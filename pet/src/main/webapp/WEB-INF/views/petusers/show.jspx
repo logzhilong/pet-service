@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:show id="ps_com_momoplan_pet_domain_PetUser" object="${petuser}" path="/petusers" z="dxTb3bQ4ykAKQNWTCmhc4FyFXLQ=">
+        <field:display field="username" id="s_com_momoplan_pet_domain_PetUser_username" object="${petuser}" z="WrcOQM5knZhr2hOub6H1nsPIU6w="/>
+        <field:display field="password" id="s_com_momoplan_pet_domain_PetUser_password" object="${petuser}" z="rQNz8k3tEGV17hue35UefFC7+nY="/>
+        <field:display field="nickname" id="s_com_momoplan_pet_domain_PetUser_nickname" object="${petuser}" z="PWy6900a8M8zM2nA3Sabs7z47G4="/>
+        <field:display field="signature" id="s_com_momoplan_pet_domain_PetUser_signature" object="${petuser}" z="HsxHkZpQLqF3F0LytS354cZdax0="/>
+        <field:display field="img" id="s_com_momoplan_pet_domain_PetUser_img" object="${petuser}" z="eC51orEG73yqNBsF3ku/gr050kk="/>
+        <field:display field="gender" id="s_com_momoplan_pet_domain_PetUser_gender" object="${petuser}" z="9+lTmm6ObutKvaVoD7IP65qDkWg="/>
+        <field:display field="birthdate" id="s_com_momoplan_pet_domain_PetUser_birthdate" object="${petuser}" z="EEhAxCl9mJVDPdPeU73rNtZtUNM="/>
+        <field:display field="phoneNumber" id="s_com_momoplan_pet_domain_PetUser_phoneNumber" object="${petuser}" z="MMU3G7SsFt9PUu3dyq03PCsSx48="/>
+        <field:display field="email" id="s_com_momoplan_pet_domain_PetUser_email" object="${petuser}" z="Avr3twS6UGdzYXmtQS/B3QYMxno="/>
+        <field:display field="hobby" id="s_com_momoplan_pet_domain_PetUser_hobby" object="${petuser}" z="0hKrLrt17ZdRDZrTbT3W/VR9k08="/>
+        <field:display date="true" dateTimePattern="${petUser_createtime_date_format}" field="createTime" id="s_com_momoplan_pet_domain_PetUser_createTime" object="${petuser}" z="WCq7xPngXBxmJvXZSn1piXwHPu4="/>
+        <field:display field="ifFraudulent" id="s_com_momoplan_pet_domain_PetUser_ifFraudulent" object="${petuser}" z="gmVbhBy8tjjdBr/MzcaI7qGZO6o="/>
+        <field:display field="city" id="s_com_momoplan_pet_domain_PetUser_city" object="${petuser}" z="tPI35jmNudh3ffPHC59nh/S7KHg="/>
+        <field:display field="deviceToken" id="s_com_momoplan_pet_domain_PetUser_deviceToken" object="${petuser}" z="KXYxMZSNbmVHKxBn+drprYXzQJ8="/>
+    </page:show>
+</div>

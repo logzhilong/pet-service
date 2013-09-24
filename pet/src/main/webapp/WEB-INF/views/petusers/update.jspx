@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_com_momoplan_pet_domain_PetUser" modelAttribute="petUser" path="/petusers" versionField="Version" z="31b+q4dh4aj8Eiagi16AZsDq7RM=">
+        <field:input field="username" id="c_com_momoplan_pet_domain_PetUser_username" z="bCjWDv32D43Ye/vVXx0noyv0Jvs="/>
+        <field:input field="password" id="c_com_momoplan_pet_domain_PetUser_password" z="Q/VqzipfZJH402EFOYzo+wi2iVQ="/>
+        <field:input field="nickname" id="c_com_momoplan_pet_domain_PetUser_nickname" z="xQTWFMb94petP7Kjp5wPaogbCNY="/>
+        <field:input field="signature" id="c_com_momoplan_pet_domain_PetUser_signature" z="QWrHejI4Dzs8ijp2VlDv6RmW/8A="/>
+        <field:input field="img" id="c_com_momoplan_pet_domain_PetUser_img" z="QImWErUiAm8MfASWeccUPlVp+Us="/>
+        <field:input field="gender" id="c_com_momoplan_pet_domain_PetUser_gender" z="Igtf4gfdESMoqbPD2aJ0FyDxalc="/>
+        <field:input field="birthdate" id="c_com_momoplan_pet_domain_PetUser_birthdate" z="IereiCBQPd76GlE4NoV89W5PAD0="/>
+        <field:input field="phoneNumber" id="c_com_momoplan_pet_domain_PetUser_phoneNumber" z="labZ2IcDVr5UcX/U7YyS1NABfEk="/>
+        <field:input field="email" id="c_com_momoplan_pet_domain_PetUser_email" validationMessageCode="field_invalid_email" z="5RXlmIYNLoh/ls+RDcogJupBFKU="/>
+        <field:input field="hobby" id="c_com_momoplan_pet_domain_PetUser_hobby" z="5GT20Krx81pjYK5jncKQiAIH2Xo="/>
+        <field:datetime dateTimePattern="${petUser_createtime_date_format}" field="createTime" id="c_com_momoplan_pet_domain_PetUser_createTime" z="c+bHrghtOgFei/cz8nl+EmcWmwY="/>
+        <field:input field="ifFraudulent" id="c_com_momoplan_pet_domain_PetUser_ifFraudulent" z="VTVlWz70IgMgkxUf15RXQWZqWGk="/>
+        <field:input field="city" id="c_com_momoplan_pet_domain_PetUser_city" z="SONAL/WCVar4rSD+NuTuO/CK0a8="/>
+        <field:input field="deviceToken" id="c_com_momoplan_pet_domain_PetUser_deviceToken" z="y9fhh7Ou6RzveOaUASL2j1JoFKA="/>
+    </form:update>
+</div>
