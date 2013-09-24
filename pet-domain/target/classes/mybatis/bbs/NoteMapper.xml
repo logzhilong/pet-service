@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="FORUM_ID" property="forumId" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="CLIENT_COUNT" property="clientCount" jdbcType="BIGINT" />
+    <result column="IS_EUTE" property="isEute" jdbcType="BIT" />
+    <result column="IS_TOP" property="isTop" jdbcType="BIT" />
+    <result column="IS_DEL" property="isDel" jdbcType="BIT" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="CT" property="ct" jdbcType="TIMESTAMP" />
+    <result column="ET" property="et" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.momoplan.pet.commons.domain.bbs.po.Note" extends="BaseResultMap" >
+    <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, IS_DEL, STATE, TYPE, 
+    CT, ET
+  </sql>
+  <sql id="Blob_Column_List" >
+    CONTENT
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BBS_NOTE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from BBS_NOTE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteCriteria" >
+    delete from BBS_NOTE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    insert into BBS_NOTE (ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, 
+      IS_DEL, STATE, TYPE, CT, ET, CONTENT)
+    values (#{id}, #{forumId}, #{userId}, #{name}, #{clientCount}, #{isEute}, #{isTop}, 
+      #{isDel}, #{state}, #{type}, #{ct}, #{et}, #{content})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    insert into BBS_NOTE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="forumId != null" >
+        FORUM_ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="clientCount != null" >
+        CLIENT_COUNT,
+      </if>
+      <if test="isEute != null" >
+        IS_EUTE,
+      </if>
+      <if test="isTop != null" >
+        IS_TOP,
+      </if>
+      <if test="isDel != null" >
+        IS_DEL,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="ct != null" >
+        CT,
+      </if>
+      <if test="et != null" >
+        ET,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="forumId != null" >
+        #{forumId},
+      </if>
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="clientCount != null" >
+        #{clientCount},
+      </if>
+      <if test="isEute != null" >
+        #{isEute},
+      </if>
+      <if test="isTop != null" >
+        #{isTop},
+      </if>
+      <if test="isDel != null" >
+        #{isDel},
+      </if>
+      <if test="state != null" >
+        #{state},
+      </if>
+      <if test="type != null" >
+        #{type},
+      </if>
+      <if test="ct != null" >
+        #{ct},
+      </if>
+      <if test="et != null" >
+        #{et},
+      </if>
+      <if test="content != null" >
+        #{content},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteCriteria" resultType="java.lang.Integer" >
+    select count(*) from BBS_NOTE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update BBS_NOTE
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id},
+      </if>
+      <if test="record.forumId != null" >
+        FORUM_ID = #{record.forumId},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId},
+      </if>
+      <if test="record.name != null" >
+        NAME = #{record.name},
+      </if>
+      <if test="record.clientCount != null" >
+        CLIENT_COUNT = #{record.clientCount},
+      </if>
+      <if test="record.isEute != null" >
+        IS_EUTE = #{record.isEute},
+      </if>
+      <if test="record.isTop != null" >
+        IS_TOP = #{record.isTop},
+      </if>
+      <if test="record.isDel != null" >
+        IS_DEL = #{record.isDel},
+      </if>
+      <if test="record.state != null" >
+        STATE = #{record.state},
+      </if>
+      <if test="record.type != null" >
+        TYPE = #{record.type},
+      </if>
+      <if test="record.ct != null" >
+        CT = #{record.ct},
+      </if>
+      <if test="record.et != null" >
+        ET = #{record.et},
+      </if>
+      <if test="record.content != null" >
+        CONTENT = #{record.content},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update BBS_NOTE
+    set ID = #{record.id},
+      FORUM_ID = #{record.forumId},
+      USER_ID = #{record.userId},
+      NAME = #{record.name},
+      CLIENT_COUNT = #{record.clientCount},
+      IS_EUTE = #{record.isEute},
+      IS_TOP = #{record.isTop},
+      IS_DEL = #{record.isDel},
+      STATE = #{record.state},
+      TYPE = #{record.type},
+      CT = #{record.ct},
+      ET = #{record.et},
+      CONTENT = #{record.content}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update BBS_NOTE
+    set ID = #{record.id},
+      FORUM_ID = #{record.forumId},
+      USER_ID = #{record.userId},
+      NAME = #{record.name},
+      CLIENT_COUNT = #{record.clientCount},
+      IS_EUTE = #{record.isEute},
+      IS_TOP = #{record.isTop},
+      IS_DEL = #{record.isDel},
+      STATE = #{record.state},
+      TYPE = #{record.type},
+      CT = #{record.ct},
+      ET = #{record.et}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

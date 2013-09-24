@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.UserForumRel" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="FORUM_ID" property="forumId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, FORUM_ID
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from BBS_USER_FORUM_REL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BBS_USER_FORUM_REL
+    where ID = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BBS_USER_FORUM_REL
+    where ID = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria" >
+    delete from BBS_USER_FORUM_REL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRel" >
+    insert into BBS_USER_FORUM_REL (ID, USER_ID, FORUM_ID)
+    values (#{id}, #{userId}, #{forumId})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRel" >
+    insert into BBS_USER_FORUM_REL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="forumId != null" >
+        FORUM_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="userId != null" >
+        #{userId},
+      </if>
+      <if test="forumId != null" >
+        #{forumId},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria" resultType="java.lang.Integer" >
+    select count(*) from BBS_USER_FORUM_REL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update BBS_USER_FORUM_REL
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id},
+      </if>
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId},
+      </if>
+      <if test="record.forumId != null" >
+        FORUM_ID = #{record.forumId},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update BBS_USER_FORUM_REL
+    set ID = #{record.id},
+      USER_ID = #{record.userId},
+      FORUM_ID = #{record.forumId}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRel" >
+    update BBS_USER_FORUM_REL
+    <set >
+      <if test="userId != null" >
+        USER_ID = #{userId},
+      </if>
+      <if test="forumId != null" >
+        FORUM_ID = #{forumId},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumRel" >
+    update BBS_USER_FORUM_REL
+    set USER_ID = #{userId},
+      FORUM_ID = #{forumId}
+    where ID = #{id}
+  </update>
+</mapper>

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.Forum" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="PID" property="pid" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DESCRIPT" property="descript" jdbcType="VARCHAR" />
+    <result column="CLIENT_COUNT" property="clientCount" jdbcType="BIGINT" />
+    <result column="REPLY_COUNT" property="replyCount" jdbcType="BIGINT" />
+    <result column="LOGO_IMG" property="logoImg" jdbcType="VARCHAR" />
+    <result column="AREA_CODE" property="areaCode" jdbcType="VARCHAR" />
+    <result column="AREA_DESC" property="areaDesc" jdbcType="VARCHAR" />
+    <result column="CT" property="ct" jdbcType="TIMESTAMP" />
+    <result column="CB" property="cb" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, PID, NAME, DESCRIPT, CLIENT_COUNT, REPLY_COUNT, LOGO_IMG, AREA_CODE, AREA_DESC, 
+    CT, CB
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.ForumCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from BBS_FORUM
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from BBS_FORUM
+    where ID = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BBS_FORUM
+    where ID = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.ForumCriteria" >
+    delete from BBS_FORUM
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
+    insert into BBS_FORUM (ID, PID, NAME, DESCRIPT, CLIENT_COUNT, REPLY_COUNT, LOGO_IMG, 
+      AREA_CODE, AREA_DESC, CT, CB)
+    values (#{id}, #{pid}, #{name}, #{descript}, #{clientCount}, #{replyCount}, #{logoImg}, 
+      #{areaCode}, #{areaDesc}, #{ct}, #{cb})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
+    insert into BBS_FORUM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="pid != null" >
+        PID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="descript != null" >
+        DESCRIPT,
+      </if>
+      <if test="clientCount != null" >
+        CLIENT_COUNT,
+      </if>
+      <if test="replyCount != null" >
+        REPLY_COUNT,
+      </if>
+      <if test="logoImg != null" >
+        LOGO_IMG,
+      </if>
+      <if test="areaCode != null" >
+        AREA_CODE,
+      </if>
+      <if test="areaDesc != null" >
+        AREA_DESC,
+      </if>
+      <if test="ct != null" >
+        CT,
+      </if>
+      <if test="cb != null" >
+        CB,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="pid != null" >
+        #{pid},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="descript != null" >
+        #{descript},
+      </if>
+      <if test="clientCount != null" >
+        #{clientCount},
+      </if>
+      <if test="replyCount != null" >
+        #{replyCount},
+      </if>
+      <if test="logoImg != null" >
+        #{logoImg},
+      </if>
+      <if test="areaCode != null" >
+        #{areaCode},
+      </if>
+      <if test="areaDesc != null" >
+        #{areaDesc},
+      </if>
+      <if test="ct != null" >
+        #{ct},
+      </if>
+      <if test="cb != null" >
+        #{cb},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.ForumCriteria" resultType="java.lang.Integer" >
+    select count(*) from BBS_FORUM
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update BBS_FORUM
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id},
+      </if>
+      <if test="record.pid != null" >
+        PID = #{record.pid},
+      </if>
+      <if test="record.name != null" >
+        NAME = #{record.name},
+      </if>
+      <if test="record.descript != null" >
+        DESCRIPT = #{record.descript},
+      </if>
+      <if test="record.clientCount != null" >
+        CLIENT_COUNT = #{record.clientCount},
+      </if>
+      <if test="record.replyCount != null" >
+        REPLY_COUNT = #{record.replyCount},
+      </if>
+      <if test="record.logoImg != null" >
+        LOGO_IMG = #{record.logoImg},
+      </if>
+      <if test="record.areaCode != null" >
+        AREA_CODE = #{record.areaCode},
+      </if>
+      <if test="record.areaDesc != null" >
+        AREA_DESC = #{record.areaDesc},
+      </if>
+      <if test="record.ct != null" >
+        CT = #{record.ct},
+      </if>
+      <if test="record.cb != null" >
+        CB = #{record.cb},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update BBS_FORUM
+    set ID = #{record.id},
+      PID = #{record.pid},
+      NAME = #{record.name},
+      DESCRIPT = #{record.descript},
+      CLIENT_COUNT = #{record.clientCount},
+      REPLY_COUNT = #{record.replyCount},
+      LOGO_IMG = #{record.logoImg},
+      AREA_CODE = #{record.areaCode},
+      AREA_DESC = #{record.areaDesc},
+      CT = #{record.ct},
+      CB = #{record.cb}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
+    update BBS_FORUM
+    <set >
+      <if test="pid != null" >
+        PID = #{pid},
+      </if>
+      <if test="name != null" >
+        NAME = #{name},
+      </if>
+      <if test="descript != null" >
+        DESCRIPT = #{descript},
+      </if>
+      <if test="clientCount != null" >
+        CLIENT_COUNT = #{clientCount},
+      </if>
+      <if test="replyCount != null" >
+        REPLY_COUNT = #{replyCount},
+      </if>
+      <if test="logoImg != null" >
+        LOGO_IMG = #{logoImg},
+      </if>
+      <if test="areaCode != null" >
+        AREA_CODE = #{areaCode},
+      </if>
+      <if test="areaDesc != null" >
+        AREA_DESC = #{areaDesc},
+      </if>
+      <if test="ct != null" >
+        CT = #{ct},
+      </if>
+      <if test="cb != null" >
+        CB = #{cb},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
+    update BBS_FORUM
+    set PID = #{pid},
+      NAME = #{name},
+      DESCRIPT = #{descript},
+      CLIENT_COUNT = #{clientCount},
+      REPLY_COUNT = #{replyCount},
+      LOGO_IMG = #{logoImg},
+      AREA_CODE = #{areaCode},
+      AREA_DESC = #{areaDesc},
+      CT = #{ct},
+      CB = #{cb}
+    where ID = #{id}
+  </update>
+</mapper>
