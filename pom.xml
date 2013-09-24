@@ -8,6 +8,13 @@
 	<version>1.0.0-SNAPSHOTS</version>
 	<name>Momoplan-Parent</name>
 
+	<modules>
+		<module>pet</module>
+		<module>pet-commons</module>
+		<module>pet-domain</module>
+		<module>pet-service-bbs</module>
+	</modules>
+
 	<properties>
 		<aspectj.version>1.6.12.M2</aspectj.version>
 		<java.version>6</java.version>
@@ -17,7 +24,7 @@
 		<spring.version>3.1.1.RELEASE</spring.version>
 		<spring-security.version>3.1.1.RELEASE</spring-security.version>
 	</properties>
-
+	
 	<repositories>
 		<!-- add by liangc : ruyicai nexus repo -->
 		<repository>
@@ -560,6 +567,10 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
+
+	
+		
+	
 
 	<distributionManagement>
 		<snapshotRepository>
