@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper" >
   <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.Note" >
-    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="FORUM_ID" property="forumId" jdbcType="VARCHAR" />
     <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <result column="NAME" property="name" jdbcType="VARCHAR" />
@@ -116,6 +116,18 @@
       <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
     </if>
   </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from BBS_NOTE
+    where ID = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from BBS_NOTE
+    where ID = #{id}
+  </delete>
   <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteCriteria" >
     delete from BBS_NOTE
     <if test="_parameter != null" >
@@ -302,5 +314,78 @@
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    update BBS_NOTE
+    <set >
+      <if test="forumId != null" >
+        FORUM_ID = #{forumId},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId},
+      </if>
+      <if test="name != null" >
+        NAME = #{name},
+      </if>
+      <if test="clientCount != null" >
+        CLIENT_COUNT = #{clientCount},
+      </if>
+      <if test="isEute != null" >
+        IS_EUTE = #{isEute},
+      </if>
+      <if test="isTop != null" >
+        IS_TOP = #{isTop},
+      </if>
+      <if test="isDel != null" >
+        IS_DEL = #{isDel},
+      </if>
+      <if test="state != null" >
+        STATE = #{state},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type},
+      </if>
+      <if test="ct != null" >
+        CT = #{ct},
+      </if>
+      <if test="et != null" >
+        ET = #{et},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content},
+      </if>
+    </set>
+    where ID = #{id}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    update BBS_NOTE
+    set FORUM_ID = #{forumId},
+      USER_ID = #{userId},
+      NAME = #{name},
+      CLIENT_COUNT = #{clientCount},
+      IS_EUTE = #{isEute},
+      IS_TOP = #{isTop},
+      IS_DEL = #{isDel},
+      STATE = #{state},
+      TYPE = #{type},
+      CT = #{ct},
+      ET = #{et},
+      CONTENT = #{content}
+    where ID = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
+    update BBS_NOTE
+    set FORUM_ID = #{forumId},
+      USER_ID = #{userId},
+      NAME = #{name},
+      CLIENT_COUNT = #{clientCount},
+      IS_EUTE = #{isEute},
+      IS_TOP = #{isTop},
+      IS_DEL = #{isDel},
+      STATE = #{state},
+      TYPE = #{type},
+      CT = #{ct},
+      ET = #{et}
+    where ID = #{id}
   </update>
 </mapper>

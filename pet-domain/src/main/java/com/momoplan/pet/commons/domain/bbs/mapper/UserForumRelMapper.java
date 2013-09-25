@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-24 11:11:36
+* @date 2013-09-25 15:10:59
 */
 public interface UserForumRelMapper {
     /**
