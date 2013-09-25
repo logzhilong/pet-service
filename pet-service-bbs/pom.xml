@@ -46,6 +46,19 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<url>${tomcat.manager.url}</url>
+					<username>tomcat</username>
+					<password>explink</password>
+					<path>/pet-service-bbs</path>
+					<update>true</update>
+				</configuration>
+			</plugin>
+
 		</plugins>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
@@ -61,24 +74,6 @@
 			<id>test</id>
 			<properties>
 				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
-				<database.url>jdbc:mysql://123.178.27.74:3306/pet_bbs?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false</database.url>
-				<database.username>root</database.username>
-				<database.password></database.password>
-				<database.promptOnNonLocalDatabase>false</database.promptOnNonLocalDatabase>
-				<uploadPath>/home/appusr/static</uploadPath>
-				<jms.brokerURL>tcp://123.178.27.74:61616</jms.brokerURL>
-			</properties>
-		</profile>
-		<profile>
-			<id>release</id>
-			<properties>
-				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
-				<database.url>jdbc:mysql://192.168.99.51:3306/pet_bbs?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false</database.url>
-				<database.username>root</database.username>
-				<database.password>123456</database.password>
-				<database.promptOnNonLocalDatabase>false</database.promptOnNonLocalDatabase>
-				<uploadPath>/home/appusr/static</uploadPath>
-				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
 			</properties>
 		</profile>
 	</profiles>
