@@ -56,6 +56,7 @@ public class CoreController {
 		}
 		//apn推送
 		if(coreRequest.getMethod().equals("pushMsgApn")){
+			logger.debug(coreRequest.toString());
 			return handldPushMsgApn(coreRequest);
 		}
 		//处理好友关系
