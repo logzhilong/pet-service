@@ -8,10 +8,12 @@ import javapns.devices.Device;
 import javapns.devices.implementations.basic.BasicDevice;
 import javapns.notification.PushNotificationPayload;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.momoplan.pet.vo.ApnMsg;
 
 public class PushApn {
-	
+
 	/**
 	 * 单发消息
 	 * @param msg

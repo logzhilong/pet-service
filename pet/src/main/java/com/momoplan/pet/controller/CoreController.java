@@ -49,7 +49,7 @@ public class CoreController {
 	
 	@RequestMapping("request")
 	public @ResponseBody Object request(@RequestParam("body")String body,HttpServletResponse response) throws Exception{
-		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+		System.out.println("----------------------------------------------------------debug");
 		try{
 			body = body.replaceAll("\\", "");
 		}catch(Exception e){
@@ -61,6 +61,7 @@ public class CoreController {
 		if(coreRequest.getMethod().equals("open")){
 			return null;
 		}
+		
 		//apn推送
 		if(coreRequest.getMethod().equals("pushMsgApn")){
 			logger.debug("\ncoreRequest--------------------------------------------------------------------->"+coreRequest.toString());
@@ -218,6 +219,7 @@ public class CoreController {
 		PetVersion petVersion = new PetVersion();
 		petVersion.setPetVersion(file.getOriginalFilename());
 		petVersion.setCreateDate(new Timestamp(System.currentTimeMillis()));
+		petVersion.setPhoneType("android");
 		petVersion.persist();
 		FileOutputStream fileOS = new FileOutputStream(uploadService.getUploadUrl() + File.separator + petVersion.getId()+".petV");
 		fileOS.write(file.getBytes());
