@@ -465,15 +465,16 @@ public class ClientController {
 
 		// 给接收者发送提醒
 		XMPPRequest xr = new XMPPRequest();
-		xr.setSendUser(PetUser.findPetUser(replyComments.getCommentUserid())
-				.getUsername());
-		xr.setReceiveUser(PetUser.findPetUser(replyComments.getReplyUserid())
-				.getUsername());
+		PetUser sendUser = PetUser.findPetUser(replyComments.getCommentUserid());
+		xr.setSendUser(sendUser.getUsername());
+		xr.setReceiveUser(PetUser.findPetUser(replyComments.getReplyUserid()).getUsername());
 		xr.setType("reply");
 		xr.setPrams(replyComments.getUserStateid());
 		xr.setWords(replyComments.getCommentsMsg());
 		xr.setMsgTime(replyComments.getCommentTime());
 		xr.setRegion("@test.com");
+		xr.setFromHeadImg(sendUser.getImg());
+		xr.setFromNickname(sendUser.getNickname());
 		try {
 			xr.SendMessage();
 		} catch (Exception e) {
@@ -484,15 +485,15 @@ public class ClientController {
 		}
 		// 给动态发布者发送提醒
 		XMPPRequest xr2 = new XMPPRequest();
-		xr2.setSendUser(PetUser.findPetUser(replyComments.getCommentUserid())
-				.getUsername());
-		xr2.setReceiveUser(PetUser.findPetUser(
-				UserStates.findUserStates(replyComments.getUserStateid())
-						.getPetUserid()).getUsername());
+		PetUser sendUser2 = PetUser.findPetUser(replyComments.getCommentUserid());
+		xr2.setSendUser(sendUser2.getUsername());
+		xr2.setReceiveUser(PetUser.findPetUser(UserStates.findUserStates(replyComments.getUserStateid()).getPetUserid()).getUsername());
 		xr2.setType("reply");
 		xr2.setPrams(replyComments.getUserStateid());
 		xr2.setWords(replyComments.getCommentsMsg());
 		xr2.setRegion("@test.com");
+		xr.setFromHeadImg(sendUser2.getImg());
+		xr.setFromNickname(sendUser2.getNickname());
 		try {
 			xr2.SendMessage();
 		} catch (Exception e) {
@@ -542,15 +543,16 @@ public class ClientController {
 		ReplyView replyView = getReplyView(reply,
 				authenticationToken.getUserid());
 		XMPPRequest xr = new XMPPRequest();
-		xr.setSendUser(PetUser.findPetUser(reply.getPetUserid()).getUsername());
-		xr.setReceiveUser(PetUser.findPetUser(
-				UserStates.findUserStates(reply.getUserStateid())
-						.getPetUserid()).getUsername());
+		PetUser sendUser = PetUser.findPetUser(reply.getPetUserid());
+		xr.setSendUser(sendUser.getUsername());
+		xr.setReceiveUser(PetUser.findPetUser(UserStates.findUserStates(reply.getUserStateid()).getPetUserid()).getUsername());
 		xr.setType("reply");
 		xr.setPrams(reply.getUserStateid());
 		xr.setWords(reply.getMsg());
 		xr.setMsgTime(reply.getReplyTime());
 		xr.setRegion("@test.com");
+		xr.setFromHeadImg(sendUser.getImg());
+		xr.setFromNickname(sendUser.getNickname());
 		try {
 			xr.SendMessage();
 		} catch (HttpException e) {
@@ -673,8 +675,8 @@ public class ClientController {
 		userZan.persist();
 		try {
 			XMPPRequest xr = new XMPPRequest();
-			xr.setSendUser(PetUser.findPetUser(userZan.getUserid())
-					.getUsername());
+			PetUser sendUser = PetUser.findPetUser(userZan.getUserid());
+			xr.setSendUser(sendUser.getUsername());
 			xr.setReceiveUser(PetUser.findPetUser(userZan.getZanUserid())
 					.getUsername());
 			xr.setMsgTime(new Date(System.currentTimeMillis()));
@@ -687,6 +689,8 @@ public class ClientController {
 			} else if (zanType.contains("2")) {// 用户
 				xr.setType("zanPeople");
 			}
+			xr.setFromHeadImg(sendUser.getImg());
+			xr.setFromNickname(sendUser.getNickname());
 			xr.setRegion("@test.com");
 			xr.SendMessage();
 		} catch (Exception e) {

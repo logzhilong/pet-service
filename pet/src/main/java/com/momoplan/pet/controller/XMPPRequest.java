@@ -17,6 +17,25 @@ public class XMPPRequest {
 	private String msgtype;
 	private String prams;
 	private Date msgTime;
+	private String fromNickname;
+	private String fromHeadImg;
+	
+
+	public String getFromNickname() {
+		return fromNickname;
+	}
+
+	public void setFromNickname(String fromNickname) {
+		this.fromNickname = fromNickname;
+	}
+
+	public String getFromHeadImg() {
+		return fromHeadImg;
+	}
+
+	public void setFromHeadImg(String fromHeadImg) {
+		this.fromHeadImg = fromHeadImg;
+	}
 
 	public Date getMsgTime() {
 		return msgTime;
@@ -87,7 +106,7 @@ public class XMPPRequest {
 
 	public void SendMessage() throws HttpException, IOException {
 		String msg = "<message to = " + "\"" + this.receiveUser + this.region + "\" " + " from = " + "\"" + this.sendUser + this.region
-				 + "\" " + " type = \"chat\" msgtype=" + "\"" + msgtype + "\" " + prams + " msgTime=" + "\"" + msgTime.getTime() + "\" " + "><body>" + this.words + "</body></message>";
+				 + "\" " + " type = \"chat\" msgtype=" + "\"" + this.msgtype + "\" " + prams + " msgTime=" + "\"" + this.msgTime.getTime() + "\" " + " fromNickname=" + "\"" + this.fromNickname + "\" " + " fromHeadImg=" + "\"" + this.fromHeadImg + "\" " + "><body>" + this.words + "</body></message>";
 		System.out.println(msg);
 		HttpClient httpClient = new HttpClient();
 		PostMethod method = new PostMethod("http://61.51.110.55:5280/rest");
@@ -112,16 +131,18 @@ public class XMPPRequest {
 //				+ this.words + "</body></message>";
 //		System.out.println();
 //	}
-	public static void main(String[] args) {
-		String msg = "<message xmlns=\"jabber:client\" from=\"15277880000@test.com\" to=\"15511487633@test.com\" type=\"chat\"><body>自言自语</body></message>";
-		try {
-			SendMessage(msg);
-		} catch (HttpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		XMPPRequest xr = new XMPPRequest();
+//		xr.setFromHeadImg("1");
+//		xr.setFromNickname("a");
+//		xr.setMsgTime(new Date(System.currentTimeMillis()));
+//		xr.setReceiveUser("b");
+//		xr.setRegion("@test");
+//		xr.setSendUser("A");
+//		xr.setType("reply");
+//		xr.setWords("XXX");
+//		String msg = "<message to = " + "\"" + xr.receiveUser + xr.region + "\" " + " xr = " + "\"" + xr.sendUser + xr.region
+//				 + "\" " + " type = \"chat\" msgtype=" + "\"" + xr.msgtype + "\" " + " msgTime=" + "\"" + xr.msgTime.getTime() + "\" " + " fromNickname=" + "\"" + xr.fromNickname + "\" " + " fromHeadImg=" + "\"" + xr.fromHeadImg + "\" " + "><body>" + xr.words + "</body></message>";
+//		System.out.println(msg);
+//	}
 }

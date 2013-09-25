@@ -31,7 +31,6 @@ public class PushApn {
 			device.setToken(msg.getToken());
 			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
 			Push.payload(payLoad, cert, "110110", false, device);
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
