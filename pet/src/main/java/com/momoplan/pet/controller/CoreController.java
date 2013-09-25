@@ -49,14 +49,16 @@ public class CoreController {
 	
 	@RequestMapping("request")
 	public @ResponseBody Object request(@RequestParam("body")String body,HttpServletResponse response) throws Exception{
-		body = body.replace("\\", "");
+		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+		body = body.replaceAll("\\", "");
+		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
 		CoreRequest coreRequest=new ObjectMapper().reader(CoreRequest.class).readValue(body);
 		if(coreRequest.getMethod().equals("open")){
 			return null;
 		}
 		//apn推送
 		if(coreRequest.getMethod().equals("pushMsgApn")){
-			logger.debug(coreRequest.toString());
+			logger.debug("\ncoreRequest--------------------------------------------------------------------->"+coreRequest.toString());
 			return handldPushMsgApn(coreRequest);
 		}
 		//处理好友关系
