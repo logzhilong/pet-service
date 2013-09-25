@@ -49,14 +49,21 @@ public class CoreController {
 	
 	@RequestMapping("request")
 	public @ResponseBody Object request(@RequestParam("body")String body,HttpServletResponse response) throws Exception{
-		body = body.replace("\\", "");
+		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+		try{
+			body = body.replaceAll("\\", "");
+		}catch(Exception e){
+			logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+			logger.debug(e.getMessage());
+		}
+
 		CoreRequest coreRequest=new ObjectMapper().reader(CoreRequest.class).readValue(body);
 		if(coreRequest.getMethod().equals("open")){
 			return null;
 		}
 		//apn推送
 		if(coreRequest.getMethod().equals("pushMsgApn")){
-			logger.debug(coreRequest.toString());
+			logger.debug("\ncoreRequest--------------------------------------------------------------------->"+coreRequest.toString());
 			return handldPushMsgApn(coreRequest);
 		}
 		//处理好友关系
@@ -77,11 +84,14 @@ public class CoreController {
 		String aliasName = userFriendshipService.getAliasName(toid,fromid);
 		ApnMsg msg = new ApnMsg();
 		if(StringUtils.isEmpty(aliasName)){
-			msg.setMsg(petUsers.get(0).getUsername()+":"+PetUtil.getParameter(coreRequest, "msg"));	
+			msg.setMsg(petUsers.get(0).getNickname()+":"+PetUtil.getParameter(coreRequest, "msg"));	
 		}else{
 			msg.setMsg(aliasName+":"+PetUtil.getParameter(coreRequest, "msg"));
 		}
 		msg.setToken(PetUser.findPetUsersByUsername(PetUtil.getParameter(coreRequest, "toname")).getSingleResult().getDeviceToken());
+		logger.debug("\n msg--------------------------------------------------------------->"+msg.getMsg());
+		logger.debug("\n msgdotken--------------------------------------------------------------->"+msg.getToken());
+		
 		PushApn.sendMsgApn(msg, 1);
 		return null;
 	}
