@@ -50,8 +50,13 @@ public class CoreController {
 	@RequestMapping("request")
 	public @ResponseBody Object request(@RequestParam("body")String body,HttpServletResponse response) throws Exception{
 		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
-		body = body.replaceAll("\\", "");
-		logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+		try{
+			body = body.replaceAll("\\", "");
+		}catch(Exception e){
+			logger.debug("\ncoreRequest--------------------------------------------------------------------->"+body.toString());
+			logger.debug(e.getMessage());
+		}
+
 		CoreRequest coreRequest=new ObjectMapper().reader(CoreRequest.class).readValue(body);
 		if(coreRequest.getMethod().equals("open")){
 			return null;
