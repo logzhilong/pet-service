@@ -84,7 +84,7 @@ public class CoreController {
 		String aliasName = userFriendshipService.getAliasName(toid,fromid);
 		ApnMsg msg = new ApnMsg();
 		if(StringUtils.isEmpty(aliasName)){
-			msg.setMsg(petUsers.get(0).getUsername()+":"+PetUtil.getParameter(coreRequest, "msg"));	
+			msg.setMsg(petUsers.get(0).getNickname()+":"+PetUtil.getParameter(coreRequest, "msg"));	
 		}else{
 			msg.setMsg(aliasName+":"+PetUtil.getParameter(coreRequest, "msg"));
 		}
