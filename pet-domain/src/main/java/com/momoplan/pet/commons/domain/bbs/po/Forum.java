@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-25 15:10:59
+* @date 2013-09-26 12:09:32
 */
 public class Forum implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -38,6 +38,8 @@ public class Forum implements Serializable {
     private Date ct;
 
     private String cb;
+
+    private Long seq;
 
     public String getId() {
         return id;
@@ -127,6 +129,14 @@ public class Forum implements Serializable {
         this.cb = cb;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public void setSeq(Long seq) {
+        this.seq = seq;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -149,7 +159,8 @@ public class Forum implements Serializable {
             && (this.getAreaCode() == null ? other.getAreaCode() == null : this.getAreaCode().equals(other.getAreaCode()))
             && (this.getAreaDesc() == null ? other.getAreaDesc() == null : this.getAreaDesc().equals(other.getAreaDesc()))
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
-            && (this.getCb() == null ? other.getCb() == null : this.getCb().equals(other.getCb()));
+            && (this.getCb() == null ? other.getCb() == null : this.getCb().equals(other.getCb()))
+            && (this.getSeq() == null ? other.getSeq() == null : this.getSeq().equals(other.getSeq()));
     }
 
     @Override
@@ -167,6 +178,7 @@ public class Forum implements Serializable {
         result = prime * result + ((getAreaDesc() == null) ? 0 : getAreaDesc().hashCode());
         result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getCb() == null) ? 0 : getCb().hashCode());
+        result = prime * result + ((getSeq() == null) ? 0 : getSeq().hashCode());
         return result;
     }
 

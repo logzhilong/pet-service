@@ -31,7 +31,7 @@ public class ForumMapperTest extends AbstractTest {
 		forumMapper.insertSelective(forum);
 		System.out.println("OK...");
 	}
-
+	@Test
 	public void selectTest(){
 		ForumCriteria forumCriteria = new ForumCriteria();
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
@@ -60,8 +60,8 @@ public class ForumMapperTest extends AbstractTest {
 		}
 		System.out.println("OK..");
 	}
+
 	
-	@Test
 	public void deleteTest(){
 		ForumCriteria forumCriteria = new ForumCriteria();
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
