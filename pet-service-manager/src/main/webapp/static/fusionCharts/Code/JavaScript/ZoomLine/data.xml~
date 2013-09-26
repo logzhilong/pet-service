@@ -1,0 +1,22 @@
+<chart palette='2' caption='fuck you' divLineDecimalPrecision='' limitsDecimalPrecision='' SYAxisName='fuck' >
+  
+  <categories>
+    <category label='20121110' />
+    <category label='20121111' />
+    <category label='20121112' />
+    <category label='20121113' />
+    <category label='20121114' />
+    <category label='20121115' />
+    <category label='20121116' />
+  </categories>
+
+  <dataset parentYAxis='S' >
+    <set value='174' />
+    <set value='197' />
+    <set value='155' />
+    <set value='15' />
+    <set value='66' />
+    <set value='85' />
+    <set value='37' />
+  </dataset>
+</chart>
