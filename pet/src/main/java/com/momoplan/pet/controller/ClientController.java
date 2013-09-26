@@ -43,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetUtil;
+import com.momoplan.common.ProxyUri;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
 import com.momoplan.pet.domain.AuthenticationToken;
@@ -106,6 +107,8 @@ public class ClientController {
 	private String smsUserid = null;
 	@Value("#{config['sms.password']}")
 	private String smsPassword = null;
+	@Value("#{config['uri.pet_bbs']}")
+	private String pet_bbs = null;
 
 	@Resource
 	private JmsTemplate apprequestTemplate;
@@ -118,14 +121,15 @@ public class ClientController {
 	 */
 	@RequestMapping("request")
 	public @ResponseBody
-	Object request(@RequestParam("body") String body,
-			HttpServletResponse response) throws Exception {
+	Object request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
 		String ret = null;
-		ClientRequest clientRequest = new ObjectMapper().reader(
-				ClientRequest.class).readValue(body);
+		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(clientRequest, response);
 			ret = new ObjectMapper().writeValueAsString(retObj);
+			if(retObj.toString().contains("needProxy")){
+				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
+			}
 		} finally {
 			TextMessage tm = new ActiveMQTextMessage();
 			tm.setStringProperty("body", body);
@@ -136,9 +140,7 @@ public class ClientController {
 		return ret;
 	}
 
-	private Object doRequest(ClientRequest clientRequest,
-			HttpServletResponse response) throws IOException,
-			JsonProcessingException, ParseException {
+	private Object doRequest(ClientRequest clientRequest,HttpServletResponse response) throws IOException,JsonProcessingException, ParseException {
 		// ClientRequest clientRequest = new
 		// ObjectMapper().reader(ClientRequest.class).readValue(body);
 		if (clientRequest.getMethod().equals("open")) {
@@ -213,10 +215,6 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("getOneFriend")) {
 			return handleGetOneFriend(clientRequest);
 		}
-		// 获取十条假数据
-		// if (clientRequest.getMethod().equals("cheatUser")) {
-		// return handldCheatUser(clientRequest);
-		// }
 		// 获取验证码
 		if (clientRequest.getMethod().equals("getVerificationCode")) {
 			return handldGetVerificationCode(clientRequest);
@@ -225,18 +223,6 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("verifyCode")) {
 			return handldVerifyCode(clientRequest);
 		}
-		// // 建立好友关系
-		// if (clientRequest.getMethod().equals("addFriend")) {
-		// return handldAddFriend(clientRequest);
-		// }
-		// // 建立非好友好友关系
-		// if (clientRequest.getMethod().equals("delFriend")) {
-		// return handldDelFriend(clientRequest);
-		// }
-		// // 建立黑名单关系
-		// if (clientRequest.getMethod().equals("insBlackList")) {
-		// return handldInsBlackList(clientRequest);
-		// }
 		// 根据用户名查询一个用户的所有信息
 		if (clientRequest.getMethod().equals("selectUserViewByUserName")) {
 			return handleSelectUserViewByUserName(clientRequest);
@@ -317,8 +303,123 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("findOneState")) {
 			return handleFindOneState(clientRequest);
 		}
+		//proxy发帖
+		if (clientRequest.getMethod().equals("sendNote")) {
+//			Object petResponse = handleSendNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy回帖
+		if (clientRequest.getMethod().equals("replyNote")) {
+//			Object petResponse = handleReplyNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy搜索
+		if (clientRequest.getMethod().equals("searchNote")) {
+//			Object petResponse = handleSearchNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy根据id查看帖子详情
+		if (clientRequest.getMethod().equals("detailNote")) {
+//			Object petResponse = handleDetailNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy删除帖子
+		if (clientRequest.getMethod().equals("delNote")) {
+//			Object petResponse = handleDelNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy关注圈子
+		if (clientRequest.getMethod().equals("attentionForum")) {
+//			Object petResponse = handleAttentionForum(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy退出圈子
+		if (clientRequest.getMethod().equals("quitForum")) {
+//			Object petResponse = handleQuitForum(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy获取最新帖子
+		if (clientRequest.getMethod().equals("newNote")) {
+//			Object petResponse = handleNewNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy举报帖子
+		if (clientRequest.getMethod().equals("reportNote")) {
+//			Object petResponse = handleReportNote(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy获取当前帖子所有回复
+		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {
+//			Object petResponse = handleGetAllReplyNoteByNoteid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy根据回帖id获取回帖
+		if (clientRequest.getMethod().equals("getReplyNoteSubByReplyNoteid")) {
+//			Object petResponse = handleGetReplyNoteSubByReplyNoteid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy今日新增帖子列表
+		if (clientRequest.getMethod().equals("getTodayNewNoteList")) {
+//			Object petResponse = handleGetTodayNewNoteList(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy我发表过的帖子列表
+		if (clientRequest.getMethod().equals("getMyNotedListByuserid")) {
+//			Object petResponse = handleGetMyNotedListByuserid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy我回复过的帖子列表
+		if (clientRequest.getMethod().equals("getMyReplyNoteListByUserid")) {
+//			Object petResponse = handleGetMyReplyNoteListByUserid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy获取某圈子下所有帖子数
+		if (clientRequest.getMethod().equals("getNoteCountByForumid")) {
+//			Object petResponse = handleGetNoteCountByForumid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy获取某圈子下所有回复数
+		if (clientRequest.getMethod().equals("getNoteSubCountByForumid")) {
+//			Object petResponse = handleGetNoteSubCountByForumid(clientRequest);
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		
 		return clientRequest;
+		
+		
 	}
+
+	private Object handleProxyRequest(ClientRequest clientRequest) {
+		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		if (null == authenticationToken) {
+			return "false";
+		}
+		return "needProxy:" + pet_bbs;
+	}
+
+//	private Object handleSendNote(ClientRequest clientRequest) {
+//		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+//		if(null==authenticationToken){
+//			return null;
+//		}
+//		return "needProxy:"+pet_bbs;
+//	}
 
 	private Object handleFindOneState(ClientRequest clientRequest) {
 		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
@@ -983,35 +1084,6 @@ public class ClientController {
 	 * @param ustate
 	 * @return
 	 */
-	// private List<ReplyView> getReplyViews(UserStates ustate, long petUserid,
-	// int pageIndex) {
-	// // 根据动态id查询评论表
-	// List<Reply> replys = Reply.findReplysByUserStateid(ustate,
-	// petUserid,pageIndex).getResultList();
-	// List<ReplyView> replyViews = new ArrayList<ReplyView>();
-	// // 将评论的list封装到评论视图
-	// for (int i = 0; i < replys.size(); i++) {
-	// ReplyView replyView = new ReplyView();
-	// replyView.setMsg(replys.get(i).getMsg());
-	// replyView.setId(replys.get(i).getId());
-	// replyView.setPetUser(PetUser.findPetUser(replys.get(i)
-	// .getPetUserid()));// 封装发表评论的用户
-	// replyView.setReplyTime(replys.get(i).getReplyTime());
-	// replyView.setUserStateid(replys.get(i).getUserStateid());// 将评价中的状态id插入
-	// replyView.setReplyCommentViews(getReplyCommentsView(replys.get(i),
-	// 0));// 根据获取的评价获取“回复评价”视图
-	// replyView.setPageIndex(i);
-	// replyViews.add(replyView);
-	// }
-	// return replyViews;
-	// }
-
-	/**
-	 * 获取评价视图
-	 * 
-	 * @param ustate
-	 * @return
-	 */
 	private List<ReplyView> getReplyViews(UserStates ustate, long petUserid,
 			int lastReplyid, String whos) {
 		List<Reply> replys = Reply.findReplysByUserStateid(ustate, petUserid,
@@ -1089,83 +1161,6 @@ public class ClientController {
 		}
 	}
 
-	// /**
-	// * 好友关系变为黑名单
-	// *
-	// * @param clientRequest
-	// * @return
-	// */
-	// private Object handldInsBlackList(ClientRequest clientRequest) {
-	// try {
-	// AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-	// Long aId = PetUtil.getParameterLong(clientRequest, "aId");
-	// Long bId = PetUtil.getParameterLong(clientRequest, "bId");
-	// UserFriendship userFriendship = userFriendshipService
-	// .findUserFriendshipsByABId(aId, bId);
-	// if (null != userFriendship) {
-	// userFriendship.setVerified(2);
-	// userFriendship.merge();
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// return "exception";
-	// }
-	// return "success";
-	// }
-	//
-	// /**
-	// * 好友关系变为陌生人
-	// *
-	// * @param clientRequest
-	// * @return
-	// */
-	// private Object handldDelFriend(ClientRequest clientRequest) {
-	// try {
-	// AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-	// Long aId = PetUtil.getParameterLong(clientRequest, "aId");
-	// Long bId = PetUtil.getParameterLong(clientRequest, "bId");
-	// UserFriendship userFriendship = userFriendshipService
-	// .findUserFriendshipsByABId(aId, bId);
-	// if (null != userFriendship) {
-	// userFriendship.setVerified(1);
-	// userFriendship.merge();
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// return "exception";
-	// }
-	// return "success";
-	// }
-	//
-	// /**
-	// * 好友关系变为好友
-	// *
-	// * @param clientRequest
-	// * @return
-	// */
-	// private Object handldAddFriend(ClientRequest clientRequest) {
-	// try {
-	// AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-	// Long aId = PetUtil.getParameterLong(clientRequest, "aId");
-	// Long bId = PetUtil.getParameterLong(clientRequest, "bId");
-	// UserFriendship userFriendship =
-	// userFriendshipService.findUserFriendshipsByABId(aId, bId);
-	// if (null != userFriendship) {
-	// userFriendship.setVerified(0);
-	// userFriendship.merge();
-	// } else {
-	// UserFriendship uf = new UserFriendship();
-	// uf.setVerified(0);
-	// uf.setAId(aId);
-	// uf.setBId(bId);
-	// uf.persist();
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// return "exception";
-	// }
-	// return "success";
-	// }
 
 	/**
 	 * 
@@ -1233,31 +1228,6 @@ public class ClientController {
 		return petFileService.getNewVersion(clientRequest.getImei());
 	}
 
-	/**
-	 * 返回十条假数据
-	 * 
-	 * @param clientRequest
-	 * @return
-	 */
-	// private Object handldCheatUser(ClientRequest clientRequest) {
-	// AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-	// List<PetUserView> petUserViews = new ArrayList<PetUserView>();
-	// String city = getParameter(clientRequest, "city");
-	// Random rd = new Random();
-	// int num = 1;
-	// boolean[] bool = new boolean[19];
-	// for (int i = 0; i < 10; i++) {
-	// do {
-	// // 如果产生的数相同继续循环
-	// num = rd.nextInt(19);
-	// } while (bool[num]);
-	// bool[num] = true;
-	// PetUserView petUserview = this.getPetUserview(num + 1, city);
-	// petUserview.setDistance("100米");
-	// petUserViews.add(petUserview);
-	// }
-	// return petUserViews;
-	// }
 
 	/**
 	 * 获取好友信息
@@ -1513,26 +1483,6 @@ public class ClientController {
 		return openResponse;
 	}
 
-	// private Object beforeOpen(ClientRequest clientRequest) {
-	// Device device = new Device();
-	// device.setCreateTime(new Date(System.currentTimeMillis()));
-	// device.setMac(clientRequest.getMac());
-	// device.setImei(clientRequest.getImei());
-	// device.setChannel(clientRequest.getChannel());
-	// return device;
-	// }
-	//
-	// private Object beforeContral(ClientRequest clientRequest) {
-	// AuthenticationToken authenticationToken =
-	// AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-	// if(null==authenticationToken){
-	// return "";
-	// }
-	// PetStisticJmsView psv = new PetStisticJmsView();
-	// psv.setUserid(authenticationToken.getUserid());
-	// psv.setConnectTime(new Date(System.currentTimeMillis()));
-	// return psv;
-	// }
 
 	private Object handleSaveUserInfo(ClientRequest clientRequest) {
 		AuthenticationToken authenticationToken = AuthenticationToken
@@ -1703,7 +1653,7 @@ public class ClientController {
 			
 			List<PetUserView> petUserViews = new ArrayList<PetUserView>();
 			for (UserLocation userLocation : nearbyUser) {
-				PetUserView petUserview = this.getPetUserview(userLocation.getUserid());
+				PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 				petUserview.setDistance(getDistance(userLocation, longitude,latitude, true));
 				petUserview.setPageIndex(pageIndex++);
 				if (null != userLocation.getCreateDate()) {
@@ -1718,8 +1668,7 @@ public class ClientController {
 				int distance = 0;
 				for (UserLocation userLocation : nearByUserFraudulents) {
 					
-					PetUserView petUserview = this.getPetUserview(userLocation
-							.getUserid());
+					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
 							+ "米以内");
 					distance = distance + 50;
@@ -1747,7 +1696,7 @@ public class ClientController {
 			
 			List<PetUserView> petUserViews = new ArrayList<PetUserView>();
 			for (UserLocation userLocation : nearbyUser) {
-				PetUserView petUserview = this.getPetUserview(userLocation.getUserid());
+				PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 				petUserview.setDistance(getDistance(userLocation, longitude,latitude, true));
 				petUserview.setPageIndex(pageIndex++);
 				if (null != userLocation.getCreateDate()) {
@@ -1762,8 +1711,7 @@ public class ClientController {
 				int distance = 400;
 				for (UserLocation userLocation : nearByUserFraudulents) {
 					
-					PetUserView petUserview = this.getPetUserview(userLocation
-							.getUserid());
+					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
 							+ "米以内");
 					distance = distance + 50;
@@ -1802,29 +1750,12 @@ public class ClientController {
 		return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
 	}
 
-	// private String getDistance(UserLocation userLocation, double
-	// longitude,double latitude, boolean ifGroup) {
-	// double uLongitude = userLocation.getLongitude();
-	// double uLatitude = userLocation.getLatitude();
-	// double distance = PetUtil.getDistance(uLongitude, uLatitude, longitude,
-	// latitude);
-	// if (!ifGroup) {
-	// return String.valueOf((int) distance) + "米";
-	// }
-	// return String.valueOf((int) distance / 100 * 100) + "米";
-	// }
-
 	private String getDistance(UserStates userStates, double longitude,
 			double latitude, boolean ifGroup) {
 		double uLongitude = userStates.getLongitude();
 		double uLatitude = userStates.getLatitude();
 		double distance = PetUtil.getDistance(uLongitude, uLatitude, longitude,
 				latitude);
-		// if (!ifGroup||distance<100) {
-		// return String.valueOf((int) distance) + "米";
-		// }else{
-		// return String.valueOf((int) distance / 50 * 50) + "米";
-		// }
 		return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
 	}
 

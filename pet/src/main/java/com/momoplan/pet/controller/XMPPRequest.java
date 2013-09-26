@@ -1,7 +1,6 @@
 package com.momoplan.pet.controller;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.httpclient.HttpClient;
