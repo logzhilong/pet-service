@@ -43,7 +43,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetUtil;
-import com.momoplan.common.ProxyUri;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
 import com.momoplan.pet.domain.AuthenticationToken;
