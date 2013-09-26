@@ -3,6 +3,8 @@ package com.momoplan.pet.test;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.momoplan.pet.commons.ForumRequest;
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.framework.bbs.service.DemoService;
 
 
@@ -13,6 +15,7 @@ public class DemoServiceTest extends AbstractTest {
 	
 	@Test
 	public void insertTest(){
+		
 		demoService.insertDemo();
 	}
 	
