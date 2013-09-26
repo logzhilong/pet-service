@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-25 15:10:59
+* @date 2013-09-26 12:09:32
 */
 public class ForumCriteria {
     protected String orderByClause;
@@ -890,6 +890,66 @@ public class ForumCriteria {
 
         public Criteria andCbNotBetween(String value1, String value2) {
             addCriterion("CB not between", value1, value2, "cb");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIsNull() {
+            addCriterion("SEQ is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIsNotNull() {
+            addCriterion("SEQ is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqEqualTo(Long value) {
+            addCriterion("SEQ =", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqNotEqualTo(Long value) {
+            addCriterion("SEQ <>", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqGreaterThan(Long value) {
+            addCriterion("SEQ >", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqGreaterThanOrEqualTo(Long value) {
+            addCriterion("SEQ >=", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqLessThan(Long value) {
+            addCriterion("SEQ <", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqLessThanOrEqualTo(Long value) {
+            addCriterion("SEQ <=", value, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqIn(List<Long> values) {
+            addCriterion("SEQ in", values, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqNotIn(List<Long> values) {
+            addCriterion("SEQ not in", values, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqBetween(Long value1, Long value2) {
+            addCriterion("SEQ between", value1, value2, "seq");
+            return (Criteria) this;
+        }
+
+        public Criteria andSeqNotBetween(Long value1, Long value2) {
+            addCriterion("SEQ not between", value1, value2, "seq");
             return (Criteria) this;
         }
     }

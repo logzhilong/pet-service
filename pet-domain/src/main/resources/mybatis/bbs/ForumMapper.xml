@@ -13,6 +13,7 @@
     <result column="AREA_DESC" property="areaDesc" jdbcType="VARCHAR" />
     <result column="CT" property="ct" jdbcType="TIMESTAMP" />
     <result column="CB" property="cb" jdbcType="VARCHAR" />
+    <result column="SEQ" property="seq" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     ID, PID, NAME, DESCRIPT, CLIENT_COUNT, REPLY_COUNT, LOGO_IMG, AREA_CODE, AREA_DESC, 
-    CT, CB
+    CT, CB, SEQ
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.ForumCriteria" >
     select
@@ -111,9 +112,9 @@
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
     insert into BBS_FORUM (ID, PID, NAME, DESCRIPT, CLIENT_COUNT, REPLY_COUNT, LOGO_IMG, 
-      AREA_CODE, AREA_DESC, CT, CB)
+      AREA_CODE, AREA_DESC, CT, CB, SEQ)
     values (#{id}, #{pid}, #{name}, #{descript}, #{clientCount}, #{replyCount}, #{logoImg}, 
-      #{areaCode}, #{areaDesc}, #{ct}, #{cb})
+      #{areaCode}, #{areaDesc}, #{ct}, #{cb}, #{seq})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Forum" >
     insert into BBS_FORUM
@@ -151,6 +152,9 @@
       <if test="cb != null" >
         CB,
       </if>
+      <if test="seq != null" >
+        SEQ,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -185,6 +189,9 @@
       </if>
       <if test="cb != null" >
         #{cb},
+      </if>
+      <if test="seq != null" >
+        #{seq},
       </if>
     </trim>
   </insert>
@@ -230,6 +237,9 @@
       <if test="record.cb != null" >
         CB = #{record.cb},
       </if>
+      <if test="record.seq != null" >
+        SEQ = #{record.seq},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -247,7 +257,8 @@
       AREA_CODE = #{record.areaCode},
       AREA_DESC = #{record.areaDesc},
       CT = #{record.ct},
-      CB = #{record.cb}
+      CB = #{record.cb},
+      SEQ = #{record.seq}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -285,6 +296,9 @@
       <if test="cb != null" >
         CB = #{cb},
       </if>
+      <if test="seq != null" >
+        SEQ = #{seq},
+      </if>
     </set>
     where ID = #{id}
   </update>
@@ -299,7 +313,8 @@
       AREA_CODE = #{areaCode},
       AREA_DESC = #{areaDesc},
       CT = #{ct},
-      CB = #{cb}
+      CB = #{cb},
+      SEQ = #{seq}
     where ID = #{id}
   </update>
 </mapper>
