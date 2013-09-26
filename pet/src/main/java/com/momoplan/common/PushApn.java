@@ -8,10 +8,12 @@ import javapns.devices.Device;
 import javapns.devices.implementations.basic.BasicDevice;
 import javapns.notification.PushNotificationPayload;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.momoplan.pet.vo.ApnMsg;
 
 public class PushApn {
-	
+
 	/**
 	 * 单发消息
 	 * @param msg
@@ -29,7 +31,8 @@ public class PushApn {
 			payLoad.addSound("default"); // 铃音 默认
 			Device device = new BasicDevice();
 			device.setToken(msg.getToken());
-			Push.payload(payLoad, "E:\\pushCert.p12", "110110", false, device);
+			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
+			Push.payload(payLoad, cert, "110110", false, device);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +60,10 @@ public class PushApn {
 			/* 指定需要多少线程发送 */
 			int threads = 30;
 			/* 启动线程并发送 */
-			Push.payload(payLoad, "E:\\pushCert.p12", "110110", false, threads,devices);
+			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
+//			System.out.println(file.replace("/", "\\"));
+//			System.out.println(cert);
+			Push.payload(payLoad, cert , "110110", false, threads,devices);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,6 +75,7 @@ public class PushApn {
 //		tokens.add("684c474512603e53d5aa719fb2e135f313c89f0759e80f277e01498adf5010e4");
 //		tokens.add("263584ada5adcceba50c74b5802103c8cf36c481944cf4a5a2a49a858bb8bec8");
 //		sendMsgsApn(msg,tokens);
-////		sendMsgApn(new ApnMsg("test1","263584ada5adcceba50c74b5802103c8cf36c481944cf4a5a2a49a858bb8bec8"),111);
+//		sendMsgApn(new ApnMsg("test1","263584ada5adcceba50c74b5802103c8cf36c481944cf4a5a2a49a858bb8bec8"),111);
 //	}
+	
 }

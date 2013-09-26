@@ -44,7 +44,11 @@ public class PetFileDAO {
 	
 	public PetVersion getNewVersion(String phoneType) {
 		TypedQuery<PetVersion> createQuery = entityManager.createQuery(" SELECT o FROM PetVersion o where o.id = (select max(p.id) from PetVersion p where p.phoneType = :phoneType) ",PetVersion.class);
-		createQuery.setParameter("phoneType", phoneType);
+		if(phoneType.contains("iphone")){
+			createQuery.setParameter("phoneType", phoneType);
+		}else{
+			createQuery.setParameter("phoneType", "android");
+		}
 		return createQuery.getSingleResult();
 	}
 }

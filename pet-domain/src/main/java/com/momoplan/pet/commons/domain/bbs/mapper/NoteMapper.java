@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-24 11:11:36
+* @date 2013-09-25 15:10:59
 */
 public interface NoteMapper {
     /**
@@ -23,6 +23,11 @@ public interface NoteMapper {
      * 根据条件删除记录
      */
     int deleteByExample(NoteCriteria noteCriteria);
+
+    /**
+     * 根据主键删除记录
+     */
+    int deleteByPrimaryKey(String id);
 
     /**
      * 保存记录,不管记录里面的属性是否为空
@@ -45,6 +50,11 @@ public interface NoteMapper {
     List<Note> selectByExample(NoteCriteria noteCriteria);
 
     /**
+     * 根据主键查询记录
+     */
+    Note selectByPrimaryKey(String id);
+
+    /**
      * 根据条件更新属性不为空的记录
      */
     int updateByExampleSelective(@Param("note") Note note, @Param("noteCriteria") NoteCriteria noteCriteria);
@@ -58,4 +68,19 @@ public interface NoteMapper {
      * 根据条件更新记录
      */
     int updateByExample(@Param("note") Note note, @Param("noteCriteria") NoteCriteria noteCriteria);
+
+    /**
+     * 根据主键更新属性不为空的记录
+     */
+    int updateByPrimaryKeySelective(Note note);
+
+    /**
+     * 根据主键更新记录
+     */
+    int updateByPrimaryKeyWithBLOBs(Note note);
+
+    /**
+     * 根据主键更新记录
+     */
+    int updateByPrimaryKey(Note note);
 }
