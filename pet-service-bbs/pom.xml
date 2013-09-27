@@ -27,6 +27,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>pet-service-bbs</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
