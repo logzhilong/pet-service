@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.httpclient.HttpException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.momoplan.common.HttpRequestProxy;
+import com.momoplan.common.JmsRequest;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
@@ -126,19 +130,55 @@ public class ClientController {
 		try {
 			Object retObj = doRequest(clientRequest, response);
 			ret = new ObjectMapper().writeValueAsString(retObj);
-			if(retObj.toString().contains("needProxy")){
+			if(ret.contains("needProxy")){
 				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
 			}
 		} finally {
-			TextMessage tm = new ActiveMQTextMessage();
-			tm.setStringProperty("body", body);
-			tm.setStringProperty("ret", ret);
-			apprequestTemplate.convertAndSend(tm);
-//			jmsService.sendJms(body, ret);
+			try {
+				TextMessage tm = new ActiveMQTextMessage();
+				Map<String,String> proxyJms = proxyJms(body,ret);
+				tm.setStringProperty("body", proxyJms.get("body"));
+				tm.setStringProperty("ret", proxyJms.get("ret"));
+				apprequestTemplate.convertAndSend(tm);
+			} catch (Exception e) {
+				return ret;
+			}
 		}
 		return ret;
 	}
 
+	private Map<String,String> proxyJms(String body,String ret){
+		try {
+			JSONObject bodyJson = new JSONObject(body);
+			JSONObject retJson = new JSONObject();;
+			if(!ret.contains("null")){
+				retJson =  new JSONObject(ret);
+			}
+			String token = bodyJson.get("token")!=null?bodyJson.get("token").toString():retJson.get("token").toString();
+			if(!StringUtils.hasLength(token)){
+				return null;
+			}
+			long userid = AuthenticationToken.findAuthenticationToken(token).getUserid();
+			if(userid == 0){
+				return null;
+			}
+			JSONObject newbody = new JSONObject(body);
+			JSONObject newparams = newbody.getJSONObject("params");
+			JSONObject newret = new JSONObject();
+			newparams.accumulate("jsmuserid", String.valueOf(userid));
+			newbody.remove("params");
+			newbody.accumulate("params", newparams);
+			newret.accumulate("method", bodyJson.get("method"));
+			newret.accumulate("params", new JSONObject().accumulate("jsmuserid", String.valueOf(userid)));
+			Map<String,String> map = new HashMap<String, String>();
+			map.put("body", newbody.toString());
+			map.put("ret", newret.toString());
+			return map;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	private Object doRequest(ClientRequest clientRequest,HttpServletResponse response) throws IOException,JsonProcessingException, ParseException {
 		// ClientRequest clientRequest = new
 		// ObjectMapper().reader(ClientRequest.class).readValue(body);
@@ -1030,19 +1070,15 @@ public class ClientController {
 				.get("latitude").toString());
 		int pageIndex = PetUtil.getParameterInteger(clientRequest, "pageIndex");
 		// 获取用户地理位置状态视图（地理位置，时间，性别）
-		List<UserStates> userStates = UserStates
-				.findUserStateByLatitudeOrLongitudeOrGenderEquals(latitude,
-						longitude, pageIndex).getResultList();
+		List<UserStates> userStates = UserStates.findUserStateByLatitudeOrLongitudeOrGenderEquals(latitude,longitude, pageIndex).getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		// 用户地理位置视图遍历查询，获取附近用户状态视图
 		for (UserStates userState : userStates) {
 			// 获取状态视图
 			StateView stateView = new StateView();
 			if (userState.getPetUserid() == authenticationToken.getUserid()) {
-				stateView = this.getStateView(userState,
-						authenticationToken.getUserid(), "myself");
-				stateView.setDistance(getDistance(userState, longitude,
-						latitude, true));
+				stateView = this.getStateView(userState,authenticationToken.getUserid(), "myself");
+				stateView.setDistance(getDistance(userState, longitude,latitude, true));
 				stateView.setPageIndex(pageIndex++);
 			} else {
 				stateView = this.getStateView(userState,
@@ -1054,7 +1090,7 @@ public class ClientController {
 			// Collections.sort(petUserViews);
 			userViews.add(stateView);
 		}
-		if (userViews.size() < 5) {
+		if (userViews.size() < 5 && pageIndex == 0) {
 			List<UserStates> userStates2 = UserStates.findUserStateWithType("1").getResultList();
 			// 用户地理位置视图遍历查询，获取附近用户状态视图
 			for (UserStates userState : userStates2) {
@@ -1554,7 +1590,7 @@ public class ClientController {
 				petUserViews.add(petUserview);
 			}
 			
-			if(pageIndex<20&&nearbyUser.size()<20){
+			if(pageIndex==0&&nearbyUser.size()<20){
 				List<UserLocation> nearByUserFraudulents = this.locationService.getNearbyUser(longitude, latitude, PetUtil.getParameter(clientRequest, "gender"), PetUtil
 								.getParameterInteger(clientRequest, "type"),nearbyUser.size(), "1");
 				int distance = 400;
@@ -1597,7 +1633,7 @@ public class ClientController {
 				petUserViews.add(petUserview);
 			}
 			
-			if(pageIndex<20&&nearbyUser.size()<20){
+			if(pageIndex==0&&nearbyUser.size()<20){
 				List<UserLocation> nearByUserFraudulents = this.locationService.getNearbyUser(longitude, latitude, PetUtil.getParameter(clientRequest, "gender"), PetUtil
 								.getParameterInteger(clientRequest, "type"),nearbyUser.size(), "1");
 				int distance = 400;
@@ -1661,7 +1697,7 @@ public class ClientController {
 				petUserViews.add(petUserview);
 			}
 			
-			if(pageIndex<20&&nearbyUser.size()<20){
+			if(pageIndex==0&&nearbyUser.size()<20){
 				List<UserLocation> nearByUserFraudulents = this.locationService.getNearbyUser(longitude, latitude, PetUtil.getParameter(clientRequest, "gender"), PetUtil
 								.getParameterInteger(clientRequest, "type"),nearbyUser.size(), "1");
 				int distance = 0;
@@ -1690,7 +1726,7 @@ public class ClientController {
 			// String city = getParameter(clientRequest, "city");
 			int pageIndex = PetUtil.getParameterInteger(clientRequest,
 					"pageIndex");
-			List<UserLocation> nearbyUser = this.locationService.getNearbyUser(longitude, latitude,PetUtil.getParameter(clientRequest, "gender"),
+			List<UserLocation> nearbyUser = this.locationService.getNearByUserAndPet(longitude, latitude,PetUtil.getParameter(clientRequest, "gender"),
 					PetUtil.getParameterInteger(clientRequest, "type"),pageIndex,userId,"0");
 			
 			List<PetUserView> petUserViews = new ArrayList<PetUserView>();
@@ -1704,7 +1740,7 @@ public class ClientController {
 				petUserViews.add(petUserview);
 			}
 			
-			if(pageIndex<20&&nearbyUser.size()<20){
+			if(pageIndex==0&&nearbyUser.size()<20){
 				List<UserLocation> nearByUserFraudulents = this.locationService.getNearbyUser(longitude, latitude, PetUtil.getParameter(clientRequest, "gender"), PetUtil
 								.getParameterInteger(clientRequest, "type"),nearbyUser.size(), "1");
 				int distance = 400;

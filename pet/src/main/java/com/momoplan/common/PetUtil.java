@@ -80,8 +80,7 @@ public class PetUtil {
         return Long.valueOf(obj+"");
 	}
 	
-	public static double getDistance(double wd1, double jd1, double wd2,
-			double jd2) {
+	public static double getDistance(double wd1, double jd1, double wd2,double jd2) {
 		double x, y, out;
 		double PI = 3.14159265;
 		double R = 6.371229 * 1e6;

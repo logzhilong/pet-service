@@ -45,6 +45,21 @@ public class LocationService {
 		return nearByUsers;
 	}
 
+	/**
+	 * 获取附近好友的一个重载添加了userid,作用是排除本用户自己的信息
+	 * @param longitude
+	 * @param latitude
+	 * @param gender
+	 * @param type
+	 * @param pageIndex
+	 * @param userId
+	 * @return
+	 */
+	public List<UserLocation> getNearByUserAndPet(double longitude, double latitude,String gender, Integer type, int pageIndex, long userId,String ifFraudulent) {
+		List<UserLocation> nearByUsers = userLocationDAO.getNearByUserAndPet(longitude, latitude, gender, type,pageIndex, userId,ifFraudulent);
+		return nearByUsers;
+	}
+	
 	public UserLocation setUserLocation(double longitude, double latitude, long userid) {
 		UserLocation userLocation=UserLocation.findUserLocation(userid);
 		if(userLocation==null){
