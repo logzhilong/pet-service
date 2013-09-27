@@ -3,8 +3,6 @@ package com.momoplan.pet.vo;
 import java.util.Date;
 import java.util.List;
 
-import com.momoplan.pet.domain.PetUser;
-
 public class ReplyView {
 	private long id;
 	private long userStateid;
