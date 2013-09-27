@@ -12,6 +12,7 @@
 		<module>pet</module>
 		<module>pet-commons</module>
 		<module>pet-domain</module>
+		<module>pet-statistic</module>
 		<module>pet-service-bbs</module>
 		<module>pet-service-manager</module>
 	</modules>
