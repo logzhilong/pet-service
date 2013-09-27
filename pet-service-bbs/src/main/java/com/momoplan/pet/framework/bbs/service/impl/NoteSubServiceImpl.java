@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
@@ -80,7 +78,6 @@ public class NoteSubServiceImpl implements NoteSubService {
 			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
 			criteria.andNoteIdEqualTo(PetUtil.getParameter(bbsClientRequest, "noteId"));
 			List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
-			Assert.assertNotNull(noteSubs);
 			return noteSubs;
 		} catch (Exception e) {
 			e.printStackTrace();
