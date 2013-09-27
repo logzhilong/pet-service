@@ -24,12 +24,12 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li>
-				<a class="add" href="${ctx }/alerts/add.html?eid=${eid}" target="dialog" max="false" rel="alert_dialog" mask="true" title="添加预警" width="800" height="550" close="defineAlert.refresh" param="'${eid }'" >
+				<a class="add" href="${ctx }/manager/commons/areaCodeAdd.html" target="dialog" max="false" rel="areaCode_add_dialog" mask="true" title="添加" width="450" height="260" close="forum.refresh" >
 					<span>添加</span>
-				</a>
+				</a>				
 			</li>
 			<li>
-				<a class="edit" href="${ctx }/alerts/viewOrEdit.html?eid=${eid}&aid={aid}&action=edit" target="dialog" max="false" rel="alert_dialog" mask="true" title="修改预警" width="800" height="550" close="defineAlert.refresh" param="'${eid }'" >
+				<a class="edit" href="${ctx }/manager/commons/areaCodeAdd.html?id={id}" target="dialog" max="false" rel="alert_dialog" mask="true" title="修改预警" width="800" height="550" close="defineAlert.refresh" param="'${id }'">
 					<span>修改</span>
 				</a>
 			</li>
@@ -55,11 +55,9 @@
 				<th width="200" align="center" >名称</th>
 			</tr>
 		</thead>
-		<tbody id="alertListTbody" >
+		<tbody id="areaCode_tbody" >
 			<c:forEach items="${pageBean.data }" var="itm" varStatus="idx">
-			
-			
-				<tr target="aid" rel="${itm.id }">
+				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>${itm.id }</td>
 					<td>${itm.pid }</td>

@@ -96,7 +96,7 @@ var forum = (function(){
 					if(result.rtn){
 						alertMsg.correct(result.msg);
 						$.pdialog.close("alert_dialog");//关闭新增页面
-						reload("alert_","cindex=1");//刷新dialog
+						reload("panel0101","cindex=1");//刷新dialog
 					}else{
 						alertMsg.error(result.msg);
 					}
@@ -105,3 +105,66 @@ var forum = (function(){
 		}
 	}
 })();
+
+/**
+ * 没特么用
+ */
+var areaCode = (function(){
+	var datas = {
+	};
+	function reload(dialogId,queryParam){
+		var dialog = $("body").data(dialogId);
+        if(dialog){
+            var u = dialog.data("url")+"&"+queryParam;
+            $.pdialog.reload( u , { dialogId: dialogId } );
+        }
+	}	
+	return {
+		addSubmit : function(ctx,formId) {
+			$.ajax({
+				url : ctx+"/alerts/areaCodeSaveOrUpdate.html",
+				data : $('#'+formId).serialize(),
+				type : "POST",
+				dataType : "json",
+				success : function(result) {
+					if(result.rtn){
+						alertMsg.correct(result.msg);
+						$.pdialog.close("areaCode_add_dialog");//关闭新增页面
+					}else{
+						alertMsg.error(result.msg);
+					}
+				}
+			});
+		}		
+	}
+})();
+
+/**
+ * 这会根据 data 展开一颗树，具体渲染到哪，需要自己指定，例如 
+ * 
+ * $("#left_1").html(getTree(data,'0').replaceAll("<ul></ul>",""));
+ * 
+ * @param data
+ * @param pid
+ * @returns {String}
+ */
+function getTree(data,pid,ctx){ 
+    var tree; 
+    if(pid == '0'){ 
+        tree = '<ul class="tree treeFolder">';
+    }else{
+        tree = '<ul>'; 
+    }
+    for(var i in data){
+        if(data[i].pnode == pid){
+			if(data[i].href=='#' || data[i].href==null ){
+            	tree += "<li><a title='"+data[i].name+"' href='#' >"+data[i].name+"</a>"; 
+			}else{
+				tree += "<li><a title='"+data[i].name+"' href='"+ctx+data[i].href+"' target='navTab' rel='panel"+data[i].node+"'>"+data[i].name+"</a>"; 
+			}
+            tree += getTree(data,data[i].node,ctx);
+            tree += "</li>";
+        }
+    }
+    return tree+"</ul>"; 
+}

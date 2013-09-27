@@ -3,6 +3,8 @@ package com.momoplan.pet.framework.manager.service.impl;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,10 @@ import com.momoplan.pet.framework.manager.vo.PageBean;
 @Service
 public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 	
+	private Logger logger = LoggerFactory.getLogger(CommonDataManagerServiceImpl.class);
+	
 	@Autowired
-	CommonAreaCodeMapper commonAreaCodeMapper = null;
+	private CommonAreaCodeMapper commonAreaCodeMapper = null;
 	
 	@Override
 	public PageBean<CommonAreaCode> listAreaCode(PageBean<CommonAreaCode> pageBean, CommonAreaCode vo) throws Exception {
@@ -41,6 +45,18 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 		pageBean.setData(list);
 		pageBean.setTotalCount(totalCount);
 		return pageBean;
+	}
+
+	@Override
+	public int insertOrUpdateAreaCode(CommonAreaCode vo) throws Exception {
+		String id = vo.getId();
+		CommonAreaCode po = commonAreaCodeMapper.selectByPrimaryKey(id);
+		if(po!=null&&!"".equals(po.getId())){
+			logger.debug("selectByPK.po="+po.toString());
+			return commonAreaCodeMapper.updateByPrimaryKeySelective(vo);
+		}else{
+			return commonAreaCodeMapper.insertSelective(vo);
+		}
 	}
 
 }
