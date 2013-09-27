@@ -12,6 +12,7 @@
 		   	<list>
 				<value>classpath:sms.properties</value>
 				<value>classpath:database.properties</value>
+				<value>classpath:proxyUri.properties</value>
 			</list>
 	  	</constructor-arg>
   	</bean>

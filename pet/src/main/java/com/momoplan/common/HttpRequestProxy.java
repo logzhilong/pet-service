@@ -7,53 +7,28 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
-/**
- * <pre>
- * HTTP请求[qing qiu]代理类
- * </pre>
- * 
- * @author benl
- * @version 1.0, 2007-7-3
- */
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.json.HTTP;
+
+import com.momoplan.pet.commons.http.PostRequest;
+
 public class HttpRequestProxy {
 
-	/**
-	 * 连接[lian jie]超时[chao shi]
-	 */
 	private static int connectTimeOut = 5000;
-
-	/**
-	 * 读取[du qu]数据[shu ju]超时[chao shi]
-	 */
 	private static int readTimeOut = 10000;
-
-	/**
-	 * 请求[qing qiu]编码[bian ma]
-	 */
 	private static String requestEncoding = "utf-8";
 
 
-
-	/**
-	 * <pre>
-	 * 发送带参数[can shu]的POST的HTTP请求[qing qiu]
-	 * </pre>
-	 * 
-	 * @param reqUrl
-	 *            HTTP请求[qing qiu]URL
-	 * @param parameters
-	 *            参数[can shu]映射[ying she]表
-	 * @return HTTP响应[xiang ying]的字符[zi fu]串[zi fu chuan]
-	 */
-	public static String doPost(String reqUrl, Map parameters,
-			String recvEncoding) {
+	public static String doPost(String reqUrl, Map parameters, String recvEncoding) {
 		HttpURLConnection url_con = null;
 		String responseContent = null;
 		try {
@@ -62,8 +37,7 @@ public class HttpRequestProxy {
 				Entry element = (Entry) iter.next();
 				params.append(element.getKey().toString());
 				params.append("=");
-				params.append(URLEncoder.encode(element.getValue().toString(),
-						HttpRequestProxy.requestEncoding));
+				params.append(URLEncoder.encode(element.getValue().toString(),HttpRequestProxy.requestEncoding));
 				params.append("&");
 			}
 
@@ -75,13 +49,6 @@ public class HttpRequestProxy {
 			url_con = (HttpURLConnection) url.openConnection();
 			url_con.setRequestMethod("POST");
 			url_con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//			System.setProperty("sun.net.client.defaultConnectTimeout",String.valueOf(HttpRequestProxy.connectTimeOut));
-			// （单位[dan wei]：毫秒）jdk1.4换成这个,连接[lian jie]超时[chao shi]
-//			System.setProperty("sun.net.client.defaultReadTimeout",String.valueOf(HttpRequestProxy.readTimeOut));
-			// （单位[dan wei]：毫秒）jdk1.4换成这个,读操作超时[chao shi] url_con.setConnectTimeout(5000);
-			
-			//（单位[dan wei]：毫秒）jdk 1.5换成这个,连接[lian jie]超时[chao shi] url_con.setReadTimeout(5000);
-			//（单位[dan wei]：毫秒）jdk 1.5换成这个,读操作超时[chao shi]
 			url_con.setDoOutput(true);
 			byte[] b = params.toString().getBytes();
 			url_con.getOutputStream().write(b, 0, b.length);
@@ -112,54 +79,46 @@ public class HttpRequestProxy {
 		return responseContent;
 	}
 
-	/**
-	 * @return 连接[lian jie]超时[chao shi](毫秒)
-	 * @see com.hengpeng.common.web.HttpRequestProxy#connectTimeOut
-	 */
 	public static int getConnectTimeOut() {
-		return HttpRequestProxy.connectTimeOut;
+		return connectTimeOut;
 	}
 
-	/**
-	 * @return 读取[du qu]数据[shu ju]超时[chao shi](毫秒)
-	 * @see com.hengpeng.common.web.HttpRequestProxy#readTimeOut
-	 */
-	public static int getReadTimeOut() {
-		return HttpRequestProxy.readTimeOut;
-	}
-
-	/**
-	 * @return 请求[qing qiu]编码[bian ma]
-	 * @see com.hengpeng.common.web.HttpRequestProxy#requestEncoding
-	 */
-	public static String getRequestEncoding() {
-		return requestEncoding;
-	}
-
-	/**
-	 * @param connectTimeOut
-	 *            连接[lian jie]超时[chao shi](毫秒)
-	 * @see com.hengpeng.common.web.HttpRequestProxy#connectTimeOut
-	 */
 	public static void setConnectTimeOut(int connectTimeOut) {
 		HttpRequestProxy.connectTimeOut = connectTimeOut;
 	}
 
-	/**
-	 * @param readTimeOut
-	 *            读取[du qu]数据[shu ju]超时[chao shi](毫秒)
-	 * @see com.hengpeng.common.web.HttpRequestProxy#readTimeOut
-	 */
+	public static int getReadTimeOut() {
+		return readTimeOut;
+	}
+
 	public static void setReadTimeOut(int readTimeOut) {
 		HttpRequestProxy.readTimeOut = readTimeOut;
 	}
 
-	/**
-	 * @param requestEncoding
-	 *            请求[qing qiu]编码[bian ma]
-	 * @see com.hengpeng.common.web.HttpRequestProxy#requestEncoding
-	 */
+	public static String getRequestEncoding() {
+		return requestEncoding;
+	}
+
 	public static void setRequestEncoding(String requestEncoding) {
 		HttpRequestProxy.requestEncoding = requestEncoding;
+	}
+	public static String doPostHttpClient(String url, String body){
+		HttpClient httpClient = new HttpClient();
+		PostMethod postMethod = new PostMethod(url);
+		try {
+//			PostRequest.postText(url, args)
+//			stringRequestEntity = new StringRequestEntity("body="+body, "application/json", requestEncoding);
+//			postMethod.setRequestEntity(stringRequestEntity);
+			postMethod.setParameter("body", body);
+//			postMethod.addRequestHeader("Accept-Language", "zh-CN");
+//			postMethod.addRequestHeader("Content-Type", "application/json;charset=utf-8");
+			httpClient.executeMethod(postMethod);
+			String respronse = postMethod.getResponseBodyAsString();
+			postMethod.releaseConnection();
+			return respronse;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
