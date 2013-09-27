@@ -7,4 +7,6 @@ public interface CommonDataManagerService {
 	
 	public PageBean<CommonAreaCode> listAreaCode(PageBean<CommonAreaCode> pageBean,CommonAreaCode vo) throws Exception;
 	
+	public int insertOrUpdateAreaCode(CommonAreaCode vo)throws Exception;
+
 }

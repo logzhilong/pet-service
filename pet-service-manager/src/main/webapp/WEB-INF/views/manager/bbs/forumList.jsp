@@ -67,7 +67,7 @@
 				<tr target="aid" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>
-						<a class="add" href="${ctx }/manager/bbs/forumManager.html" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="800" height="550" close="forum.refresh" param="'${itm.id }'" >
+						<a class="add" href="${ctx }/manager/bbs/forumManager.html" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="900" height="600" close="forum.refresh" param="'${itm.id }'" >
 							${itm.name }
 						</a>
 					</td>
