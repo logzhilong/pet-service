@@ -2,8 +2,6 @@ package com.momoplan.pet.vo;
 
 import java.util.Date;
 
-import com.momoplan.pet.domain.PetUser;
-
 public class ReplyCommentViews {
 	private long userStateid;
 	private long replyid;
