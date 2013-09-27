@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import junit.framework.Assert;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -87,7 +85,6 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andNameLike("%"+name+"%");
 			criteria.andStateEqualTo("0");
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			Assert.assertNotNull(notelist);
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,7 +109,6 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andTypeEqualTo("0");
 			criteria.andIdEqualTo(noteid);
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			Assert.assertNotNull(notelist);
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -164,7 +160,6 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsEuteEqualTo(false);
 			criteria.andTypeEqualTo("0");
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			Assert.assertNotNull(notelist);
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();
