@@ -29,10 +29,10 @@ public class PushApn {
 			payLoad.addSound("default"); // 铃音 默认
 			Device device = new BasicDevice();
 			device.setToken(msg.getToken());
-			String cert = System.getProperty("user.home")+"/.ssh/pushCertTest.p12";
-			Push.payload(payLoad, cert, "110110", false, device);
-//			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
-//			Push.payload(payLoad, cert, "110110", true, device);
+//			String cert = System.getProperty("user.home")+"/.ssh/pushCertTest.p12";
+//			Push.payload(payLoad, cert, "110110", false, device);
+			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
+			Push.payload(payLoad, cert, "110110", true, device);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
