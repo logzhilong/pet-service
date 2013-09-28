@@ -7,9 +7,11 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XMPPRequest {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	private String words;
 	private String sendUser;
 	private String receiveUser;
@@ -114,12 +116,13 @@ public class XMPPRequest {
 	public void SendMessage() throws HttpException, IOException { 
 		String msg = "<message to = " + "\"" + this.receiveUser + this.region + "\" " + " from = " + "\"" + this.sendUser + this.region
 				 + "\" " + " type = \"chat\" msgtype=" + "\"" + this.msgtype + "\" " + prams + " msgTime=" + "\"" + this.msgTime.getTime() + "\" " + " fromNickname=" + "\"" + this.fromNickname + "\" " + " fromHeadImg=" + "\"" + this.fromHeadImg + "\" " + "><body>" + this.words + "</body></message>";
-		System.out.println(this.xmpppath);
-		System.out.println(msg);
+		logger.debug("\n------------------------->msg: "+msg);
 		HttpClient httpClient = new HttpClient();
 		PostMethod method = new PostMethod(this.xmpppath);
 		method.setRequestEntity(new StringRequestEntity(msg, "", "UTF-8"));
 		httpClient.executeMethod(method);
+		logger.debug("\n------------------------->method sended");
+		logger.debug("\n------------------------->xmpppath: "+xmpppath);
 	}
 	
 //	public static void SendMessage(String msg) throws HttpException, IOException {
