@@ -25,7 +25,7 @@ public class PushApn {
 		try {
 			PushNotificationPayload payLoad = new PushNotificationPayload();
 			payLoad.addAlert(msg.getMsg()); // 消息内容
-			payLoad.addBadge(count); // iphone应用图标上小红圈上的数值
+//			payLoad.addBadge(count); // iphone应用图标上小红圈上的数值
 			payLoad.addSound("default"); // 铃音 默认
 			Device device = new BasicDevice();
 			device.setToken(msg.getToken());
