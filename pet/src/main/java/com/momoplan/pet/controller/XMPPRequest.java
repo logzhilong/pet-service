@@ -111,7 +111,7 @@ public class XMPPRequest {
 	public void setReceiveUser(String receiveUser) {
 		this.receiveUser = receiveUser;
 	}
-	public void SendMessage() throws HttpException, IOException {
+	public void SendMessage() throws HttpException, IOException { 
 		String msg = "<message to = " + "\"" + this.receiveUser + this.region + "\" " + " from = " + "\"" + this.sendUser + this.region
 				 + "\" " + " type = \"chat\" msgtype=" + "\"" + this.msgtype + "\" " + prams + " msgTime=" + "\"" + this.msgTime.getTime() + "\" " + " fromNickname=" + "\"" + this.fromNickname + "\" " + " fromHeadImg=" + "\"" + this.fromHeadImg + "\" " + "><body>" + this.words + "</body></message>";
 		System.out.println(this.xmpppath);
