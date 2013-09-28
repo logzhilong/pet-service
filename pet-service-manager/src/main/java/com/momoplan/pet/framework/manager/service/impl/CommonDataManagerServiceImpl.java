@@ -33,11 +33,11 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 		String id = vo.getId();
 		CommonAreaCodeCriteria commonAreaCodeCriteria = new CommonAreaCodeCriteria();
 		CommonAreaCodeCriteria.Criteria criteria = commonAreaCodeCriteria.createCriteria();
-		if(StringUtils.isEmpty(id)){
-			criteria.andPidEqualTo("0");
-		}else{
-			criteria.andPidEqualTo(id);
-		}
+//		if(StringUtils.isEmpty(id)){
+//			criteria.andPidEqualTo("0");
+//		}else{
+//			criteria.andPidEqualTo(id);
+//		}
 		int totalCount = commonAreaCodeMapper.countByExample(commonAreaCodeCriteria);
 		commonAreaCodeCriteria.setMysqlOffset((pageNo-1)*pageSize);
 		commonAreaCodeCriteria.setMysqlLength(pageSize);
@@ -46,7 +46,9 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 		pageBean.setTotalCount(totalCount);
 		return pageBean;
 	}
-
+		/**
+		 * 增加或者更新方法
+		 */
 	@Override
 	public int insertOrUpdateAreaCode(CommonAreaCode vo) throws Exception {
 		String id = vo.getId();
@@ -58,5 +60,73 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 			return commonAreaCodeMapper.insertSelective(vo);
 		}
 	}
-
-}
+	/**
+	 * 获取所有国家
+	 */
+	@Override
+	public List<CommonAreaCode> getConmonArealist() throws Exception
+	{
+		try {
+			CommonAreaCodeCriteria areaCodeCriteria=new CommonAreaCodeCriteria();
+			CommonAreaCodeCriteria.Criteria criteria=areaCodeCriteria.createCriteria();
+			criteria.andPidEqualTo("00000");
+			List<CommonAreaCode> codes=commonAreaCodeMapper.selectByExample(areaCodeCriteria);
+			return codes;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据id获取该城市
+	 */
+	@Override
+	public CommonAreaCode  getCommonAreaCodeByid(CommonAreaCode  areaCode){
+		try {
+			CommonAreaCode code=commonAreaCodeMapper.selectByPrimaryKey(areaCode.getId());
+			return code;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据pid获取城市集合
+	 */
+	@Override
+	public List<CommonAreaCode> getConmonArealistBypid(CommonAreaCode  areaCode)throws Exception
+	{
+		try {
+			CommonAreaCodeCriteria areaCodeCriteria=new CommonAreaCodeCriteria();
+			CommonAreaCodeCriteria.Criteria criteria=areaCodeCriteria.createCriteria();
+			criteria.andPidEqualTo(areaCode.getPid());
+			List<CommonAreaCode> codes=commonAreaCodeMapper.selectByExample(areaCodeCriteria);
+			return codes;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	/**
+	 *根据id删除该城市 
+	 * 
+	 */
+	public void areaCodeDelByid(CommonAreaCode  areaCode){
+		try {
+			CommonAreaCodeCriteria areaCodeCriteria=new CommonAreaCodeCriteria();
+			CommonAreaCodeCriteria.Criteria criteria=areaCodeCriteria.createCriteria();
+			criteria.andPidEqualTo(areaCode.getId());
+			List<CommonAreaCode> codes=commonAreaCodeMapper.selectByExample(areaCodeCriteria);
+			if(codes.size()>0){
+				for(CommonAreaCode code:codes){
+					commonAreaCodeMapper.deleteByPrimaryKey(code.getId());
+				}
+			}
+			commonAreaCodeMapper.deleteByPrimaryKey(areaCode.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+ }
