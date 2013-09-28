@@ -159,8 +159,19 @@ public class PetUserView implements Comparable<PetUserView>{
 	
 	@Override
     public int compareTo(PetUserView arg0) {
-		int thisDis = Integer.parseInt(this.getDistance().substring(0, this.getDistance().length()-3));
-		int argDis = Integer.parseInt(arg0.getDistance().substring(0, arg0.getDistance().length()-3));
+		int thisDis = 0;
+		int argDis = 0;
+		if(this.getDistance().contains("千米以内")){
+			thisDis = (int) (Double.parseDouble(this.getDistance().substring(0, this.getDistance().length()-4))*1000);
+		}else{
+			thisDis = Integer.parseInt(this.getDistance().substring(0, this.getDistance().length()-3));
+		}
+		if(arg0.getDistance().contains("千米以内")){
+			argDis = (int) (Double.parseDouble(arg0.getDistance().substring(0, arg0.getDistance().length()-4))*1000);
+		}else{
+			argDis = Integer.parseInt(arg0.getDistance().substring(0, arg0.getDistance().length()-3));
+		}
         return thisDis-argDis;
     }
+	
 }
