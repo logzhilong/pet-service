@@ -134,7 +134,7 @@ public class ClientController {
 			if(ret.contains("needProxy")){
 				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
 			}
-		} finally {
+		} finally { 
 			try {
 				TextMessage tm = new ActiveMQTextMessage();
 				Map<String,String> proxyJms = proxyJms(body,ret);
