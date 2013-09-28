@@ -122,13 +122,13 @@ public class XMPPRequest {
 		httpClient.executeMethod(method);
 	}
 	
-	public static void SendMessage(String msg) throws HttpException, IOException {
-		System.out.println(msg);
-		HttpClient httpClient = new HttpClient();
-		PostMethod method = new PostMethod("http://61.51.110.55:5280/rest");
-		method.setRequestEntity(new StringRequestEntity(msg, "", "UTF-8"));
-		httpClient.executeMethod(method);
-	}
+//	public static void SendMessage(String msg) throws HttpException, IOException {
+//		System.out.println(msg);
+//		HttpClient httpClient = new HttpClient();
+//		PostMethod method = new PostMethod("http://61.51.110.55:5280/rest");
+//		method.setRequestEntity(new StringRequestEntity(msg, "", "UTF-8"));
+//		httpClient.executeMethod(method);
+//	}
 
 //	public static void main(String[] args) {
 //		 String restring=" //[[^@]]+//]";
