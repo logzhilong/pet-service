@@ -1780,7 +1780,11 @@ public class ClientController {
 		// }else{
 		// return String.valueOf((int) distance / 50 * 50) + "米";
 		// }
-		return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+		if(distance<=1000){
+			return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+		}else{
+			return String.valueOf((int) distance / 100 * 100/1000 + 0.1) + "千米以内";
+		}
 	}
 
 	private String getDistance(UserStates userStates, double longitude,
@@ -1789,7 +1793,12 @@ public class ClientController {
 		double uLatitude = userStates.getLatitude();
 		double distance = PetUtil.getDistance(uLongitude, uLatitude, longitude,
 				latitude);
-		return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+		if(distance<=1000){
+			return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+		}else{
+			return String.valueOf((int) distance / 100 * 100/1000 + 0.1) + "千米以内";
+		}
+		
 	}
 
 	private Object handleGetChatServerList(ClientRequest clientRequest) {
