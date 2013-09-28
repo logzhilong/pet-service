@@ -13,6 +13,7 @@
 				<value>classpath:sms.properties</value>
 				<value>classpath:database.properties</value>
 				<value>classpath:proxyUri.properties</value>
+				<value>classpath:xmppserver.properties</value>
 			</list>
 	  	</constructor-arg>
   	</bean>

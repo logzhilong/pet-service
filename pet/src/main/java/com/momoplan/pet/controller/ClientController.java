@@ -110,6 +110,9 @@ public class ClientController {
 	private String smsPassword = null;
 	@Value("#{config['uri.pet_bbs']}")
 	private String pet_bbs = null;
+	@Value("#{config['xmpp.server']}")
+	private String xmpppath = null;
+	
 
 	@Resource
 	private JmsTemplate apprequestTemplate;
@@ -613,6 +616,7 @@ public class ClientController {
 		xr.setRegion("@test.com");
 		xr.setFromHeadImg(sendUser.getImg());
 		xr.setFromNickname(sendUser.getNickname());
+		xr.setXmpppath(xmpppath);
 		try {
 			xr.SendMessage();
 		} catch (Exception e) {
@@ -630,8 +634,9 @@ public class ClientController {
 		xr2.setPrams(replyComments.getUserStateid());
 		xr2.setWords(replyComments.getCommentsMsg());
 		xr2.setRegion("@test.com");
-		xr.setFromHeadImg(sendUser2.getImg());
-		xr.setFromNickname(sendUser2.getNickname());
+		xr2.setFromHeadImg(sendUser2.getImg());
+		xr2.setFromNickname(sendUser2.getNickname());
+		xr2.setXmpppath(xmpppath);
 		try {
 			xr2.SendMessage();
 		} catch (Exception e) {
@@ -691,6 +696,7 @@ public class ClientController {
 		xr.setRegion("@test.com");
 		xr.setFromHeadImg(sendUser.getImg());
 		xr.setFromNickname(sendUser.getNickname());
+		xr.setXmpppath(xmpppath);
 		try {
 			xr.SendMessage();
 		} catch (HttpException e) {
@@ -830,6 +836,7 @@ public class ClientController {
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
 			xr.setRegion("@test.com");
+			xr.setXmpppath(xmpppath);
 			xr.SendMessage();
 		} catch (Exception e) {
 			return userZan;

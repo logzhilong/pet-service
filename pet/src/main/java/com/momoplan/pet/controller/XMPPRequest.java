@@ -7,6 +7,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.springframework.beans.factory.annotation.Value;
 
 public class XMPPRequest {
 	private String words;
@@ -18,8 +19,16 @@ public class XMPPRequest {
 	private Date msgTime;
 	private String fromNickname;
 	private String fromHeadImg;
+	private String xmpppath;
 	
+	public String getXmpppath() {
+		return xmpppath;
+	}
 
+	public void setXmpppath(String xmpppath) {
+		this.xmpppath = xmpppath;
+	}
+	
 	public String getFromNickname() {
 		return fromNickname;
 	}
@@ -102,13 +111,13 @@ public class XMPPRequest {
 	public void setReceiveUser(String receiveUser) {
 		this.receiveUser = receiveUser;
 	}
-
 	public void SendMessage() throws HttpException, IOException {
 		String msg = "<message to = " + "\"" + this.receiveUser + this.region + "\" " + " from = " + "\"" + this.sendUser + this.region
 				 + "\" " + " type = \"chat\" msgtype=" + "\"" + this.msgtype + "\" " + prams + " msgTime=" + "\"" + this.msgTime.getTime() + "\" " + " fromNickname=" + "\"" + this.fromNickname + "\" " + " fromHeadImg=" + "\"" + this.fromHeadImg + "\" " + "><body>" + this.words + "</body></message>";
+		System.out.println(this.xmpppath);
 		System.out.println(msg);
 		HttpClient httpClient = new HttpClient();
-		PostMethod method = new PostMethod("http://61.51.110.55:5280/rest");
+		PostMethod method = new PostMethod(this.xmpppath);
 		method.setRequestEntity(new StringRequestEntity(msg, "", "UTF-8"));
 		httpClient.executeMethod(method);
 	}
