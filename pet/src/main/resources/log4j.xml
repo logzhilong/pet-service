@@ -68,7 +68,7 @@
 	<!-- ======================= -->
 
 	<root>
-		<level value="DEBUG" />
+		<level value="error" />
 		<appender-ref ref="FILE" />
 		<appender-ref ref="CONSOLE" />
 	</root>
