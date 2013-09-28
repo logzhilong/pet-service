@@ -91,7 +91,7 @@ public class CoreController {
 		}
 		msg.setToken(PetUser.findPetUsersByUsername(PetUtil.getParameter(coreRequest, "toname")).getSingleResult().getDeviceToken());
 		logger.debug("\n msg--------------------------------------------------------------->"+msg.getMsg());
-		logger.debug("\n msgdotken--------------------------------------------------------------->"+msg.getToken());
+		logger.debug("\n msgtoken--------------------------------------------------------------->"+msg.getToken());
 		
 		PushApn.sendMsgApn(msg, 1);
 		return null;
