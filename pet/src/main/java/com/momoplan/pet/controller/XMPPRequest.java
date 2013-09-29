@@ -84,10 +84,11 @@ public class XMPPRequest {
 	}
 
 	public void setRegion(String region) {
-		if (region.matches("^@\\w+.com$")) {
+		//modify by liangc 130929: 为什么写这么个多余的正则？
+//		if (region.matches("^@\\w+.com$")) {
 			this.region = region;
-		}
-		this.region = "@test.com";
+//		}
+//		this.region = "@test.com";
 	}
 
 	public String getWords() {
