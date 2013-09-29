@@ -683,6 +683,7 @@ public class ClientController {
 			try {
 				reply.setReplyTime(PetUtil.getParameterDate(clientRequest, "replyTime"));
 			} catch (ParseException e) {
+				logger.error("liangc_debug: ", e);
 				return false;
 			}
 			reply.persist();
@@ -712,6 +713,7 @@ public class ClientController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("liangc_debug: ", e);
+			return e.getMessage();
 		}
 	}
 
