@@ -289,6 +289,8 @@
 				<database.promptOnNonLocalDatabase>false</database.promptOnNonLocalDatabase>
 				<uploadPath>/home/appusr/static</uploadPath>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<xmpp.server>http://221.122.114.212:5280/rest</xmpp.server>
+				<xmpp.domain>hadoop7.ruyicai.com</xmpp.domain>
 			</properties>
 		</profile>
 	</profiles>
