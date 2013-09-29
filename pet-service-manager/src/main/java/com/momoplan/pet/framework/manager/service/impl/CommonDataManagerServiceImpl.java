@@ -27,28 +27,32 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 	private CommonAreaCodeMapper commonAreaCodeMapper = null;
 	
 	@Override
-	public PageBean<CommonAreaCode> listAreaCode(PageBean<CommonAreaCode> pageBean, CommonAreaCode vo) throws Exception {
-		int pageNo = pageBean.getPageNo();
-		int pageSize = pageBean.getPageSize();
-		String id = vo.getId();
+	public PageBean<CommonAreaCode> listAreaCode(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode vo) throws Exception {
+//		String id = vo.getId();
 		CommonAreaCodeCriteria commonAreaCodeCriteria = new CommonAreaCodeCriteria();
 		CommonAreaCodeCriteria.Criteria criteria = commonAreaCodeCriteria.createCriteria();
+		if(!"".equals(grandsunid) && null != grandsunid){
+			criteria.andPidEqualTo(grandsunid);
+		}
+		else if(!"".equals(father) && null != father){
+			criteria.andPidEqualTo(father);
+		}
 //		if(StringUtils.isEmpty(id)){
 //			criteria.andPidEqualTo("0");
 //		}else{
 //			criteria.andPidEqualTo(id);
 //		}
 		int totalCount = commonAreaCodeMapper.countByExample(commonAreaCodeCriteria);
-		commonAreaCodeCriteria.setMysqlOffset((pageNo-1)*pageSize);
-		commonAreaCodeCriteria.setMysqlLength(pageSize);
+		commonAreaCodeCriteria.setMysqlOffset((pageBean.getPageNo()-1)*pageBean.getPageSize());
+		commonAreaCodeCriteria.setMysqlLength(pageBean.getPageSize());
 		List<CommonAreaCode> list = commonAreaCodeMapper.selectByExample(commonAreaCodeCriteria);
 		pageBean.setData(list);
-		pageBean.setTotalCount(totalCount);
+		pageBean.setTotalRecorde(totalCount);
 		return pageBean;
 	}
-		/**
-		 * 增加或者更新方法
-		 */
+	/**
+	* 增加或者更新方法
+	*/
 	@Override
 	public int insertOrUpdateAreaCode(CommonAreaCode vo) throws Exception {
 		String id = vo.getId();

@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
@@ -27,19 +25,47 @@ public class CommonDataManagerController {
 	@Autowired
 	private CommonDataManagerService commonDataManagerService;
 	
+	/**
+	 * 获取AreaList
+	 * @param pageBean
+	 * @param myForm
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/manager/commons/areaCodeList.html")
-	
-	public String areaCodeList(PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
+	public String areaCodeList(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
 		logger.debug("wlcome to pet manager areaCodeManager......");
 		try {
-			//测试时先写死，分页尚未实现 >>>>>>>>>>
-			pageBean.setPageNo(1);
-			pageBean.setPageSize(100);
-			//测试时先写死，分页尚未实现 <<<<<<<<<<
-			pageBean = commonDataManagerService.listAreaCode(pageBean, myForm);
+			pageBean = commonDataManagerService.listAreaCode(father,grandsunid,pageBean, myForm);
 			model.addAttribute("pageBean",pageBean);
+			
+			//读取所有国家(查询级联)
+			List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+			model.addAttribute("codes", codes);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+		}
+		return "/manager/commons/areaCodeList";
+	}
+	
+	/**
+	 * 搜索区域查询
+	 * @param pageBean
+	 * @param myForm
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/manager/commons/areaCodeSearch.html")
+	public String areaCodeSearch(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
+		try {
+				pageBean.setPageNo(1);
+				pageBean.setPageSize(4);
+				pageBean = commonDataManagerService.listAreaCode(father,grandsunid,pageBean, myForm);
+				model.addAttribute("pageBean",pageBean);
+				List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+				model.addAttribute("codes", codes);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return "/manager/commons/areaCodeList";
 	}
@@ -97,7 +123,7 @@ public class CommonDataManagerController {
 		long now = System.currentTimeMillis();
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
-		json.put("message", "200");
+		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0101");
@@ -127,7 +153,7 @@ public class CommonDataManagerController {
 	
 	
 	/**
-	 * 根据pid获取该Area
+	 * 根据pid获取该AreaList(级联)
 	 * @param areaCode
 	 * @param model
 	 * @param response

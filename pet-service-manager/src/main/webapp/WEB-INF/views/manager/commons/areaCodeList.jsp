@@ -7,12 +7,29 @@
 		<table class="searchContent">
 			<tr>
 				<td>
-					日期：<input id="queryDate" type="text" class="date" readonly="true" dateFmt="yyyy-MM-dd" value="${queryDate }" />
-					TODO : 需要增加很多检索条件
+					<form method="post" id="areaCodeAddForm" action="${ctx }/manager/commons/areaCodeSearch.html?fuid={father},grandsunid={grandsunid}" >
+					<select class="combox" name="father" ref="w_combox_city" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
+						<option value="">--请选择国家--</option>
+						<c:forEach var="itr" items="${codes }">
+	  							<option value="${itr.id }">${itr.name }</option>
+	  					</c:forEach>
+					</select> 
+					<select class="combox" name="grandsunid" id="w_combox_city">
+						<option value="">--请选择省份(市)--</option>
+					</select> 
+					
+<%-- 					日期：<input id="queryDate" type="text" class="date" readonly="true" dateFmt="yyyy-MM-dd" value="${queryDate }" /> --%>
+					<div class="buttonActive"> 
+						<div class="buttonContent">	<button type="submit">搜索</button> 
+					</div> 
+				</div>
+				</form>
 				</td>
-				<td>
-					<div class="buttonActive"><div class="buttonContent"><button type="button" onclick="defineAlert.queryAlertsByDate( $('#queryDate').val() )" >检索</button></div></div>
-				</td>
+<!-- 				<td> -->
+<!-- 					<div class="buttonActive"><div class="buttonContent"><button type="button"  onclick="defineAlert.queryAlertsByDate( $('#queryDate').val() )" >检索</button></div></div> -->
+<!-- 				</td> -->
+				
+				
 			</tr>
 		</table>
 	</div>
@@ -74,6 +91,19 @@
 			</c:forEach>
 		</tbody>
 	</table>
+	
+		<tr>
+			<td>当前页:${pageBean.pageNo}　</td>
+			<a href="${ctx }/manager/commons/areaCodeList.html">上一页</a>　<a href="${ctx }/manager/commons/areaCodeList.html">下一页</a>
+			<td>　共:${pageBean.totalPage}页
+			<form method="post" id="areaCodeAddForm" action="${ctx }/manager/commons/areaCodeSearch.html?pageNo={topageNo}" >
+			跳转到 <input type="text" style="width: 25px;" name="topageNo"/>页<input type="submit" value="跳转"/>
+			</form>
+      <input type="text" name="pageNo" value="${pageBean.pageNo}" />
+      <input type="text" name="pageSize" value="${pageBean.pageSize}" />
+    </td>
+		</tr>
+	
 		
 </div>
 

@@ -7,7 +7,7 @@ import com.momoplan.pet.framework.manager.vo.PageBean;
 
 public interface CommonDataManagerService {
 	
-	public PageBean<CommonAreaCode> listAreaCode(PageBean<CommonAreaCode> pageBean,CommonAreaCode vo) throws Exception;
+	public PageBean<CommonAreaCode> listAreaCode(String father,String grandsunid,PageBean<CommonAreaCode> pageBean,CommonAreaCode vo) throws Exception;
 	
 	public int insertOrUpdateAreaCode(CommonAreaCode vo)throws Exception;
 	/**

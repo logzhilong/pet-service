@@ -12,16 +12,14 @@
 			<fieldset>
 				<legend>创建地区信息</legend>
 				<dl>
-					<select class="combox" name="fdfd" ref="w_combox_city" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
-						<option value="all">--请选择--</option>
+					<select class="combox" name="father" ref="w_combox_city" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
+						<option value="all">--请选择国家--</option>
 						<c:forEach var="itr" items="${codes }">
 	  							<option value="${itr.id }">${itr.name }</option>
 	  					</c:forEach>
 					</select> 
 					<select class="combox" name="pid" id="w_combox_city">
-						<option value="all">--请选择--</option>
-						<c:forEach var="itu" items="${areaCodes }">
-	  					</c:forEach>
+						<option value="all">--请选择省份(市)--</option>
 					</select> 
 					
 				</dl>
