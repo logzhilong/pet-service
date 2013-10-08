@@ -57,6 +57,10 @@
 		<level value="OFF" />
 	</logger>
 
+	<logger name="org.apache.zookeeper">
+		<level value="INFO" />
+	</logger>
+
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
         <appender-ref ref="FILE" />
