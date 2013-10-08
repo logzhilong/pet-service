@@ -50,21 +50,21 @@
 					<span>修改</span>
 				</a>				
 			</li>
+			<li>
+				<a class="delete" href="${ctx }/manager/commons/areaCodeDel.html?id={id}">
+					<span>删除是</span>
+				</a>				
+			</li>
 
 <!-- 			<li> -->
 <%-- 				<a class="edit" href="${ctx }/manager/commons/areaCodeAdd.html?id={id}" target="dialog" max="false" rel="alert_dialog" mask="true" title="修改预警" width="450" height="260"  close="defineAlert.refresh" param="'${id }'"> --%>
 <!-- 					<span>修改</span> -->
 <!-- 				</a> -->
 <!-- 			</li> -->
-<!-- 			<li> -->
-<%-- 				<a class="delete" onclick="defineAlert.deleteAlert('checkedAlert')" href="${ctx }/manager/commons/areaCodeDel.html?id={id}" param="'${id }'" title="确定要删除吗?" > --%>
-<!-- 					<span>删除</span> -->
-<!-- 				</a> -->
-<!-- 			</li> -->
-						<li>
-				<a class="delete" href="${ctx }/manager/commons/areaCodeDel.html?id={id}">
+			<li>
+				<a class="delete" onclick="defineAlert.deleteAlert('checkedAlert')" href="${ctx }/manager/commons/areaCodeDel.html?id={id}" param="'${id }'" title="确定要删除吗?" >
 					<span>删除</span>
-				</a>				
+				</a>
 			</li>
 			
 			<li class="line">line</li>
