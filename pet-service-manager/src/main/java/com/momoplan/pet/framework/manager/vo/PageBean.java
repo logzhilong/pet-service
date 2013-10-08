@@ -66,7 +66,7 @@ public class PageBean<T> {
 	
 	//修改PageBean
 	
-	private int pageSize = 5;//每页显示条数
+	private int pageSize = 100;//每页显示条数
 	private int pageNo = 1;  //当前页
 	private int totalPage; //总页面
 	private int totalRecorde; //总记录数

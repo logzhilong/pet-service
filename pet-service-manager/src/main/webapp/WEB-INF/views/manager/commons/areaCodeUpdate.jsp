@@ -46,15 +46,9 @@
 				<li>
 					<div class="buttonActive">
 						<div class="buttonContent">
-							<button type="button"
-								onclick="areaCode.addSubmit('${ctx}','areaCodeAddForm');">保存</button>
+							<button type="submit">修改</button>
 						</div>
 					</div>
-<!-- 					<div class="buttonActive"> -->
-<!-- 						<div class="buttonContent"> -->
-<!-- 							<button type="submit">submit</button> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
 				</li>
 				<li>
 					<div class="button">

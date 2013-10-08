@@ -7,22 +7,22 @@
 		<table class="searchContent">
 			<tr>
 				<td>
-					<form method="post" id="areaCodeAddForm" action="${ctx }/manager/commons/areaCodeSearch.html?fuid={father},grandsunid={grandsunid}" >
+					<form onsubmit="return navTabSearch(this);" method="post"  action="${ctx }/manager/commons/areaCodeList.html" >
 					<select class="combox" name="father" ref="w_combox_city" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
-						<option value="">--请选择国家--</option>
+						<option value="all">--请选择国家--</option>
 						<c:forEach var="itr" items="${codes }">
 	  							<option value="${itr.id }">${itr.name }</option>
 	  					</c:forEach>
 					</select> 
 					<select class="combox" name="grandsunid" id="w_combox_city">
-						<option value="">--请选择省份(市)--</option>
+						<option value="all">--请选择省份(市)--</option>
 					</select> 
-					
-<%-- 					日期：<input id="queryDate" type="text" class="date" readonly="true" dateFmt="yyyy-MM-dd" value="${queryDate }" /> --%>
 					<div class="buttonActive"> 
-						<div class="buttonContent">	<button type="submit">搜索</button> 
-					</div> 
-				</div>
+						<div class="buttonContent">	
+							<button type="submit">搜索</button> 
+						</div> 
+							
+					</div>
 				</form>
 				</td>
 <!-- 				<td> -->

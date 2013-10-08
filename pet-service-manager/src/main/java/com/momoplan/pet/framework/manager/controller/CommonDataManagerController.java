@@ -26,7 +26,8 @@ public class CommonDataManagerController {
 	private CommonDataManagerService commonDataManagerService;
 	
 	/**
-	 * 获取AreaList
+	 * 1:获取AreaList  
+	 * 2:根据搜索条件查询AreaList
 	 * @param pageBean
 	 * @param myForm
 	 * @param model
@@ -49,27 +50,11 @@ public class CommonDataManagerController {
 	}
 	
 	/**
-	 * 搜索区域查询
-	 * @param pageBean
+	 * To AddOrUpdateArea
 	 * @param myForm
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/manager/commons/areaCodeSearch.html")
-	public String areaCodeSearch(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
-		try {
-				pageBean.setPageNo(1);
-				pageBean.setPageSize(4);
-				pageBean = commonDataManagerService.listAreaCode(father,grandsunid,pageBean, myForm);
-				model.addAttribute("pageBean",pageBean);
-				List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
-				model.addAttribute("codes", codes);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "/manager/commons/areaCodeList";
-	}
-
 	@RequestMapping("/manager/commons/areaCodeAdd.html")
 	public String addOrEditAreaCode(CommonAreaCode myForm,Model model){
 		try {
@@ -110,7 +95,7 @@ public class CommonDataManagerController {
 	}
 	
 	/**
-	 * 增加Area
+	 * 增加或者修改Area
 	 * @param myForm
 	 * @param model
 	 * @param request
@@ -118,26 +103,21 @@ public class CommonDataManagerController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/alerts/areaCodeSaveOrUpdate.html")
-	public void saveOrUpdateAreaCode(CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
-		
-		long now = System.currentTimeMillis();
+	public void saveOrUpdateAreaCode(String father,CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+//		long now = System.currentTimeMillis();
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0101");
-/*		
-		{
-			“statusCode”:”200″,
-			”message”:”添加成功”,
-			“callbackType”:”closeCurrent”,
-			”forwardUrl”:”",
-			“navTabId”:”main”
-		}
-*/		
 		try{
 			CommonAreaCode code=new CommonAreaCode();
+			if("" == myForm.getPid() || null == myForm.getPid()){
+				if("" != father){
+					myForm.setPid(father);
+				}
+			}
 			code.setId(myForm.getPid());
 			myForm.setPname(commonDataManagerService.getCommonAreaCodeByid(code).getName());
 			commonDataManagerService.insertOrUpdateAreaCode(myForm);
@@ -166,6 +146,8 @@ public class CommonDataManagerController {
 			StringBuffer sb = new StringBuffer("[");
 			if(areaCodes.size()>0){
 				int i=0;
+				sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
+				sb.append(",");
 				for(CommonAreaCode code :areaCodes ){
 					if(i++>0){
 						sb.append(",");
@@ -175,7 +157,7 @@ public class CommonDataManagerController {
 				sb.append("]");
 			}
 			else{
-					sb.append("[\"").append("0000000").append("\",\"").append("--请选择--").append("\"]");
+					sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
 					sb.append("]");
 			}
 			String res = sb.toString();

@@ -2,7 +2,6 @@ package com.momoplan.pet.framework.manager.service.impl;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +27,17 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 	
 	@Override
 	public PageBean<CommonAreaCode> listAreaCode(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode vo) throws Exception {
-//		String id = vo.getId();
 		CommonAreaCodeCriteria commonAreaCodeCriteria = new CommonAreaCodeCriteria();
 		CommonAreaCodeCriteria.Criteria criteria = commonAreaCodeCriteria.createCriteria();
-		if(!"".equals(grandsunid) && null != grandsunid){
+		if("all".equals(grandsunid) && "all".equals(grandsunid)){
+			
+		}
+		else if(!"".equals(grandsunid) && null != grandsunid){
 			criteria.andPidEqualTo(grandsunid);
 		}
 		else if(!"".equals(father) && null != father){
 			criteria.andPidEqualTo(father);
 		}
-//		if(StringUtils.isEmpty(id)){
-//			criteria.andPidEqualTo("0");
-//		}else{
-//			criteria.andPidEqualTo(id);
-//		}
 		int totalCount = commonAreaCodeMapper.countByExample(commonAreaCodeCriteria);
 		commonAreaCodeCriteria.setMysqlOffset((pageBean.getPageNo()-1)*pageBean.getPageSize());
 		commonAreaCodeCriteria.setMysqlLength(pageBean.getPageSize());
