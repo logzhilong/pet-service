@@ -1,10 +1,12 @@
 package com.momoplan.pet.framework.manager.service.impl;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.momoplan.pet.commons.spring.Bootstrap;
 import com.momoplan.pet.commons.zoo.config.ConfigWatcher;
 import com.momoplan.pet.framework.manager.service.ConfigManager;
-
+@Service
 public class ConfigManagerImpl implements ConfigManager{
 
 	private ConfigWatcher configWatcher = Bootstrap.configWatcher;
