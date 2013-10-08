@@ -69,11 +69,10 @@ public class CommonDataManagerController {
 				model.addAttribute("code",code);
 				logger.debug("wlcome to pet manager EditAreaCode......");		
 				return "/manager/commons/areaCodeUpdate";
-
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "/manager/commons/areaCodeAdd";
+			return "/manager/commons/areaCodeList";
 		}
 	}
 	/**
@@ -83,14 +82,13 @@ public class CommonDataManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/commons/areaCodeDel.html")
-	public String areaCodeDel(CommonAreaCode myForm,Model model){
+	public void areaCodeDel(String id,CommonAreaCode myForm,Model model){
 		try {
 				commonDataManagerService.areaCodeDelByid(myForm);
-				logger.debug("wlcome to pet manager EditAreaCode......");		
-				return "${ctx }/manager/commons/areaCodeList.html";
+				logger.debug("wlcome to pet manager EditAreaCode......");
+				areaCodeList(id, id, null, myForm, model);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 	}
 	
