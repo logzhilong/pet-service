@@ -37,5 +37,5 @@ public class BootstrapContextLoaderListener extends ContextLoaderListener {
     protected void customizeContext(ServletContext servletContext, ConfigurableWebApplicationContext applicationContext) {
         Bootstrap.setAppContext(applicationContext);
     }
-
+    
 }
