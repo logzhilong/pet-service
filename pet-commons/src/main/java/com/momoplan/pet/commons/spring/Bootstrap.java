@@ -8,12 +8,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.Resource;
 
+import com.momoplan.pet.commons.zoo.config.ConfigWatcher;
+
 /**
  * Temporary holder for static lookup of beans through the app context
  * @author jhickey
  * 
  */
 public class Bootstrap {
+	/**
+	 * 容器监听的端口
+	 */
+	public static int http_port;
+	public static ConfigWatcher configWatcher = null;
+	
     static ApplicationContext appContext;
     private static Map<String, Object> testBeansByName = new HashMap<String, Object>();
     private static Map<Class<?>, Object> testBeansByType = new HashMap<Class<?>, Object>();
