@@ -48,7 +48,7 @@ public class PushApn {
 		try {
 			PushNotificationPayload payLoad = new PushNotificationPayload();
 			payLoad.addAlert(msg); // 消息内容
-			payLoad.addBadge(1); // iphone应用图标上小红圈上的数值
+//			payLoad.addBadge(1); // iphone应用图标上小红圈上的数值
 			payLoad.addSound("default"); // 铃音 默认
 			List<Device> devices = new ArrayList<Device>();
 			for (String token : tokens) {

@@ -1,5 +1,7 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,52 +21,103 @@ import com.momoplan.pet.framework.manager.vo.PageBean;
 public class CommonDataManagerController {
 	
 	private Logger logger = LoggerFactory.getLogger(CommonDataManagerController.class);
-	
+
 	@Autowired
 	private CommonDataManagerService commonDataManagerService;
 	
+	/**
+	 * 1:获取AreaList  
+	 * 2:根据搜索条件查询AreaList
+	 * @param pageBean
+	 * @param myForm
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/manager/commons/areaCodeList.html")
-	public String areaCodeList(PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
+	public String areaCodeList(String father,String grandsunid,PageBean<CommonAreaCode> pageBean, CommonAreaCode myForm,Model model){
 		logger.debug("wlcome to pet manager areaCodeManager......");
 		try {
-			//测试时先写死，分页尚未实现 >>>>>>>>>>
-			pageBean.setPageNo(1);
-			pageBean.setPageSize(100);
-			//测试时先写死，分页尚未实现 <<<<<<<<<<
-			pageBean = commonDataManagerService.listAreaCode(pageBean, myForm);
+			pageBean = commonDataManagerService.listAreaCode(father,grandsunid,pageBean, myForm);
 			model.addAttribute("pageBean",pageBean);
+			
+			//读取所有国家(查询级联)
+			List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+			model.addAttribute("codes", codes);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return "/manager/commons/areaCodeList";
 	}
-
+	
+	/**
+	 * To AddOrUpdateArea
+	 * @param myForm
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/manager/commons/areaCodeAdd.html")
 	public String addOrEditAreaCode(CommonAreaCode myForm,Model model){
-		logger.debug("wlcome to pet manager addOrEditAreaCode......");
-		model.addAttribute("myForm",myForm);
-		return "/manager/commons/areaCodeAdd";
+		try {
+			if("".equals(myForm.getId()) || null==myForm.getId())
+			{
+				List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+				model.addAttribute("codes",codes);
+				logger.debug("wlcome to pet manager addAreaCode......");
+				return "/manager/commons/areaCodeAdd";
+			}else{
+				CommonAreaCode code=commonDataManagerService.getCommonAreaCodeByid(myForm);
+				model.addAttribute("code",code);
+				logger.debug("wlcome to pet manager EditAreaCode......");		
+				return "/manager/commons/areaCodeUpdate";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/manager/commons/areaCodeList";
+		}
 	}
-
+	/**
+	 * 删除Area
+	 * @param myForm
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/manager/commons/areaCodeDel.html")
+	public void areaCodeDel(String id,CommonAreaCode myForm,Model model){
+		try {
+				commonDataManagerService.areaCodeDelByid(myForm);
+				logger.debug("wlcome to pet manager EditAreaCode......");
+				areaCodeList(id, id, null, myForm, model);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 增加或者修改Area
+	 * @param myForm
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping("/alerts/areaCodeSaveOrUpdate.html")
-	public void saveOrUpdateAreaCode(CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
-		long now = System.currentTimeMillis();
+	public void saveOrUpdateAreaCode(String father,CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+//		long now = System.currentTimeMillis();
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
-		json.put("message", 200);
+		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0101");
-/*		
-		{
-			“statusCode”:”200″,
-			”message”:”添加成功”,
-			“callbackType”:”closeCurrent”,
-			”forwardUrl”:”",
-			“navTabId”:”main”
-		}
-*/		
 		try{
+			CommonAreaCode code=new CommonAreaCode();
+			if("" == myForm.getPid() || null == myForm.getPid()){
+				if("" != father){
+					myForm.setPid(father);
+				}
+			}
+			code.setId(myForm.getPid());
+			myForm.setPname(commonDataManagerService.getCommonAreaCodeByid(code).getName());
 			commonDataManagerService.insertOrUpdateAreaCode(myForm);
 		}catch(Exception e){
 			json.put("message", e.getMessage());
@@ -75,6 +128,45 @@ public class CommonDataManagerController {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
 	}
+	
+	
+	/**
+	 * 根据pid获取该AreaList(级联)
+	 * @param areaCode
+	 * @param model
+	 * @param response
+	 */
+	@RequestMapping("/manager/commons/getConmonArealistBypid.html")
+	public void getConmonArealistBypid(CommonAreaCode areaCode,Model model,HttpServletResponse response){
+		try {
+			logger.debug("地区:"+areaCode.toString());
+			List<CommonAreaCode> areaCodes=commonDataManagerService.getConmonArealistBypid(areaCode);
+			StringBuffer sb = new StringBuffer("[");
+			if(areaCodes.size()>0){
+				int i=0;
+				sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
+				sb.append(",");
+				for(CommonAreaCode code :areaCodes ){
+					if(i++>0){
+						sb.append(",");
+					}
+					sb.append("[\"").append(code.getId()).append("\",\"").append(code.getName()).append("\"]");
+				}
+				sb.append("]");
+			}
+			else{
+					sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
+					sb.append("]");
+			}
+			String res = sb.toString();
+			logger.debug(res);
+			response.setCharacterEncoding("utf-8");
+			response.getWriter().write(res);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	
 }

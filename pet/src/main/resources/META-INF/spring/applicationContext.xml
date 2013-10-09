@@ -10,10 +10,13 @@
   	<bean id="locations" class="java.util.ArrayList" >
   		<constructor-arg>
 		   	<list>
-				<value>classpath:sms.properties</value>
 				<value>classpath:database.properties</value>
+				<value>classpath:properties/zoo.properties</value>
+				<!--  
+				<value>classpath:sms.properties</value>
 				<value>classpath:proxyUri.properties</value>
 				<value>classpath:xmppserver.properties</value>
+				-->
 			</list>
 	  	</constructor-arg>
   	</bean>
@@ -90,5 +93,23 @@
     <bean class="com.momoplan.pet.service.UploadService">
     	<property name="uploadUrl" value="${uploadPath}"></property>
     </bean>
+   
+   	<!-- 配置管理服务器地址 -->
+    <bean id="zooServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="${zoo.server}" />
+    </bean>
+    
+    <!--  
+    add by liangc 130929 : 把 xmpp 相关配置提升到 spring 中,以便用 pom 的 profile 重写 >>>>>>
+    -->
+    <bean id="xmppDomain" class="java.lang.String" >
+    	<constructor-arg index="0" value="${xmpp.domain}" />
+    </bean>
+    <bean id="xmppServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="${xmpp.server}" />
+    </bean>
+    <!--
+    add by liangc 130929 : 把 xmpp 相关配置提升到 spring 中,以便用 pom 的 profile 重写 <<<<<<
+    -->
     
 </beans>

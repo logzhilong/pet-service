@@ -47,6 +47,7 @@ import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
+import com.momoplan.pet.commons.spring.Bootstrap;
 import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
@@ -110,10 +111,15 @@ public class ClientController {
 	private String smsPassword = null;
 	@Value("#{config['uri.pet_bbs']}")
 	private String pet_bbs = null;
-	@Value("#{config['xmpp.server']}")
-	private String xmpppath = null;
-	
 
+//	@Value("#{config['xmpp.server']}")
+//	private String xmpppath = null;
+	//add by liangc 130929 : XMPP的域不能写死，正式跟测试环境会用到不同的域，所以把这块配置到 spring 中，然后用 pom.xml 中的 profile 重写
+	@Autowired
+	private String xmppServer = null;
+	@Autowired
+	private String xmppDomain = null;
+			
 	@Resource
 	private JmsTemplate apprequestTemplate;
 	
@@ -613,10 +619,10 @@ public class ClientController {
 		xr.setPrams(replyComments.getUserStateid());
 		xr.setWords(replyComments.getCommentsMsg());
 		xr.setMsgTime(replyComments.getCommentTime());
-		xr.setRegion("@test.com");
+		xr.setRegion("@"+xmppDomain);
 		xr.setFromHeadImg(sendUser.getImg());
 		xr.setFromNickname(sendUser.getNickname());
-		xr.setXmpppath(xmpppath);
+		xr.setXmpppath(xmppServer);
 		try {
 			xr.SendMessage();
 		} catch (Exception e) {
@@ -633,10 +639,10 @@ public class ClientController {
 		xr2.setType("reply");
 		xr2.setPrams(replyComments.getUserStateid());
 		xr2.setWords(replyComments.getCommentsMsg());
-		xr2.setRegion("@test.com");
+		xr2.setRegion("@"+xmppDomain);
 		xr2.setFromHeadImg(sendUser2.getImg());
 		xr2.setFromNickname(sendUser2.getNickname());
-		xr2.setXmpppath(xmpppath);
+		xr2.setXmpppath(xmppServer);
 		try {
 			xr2.SendMessage();
 		} catch (Exception e) {
@@ -667,44 +673,49 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleAddReply(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
-		Reply reply = new Reply();
-		// 评论者id:petuserid
-		reply.setPetUserid(PetUtil.getParameterLong(clientRequest, "petuserId"));
-		// 被评论动态id:userstateid
-		reply.setUserStateid(PetUtil.getParameterLong(clientRequest,
-				"userstateId"));
-		reply.setMsg(PetUtil.getParameter(clientRequest, "msg"));
 		try {
-			reply.setReplyTime(PetUtil.getParameterDate(clientRequest,
-					"replyTime"));
-		} catch (ParseException e) {
-			return false;
-		}
-		reply.persist();
-		ReplyView replyView = getReplyView(reply,
-				authenticationToken.getUserid());
-		XMPPRequest xr = new XMPPRequest();
-		PetUser sendUser = PetUser.findPetUser(reply.getPetUserid());
-		xr.setSendUser(sendUser.getUsername());
-		xr.setReceiveUser(PetUser.findPetUser(UserStates.findUserStates(reply.getUserStateid()).getPetUserid()).getUsername());
-		xr.setType("reply");
-		xr.setPrams(reply.getUserStateid());
-		xr.setWords(reply.getMsg());
-		xr.setMsgTime(reply.getReplyTime());
-		xr.setRegion("@test.com");
-		xr.setFromHeadImg(sendUser.getImg());
-		xr.setFromNickname(sendUser.getNickname());
-		xr.setXmpppath(xmpppath);
-		try {
-			xr.SendMessage();
-		} catch (HttpException e) {
+			AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+			Reply reply = new Reply();
+			// 评论者id:petuserid
+			reply.setPetUserid(PetUtil.getParameterLong(clientRequest, "petuserId"));
+			// 被评论动态id:userstateid
+			reply.setUserStateid(PetUtil.getParameterLong(clientRequest, "userstateId"));
+			reply.setMsg(PetUtil.getParameter(clientRequest, "msg"));
+			try {
+				reply.setReplyTime(PetUtil.getParameterDate(clientRequest, "replyTime"));
+			} catch (ParseException e) {
+				logger.error("liangc_debug: ", e);
+				return false;
+			}
+			reply.persist();
+			ReplyView replyView = getReplyView(reply, authenticationToken.getUserid());
+			XMPPRequest xr = new XMPPRequest();
+			PetUser sendUser = PetUser.findPetUser(reply.getPetUserid());
+			xr.setSendUser(sendUser.getUsername());
+			xr.setReceiveUser(PetUser.findPetUser(UserStates.findUserStates(reply.getUserStateid()).getPetUserid()).getUsername());
+			xr.setType("reply");
+			xr.setPrams(reply.getUserStateid());
+			xr.setWords(reply.getMsg());
+			xr.setMsgTime(reply.getReplyTime());
+			xr.setRegion("@"+xmppDomain);
+			xr.setFromHeadImg(sendUser.getImg());
+			xr.setFromNickname(sendUser.getNickname());
+			xr.setXmpppath(xmppServer);
+			try {
+				xr.SendMessage();
+			} catch (HttpException e) {
+				logger.error("liangc_debug: ", e);
+				return replyView;
+			} catch (IOException e) {
+				logger.error("liangc_debug: ", e);
+				return replyView;
+			}
 			return replyView;
-		} catch (IOException e) {
-			return replyView;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("liangc_debug: ", e);
+			return e.getMessage();
 		}
-		return replyView;
 	}
 
 	private ReplyView getReplyView(Reply reply, long petUserid) {
@@ -835,8 +846,8 @@ public class ClientController {
 			}
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
-			xr.setRegion("@test.com");
-			xr.setXmpppath(xmpppath);
+			xr.setRegion("@"+xmppDomain);
+			xr.setXmpppath(xmppServer);
 			xr.SendMessage();
 		} catch (Exception e) {
 			return userZan;
@@ -1244,6 +1255,8 @@ public class ClientController {
 				verification.persist();
 			}
 			Map<String, String> map = new LinkedHashMap<String, String>();
+			smsUserid = Bootstrap.configWatcher.getProperty("sms.username", null);
+			logger.debug("smsUserid = "+smsUserid);
 			map.put("userId",smsUserid);
 			map.put("password", smsPassword);
 			map.put("pszMobis", phoneNum);

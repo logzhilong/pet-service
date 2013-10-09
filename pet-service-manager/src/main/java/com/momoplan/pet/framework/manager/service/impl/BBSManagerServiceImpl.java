@@ -21,8 +21,6 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	
 	@Override
 	public PageBean<Forum> listForum(PageBean<Forum> pageBean , Forum vo) throws Exception {
-		int pageNo = pageBean.getPageNo();
-		int pageSize = pageBean.getPageSize();
 		String id = vo.getId();
 		ForumCriteria forumCriteria = new ForumCriteria();
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
@@ -32,11 +30,11 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andPidEqualTo(id);
 		}
 		int totalCount = forumMapper.countByExample(forumCriteria);
-		forumCriteria.setMysqlOffset((pageNo-1)*pageSize);
-		forumCriteria.setMysqlLength(pageSize);
+		forumCriteria.setMysqlOffset((pageBean.getPageNo()-1)*pageBean.getPageSize());
+		forumCriteria.setMysqlLength(pageBean.getPageSize());
 		List<Forum> list = forumMapper.selectByExample(forumCriteria);
 		pageBean.setData(list);
-		pageBean.setTotalCount(totalCount);
+		pageBean.setTotalRecorde(totalCount);
 		return pageBean;
 	}
 
