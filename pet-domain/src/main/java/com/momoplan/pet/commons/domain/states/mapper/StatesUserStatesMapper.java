@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-09 15:38:15
+* @date 2013-10-09 16:26:51
 */
 public interface StatesUserStatesMapper {
     /**
