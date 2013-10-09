@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.momoplan.common.HttpRequestProxy;
+import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
@@ -105,13 +106,8 @@ public class ClientController {
 	ChatServerService chatServerService;
 //	@Autowired
 //	JmsService jmsService;
-	@Value("#{config['sms.username']}")
-	private String smsUserid = null;
-	@Value("#{config['sms.password']}")
-	private String smsPassword = null;
-	@Value("#{config['uri.pet_bbs']}")
-	private String pet_bbs = null;
 
+	
 //	@Value("#{config['xmpp.server']}")
 //	private String xmpppath = null;
 	//add by liangc 130929 : XMPP的域不能写死，正式跟测试环境会用到不同的域，所以把这块配置到 spring 中，然后用 pom.xml 中的 profile 重写
@@ -456,7 +452,7 @@ public class ClientController {
 		if (null == authenticationToken) {
 			return "false";
 		}
-		return "needProxy:" + pet_bbs;
+		return "needProxy:" + Bootstrap.configWatcher.getProperty(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 
 //	private Object handleSendNote(ClientRequest clientRequest) {
@@ -1255,15 +1251,13 @@ public class ClientController {
 				verification.persist();
 			}
 			Map<String, String> map = new LinkedHashMap<String, String>();
-			smsUserid = Bootstrap.configWatcher.getProperty("sms.username", null);
-			logger.debug("smsUserid = "+smsUserid);
-			map.put("userId",smsUserid);
-			map.put("password", smsPassword);
+			map.put("userId",Bootstrap.configWatcher.getProperty(PetConstants.SMS_USERNAME, null));
+			map.put("password", Bootstrap.configWatcher.getProperty(PetConstants.SMS_PASSWORD, null));
 			map.put("pszMobis", phoneNum);
 			map.put("pszMsg", verificationCode);
 			map.put("iMobiCount", "1");
 			map.put("pszSubPort", "***********");
-			HttpRequestProxy.doPost("http://61.145.229.29:9002/MWGate/wmgw.asmx/MongateCsSpSendSmsNew",map, "utf-8");
+			HttpRequestProxy.doPost(Bootstrap.configWatcher.getProperty(PetConstants.SMS_PATH, null),map, "utf-8");
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
