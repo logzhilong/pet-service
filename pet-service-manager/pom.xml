@@ -75,7 +75,7 @@
 			<id>test</id>
 			<properties>
 				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
-				<zoo.server>127.0.0.1:2181</zoo.server>
+				<zoo.server>123.178.27.74:2181</zoo.server>
 			</properties>
 		</profile>
 	</profiles>
