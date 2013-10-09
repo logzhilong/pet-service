@@ -282,15 +282,12 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
 				<database.url>jdbc:mysql://192.168.99.51:3306/pet?characterEncoding=utf8&amp;amp;autoReconnect=true&amp;amp;failOverReadOnly=false</database.url>
 				<database.username>root</database.username>
 				<database.password>123456</database.password>
 				<database.promptOnNonLocalDatabase>false</database.promptOnNonLocalDatabase>
-				<uploadPath>/home/appusr/static</uploadPath>
 				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
-				<xmpp.server>http://192.168.99.53:5280/rest</xmpp.server>
-				<xmpp.domain>hadoop7.ruyicai.com</xmpp.domain>
+				<zoo.server>192.168.99.50:2181,192.168.99.51:2181,192.168.99.53:2181</zoo.server>
 			</properties>
 		</profile>
 	</profiles>
