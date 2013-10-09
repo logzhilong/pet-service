@@ -1,43 +1,28 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp"%>
-<form method="post" id="areaCodeAddForm" action="${ctx }/alerts/areaCodeSaveOrUpdate.html" onsubmit="return validateCallback(this,dialogAjaxDone);">
+<form method="post" id="areaCodeAddForm" action="${ctx }/manager/bbs/addOrUpdateForum.html" onsubmit="return validateCallback(this,dialogAjaxDone);">
 
 	<div class="pageContent">
 		<div class="pageFormContent" layoutH="60">
 			<fieldset>
-				<legend>修改地区信息</legend>
-
+				<legend>修改圈子信息</legend>
+			
 				
 			<dl>
-				<dt>编码：</dt>
+				<dt>id：</dt>
 				<dd>
-					<input type="text" readonly="readonly" name="id" value="${code.id }" />
+					<input readonly="readonly" type="text" name="id" value="${fos.id }" />
 				</dd>
 			</dl>
-			
 			<dl>
-				<dt>父级编码：</dt>
+				<dt>name：</dt>
 				<dd>
-					<input readonly="readonly" type="text" name="pid" value="${code.pid }" />
+					<input type="text" name="name" value="${fos.name }" />
 				</dd>
 			</dl>
 			
-			<dl>
-				<dt>父级名称：</dt>
-				<dd>
-					<input type="text" readonly="readonly" name="pname" value="${code.pname }" />
-				</dd>
-			</dl>
 			
-			<dl>
-				<dt>本区域名称：</dt>
-				<dd>
-					<input type="text" name="name" value="${code.name }" />
-				</dd>
-			</dl>
-			
-
 			</fieldset>
 		</div>
 

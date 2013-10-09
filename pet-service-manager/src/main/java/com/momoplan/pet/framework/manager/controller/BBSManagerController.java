@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
+import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
 import com.momoplan.pet.framework.manager.vo.TreeBean;
 
@@ -25,7 +28,84 @@ public class BBSManagerController {
 	private Logger logger = LoggerFactory.getLogger(IndexController.class);
 	
 	@Autowired
-	private BBSManagerService bBSManagerService = null;
+	private BBSManagerService bBSManagerService;
+	@Autowired
+	private CommonDataManagerService commonDataManagerService;
+	
+	@RequestMapping("/manager/bbs/ToaddOrUpdateForum.html")
+	public String ToaddOrEditAreaCode(Forum forum,Model model){
+		try {
+			if("".equals(forum.getId()) || null==forum.getId())
+			{
+				List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+				model.addAttribute("codes", codes);
+				List<Forum> forums=	bBSManagerService.getForumlist();
+				model.addAttribute("forums",forums);
+				logger.debug("wlcome to pet manager Forumadd......");
+				return "/manager/bbs/forumAdd";
+			}else{
+				List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+				model.addAttribute("codes", codes);
+				Forum  fos=bBSManagerService.getForumbyid(forum);
+				model.addAttribute("fos",fos);
+				logger.debug("wlcome to pet manager updateforum......");		
+				return "/manager/bbs/forumUpdate";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	@RequestMapping("/manager/bbs/addOrUpdateForum.html")
+	public void addOrUpdateForum(String fatherid,String sdd,String zid,Forum forum,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		logger.debug("wlcome to pet-service-bbs manager addorupdate ......");
+		JSONObject json = new JSONObject();
+		json.put("statusCode", 200);
+		json.put("message", "操作成功!");
+		json.put("callbackType", "closeCurrent");
+		json.put("forwardUrl", "");
+		json.put("navTabId", "panel0002");
+		try {
+			CommonAreaCode areaCode=new CommonAreaCode();
+			areaCode.setId(zid);
+			forum.setAreaCode(commonDataManagerService.getCommonAreaCodeByid(areaCode).getName());
+			bBSManagerService.addOrUpdateForum(forum);
+		} catch (Exception e) {
+			json.put("message", e.getMessage());
+			e.printStackTrace();
+		}
+		String jsonStr = json.toString();
+		logger.debug(jsonStr);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonStr);
+	}
+	@RequestMapping("/manager/bbs/DelForum.html")
+	public void DelForum(Forum forum,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		logger.debug("wlcome to pet-service-bbs manager del ......");
+		JSONObject json = new JSONObject();
+		json.put("statusCode", 200);
+		json.put("message", "操作成功!");
+		json.put("callbackType", "closeCurrent");
+		json.put("forwardUrl", "");
+		json.put("navTabId", "panel0101");
+		try {
+			bBSManagerService.DelForum(forum);
+		} catch (Exception e) {
+			json.put("message", e.getMessage());
+			e.printStackTrace();
+		}
+		String jsonStr = json.toString();
+		logger.debug(jsonStr);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonStr);
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping("/manager/bbs/main.html")
 	public String main(Model model,HttpServletRequest request,HttpServletResponse response){
@@ -45,8 +125,8 @@ public class BBSManagerController {
 		logger.debug("wlcome to pet-service-bbs manager forumList ......");
 		try {
 			//测试时先写死，分页尚未实现 >>>>>>>>>>
-			pageBean.setPageNo(1);
-			pageBean.setPageSize(100);
+//			pageBean.setPageNo(1);
+//			pageBean.setPageSize(100);
 			//测试时先写死，分页尚未实现 <<<<<<<<<<
 			pageBean = bBSManagerService.listForum(pageBean, myForm);
 			model.addAttribute("pageBean",pageBean);

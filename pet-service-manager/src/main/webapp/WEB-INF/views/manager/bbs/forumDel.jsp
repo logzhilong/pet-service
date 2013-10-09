@@ -23,17 +23,17 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li><a class="add"
-				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
+				href="${ctx }/manager/commons/areaCodeAdd.html" target="dialog"
 				max="false" rel="areaCode_add_dialog" mask="true" title="添加"
 				width="450" height="260" close="forum.refresh"> <span>添加</span>
 			</a></li>
 			<li><a class="edit"
-				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
+				href="${ctx }/manager/commons/areaCodeAdd.html?id={id}"
 				target="dialog" max="false" rel="areaCode_update_dialog" mask="true"
 				title="修改" width="450" height="260" close="forum.refresh"> <span>修改</span>
 			</a></li>
 			<li><a class="delete" target="ajaxTodo" title="确定要删除吗?"
-				href="${ctx }/manager/bbs/DelForum.html?id={id}"> <span>删除</span>
+				href="${ctx }/manager/commons/areaCodeDel.html?id={id}"> <span>删除</span>
 			</a></li>
 			<li class="line">line</li>
 		</ul>
@@ -59,7 +59,7 @@
 			<c:forEach items="${pageBean.data }" var="itm" varStatus="idx">
 			
 			
-				<tr target="id" rel="${itm.id }">
+				<tr target="aid" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>
 						<a class="add" href="${ctx }/manager/bbs/forumManager.html" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="900" height="600" close="forum.refresh" param="'${itm.id }'" >

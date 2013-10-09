@@ -32,18 +32,20 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 		if("all".equals(grandsunid) && "all".equals(grandsunid)){
 			
 		}
-		else if(!"".equals(grandsunid) && null != grandsunid){
+		else if("" !=grandsunid && null != grandsunid){
 			criteria.andPidEqualTo(grandsunid);
 		}
-		else if(!"".equals(father) && null != father){
+		else if("" != father && null != father){
 			criteria.andPidEqualTo(father);
 		}
+		
 		int totalCount = commonAreaCodeMapper.countByExample(commonAreaCodeCriteria);
 		commonAreaCodeCriteria.setMysqlOffset((pageBean.getPageNo()-1)*pageBean.getPageSize());
 		commonAreaCodeCriteria.setMysqlLength(pageBean.getPageSize());
 		List<CommonAreaCode> list = commonAreaCodeMapper.selectByExample(commonAreaCodeCriteria);
 		pageBean.setData(list);
 		pageBean.setTotalRecorde(totalCount);
+		
 		return pageBean;
 	}
 	/**
