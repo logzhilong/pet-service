@@ -10,10 +10,13 @@
   	<bean id="locations" class="java.util.ArrayList" >
   		<constructor-arg>
 		   	<list>
-				<value>classpath:sms.properties</value>
 				<value>classpath:database.properties</value>
+				<value>classpath:properties/zoo.properties</value>
+				<!--  
+				<value>classpath:sms.properties</value>
 				<value>classpath:proxyUri.properties</value>
 				<value>classpath:xmppserver.properties</value>
+				-->
 			</list>
 	  	</constructor-arg>
   	</bean>
@@ -89,6 +92,11 @@
     </bean>
     <bean class="com.momoplan.pet.service.UploadService">
     	<property name="uploadUrl" value="${uploadPath}"></property>
+    </bean>
+   
+   	<!-- 配置管理服务器地址 -->
+    <bean id="zooServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="${zoo.server}" />
     </bean>
     
     <!--  

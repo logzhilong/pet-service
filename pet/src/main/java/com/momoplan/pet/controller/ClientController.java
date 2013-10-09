@@ -47,6 +47,7 @@ import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
+import com.momoplan.pet.commons.spring.Bootstrap;
 import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
@@ -1254,6 +1255,8 @@ public class ClientController {
 				verification.persist();
 			}
 			Map<String, String> map = new LinkedHashMap<String, String>();
+			smsUserid = Bootstrap.configWatcher.getProperty("sms.username", null);
+			logger.debug("smsUserid = "+smsUserid);
 			map.put("userId",smsUserid);
 			map.put("password", smsPassword);
 			map.put("pszMobis", phoneNum);
