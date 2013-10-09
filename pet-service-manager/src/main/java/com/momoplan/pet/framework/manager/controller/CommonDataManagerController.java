@@ -40,7 +40,6 @@ public class CommonDataManagerController {
 		try {
 			pageBean = commonDataManagerService.listAreaCode(father,grandsunid,pageBean, myForm);
 			model.addAttribute("pageBean",pageBean);
-			
 			//读取所有国家(查询级联)
 			List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
 			model.addAttribute("codes", codes);
@@ -89,7 +88,7 @@ public class CommonDataManagerController {
 		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
-		json.put("navTabId", "main");
+		json.put("navTabId", "panel0101");
 		try {
 				commonDataManagerService.areaCodeDelByid(myForm);
 				logger.debug("wlcome to pet manager DelAreaCode......");
@@ -101,7 +100,6 @@ public class CommonDataManagerController {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
 	}
-	
 	/**
 	 * 增加或者修改Area
 	 * @param myForm

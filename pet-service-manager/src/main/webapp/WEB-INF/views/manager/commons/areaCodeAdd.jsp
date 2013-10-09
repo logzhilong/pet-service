@@ -45,9 +45,6 @@
 		<div class="formBar">
 			<ul>
 				<li>
-					 
-<%-- 				<div class="buttonActive"><div class="buttonContent"><button type="button" onclick="areaCode.addSubmit('${ctx}','areaCodeAddForm');" >保存</button></div></div> --%>
-				
 					<div class="buttonActive">
 						<div class="buttonContent">
 							<button type="submit">保存</button>

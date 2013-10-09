@@ -26,7 +26,7 @@ public class ConfigManagerController {
 	private ConfigManager configManager;
 	
 	/**
-	 * 获取集合
+	 * 获取集合配置信息
 	 * @param model
 	 * @return
 	 */
@@ -52,7 +52,7 @@ public class ConfigManagerController {
 		}
 	}
 	/**
-	 * To增加或者修改
+	 * To增加或者修改配置信息
 	 * @param model
 	 * @return
 	 */
@@ -75,7 +75,7 @@ public class ConfigManagerController {
 		}
 	}
 	/**
-	 * 增加或者修改
+	 * 增加或者修改配置信息
 	 * @param model
 	 * @return
 	 */
@@ -109,7 +109,7 @@ public class ConfigManagerController {
 		response.getWriter().write(jsonStr);
 	}
 	/**
-	 * 删除
+	 * 删除配置信息
 	 * @param model
 	 * @return
 	 */
