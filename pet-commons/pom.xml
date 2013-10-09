@@ -14,17 +14,6 @@
 	<name>pet-commons</name>
 
 	<dependencies>
-		<dependency>
-		  <groupId>org.freemarker</groupId>
-		  <artifactId>freemarker</artifactId>
-		</dependency>	
-		<dependency>
-		  <groupId>org.apache.zookeeper</groupId>
-		  <artifactId>zookeeper-cdh</artifactId>
-		</dependency>
-
-	
-	
 	</dependencies>
 
 	<build>
