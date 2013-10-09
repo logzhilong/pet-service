@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -114,4 +115,17 @@ public class HttpRequestProxy {
 			return null;
 		}
 	}
+	
+//	public static void main(String[] args) {
+//		Map map = new HashMap<String, String>();
+//		map.put("userId","J00348");
+//		map.put("password", "142753");
+//		map.put("pszMobis", "18801108730");
+//		map.put("pszMobis", "18801108730");
+//		map.put("pszMsg", "test");
+//		map.put("iMobiCount", "1");
+//		map.put("pszSubPort", "***********");
+//		System.out.println(doPost("http://61.145.229.29:9002/MWGate/wmgw.asmx/MongateCsSpSendSmsNew",map, "utf-8"));
+//		
+//	}
 }
