@@ -25,8 +25,12 @@ public class MyListener implements MessageListener  {
 		if( message instanceof TextMessage ){
 			TextMessage textMessage = (TextMessage)message;
 			try {
-				logger.debug(textMessage.getText());
+				String biz = textMessage.getStringProperty("biz");
+				String bid = textMessage.getStringProperty("bid");
+				String content = textMessage.getStringProperty("content");
+				logger.debug("消息内容 biz="+biz+";bid="+bid+";content="+content);
 				message.acknowledge();
+				wordFilterService.doFilter(biz, bid, content);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
