@@ -151,7 +151,6 @@ $(function(){
 						<jsp:include page="/funTree.html" />
 					</div>
 					<div class="accordionHeader">
-						<h2><span>Folder</span>系统管理</h2>
 					</div>
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
@@ -159,6 +158,12 @@ $(function(){
 								<a>账户管理</a>
 								<ul>
 									<li><a>修改密码</a></li>
+								</ul>
+							</li>
+							<li>
+								<a>配置管理</a>
+								<ul>
+									<li><a rel="commanage" target="navTab" href="/pet-service-manager/manager/commons/commanageList.html">公共配置管理</a></li>
 								</ul>
 							</li>
 						</ul>

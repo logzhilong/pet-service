@@ -25,11 +25,6 @@
 					</div>
 				</form>
 				</td>
-<!-- 				<td> -->
-<!-- 					<div class="buttonActive"><div class="buttonContent"><button type="button"  onclick="defineAlert.queryAlertsByDate( $('#queryDate').val() )" >检索</button></div></div> -->
-<!-- 				</td> -->
-				
-				
 			</tr>
 		</table>
 	</div>
@@ -46,29 +41,16 @@
 				</a>				
 			</li>
 			<li>
-				<a class="edit" href="${ctx }/manager/commons/areaCodeAdd.html?id={id}" target="dialog" max="false" rel="areaCode_update_dialog" mask="true" title="修改" width="450" height="260" close="forum.refresh" >
+				<a class="edit"  href="${ctx }/manager/commons/areaCodeAdd.html?id={id}" target="dialog" max="false" rel="areaCode_update_dialog" mask="true" title="修改" width="450" height="260" close="forum.refresh" >
 					<span>修改</span>
 				</a>				
 			</li>
 			<li>
-				<a class="delete" href="${ctx }/manager/commons/areaCodeDel.html?id={id}">
-					<span>删除是</span>
-				</a>				
-			</li>
-
-<!-- 			<li> -->
-<%-- 				<a class="edit" href="${ctx }/manager/commons/areaCodeAdd.html?id={id}" target="dialog" max="false" rel="alert_dialog" mask="true" title="修改预警" width="450" height="260"  close="defineAlert.refresh" param="'${id }'"> --%>
-<!-- 					<span>修改</span> -->
-<!-- 				</a> -->
-<!-- 			</li> -->
-			<li>
-				<a class="delete" onclick="defineAlert.deleteAlert('checkedAlert')" href="${ctx }/manager/commons/areaCodeDel.html?id={id}" param="'${id }'" title="确定要删除吗?" >
-					<span>删除</span>
+				<a class="delete" target="ajaxTodo" title="确定要删除吗?" href="${ctx }/manager/commons/areaCodeDel.html?id={id}" >
+						<span>删除</span>
 				</a>
 			</li>
-			
 			<li class="line">line</li>
-			
 		</ul>
 	</div>
 

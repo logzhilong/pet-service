@@ -25,6 +25,7 @@ public class CommonDataManagerController {
 	@Autowired
 	private CommonDataManagerService commonDataManagerService;
 	
+	
 	/**
 	 * 1:获取AreaList  
 	 * 2:根据搜索条件查询AreaList
@@ -82,14 +83,23 @@ public class CommonDataManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/commons/areaCodeDel.html")
-	public void areaCodeDel(String id,CommonAreaCode myForm,Model model){
+	public void areaCodeDel(String id,CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response)  throws Exception{
+		JSONObject json = new JSONObject();
+		json.put("statusCode", 200);
+		json.put("message", "操作成功!");
+		json.put("callbackType", "closeCurrent");
+		json.put("forwardUrl", "");
+		json.put("navTabId", "main");
 		try {
 				commonDataManagerService.areaCodeDelByid(myForm);
-				logger.debug("wlcome to pet manager EditAreaCode......");
-				areaCodeList(id, id, null, myForm, model);
+				logger.debug("wlcome to pet manager DelAreaCode......");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		String jsonStr = json.toString();
+		logger.debug(jsonStr);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonStr);
 	}
 	
 	/**
