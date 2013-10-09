@@ -151,6 +151,7 @@ $(function(){
 						<jsp:include page="/funTree.html" />
 					</div>
 					<div class="accordionHeader">
+						<h2><span>Folder</span>系统管理</h2>
 					</div>
 					<div class="accordionContent">
 						<ul class="tree treeFolder">
