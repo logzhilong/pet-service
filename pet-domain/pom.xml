@@ -26,10 +26,6 @@
 			<groupId>c3p0</groupId>
 			<artifactId>c3p0</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
