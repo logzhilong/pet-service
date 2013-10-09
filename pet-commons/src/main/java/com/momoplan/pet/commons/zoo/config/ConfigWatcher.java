@@ -294,7 +294,7 @@ public class ConfigWatcher extends Config implements Watcher {
 		 * sms.username=J00348
 		 * sms.password=142753
 		 */
-		ConfigWatcher app1 = new ConfigWatcher("127.0.0.1");
+		ConfigWatcher app1 = new ConfigWatcher("123.178.27.74:2181");
 		app1.store.write("/config-manager/sms.username", "J00348");
 		app1.store.write("/config-manager/sms.password", "142753");
 		/*
@@ -313,6 +313,9 @@ public class ConfigWatcher extends Config implements Watcher {
 		 */
 		app1.store.write("/config-manager/xmpp.server", "http://61.51.110.55:5280/rest");
 		app1.store.write("/config-manager/xmpp.domain", "test.com");
+		
+		//<uploadPath>/home/appusr/static</uploadPath>
+		app1.store.write("/config-manager/uploadPath", "/home/appusr/static");
 		
 		logger.info("app1 publicConfig : "+Config.publicConfig);
 		logger.info("app1 privateConfig : "+Config.privateConfig);

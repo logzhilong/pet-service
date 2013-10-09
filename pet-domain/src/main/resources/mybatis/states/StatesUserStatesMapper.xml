@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="if_transmit_msg" property="ifTransmitMsg" jdbcType="VARCHAR" />
+    <result column="imgid" property="imgid" jdbcType="VARCHAR" />
+    <result column="msg" property="msg" jdbcType="VARCHAR" />
+    <result column="pet_userid" property="petUserid" jdbcType="BIGINT" />
+    <result column="submit_time" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="transmit_msg" property="transmitMsg" jdbcType="VARCHAR" />
+    <result column="transmit_url" property="transmitUrl" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
+    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
+    <result column="state_type" property="stateType" jdbcType="VARCHAR" />
+    <result column="report_times" property="reportTimes" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, if_transmit_msg, imgid, msg, pet_userid, submit_time, transmit_msg, transmit_url, 
+    version, latitude, longitude, state_type, report_times
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user_states
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_states
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user_states
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
+    delete from user_states
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+    insert into user_states (id, if_transmit_msg, imgid, msg, pet_userid, submit_time, transmit_msg, 
+      transmit_url, version, latitude, longitude, state_type, report_times
+      )
+    values (#{id}, #{ifTransmitMsg}, #{imgid}, #{msg}, #{petUserid}, #{submitTime}, #{transmitMsg}, 
+      #{transmitUrl}, #{version}, #{latitude}, #{longitude}, #{stateType}, #{reportTimes}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+    insert into user_states
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="ifTransmitMsg != null" >
+        if_transmit_msg,
+      </if>
+      <if test="imgid != null" >
+        imgid,
+      </if>
+      <if test="msg != null" >
+        msg,
+      </if>
+      <if test="petUserid != null" >
+        pet_userid,
+      </if>
+      <if test="submitTime != null" >
+        submit_time,
+      </if>
+      <if test="transmitMsg != null" >
+        transmit_msg,
+      </if>
+      <if test="transmitUrl != null" >
+        transmit_url,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="stateType != null" >
+        state_type,
+      </if>
+      <if test="reportTimes != null" >
+        report_times,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="ifTransmitMsg != null" >
+        #{ifTransmitMsg},
+      </if>
+      <if test="imgid != null" >
+        #{imgid},
+      </if>
+      <if test="msg != null" >
+        #{msg},
+      </if>
+      <if test="petUserid != null" >
+        #{petUserid},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime},
+      </if>
+      <if test="transmitMsg != null" >
+        #{transmitMsg},
+      </if>
+      <if test="transmitUrl != null" >
+        #{transmitUrl},
+      </if>
+      <if test="version != null" >
+        #{version},
+      </if>
+      <if test="latitude != null" >
+        #{latitude},
+      </if>
+      <if test="longitude != null" >
+        #{longitude},
+      </if>
+      <if test="stateType != null" >
+        #{stateType},
+      </if>
+      <if test="reportTimes != null" >
+        #{reportTimes},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_states
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update user_states
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.ifTransmitMsg != null" >
+        if_transmit_msg = #{record.ifTransmitMsg},
+      </if>
+      <if test="record.imgid != null" >
+        imgid = #{record.imgid},
+      </if>
+      <if test="record.msg != null" >
+        msg = #{record.msg},
+      </if>
+      <if test="record.petUserid != null" >
+        pet_userid = #{record.petUserid},
+      </if>
+      <if test="record.submitTime != null" >
+        submit_time = #{record.submitTime},
+      </if>
+      <if test="record.transmitMsg != null" >
+        transmit_msg = #{record.transmitMsg},
+      </if>
+      <if test="record.transmitUrl != null" >
+        transmit_url = #{record.transmitUrl},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version},
+      </if>
+      <if test="record.latitude != null" >
+        latitude = #{record.latitude},
+      </if>
+      <if test="record.longitude != null" >
+        longitude = #{record.longitude},
+      </if>
+      <if test="record.stateType != null" >
+        state_type = #{record.stateType},
+      </if>
+      <if test="record.reportTimes != null" >
+        report_times = #{record.reportTimes},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update user_states
+    set id = #{record.id},
+      if_transmit_msg = #{record.ifTransmitMsg},
+      imgid = #{record.imgid},
+      msg = #{record.msg},
+      pet_userid = #{record.petUserid},
+      submit_time = #{record.submitTime},
+      transmit_msg = #{record.transmitMsg},
+      transmit_url = #{record.transmitUrl},
+      version = #{record.version},
+      latitude = #{record.latitude},
+      longitude = #{record.longitude},
+      state_type = #{record.stateType},
+      report_times = #{record.reportTimes}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+    update user_states
+    <set >
+      <if test="ifTransmitMsg != null" >
+        if_transmit_msg = #{ifTransmitMsg},
+      </if>
+      <if test="imgid != null" >
+        imgid = #{imgid},
+      </if>
+      <if test="msg != null" >
+        msg = #{msg},
+      </if>
+      <if test="petUserid != null" >
+        pet_userid = #{petUserid},
+      </if>
+      <if test="submitTime != null" >
+        submit_time = #{submitTime},
+      </if>
+      <if test="transmitMsg != null" >
+        transmit_msg = #{transmitMsg},
+      </if>
+      <if test="transmitUrl != null" >
+        transmit_url = #{transmitUrl},
+      </if>
+      <if test="version != null" >
+        version = #{version},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude},
+      </if>
+      <if test="stateType != null" >
+        state_type = #{stateType},
+      </if>
+      <if test="reportTimes != null" >
+        report_times = #{reportTimes},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+    update user_states
+    set if_transmit_msg = #{ifTransmitMsg},
+      imgid = #{imgid},
+      msg = #{msg},
+      pet_userid = #{petUserid},
+      submit_time = #{submitTime},
+      transmit_msg = #{transmitMsg},
+      transmit_url = #{transmitUrl},
+      version = #{version},
+      latitude = #{latitude},
+      longitude = #{longitude},
+      state_type = #{stateType},
+      report_times = #{reportTimes}
+    where id = #{id}
+  </update>
+</mapper>

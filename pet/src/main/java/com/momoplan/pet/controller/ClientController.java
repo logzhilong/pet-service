@@ -18,11 +18,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.httpclient.HttpException;
 import org.codehaus.jackson.JsonProcessingException;
@@ -441,10 +443,21 @@ public class ClientController {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
+		//举报
+		if (clientRequest.getMethod().equals("reportContent")) {
+//			Object petResponse = handleGetNoteSubCountByForumid(clientRequest);
+			Object petResponse = handleReportContent(clientRequest);
+			return petResponse;
+		}
 		
 		return clientRequest;
 		
 		
+	}
+
+	private Object handleReportContent(ClientRequest clientRequest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private Object handleProxyRequest(ClientRequest clientRequest) {
@@ -615,10 +628,10 @@ public class ClientController {
 		xr.setPrams(replyComments.getUserStateid());
 		xr.setWords(replyComments.getCommentsMsg());
 		xr.setMsgTime(replyComments.getCommentTime());
-		xr.setRegion("@"+xmppDomain);
+		xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 		xr.setFromHeadImg(sendUser.getImg());
 		xr.setFromNickname(sendUser.getNickname());
-		xr.setXmpppath(xmppServer);
+		xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 		try {
 			xr.SendMessage();
 		} catch (Exception e) {
@@ -635,10 +648,10 @@ public class ClientController {
 		xr2.setType("reply");
 		xr2.setPrams(replyComments.getUserStateid());
 		xr2.setWords(replyComments.getCommentsMsg());
-		xr2.setRegion("@"+xmppDomain);
+		xr2.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 		xr2.setFromHeadImg(sendUser2.getImg());
 		xr2.setFromNickname(sendUser2.getNickname());
-		xr2.setXmpppath(xmppServer);
+		xr2.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 		try {
 			xr2.SendMessage();
 		} catch (Exception e) {
@@ -693,10 +706,10 @@ public class ClientController {
 			xr.setPrams(reply.getUserStateid());
 			xr.setWords(reply.getMsg());
 			xr.setMsgTime(reply.getReplyTime());
-			xr.setRegion("@"+xmppDomain);
+			xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
-			xr.setXmpppath(xmppServer);
+			xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 			try {
 				xr.SendMessage();
 			} catch (HttpException e) {
@@ -842,8 +855,8 @@ public class ClientController {
 			}
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
-			xr.setRegion("@"+xmppDomain);
-			xr.setXmpppath(xmppServer);
+			xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+			xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 			xr.SendMessage();
 		} catch (Exception e) {
 			return userZan;
@@ -1058,13 +1071,36 @@ public class ClientController {
 					"latitude"));
 			userState.setLongitude(PetUtil.getParameterDouble(clientRequest,
 					"longitude"));
-			userState.setStateType("0");
+			userState.setStateType("3");
+			userState.setReportTimes(0);
 			userState.persist();
-			return this.getStateView(userState,
-					authenticationToken.getUserid(), "myself");
+			sendJMS(userState,"user_states");
+			return this.getStateView(userState,authenticationToken.getUserid(), "myself");
+			
 		} catch (ParseException e) {
 			return null;
-		}
+		} 
+	}
+
+	/**
+	 * 向校验内容的应用send消息
+	 * @param userState
+	 * @param biz
+	 */
+	private void sendJMS(UserStates userState,String biz) {
+		TextMessage tm = new ActiveMQTextMessage();
+		System.out.println("\nbid:"+userState.getId().toString());
+		System.out.println("\nmsg:"+userState.getMsg());
+		try {
+			tm.setStringProperty("biz", biz);
+			tm.setStringProperty("bid", userState.getId().toString());
+			tm.setStringProperty("content", userState.getMsg());
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName("queue/pet_wordfilter");
+			apprequestTemplate.convertAndSend(queue, tm);
+		} catch (JMSException e) {
+			e.printStackTrace();
+		} 
 	}
 
 	/**

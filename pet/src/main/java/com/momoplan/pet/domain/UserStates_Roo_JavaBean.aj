@@ -88,4 +88,12 @@ privileged aspect UserStates_Roo_JavaBean {
         this.latitude = latitude;
     }
     
+    public int UserStates.getReportTimes() {
+        return this.reportTimes;
+    }
+    
+    public void UserStates.setReportTimes(int reportTimes) {
+        this.reportTimes = reportTimes;
+    }
+    
 }

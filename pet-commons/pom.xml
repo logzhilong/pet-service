@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-        	<groupId>com.momoplan.pet</groupId>
-	        <artifactId>pet-parent</artifactId>
+        <groupId>com.momoplan.pet</groupId>
+	    <artifactId>pet-parent</artifactId>
 		<version>1.0.0-SNAPSHOTS</version>
 	</parent>
 
@@ -14,14 +14,6 @@
 	<name>pet-commons</name>
 
 	<dependencies>
-		<dependency>
-		  <groupId>org.freemarker</groupId>
-		  <artifactId>freemarker</artifactId>
-		</dependency>	
-		<dependency>
-		  <groupId>org.apache.zookeeper</groupId>
-		  <artifactId>zookeeper-cdh</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

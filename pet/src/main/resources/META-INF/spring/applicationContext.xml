@@ -91,7 +91,6 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
     <bean class="com.momoplan.pet.service.UploadService">
-    	<property name="uploadUrl" value="${uploadPath}"></property>
     </bean>
    
    	<!-- 配置管理服务器地址 -->

@@ -38,6 +38,8 @@ public class UserStates{
 
     private double latitude;
     
+    private int reportTimes;
+    
     
     public static TypedQuery<UserStates> findUserStatesesByPetUserid(long petUserid,long lastStateid) {
         EntityManager em = UserStates.entityManager();

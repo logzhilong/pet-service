@@ -9,14 +9,14 @@
 		<version>1.0.0-SNAPSHOTS</version>
 	</parent>
 
-	<artifactId>pet-service-manager</artifactId>
+	<artifactId>pet-wordfilter</artifactId>
 	<packaging>war</packaging>
-	<name>pet-service-manager</name>
+	<name>pet-wordfilter</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.momoplan.pet</groupId>
-	        <artifactId>pet-domain</artifactId>
+	        	<artifactId>pet-domain</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -27,7 +27,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>pet-service-manager</finalName>
+		<finalName>pet-wordfilter</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -55,7 +55,7 @@
 					<url>${tomcat.manager.url}</url>
 					<username>tomcat</username>
 					<password>explink</password>
-					<path>/pet-service-manager</path>
+					<path>/pet-wordfilter</path>
 					<update>true</update>
 				</configuration>
 			</plugin>
@@ -75,16 +75,7 @@
 			<id>test</id>
 			<properties>
 				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
-				<zoo.server>127.0.0.1:2181</zoo.server>
 			</properties>
 		</profile>
-		
-		<profile>
-			<id>release</id>
-			<properties>
-				<zoo.server>127.0.0.1:2181</zoo.server>
-			</properties>
-		</profile>
-		
 	</profiles>
 </project>

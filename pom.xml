@@ -13,6 +13,7 @@
 		<module>pet-commons</module>
 		<module>pet-domain</module>
 		<module>pet-statistic</module>
+		<module>pet-wordfilter</module>
 		<module>pet-service-bbs</module>
 		<module>pet-service-manager</module>
 	</modules>
@@ -319,25 +320,45 @@
 			</exclusions>
 		</dependency>
 		<!--end datasource -->
-		<!-- freemarker -->
+		<!-- freemarker
 		<dependency>
 		  <groupId>org.freemarker</groupId>
 		  <artifactId>freemarker</artifactId>
 		  <version>2.3.19</version>
 		</dependency>
-
+		-->
+		<!--
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper-cdh</artifactId>
 			<version>3.4.5</version>
  		</dependency>
-		
-
+		<dependency>
+	  		<groupId>cglib</groupId>
+	    		<artifactId>cglib</artifactId>
+	      		<version>2.2</version>
+      		</dependency>
+		-->
 	</dependencies>
 	</dependencyManagement>
 
 	<!-- 默认继承 -->
 	<dependencies>
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper-cdh</artifactId>
+			<version>3.4.5</version>
+ 		</dependency>
+		<dependency>
+	  		<groupId>cglib</groupId>
+	    		<artifactId>cglib</artifactId>
+	      		<version>2.2</version>
+      		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
