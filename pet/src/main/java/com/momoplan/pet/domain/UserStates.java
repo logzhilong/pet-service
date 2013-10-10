@@ -41,9 +41,10 @@ public class UserStates{
     private int reportTimes;
     
     
-    public static TypedQuery<UserStates> findUserStatesesByPetUserid(long petUserid,long lastStateid,String whos) {
+    public static Query findUserStatesesByPetUserid(long petUserid,long lastStateid,String whos) {
         EntityManager em = UserStates.entityManager();
         StringBuffer hql = new StringBuffer("");
+//        hql.append(" SELECT o FROM UserStates AS o WHERE o.petUserid = :petUserid ");
         if(whos.contains("myself")){
         	hql.append(" SELECT o.* FROM user_states AS o WHERE o.pet_userid = :petUserid ");
         }else if(whos.contains("others")){
@@ -53,7 +54,7 @@ public class UserStates{
         	hql.append(" AND o.id < :lastStateid ");
         }
         hql.append(" ORDER BY o.submit_time desc ");
-        TypedQuery<UserStates> q = em.createQuery(hql.toString() , UserStates.class);
+        Query q = em.createNativeQuery(hql.toString() , UserStates.class);
         q.setFirstResult(0);
         q.setMaxResults(20);
         q.setParameter("petUserid", petUserid);

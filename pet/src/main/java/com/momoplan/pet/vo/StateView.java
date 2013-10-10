@@ -18,7 +18,15 @@ public class StateView implements Comparable<StateView>{
 	private long countZan;
 	private String ifIZaned;
 	private long countReplys;
+	private String stateType;
 	
+	
+	public String getStateType() {
+		return stateType;
+	}
+	public void setStateType(String stateType) {
+		this.stateType = stateType;
+	}
 	public PetUserView getPetUserView() {
 		return petUserView;
 	}
