@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
-import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
-import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCodeCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
@@ -32,7 +30,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		ForumCriteria forumCriteria = new ForumCriteria();
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		if(StringUtils.isEmpty(id)){
-//			criteria.andPidIsNull();
+			criteria.andPidIsNull();
 		}else{
 			criteria.andPidEqualTo(id);
 		}
@@ -54,11 +52,11 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if(fo!=null&&!"".equals(fo.getId())){
 			logger.debug("selectByPK.po="+fo.toString());
-			return forumMapper.updateByPrimaryKeySelective(fo);
+			return forumMapper.updateByPrimaryKeySelective(forum);
 		}else{
 			forum.setId(IDCreater.uuid());
 			forum.setCt(new Date());
-			if(forum.getPid() == "all"){
+			if("all".equals(forum.getPid())){
 				forum.setPid(null);
 			}
 			return forumMapper.insertSelective(forum);
@@ -92,8 +90,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	 */
 	public Forum getForumbyid(Forum forum)throws Exception{
 		try {
-			Forum forum2=forumMapper.selectByPrimaryKey(forum.getId());
-			return forum2;
+				
+			return forumMapper.selectByPrimaryKey(forum.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

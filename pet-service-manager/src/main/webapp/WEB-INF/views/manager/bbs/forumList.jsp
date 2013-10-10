@@ -25,7 +25,7 @@
 			<li><a class="add"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
 				max="false" rel="areaCode_add_dialog" mask="true" title="添加"
-				width="450" height="260" close="forum.refresh"> <span>添加</span>
+				width="450" height="460" close="forum.refresh"> <span>添加</span>
 			</a></li>
 			<li><a class="edit"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
