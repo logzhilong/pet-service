@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.gson.Gson;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
@@ -130,6 +131,7 @@ public class ClientController {
 	@RequestMapping("request")
 	public @ResponseBody
 	Object request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
+		logger.debug("request input : "+body);
 		String ret = null;
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
@@ -138,6 +140,10 @@ public class ClientController {
 			if(ret.contains("needProxy")){
 				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
 			}
+		}catch(Exception e){
+			logger.error("request error",e);
+			e.printStackTrace();
+			throw e;
 		} finally { 
 			try {
 				TextMessage tm = new ActiveMQTextMessage();
@@ -184,7 +190,7 @@ public class ClientController {
 		}
 	}
 	
-	private Object doRequest(ClientRequest clientRequest,HttpServletResponse response) throws IOException,JsonProcessingException, ParseException {
+	private Object doRequest(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		// ClientRequest clientRequest = new
 		// ObjectMapper().reader(ClientRequest.class).readValue(body);
 		if (clientRequest.getMethod().equals("open")) {
@@ -1129,7 +1135,7 @@ public class ClientController {
 	 * @param clientRequest
 	 * @return
 	 */
-	private Object handleGetUserState(ClientRequest clientRequest) {
+	private Object handleGetUserState(ClientRequest clientRequest) throws Exception{
 		AuthenticationToken authenticationToken = AuthenticationToken
 				.findAuthenticationToken(clientRequest.getToken());
 		double longitude = Double.parseDouble(clientRequest.getParams()
@@ -1177,8 +1183,13 @@ public class ClientController {
 				userViews.add(stateView);
 			}
 		}
-		Collections.sort(userViews);
-		return userViews;
+		if(userViews!=null && userViews.size()>0){
+			Collections.sort(userViews);
+			logger.debug("suerViews output : "+new Gson().toJson(userViews));
+			return userViews;
+		}
+		logger.debug("suerViews output : NULL 有问题");
+		return null;
 	}
 
 	/**
@@ -1666,6 +1677,11 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
+//					if(distance<=1000){
+//						return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+//					}else{
+//						petUserview.setDistance((distance / 100 * 100/1000 + 0.1) + "千米以内");
+//					}
 					petUserview.setDistance(distance / 100 * 100 + 100
 							+ "米以内");
 					distance = distance + 50;
