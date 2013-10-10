@@ -118,7 +118,7 @@ public class ConfigManagerController {
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
-		json.put("callbackType", "closeCurrent");
+		json.put("callbackType", "");
 		json.put("forwardUrl", "");
 		json.put("navTabId", "commanage0001");
 		try {
