@@ -43,12 +43,14 @@ public class IndexController {
 		
 		TreeBean common = new TreeBean("01","0","公共数据");
 		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
+		TreeBean configManager = new TreeBean("0102","01","配置管理-public","/manager/configmanager/list.html");
 		
 		tree.add(bbs);
 		tree.add(bbsMain);
 		tree.add(bbsList);
 		tree.add(common);
 		tree.add(commonAreaCode);
+		tree.add(configManager);
 		
 		Gson g = new Gson();
 		String json = g.toJson(tree);

@@ -25,6 +25,7 @@ public class ConfigManagerImpl implements ConfigManager{
 	}
 	@Override
 	public Map<String, String> getPublicPropertys() throws Exception {
+		Thread.sleep(2000);//等2秒,不然也许得不到最新结果
 		return Bootstrap.configWatcher.publicConfig;
 	}
 
