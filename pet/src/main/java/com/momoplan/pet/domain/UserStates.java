@@ -44,11 +44,11 @@ public class UserStates{
     public static TypedQuery<UserStates> findUserStatesesByPetUserid(long petUserid,long lastStateid) {
         EntityManager em = UserStates.entityManager();
         StringBuffer hql = new StringBuffer("");
-        hql.append(" SELECT o FROM UserStates AS o WHERE o.petUserid = :petUserid ");
+        hql.append(" SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE o.pet_userid = :petUserid ");
         if(-1!=lastStateid){
         	hql.append(" AND o.id < :lastStateid ");
         }
-        hql.append(" ORDER BY o.submitTime desc ");
+        hql.append(" ORDER BY o.submit_time desc ");
         TypedQuery<UserStates> q = em.createQuery(hql.toString() , UserStates.class);
         q.setFirstResult(0);
         q.setMaxResults(20);
@@ -62,7 +62,7 @@ public class UserStates{
     public static Query finderUserStatesWithFriendship(long petUserid,long lastStateid) {
         EntityManager em = UserStates.entityManager();
         StringBuffer sql = new StringBuffer("");
-        sql.append(" SELECT o.* FROM user_states AS o WHERE (func_if_friend(o.pet_userid,:petUserid)>0 or o.pet_userid = :petUserid) ");
+        sql.append(" SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE (func_if_friend(o.pet_userid,:petUserid)>0 or o.pet_userid = :petUserid) ");
         if(-1!=lastStateid){
         	sql.append(" and o.id < :lastStateid ");
         }
@@ -75,21 +75,24 @@ public class UserStates{
         	q.setParameter("lastStateid", lastStateid);
         }
         return q;
+        
     }
     
-    public static TypedQuery<UserStates> findUserStateByLatitudeOrLongitudeOrGenderEquals(double latitude, double longitude,int pageIndex) {
+    public static Query findUserStateByLatitudeOrLongitudeOrGenderEquals(double latitude, double longitude,long petUserid,int pageIndex) {
     	double left_longitude = longitude-1;
 	  	double right_longitude = longitude+1;
 	  	double up_latitude = latitude+1;
 	  	double down_latitude = latitude-1;
-	  	StringBuffer sql = new StringBuffer("SELECT o FROM UserStates AS o WHERE (o.longitude between :left_longitude and :right_longitude) and (o.latitude between :down_latitude and :up_latitude) and o.stateType = :stateType");
-	  	sql.append(" ORDER BY o.submitTime DESC ");
+	  	StringBuffer sql = new StringBuffer("SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE (o.longitude between :left_longitude and :right_longitude) and (o.latitude between :down_latitude and :up_latitude) and o.state_type = :stateType");
+	  	sql.append(" ORDER BY o.submit_time DESC ");
+	  	
         EntityManager em = UserStates.entityManager();
-        TypedQuery<UserStates> q = em.createQuery(sql.toString(), UserStates.class);
+        Query q = em.createNativeQuery(sql.toString(), UserStates.class);
         q.setParameter("left_longitude", left_longitude);
         q.setParameter("right_longitude",right_longitude);
         q.setParameter("up_latitude", up_latitude);
         q.setParameter("down_latitude", down_latitude);
+        q.setParameter("petUserid", petUserid);
         q.setParameter("stateType", "0");
         q.setFirstResult(pageIndex);
 		q.setMaxResults(20);
