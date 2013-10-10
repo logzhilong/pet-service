@@ -56,6 +56,9 @@
 	<logger name="org.apache.commons.validator.ValidatorResources">
 		<level value="OFF" />
 	</logger>
+	<logger name="org.apache.zookeeper">
+		<level value="error" />
+	</logger>
 
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
