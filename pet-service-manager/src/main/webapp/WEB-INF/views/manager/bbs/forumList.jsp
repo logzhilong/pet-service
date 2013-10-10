@@ -7,10 +7,28 @@
 		<table class="searchContent">
 			<tr>
 				<td>
-					日期：<input id="queryDate" type="text" class="date" readonly="true" dateFmt="yyyy-MM-dd" value="${queryDate }" />
-				</td>
-				<td>
-					<div class="buttonActive"><div class="buttonContent"><button type="button" onclick="defineAlert.queryAlertsByDate( $('#queryDate').val() )" >检索</button></div></div>
+					<form onsubmit="return navTabSearch(this);" method="post"
+						action="${ctx }/manager/bbs/forumList.html">
+						<select class="combox" name="areaCode" ref="w_combox_city"
+							refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
+							<option value="all">--请选择国家--</option>
+							<c:forEach var="itr" items="${codes }">
+								<option value="${itr.id }">${itr.name }</option>
+							</c:forEach>
+						</select> 
+						<select class="combox" name="areaDesc" id="w_combox_city">
+							<option value="all">--请选择省份(市)--</option>
+						</select>
+						<dt>
+							名称:<input type="text" name="name" value="${myForm.name }"/>
+						</dt>
+						<div class="buttonActive">
+							<div class="buttonContent">
+								<button type="submit">搜索</button>
+							</div>
+
+						</div>
+					</form>
 				</td>
 			</tr>
 		</table>
@@ -30,7 +48,7 @@
 			<li><a class="edit"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
 				target="dialog" max="false" rel="areaCode_update_dialog" mask="true"
-				title="修改" width="450" height="260" close="forum.refresh"> <span>修改</span>
+				title="修改" width="450" height="460" close="forum.refresh"> <span>修改</span>
 			</a></li>
 			<li><a class="delete" target="ajaxTodo" title="确定要删除吗?"
 				href="${ctx }/manager/bbs/DelForum.html?id={id}"> <span>删除</span>

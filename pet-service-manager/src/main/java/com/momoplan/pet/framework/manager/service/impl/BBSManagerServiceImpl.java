@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
+import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
+import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
 
 
@@ -23,7 +25,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 
 	@Autowired
 	private ForumMapper forumMapper = null;
-	
+	@Autowired
+	CommonDataManagerService commonDataManagerService;
 	@Override
 	public PageBean<Forum> listForum(PageBean<Forum> pageBean , Forum vo) throws Exception {
 		String id = vo.getId();
@@ -34,12 +37,56 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		}else{
 			criteria.andPidEqualTo(id);
 		}
+		if(StringUtils.isEmpty(vo.getName())){
+				if("all".equals(vo.getAreaCode()) && "all".equals(vo.getAreaCode())){
+					
+				}
+				else if("" !=vo.getAreaDesc() && null != vo.getAreaDesc()){
+					criteria.andAreaCodeLike("%"+vo.getAreaDesc()+"%");
+				}
+				else if("" != vo.getAreaCode() && null != vo.getAreaCode()){
+					criteria.andAreaCodeLike("%"+vo.getAreaCode()+"%");
+				}
+		}else {
+			
+			criteria.andNameLike("%"+vo.getName()+"%");
+		}
 		int totalCount = forumMapper.countByExample(forumCriteria);
 		forumCriteria.setMysqlOffset((pageBean.getPageNo()-1)*pageBean.getPageSize());
 		forumCriteria.setMysqlLength(pageBean.getPageSize());
 		List<Forum> list = forumMapper.selectByExample(forumCriteria);
 		pageBean.setData(list);
 		pageBean.setTotalRecorde(totalCount);
+		for(Forum forum:pageBean.getData()){
+				int i=forum.getAreaCode().indexOf("-");
+				if(i != -1){
+					CommonAreaCode code2=new CommonAreaCode();
+					String sheng=forum.getAreaCode().substring(0,forum.getAreaCode().indexOf("-"));
+						code2.setId(sheng);
+					String sheng1=commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+				
+						if(forum.getAreaCode().indexOf("-") != forum.getAreaCode().lastIndexOf("-")){
+							String shi=forum.getAreaCode().substring(forum.getAreaCode().indexOf("-")+1,forum.getAreaCode().lastIndexOf("-"));
+							code2.setId(shi);
+							String sheng2=commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+							
+							String qu=forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-")+1);
+							code2.setId(qu);
+							String sheng3=commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+							forum.setAreaCode(sheng1+"-"+sheng2+"-"+sheng3);
+						}else{
+							String qu=forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-")+1);
+							code2.setId(qu);
+							String sheng3=commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+							forum.setAreaCode(sheng1+"-"+sheng3);
+						}
+						}else{
+							CommonAreaCode code2=new CommonAreaCode();
+							code2.setId(forum.getAreaCode());
+							String ee=commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+							forum.setAreaCode(ee);
+						}
+			}
 		return pageBean;
 	}
 	/**

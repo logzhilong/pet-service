@@ -56,12 +56,18 @@
 	  							<option value="${itr.id }">${itr.name }</option>
 	  					</c:forEach>
 					</select> 
-					<select class="combox" name="sdd" ref="xcity" id="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
+					<select class="combox" name="sunid" ref="xcity" id="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
 						<option value="all">--请选择省份(市)--</option>
 					</select> 
-					<select class="combox" name="zid" id="xcity" >
+					<select class="combox" name="grandsunid" id="xcity" >
 						<option value="all">--请选择区(县)--</option>
 					</select> 
+				</dl>
+				<dl>
+					<dt>街道(小区)：</dt>
+					<dd>
+						<input type="text" name="areaDesc" value="${forum.areaDesc }" />
+					</dd>
 				</dl>
 			</fieldset>
 		</div>

@@ -31,7 +31,12 @@ public class BBSManagerController {
 	private BBSManagerService bBSManagerService;
 	@Autowired
 	private CommonDataManagerService commonDataManagerService;
-	
+	/**
+	 * To增加OR修改圈子
+	 * @param forum
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/manager/bbs/ToaddOrUpdateForum.html")
 	public String ToaddOrEditAreaCode(Forum forum,Model model){
 		try {
@@ -53,11 +58,17 @@ public class BBSManagerController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "";
+			return null;
 		}
 	}
+	/**
+	 * 增加或者修改圈子
+	 * @param fatherid
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping("/manager/bbs/addOrUpdateForum.html")
-	public void addOrUpdateForum(String fatherid,String sdd,String zid,Forum forum,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+	public void addOrUpdateForum(String fatherid,String sunid,String grandsunid,Forum forum,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
 		logger.debug("wlcome to pet-service-bbs manager addorupdate ......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
@@ -66,9 +77,16 @@ public class BBSManagerController {
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0002");
 		try {
-			CommonAreaCode areaCode=new CommonAreaCode();
-			areaCode.setId(zid);
-			forum.setAreaCode(commonDataManagerService.getCommonAreaCodeByid(areaCode).getName());
+			if(!"all".equals(fatherid) && !"all".equals(sunid) && !"all".equals(grandsunid) && !"".equals(fatherid)){
+				
+				if(!"".equals(grandsunid) && !"all".equals(grandsunid)){
+					forum.setAreaCode(fatherid+"-"+sunid+"-"+grandsunid);
+				}else if(!"".equals(sunid) && !"all".equals(sunid) ){
+					forum.setAreaCode(fatherid+"-"+sunid);
+				}else if(!"".equals(fatherid) && !"all".equals(fatherid)){
+					forum.setAreaCode(fatherid);
+				}
+			}
 			bBSManagerService.addOrUpdateForum(forum);
 		} catch (Exception e) {
 			json.put("message", e.getMessage());
@@ -79,15 +97,23 @@ public class BBSManagerController {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
 	}
+	/**
+	 * 根据id删除指定圈子
+	 * @param forum
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping("/manager/bbs/DelForum.html")
 	public void DelForum(Forum forum,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
 		logger.debug("wlcome to pet-service-bbs manager del ......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
-		json.put("callbackType", "closeCurrent");
+		json.put("callbackType", "");
 		json.put("forwardUrl", "");
-		json.put("navTabId", "panel0101");
+		json.put("navTabId", "panel0002");
 		try {
 			bBSManagerService.DelForum(forum);
 		} catch (Exception e) {
@@ -99,14 +125,6 @@ public class BBSManagerController {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	@RequestMapping("/manager/bbs/main.html")
 	public String main(Model model,HttpServletRequest request,HttpServletResponse response){
 		logger.debug("wlcome to pet-service-bbs manager main ......");
@@ -130,6 +148,9 @@ public class BBSManagerController {
 			//测试时先写死，分页尚未实现 <<<<<<<<<<
 			pageBean = bBSManagerService.listForum(pageBean, myForm);
 			model.addAttribute("pageBean",pageBean);
+			//读取所有国家(查询级联)
+			List<CommonAreaCode> codes=commonDataManagerService.getConmonArealist();
+			model.addAttribute("codes", codes);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
