@@ -445,19 +445,12 @@ public class ClientController {
 		}
 		//举报
 		if (clientRequest.getMethod().equals("reportContent")) {
-//			Object petResponse = handleGetNoteSubCountByForumid(clientRequest);
-			Object petResponse = handleReportContent(clientRequest);
-			return petResponse;
+			return handleReportContent(clientRequest);
 		}
 		
 		return clientRequest;
 		
 		
-	}
-
-	private Object handleReportContent(ClientRequest clientRequest) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	private Object handleProxyRequest(ClientRequest clientRequest) {
@@ -476,6 +469,34 @@ public class ClientController {
 //		return "needProxy:"+pet_bbs;
 //	}
 
+	/**
+	 * 举报一条动态
+	 * @param clientRequest
+	 * @return
+	 */
+	private Object handleReportContent(ClientRequest clientRequest) {
+		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		if (null == authenticationToken) {
+			return "false";
+		}
+		long stateid = PetUtil.getParameterLong(clientRequest,"stateid");
+		//举报类型（暂时不用）
+		int reporttype = PetUtil.getParameterInteger(clientRequest,"reporttype");
+		UserStates userState = UserStates.findUserStates(stateid);
+		if(null == userState){
+			return "false";
+		}
+		//举报次数少于20的情况下
+		int reportTimes = userState.getReportTimes();
+		if(reportTimes<20){
+			userState.setReportTimes(reportTimes+1);
+		}else{
+			userState.setStateType("5");
+		}
+		userState.merge();
+		return "true";
+	}
+	
 	private Object handleFindOneState(ClientRequest clientRequest) {
 		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
 		long stateid = PetUtil.getParameterLong(clientRequest,"stateid");
@@ -882,7 +903,7 @@ public class ClientController {
 		List<UserStates> userStates = UserStates.finderUserStatesWithFriendship(userid, lastStateid).getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		for (UserStates userState : userStates) {
-			// 获取状态视图
+			// 获取状态视图 
 			StateView stateView = new StateView();
 			if (userState.getPetUserid() == authenticationToken.getUserid()) {
 				stateView = this.getStateView(userState,
@@ -966,8 +987,7 @@ public class ClientController {
 		}
 		// 封装到状态视图中
 		StateView stateView = new StateView();
-		stateView
-				.setReplyViews(this.getReplyViews(userState, userid, -1, whos));// 根据获取的本条状态获取评价视图
+		stateView.setReplyViews(this.getReplyViews(userState, userid, -1, whos));// 根据获取的本条状态获取评价视图
 		stateView.setPetUserView(getPetUserviewWithAlias(
 				userState.getPetUserid(), userid));// 封装发布状态的用户信息
 		stateView.setId(userState.getId());
@@ -1118,7 +1138,7 @@ public class ClientController {
 				.get("latitude").toString());
 		int pageIndex = PetUtil.getParameterInteger(clientRequest, "pageIndex");
 		// 获取用户地理位置状态视图（地理位置，时间，性别）
-		List<UserStates> userStates = UserStates.findUserStateByLatitudeOrLongitudeOrGenderEquals(latitude,longitude, pageIndex).getResultList();
+		List<UserStates> userStates = UserStates.findUserStateByLatitudeOrLongitudeOrGenderEquals(latitude,longitude,authenticationToken.getUserid(),pageIndex).getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		// 用户地理位置视图遍历查询，获取附近用户状态视图
 		for (UserStates userState : userStates) {
@@ -2137,9 +2157,7 @@ public class ClientController {
 			petInfoView.setId(petInfo.getId());
 			petInfoView.setCountZan(UserZan.countUserZans(userid, -1, -1,
 					petInfo.getId(), "1"));
-			petInfoView
-					.setIfIZaned(UserZan
-							.findUserZansByUseridAndUserStateidAndZanUserid(
+			petInfoView.setIfIZaned(UserZan.findUserZansByUseridAndUserStateidAndZanUserid(
 									userid, -1, -1, petInfo.getId(), "1")
 							.getResultList().isEmpty() ? "0" : "1");
 			petInfoViews.add(petInfoView);
