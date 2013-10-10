@@ -41,10 +41,14 @@ public class UserStates{
     private int reportTimes;
     
     
-    public static TypedQuery<UserStates> findUserStatesesByPetUserid(long petUserid,long lastStateid) {
+    public static TypedQuery<UserStates> findUserStatesesByPetUserid(long petUserid,long lastStateid,String whos) {
         EntityManager em = UserStates.entityManager();
         StringBuffer hql = new StringBuffer("");
-        hql.append(" SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE o.pet_userid = :petUserid ");
+        if(whos.contains("myself")){
+        	hql.append(" SELECT o.* FROM user_states AS o WHERE o.pet_userid = :petUserid ");
+        }else if(whos.contains("others")){
+        	hql.append(" SELECT o.* FROM user_states AS o WHERE o.pet_userid = :petUserid and o.state_type = '0' ");
+        }
         if(-1!=lastStateid){
         	hql.append(" AND o.id < :lastStateid ");
         }
@@ -83,7 +87,7 @@ public class UserStates{
 	  	double right_longitude = longitude+1;
 	  	double up_latitude = latitude+1;
 	  	double down_latitude = latitude-1;
-	  	StringBuffer sql = new StringBuffer("SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE (o.longitude between :left_longitude and :right_longitude) and (o.latitude between :down_latitude and :up_latitude) and o.state_type = :stateType");
+	  	StringBuffer sql = new StringBuffer("SELECT o.* FROM (select u.* from user_states u where u.pet_userid = :petUserid or (u.pet_userid != :petUserid and u.state_type != '3' and u.state_type != '4' and u.state_type != '5' )) AS o WHERE (o.longitude between :left_longitude and :right_longitude) and (o.latitude between :down_latitude and :up_latitude) ");
 	  	sql.append(" ORDER BY o.submit_time DESC ");
 	  	
         EntityManager em = UserStates.entityManager();
@@ -93,7 +97,7 @@ public class UserStates{
         q.setParameter("up_latitude", up_latitude);
         q.setParameter("down_latitude", down_latitude);
         q.setParameter("petUserid", petUserid);
-        q.setParameter("stateType", "0");
+//        q.setParameter("stateType", "0");
         q.setFirstResult(pageIndex);
 		q.setMaxResults(20);
         return q;

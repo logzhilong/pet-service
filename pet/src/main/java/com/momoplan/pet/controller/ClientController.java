@@ -931,7 +931,7 @@ public class ClientController {
 		long lastStateid = PetUtil.getParameterLong(clientRequest,
 				"lastStateid");
 		List<UserStates> userStates = UserStates.findUserStatesesByPetUserid(
-				userid, lastStateid).getResultList();
+				userid, lastStateid,"others").getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		for (UserStates userState : userStates) {
 			// 获取状态视图
@@ -961,8 +961,7 @@ public class ClientController {
 		// int pageIndex = getParameterInteger(clientRequest, "pageIndex");
 		long lastStateid = PetUtil.getParameterLong(clientRequest,
 				"lastStateid");
-		List<UserStates> userStates = UserStates.findUserStatesesByPetUserid(
-				userid, lastStateid).getResultList();
+		List<UserStates> userStates = UserStates.findUserStatesesByPetUserid(userid, lastStateid,"myself").getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		for (UserStates userState : userStates) {
 			StateView stateView = this
