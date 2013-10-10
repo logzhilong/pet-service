@@ -996,6 +996,7 @@ public class ClientController {
 		stateView.setIfTransmitMsg(userState.getIfTransmitMsg());
 		stateView.setTransmitMsg(userState.getTransmitMsg());
 		stateView.setTransmitUrl(userState.getTransmitUrl());
+		stateView.setStateType(userState.getStateType());
 		if(userState.getStateType().contains("1")||userState.getStateType().contains("2")){
 			stateView.setCountZan(UserZan.countUserZans(userid, userState.getId(),
 					userState.getPetUserid(), -1, "0")+12);
