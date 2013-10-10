@@ -631,8 +631,8 @@
 			<id>release</id>
 			<properties>
 				<zoo.server>192.168.99.50:2181,192.168.99.51:2181,192.168.99.53:2181</zoo.server>
-				<jms.brokerURL>tcp://127.0.0.1:61617</jms.brokerURL>
-				<server.jms.brokerURL>tcp://127.0.0.1:61617</server.jms.brokerURL>
+				<jms.brokerURL>tcp://127.0.0.1:61616</jms.brokerURL>
+				<server.jms.brokerURL>tcp://127.0.0.1:61616</server.jms.brokerURL>
 			</properties>
 		</profile>
 	</profiles>
