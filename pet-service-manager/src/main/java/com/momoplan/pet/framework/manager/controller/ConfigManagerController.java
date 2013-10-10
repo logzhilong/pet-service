@@ -30,7 +30,7 @@ public class ConfigManagerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/manager/commons/commanageList.html")
+	@RequestMapping("/manager/configmanager/commanageList.html")
 	public String ConfigGetCommonList(Model model){
 		try {
 			Map<String, String> configMap=configManager.getPublicPropertys();
@@ -45,10 +45,10 @@ public class ConfigManagerController {
 		        	configlist.add(map);
 		        }
 		        model.addAttribute("configlist", configlist);
-			return "/manager/commons/comManageList";
+			return "/manager/configmanager/comManageList";
 		} catch (Exception e) {
 		e.printStackTrace();
-		return  "/manager/commons/comManageList";
+		return  "/manager/configmanager/comManageList";
 		}
 	}
 	/**
@@ -56,22 +56,22 @@ public class ConfigManagerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/manager/commons/TocommanageSaveOrUpdate.html")
-	public String ToConfigCommonSaveOrUpdate(String key,Model model){
+	@RequestMapping("/manager/configmanager/TocommanageSaveOrUpdate.html")
+	public String ToConfigconfigmanageraveOrUpdate(String key,Model model){
 		try {
 			if("".equals(key) || null==key)
 			{
-				return "/manager/commons/commanageAdd";
+				return "/manager/configmanager/commanageAdd";
 			}else{
 				String valu=configManager.getProperty(key);
 				model.addAttribute("valu", valu);
 				model.addAttribute("key", key);
 				
-				return "/manager/commons/commanageUpdate";
+				return "/manager/configmanager/commanageUpdate";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "/manager/commons/commanageUpdate";
+			return "/manager/configmanager/commanageUpdate";
 		}
 	}
 	/**
@@ -79,14 +79,14 @@ public class ConfigManagerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/manager/commons/commanageSaveOrUpdate.html")
-	public void ConfigCommonSaveOrUpdate(String key,String pvalue,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+	@RequestMapping("/manager/configmanager/commanageSaveOrUpdate.html")
+	public void ConfigconfigmanageraveOrUpdate(String key,String pvalue,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
-		json.put("navTabId", "commanage");
+		json.put("navTabId", "commanage0001");
 		try {
 			if("" != key && null != key){
 				String va=configManager.getProperty(key);
@@ -113,14 +113,14 @@ public class ConfigManagerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/manager/commons/commanageDel.html")
+	@RequestMapping("/manager/configmanager/commanageDel.html")
 	public void ConfigCommonDel(String key,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
-		json.put("navTabId", "commanage");
+		json.put("navTabId", "commanage0001");
 		try {
 			if("" != key && null != key){
 				configManager.deleteProperty(key);

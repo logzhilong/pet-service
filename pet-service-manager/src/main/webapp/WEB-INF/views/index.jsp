@@ -165,7 +165,7 @@ $(function(){
 								<a>配置管理</a>
 								<ul>
 									<li>
-										<a title="公共配置管理" href="${ctx }/manager/commons/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
+										<a title="公共配置管理" href="${ctx }/manager/configmanager/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
 									</li>
 								</ul>
 							</li>
