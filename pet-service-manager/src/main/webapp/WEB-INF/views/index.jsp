@@ -164,7 +164,9 @@ $(function(){
 							<li>
 								<a>配置管理</a>
 								<ul>
-									<li><a rel="commanage" target="navTabId" href="/pet-service-manager/manager/commons/commanageList.html">公共配置管理</a></li>
+									<li>
+										<a title="公共配置管理" href="${ctx }/manager/commons/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
+									</li>
 								</ul>
 							</li>
 						</ul>
