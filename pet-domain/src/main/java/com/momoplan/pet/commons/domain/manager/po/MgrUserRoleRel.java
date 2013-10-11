@@ -5,15 +5,15 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
-* MgrUserReleRel
+* MgrUserRoleRel
 * table:mgr_user_role_rel
 * 
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-11 16:53:46
+* @date 2013-10-11 17:44:09
 */
-public class MgrUserReleRel implements Serializable {
+public class MgrUserRoleRel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -87,7 +87,7 @@ public class MgrUserReleRel implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        MgrUserReleRel other = (MgrUserReleRel) that;
+        MgrUserRoleRel other = (MgrUserRoleRel) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getRoleId() == null ? other.getRoleId() == null : this.getRoleId().equals(other.getRoleId()));

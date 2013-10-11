@@ -28,5 +28,7 @@
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="applicationContext-mybatis-bbs.xml"/>
 	<import resource="applicationContext-mybatis-states.xml"/>
+	<import resource="applicationContext-mybatis-statistic.xml"/>
+	<import resource="applicationContext-mybatis-manager.xml"/>
 	
 </beans>

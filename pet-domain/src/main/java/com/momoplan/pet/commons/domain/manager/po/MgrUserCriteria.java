@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-11 16:53:46
+* @date 2013-10-11 17:44:09
 */
 public class MgrUserCriteria {
     protected String orderByClause;

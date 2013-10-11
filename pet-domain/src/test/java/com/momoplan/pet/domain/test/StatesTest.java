@@ -19,7 +19,6 @@ public class StatesTest extends AbstractTest {
 	public void test(){
 		System.out.println(commonContentAuditMapper);
 		System.out.println(statesUserStatesMapper);
-		
 	}
 	
 }
