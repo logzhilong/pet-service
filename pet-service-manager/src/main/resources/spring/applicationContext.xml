@@ -30,8 +30,8 @@
 	
 	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 
-	<context:component-scan base-package="com.momoplan.pet.framework.*.service" />
-	<context:component-scan base-package="com.momoplan.pet.framework.*.*.service" />
+	<context:component-scan base-package="com.momoplan.pet.framework.*.s*" />
+	<context:component-scan base-package="com.momoplan.pet.framework.*.*.s*" />
 	
 	<import resource="classpath:spring/applicationContext-mybatis-transaction.xml"/>
 
@@ -40,7 +40,9 @@
     	<constructor-arg index="0" value="${zoo.server}" />
     </bean>
 
+	<import resource="classpath:spring/applicationContext-security.xml"/>
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="classpath:spring/applicationContext-mybatis-bbs.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-manager.xml"/>
 
 </beans>
