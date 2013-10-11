@@ -3,6 +3,7 @@ package com.momoplan.pet.framework.manager.service;
 import java.util.List;
 
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
+import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.framework.manager.vo.PageBean;
 
 
@@ -39,5 +40,18 @@ public interface BBSManagerService {
 	 * @throws Exception
 	 */
 	public List<Forum> getForumlist()throws Exception;
+	/**
+	 * 根据父id获取子级圈子集合
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Forum> getSunForumListbyPid(Forum forum)throws Exception;
+	/**
+	 * 根据圈子id获取帖子集合
+	 * @param forum
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Note> getAllNotesByForumId(Forum forum)throws Exception;
 	
 }

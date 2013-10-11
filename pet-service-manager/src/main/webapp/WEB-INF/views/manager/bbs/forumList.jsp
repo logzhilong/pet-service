@@ -7,8 +7,8 @@
 		<table class="searchContent">
 			<tr>
 				<td>
-					<form onsubmit="return navTabSearch(this);" method="post"
-						action="${ctx }/manager/bbs/forumList.html">
+					<form onsubmit="return navTabSearch(this);" method="post" action="${ctx }/manager/bbs/forumList.html">
+				<!-- 	
 						<select class="combox" name="areaCode" ref="w_combox_city"
 							refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
 							<option value="all">--请选择国家--</option>
@@ -19,15 +19,15 @@
 						<select class="combox" name="areaDesc" id="w_combox_city">
 							<option value="all">--请选择省份(市)--</option>
 						</select>
+				-->
 						<dt>
 							名称:<input type="text" name="name" value="${myForm.name }"/>
-						</dt>
-						<div class="buttonActive">
-							<div class="buttonContent">
-								<button type="submit">搜索</button>
+							<div class="buttonActive">
+								<div class="buttonContent">
+									<button type="submit">搜索</button>
+								</div>
 							</div>
-
-						</div>
+						</dt>
 					</form>
 				</td>
 			</tr>
@@ -43,16 +43,19 @@
 			<li><a class="add"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
 				max="false" rel="areaCode_add_dialog" mask="true" title="添加"
-				width="450" height="460" close="forum.refresh"> <span>添加</span>
+				width="450" height="350" close="forum.refresh"> <span>添加</span>
+				</a>
+			</li>
+			<li>
+				<a class="edit" href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
+					target="dialog" max="false" rel="areaCode_update_dialog" mask="true"
+					title="修改" width="450" height="350" close="forum.refresh"> <span>修改</span>
 			</a></li>
-			<li><a class="edit"
-				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
-				target="dialog" max="false" rel="areaCode_update_dialog" mask="true"
-				title="修改" width="450" height="460" close="forum.refresh"> <span>修改</span>
-			</a></li>
-			<li><a class="delete" target="ajaxTodo" title="确定要删除吗?"
-				href="${ctx }/manager/bbs/DelForum.html?id={id}"> <span>删除</span>
-			</a></li>
+			<li>
+				<a class="delete" target="ajaxTodo" title="确定要删除吗?"
+					href="${ctx }/manager/bbs/DelForum.html?id={id}"> <span>删除</span>
+				</a>
+			</li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -66,8 +69,10 @@
 				<th width="200" align="center">描述</th>
 				<th width="50" align="center">点击量</th>
 				<th width="50" align="center" >回帖量</th>
-				<th width="100" align="center" >地区</th>
+			<!-- 
+				<th width="100" align="center" >地区</th> 
 				<th width="200" align="center" >详细地址</th>
+			-->
 				<th width="150" align="center" >创建时间</th>
 				<th width="80" align="center" >创建人</th>
 				<th width="80" align="center" >序号</th>
@@ -75,20 +80,18 @@
 		</thead>
 		<tbody id="alertListTbody" >
 			<c:forEach items="${pageBean.data }" var="itm" varStatus="idx">
-			
-			
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>
-						<a class="add" href="${ctx }/manager/bbs/forumManager.html" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="900" height="600" close="forum.refresh" param="'${itm.id }'" >
+						<a class="add" href="${ctx }/manager/bbs/forumManager.html?id={id}" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="1000" height="600" close="forum.refresh" param="'${itm.id }'" >
 							${itm.name }
 						</a>
 					</td>
 					<td>${itm.descript }</td>
 					<td>${itm.clientCount }</td>
 					<td>${itm.replyCount }</td>
-					<td>${itm.areaCode }</td>
-					<td>${itm.areaDesc }</td>
+<%-- 				<td>${itm.areaCode }</td>
+					<td>${itm.areaDesc }</td> --%>
 					<td>${itm.ct }</td>
 					<td>${itm.cb }</td>
 					<td>${itm.seq }</td>
