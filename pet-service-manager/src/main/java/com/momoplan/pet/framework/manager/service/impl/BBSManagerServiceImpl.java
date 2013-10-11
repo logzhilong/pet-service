@@ -11,9 +11,12 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
+import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
@@ -25,6 +28,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 
 	@Autowired
 	private ForumMapper forumMapper = null;
+	@Autowired
+	private NoteMapper noteMapper=null;
 	@Autowired
 	CommonDataManagerService commonDataManagerService;
 	@Override
@@ -157,6 +162,46 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andPidIsNull();
 			List<Forum> forums=forumMapper.selectByExample(forumCriteria);
 			return forums;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据父id获取子级圈子集合
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Forum> getSunForumListbyPid(Forum forum)throws Exception{
+		try {
+			ForumCriteria forumCriteria=new ForumCriteria();
+			ForumCriteria.Criteria criteria=forumCriteria.createCriteria();
+			criteria.andPidEqualTo(forum.getId());
+			List<Forum> forums=forumMapper.selectByExample(forumCriteria);
+			return forums;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * 根据圈子id获取帖子集合
+	 * @param forum
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Note> getAllNotesByForumId(Forum forum)throws Exception{
+		try {
+			NoteCriteria noteCriteria=new NoteCriteria();
+			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
+			criteria.andForumIdEqualTo(forum.getId());
+			List<Note> notes=noteMapper.selectByExample(noteCriteria);
+			return notes;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

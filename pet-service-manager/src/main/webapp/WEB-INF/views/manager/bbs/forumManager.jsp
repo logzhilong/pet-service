@@ -7,11 +7,11 @@
 	    </jsp:include>
 	</div>
 	
-	<div id="jbsxBox" class="unitBox" style="margin-left:246px;">
-		<%-- ctype 和 eid 在打开这个页面的URL里传递过了，这里不必再传 
+	<div id="jbsxBoxmm" class="unitBox" style="margin-left:246px;">
+<!-- 		// ctype 和 eid 在打开这个页面的URL里传递过了，这里不必再传  -->
 	    <jsp:include page="/manager/bbs/forumManagerMain.html">
   	    	<jsp:param name="target" value="right" />
 	    </jsp:include>
-		--%>
+	
 	</div>
 </div>

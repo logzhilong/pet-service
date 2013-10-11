@@ -34,7 +34,7 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>圈子名字：</dt>
+					<dt>圈子回复量：</dt>
 					<dd>
 						<input type="text" name="replyCount" value="${fos.replyCount }" />
 					</dd>
@@ -45,7 +45,9 @@
 						<input type="text" name="logoImg" value="${fos.logoImg }" />
 					</dd>
 				</dl>
-				<dl><dt>选择地区:</dt>
+			<!-- 
+				<dl>	
+					<dt>选择地区:</dt>
 						<select class="combox" name="fatherid" ref="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
 							<option value="all">--请选择国家--</option>
 							<c:forEach var="itr" items="${codes }">
@@ -58,13 +60,14 @@
 						<select class="combox" name="grandsunid" id="xcity" >
 							<option value="all">--请选择区(县)--</option>
 						</select> 
-				</dl>
-				<dl>
+					</dl>
+					<dl>
 					<dt>街道(小区)：</dt>
 					<dd>
 						<input type="text" name="areaDesc" value="${fos.areaDesc }" />
 					</dd>
 				</dl>
+			-->
 			</fieldset>
 		</div>
 

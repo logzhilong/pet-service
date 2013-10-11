@@ -1,6 +1,5 @@
 package com.momoplan.pet.framework.manager.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.google.gson.Gson;
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
+import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
-import com.momoplan.pet.framework.manager.vo.TreeBean;
 
 @Controller
 public class BBSManagerController {
@@ -35,7 +34,7 @@ public class BBSManagerController {
 	 * To增加OR修改圈子
 	 * @param forum
 	 * @param model
-	 * @return
+	 * @returnlist1.html
 	 */
 	@RequestMapping("/manager/bbs/ToaddOrUpdateForum.html")
 	public String ToaddOrEditAreaCode(Forum forum,Model model){
@@ -178,45 +177,62 @@ public class BBSManagerController {
 		}
 		return "/manager/bbs/forumManager";
 	}
-	
+
+	/**
+	 * 显示圈子左边和右边的dialog
+	 * @param target
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/manager/bbs/forumManagerMain.html")
 	public String forumManagerMain(String target,String id,Model model){
 		logger.debug("wlcome to pet-service-bbs manager forumManagerMain ......");
-		if("left".equals(target)){
-			return fmLeft(id,model);
-		}else{//right
-			return fmRight(id,model);
+		try {
+			Forum forum=new Forum();
+			forum.setId(id);
+			List<Forum> forumss;
+			forumss = bBSManagerService.getSunForumListbyPid(forum);
+			model.addAttribute("forumss",forumss);
+			if("left".equals(target)){
+				return fmLeft(id,model);
+			}else{
+				return fmRight(id,model);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	private String fmLeft(String id,Model model){
-		List<TreeBean> tree =  new ArrayList<TreeBean> ();//platform 的节点集合
-		TreeBean root = new TreeBean();
-		root.setName("功能列表");
-		root.setLeaf(false);
-		root.setNode("0");
-		tree.add(root);
-		
-		TreeBean bbs = new TreeBean("00","0","圈子");
-		TreeBean bbsMain = new TreeBean("0001","00","圈子统计信息","/manager/bbs/main.html");
-		TreeBean bbsList = new TreeBean("0002","00","圈子管理","/manager/bbs/forumList.html");
-		
-		TreeBean common = new TreeBean("01","0","公共数据");
-		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
-		
-		tree.add(bbs);
-		tree.add(bbsMain);
-		tree.add(bbsList);
-		tree.add(common);
-		tree.add(commonAreaCode);
-		
-		Gson g = new Gson();
-		String json = g.toJson(tree);
-		logger.debug(json);
-		model.addAttribute("tree", json);
-		return "/manager/bbs/forumManagerLeft";
+		try {
+			
+			return "/manager/bbs/forumManagerLeft";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-	private String fmRight(String id,Model model){
-		
+	public String fmRight(String id,Model model){
+		return "/manager/bbs/forumManagerRight";
+	}
+	/**
+	 * 获取子集贴子管理右侧的帖子集合
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/manager/bbs/forumrightmanagelist.html")
+	public String forumrightmanagelist(String id,Model model){
+		try {
+			Forum forum=new Forum();
+			forum.setId("5A4F0290CF0648319F6AB4CFF6B02F12");
+			List<Note> forums=bBSManagerService.getAllNotesByForumId(forum);
+			model.addAttribute("forums", forums);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 		return "/manager/bbs/forumManagerRight";
 	}
 	

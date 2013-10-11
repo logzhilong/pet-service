@@ -38,7 +38,7 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>圈子名字：</dt>
+					<dt>回复数量：</dt>
 					<dd>
 						<input type="text" name="replyCount" value="${forum.replyCount }" />
 					</dd>
@@ -49,6 +49,7 @@
 						<input type="text" name="logoImg" value="${forum.logoImg }" />
 					</dd>
 				</dl>
+			<!-- 			
 				<dl><dt>选择地区:</dt>
 					<select class="combox" name="fatherid" ref="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
 						<option value="all">--请选择国家--</option>
@@ -69,6 +70,7 @@
 						<input type="text" name="areaDesc" value="${forum.areaDesc }" />
 					</dd>
 				</dl>
+			 -->
 			</fieldset>
 		</div>
 
