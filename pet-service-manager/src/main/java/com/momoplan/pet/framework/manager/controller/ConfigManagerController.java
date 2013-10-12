@@ -1,6 +1,8 @@
 package com.momoplan.pet.framework.manager.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +37,7 @@ public class ConfigManagerController {
 		try {
 			Map<String, String> configMap=configManager.getPublicPropertys();
 		        List<Map<String,String>> configlist=new ArrayList<Map<String,String>>();
-		        Iterator it = configMap.keySet().iterator();
+		        Iterator<String> it = configMap.keySet().iterator();
 		        while (it.hasNext()) {
 		            String key = it.next().toString();
 		            String value=configMap.get(key);
@@ -44,6 +46,15 @@ public class ConfigManagerController {
 		        	map.put("value", value);
 		        	configlist.add(map);
 		        }
+		        //add by liangc : 给属性排序
+		        Collections.sort(configlist,new Comparator<Map<String,String>>(){
+					@Override
+					public int compare(Map<String, String> o1, Map<String, String> o2) {
+						String k1 = o1.get("key");
+						String k2 = o2.get("key");
+						return k1.compareTo(k2);
+					}
+		        });
 		        model.addAttribute("configlist", configlist);
 			return "/manager/configmanager/comManageList";
 		} catch (Exception e) {
