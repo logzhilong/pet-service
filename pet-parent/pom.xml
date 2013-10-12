@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<roo.version>1.2.2.RELEASE</roo.version>
 		<slf4j.version>1.6.4</slf4j.version>
+		<quartz.version>2.1.7</quartz.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
 		<spring-security.version>3.1.1.RELEASE</spring-security.version>
 		<maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
@@ -53,6 +54,13 @@
 	<!-- 默认不继承,想集成时，不用写版本和范围 -->
 	<dependencyManagement>
 	<dependencies>
+		
+		<dependency>
+		  <groupId>org.quartz-scheduler</groupId>
+		  <artifactId>quartz</artifactId>
+		  <version>${quartz.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
