@@ -317,6 +317,9 @@ public class ConfigWatcher extends Config implements Watcher {
 		//<uploadPath>/home/appusr/static</uploadPath>
 		app1.store.write("/config-manager/uploadPath", "/home/appusr/static");
 		
+		// sms.path = http://61.145.229.29:9002/MWGate/wmgw.asmx/MongateCsSpSendSmsNew
+		app1.store.write("/config-manager/sms.path", "http://61.145.229.29:9002/MWGate/wmgw.asmx/MongateCsSpSendSmsNew");
+		
 		logger.info("app1 publicConfig : "+Config.publicConfig);
 		logger.info("app1 privateConfig : "+Config.privateConfig);
 		logger.info("app1 privateConfigReg : "+Config.privateConfigReg);

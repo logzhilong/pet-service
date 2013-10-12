@@ -11,22 +11,28 @@ import org.springframework.core.io.Resource;
 import com.momoplan.pet.commons.zoo.config.ConfigWatcher;
 
 /**
- * Temporary holder for static lookup of beans through the app context
- * @author jhickey
- * 
+ * 当前应用的静态资源，包括 spring 对象池，以及 zoo watche 对象
+ * 属性从 BootstrapContextLoaderListener 中初始化
+ * @author liangc
  */
 public class Bootstrap {
+	
+	/**
+	 * 存放端口的文件名
+	 */
+	public final static String PORT_FILE = "port.txt";
 	/**
 	 * 容器监听的端口
 	 */
 	public static int http_port;
-	public static ConfigWatcher configWatcher = null;
+	
+	static ConfigWatcher configWatcher = null;//不用对外了，包装起来
 	
     static ApplicationContext appContext;
     private static Map<String, Object> testBeansByName = new HashMap<String, Object>();
     private static Map<Class<?>, Object> testBeansByType = new HashMap<Class<?>, Object>();
     private static String[] springConfigLocations ;  
-
+    
     @SuppressWarnings("unchecked")
     public static <T> T getBean(Class<T> beanClass) {
 
