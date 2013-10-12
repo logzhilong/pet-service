@@ -1,3 +1,5 @@
+create database pet_manager;
+
 --后台管理的用户角色DLL
 CREATE TABLE `mgr_user` (
   `id` varchar(64) NOT NULL COMMENT '主键',
