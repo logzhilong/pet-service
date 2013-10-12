@@ -2,6 +2,8 @@ package com.momoplan.pet.framework.manager.vo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +23,17 @@ public class WebUser extends MgrUser implements UserDetails{
 	 */
 	public Collection<MgrRole> roles = new ArrayList<MgrRole>();
 	
+	public Map<String,Boolean> roleMap = new HashMap<String,Boolean>();
+	
 	public Collection<MgrRole> getRoles() {
 		return roles;
 	}
 
 	public void setRoles(Collection<MgrRole> roles) {
 		this.roles = roles;
+		for(MgrRole role : roles){
+			roleMap.put(role.getCode(), Boolean.valueOf(role.getEnable()));
+		}
 	}
 
 	@Override
