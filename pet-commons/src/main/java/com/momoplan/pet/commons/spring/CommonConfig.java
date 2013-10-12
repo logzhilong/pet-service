@@ -1,6 +1,7 @@
 package com.momoplan.pet.commons.spring;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -37,11 +38,28 @@ public class CommonConfig {
 			e.printStackTrace();
 		}
 	}
-	public String getProperty(String key,String defaultValue){
+	
+	public String get(String key,String defaultValue){
     	return Bootstrap.configWatcher.getProperty(key, defaultValue);
     }
-	public String getProperty(String key){
+	public String get(String key){
     	return Bootstrap.configWatcher.getProperty(key, null);
     }
-
+	private String buildPath(String key){
+		return Bootstrap.configWatcher.getBasePath()+"/"+key;
+	}
+	public void deleteProperty(String key) throws Exception {
+		Bootstrap.configWatcher.getStore().delete(buildPath(key),Bootstrap.configWatcher);
+	}
+	public void setProperty(String key,String value) throws Exception {
+		Bootstrap.configWatcher.getStore().write(buildPath(key), value);
+	}
+	public String getProperty(String key) throws Exception {
+		return Bootstrap.configWatcher.getStore().read(buildPath(key), Bootstrap.configWatcher);
+	}
+	public Map<String, String> getPublicPropertys() throws Exception {
+		Thread.sleep(2000);//等2秒,不然也许得不到最新结果
+		return Bootstrap.configWatcher.publicConfig;
+	}
+	
 }
