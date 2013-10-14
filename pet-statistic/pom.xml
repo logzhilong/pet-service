@@ -24,8 +24,12 @@
 		  	<artifactId>pet-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+		 <groupId>org.quartz-scheduler</groupId>
+		 <artifactId>quartz</artifactId>
+		</dependency>
+		
 	</dependencies>
-
 	<build>
 		<finalName>pet-statistic</finalName>
 		<plugins>
@@ -59,7 +63,6 @@
 					<update>true</update>
 				</configuration>
 			</plugin>
-
 		</plugins>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>

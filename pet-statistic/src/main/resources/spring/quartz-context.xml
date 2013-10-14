@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-lazy-init="false" default-autowire="byName">
+	
+	<!-- 线程执行器配置，用于任务注册 -->
+	<bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	 <property name="corePoolSize" value="10" />
+	 <property name="maxPoolSize" value="100" />
+	 <property name="queueCapacity" value="500" />
+	</bean>
+	
+	<!-- 业务对象 -->
+	<bean id="productDailyLiving" class="com.momoplan.pet.framework.statistic.scheduler.ProductDailyLivingTask" />
+	<!-- 调度业务 -->
+	<bean id="jobProductDailyLiving" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	 <property name="targetObject" ref="productDailyLiving" />
+	 <property name="targetMethod" value="productDailyLiving" />
+	</bean>
+	
+	<bean id="cronTriggerProductDailyLiving" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	 <property name="jobDetail" ref="jobProductDailyLiving" />
+	 <property name="cronExpression" value="0 0 2 * * ?" />
+	</bean>
+	
+	<!-- 业务对象 -->
+	<bean id="productDailyRegistors" class="com.momoplan.pet.framework.statistic.scheduler.productDailyRegistorsTask" />
+	<!-- 调度业务 -->
+	<bean id="jobProductDailyRegistors" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	 <property name="targetObject" ref="productDailyRegistors" />
+	 <property name="targetMethod" value="productDailyRegistors" />
+	</bean>
+	
+	<bean id="cronTriggerProductDailyRegistors" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	 <property name="jobDetail" ref="jobProductDailyRegistors" />
+	 <property name="cronExpression" value="0 0 2 * * ?" />
+	</bean>
+	
+	<!-- 业务对象 -->
+	<bean id="updateDataUsers1" class="com.momoplan.pet.framework.statistic.scheduler.UpdateDataUsersTask" />
+	<!-- 调度业务 -->
+	<bean id="jobUpdateDataUsers1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	 <property name="targetObject" ref="updateDataUsers1" />
+	 <property name="targetMethod" value="updateDataUsers1" />
+	</bean>
+	
+	<bean id="cronTriggerUpdateDataUsers1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	 <property name="jobDetail" ref="jobUpdateDataUsers1" />
+	 <property name="cronExpression" value="0 0 3 * * ?" />
+	</bean>
+	
+	<!-- 设置调度 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	 <property name="triggers">
+	  <list>
+	   <ref bean="cronTriggerProductDailyLiving" />
+	   <ref bean="cronTriggerProductDailyRegistors" />
+	  </list>
+	 </property>
+<!-- 	 <property name="taskExecutor" ref="executor" /> -->
+	</bean>
+
+</beans>

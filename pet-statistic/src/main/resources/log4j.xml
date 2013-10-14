@@ -27,6 +27,16 @@
 			<param name="ConversionPattern" value="%d{dd-MM-yyyy HH:mm:ss,SSS z} %-5p [%t] [%c@%L] %m%n" />
 		</layout>
 	</appender>
+	<!--  Provides File Logging  -->
+	<appender name="FILEQUARTZ" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="/tmp/pet-statistic-quartz.log" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd-MM-yyyy HH:mm:ss,SSS z} %-5p [%t] [%c@%L] %m%n" />
+		</layout>
+	</appender>
 
 	<logger name="org.springframework">
 		<level value="warn" />
@@ -57,18 +67,26 @@
 		<level value="OFF" />
 	</logger>
 
+	
+
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
     </logger>
+    
+    <logger name="com.momoplan.pet.framework.statistic.scheduler">
+        <level value="DEBUG"/>
+        <appender-ref ref="FILEQUARTZ" />
+    </logger>
+    
 
 	<!-- ======================= -->
 	<!-- Setup the Root logger -->
 	<!-- ======================= -->
 
 	<root>
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="FILE" />
 		<appender-ref ref="CONSOLE" />
 	</root>
