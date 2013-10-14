@@ -158,7 +158,17 @@ $(function(){
 							<li>
 								<a>账户管理</a>
 								<ul>
-									<li><a>修改密码</a></li>
+									<li>
+										<a title="角色管理" href="${ctx }/manager/mgrrolemanage/rolemanageList.html" target="navTab" rel="commanage1101">角色管理</a>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<a>用户分组</a>
+								<ul>
+									<li>
+										<a title="用户管理" href="${ctx }/manager/mgrusermanager/usermanageList.html" target="navTab" rel="commanage2201">用户管理</a>
+									</li>
 								</ul>
 							</li>
 							<li>

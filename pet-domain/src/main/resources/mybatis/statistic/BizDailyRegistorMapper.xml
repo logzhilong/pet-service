@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.statistic.mapper.BizDailyRegistorMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="biz_date" property="bizDate" jdbcType="VARCHAR" />
+    <result column="channel" property="channel" jdbcType="VARCHAR" />
+    <result column="totally_user" property="totallyUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, biz_date, channel, totally_user
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistorCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from biz_daily_registor
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from biz_daily_registor
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from biz_daily_registor
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistorCriteria" >
+    delete from biz_daily_registor
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor" >
+    insert into biz_daily_registor (id, biz_date, channel, totally_user)
+    values (#{id}, #{bizDate}, #{channel}, #{totallyUser})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor" >
+    insert into biz_daily_registor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="bizDate != null" >
+        biz_date,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="totallyUser != null" >
+        totally_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="bizDate != null" >
+        #{bizDate},
+      </if>
+      <if test="channel != null" >
+        #{channel},
+      </if>
+      <if test="totallyUser != null" >
+        #{totallyUser},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistorCriteria" resultType="java.lang.Integer" >
+    select count(*) from biz_daily_registor
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update biz_daily_registor
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.bizDate != null" >
+        biz_date = #{record.bizDate},
+      </if>
+      <if test="record.channel != null" >
+        channel = #{record.channel},
+      </if>
+      <if test="record.totallyUser != null" >
+        totally_user = #{record.totallyUser},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update biz_daily_registor
+    set id = #{record.id},
+      biz_date = #{record.bizDate},
+      channel = #{record.channel},
+      totally_user = #{record.totallyUser}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor" >
+    update biz_daily_registor
+    <set >
+      <if test="bizDate != null" >
+        biz_date = #{bizDate},
+      </if>
+      <if test="channel != null" >
+        channel = #{channel},
+      </if>
+      <if test="totallyUser != null" >
+        totally_user = #{totallyUser},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor" >
+    update biz_daily_registor
+    set biz_date = #{bizDate},
+      channel = #{channel},
+      totally_user = #{totallyUser}
+    where id = #{id}
+  </update>
+</mapper>

@@ -30,5 +30,6 @@
 	<import resource="applicationContext-mybatis-states.xml"/>
 	<import resource="applicationContext-mybatis-statistic.xml"/>
 	<import resource="applicationContext-mybatis-manager.xml"/>
+	<import resource="applicationContext-mybatis-ssoserver.xml"/>
 	
 </beans>
