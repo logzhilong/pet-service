@@ -91,11 +91,65 @@ public class ForumController {
 		if(bbsClientRequest.getMethod().equals("getTodayNewNoteList")){
 			result = getTodayNewNoteList(bbsClientRequest);
 		}
+		if(bbsClientRequest.getMethod().equals("getForumList")){
+			result = getForumList(bbsClientRequest);
+		}
+		if(bbsClientRequest.getMethod().equals("getUserForumListbyUserid")){
+			result = getUserForumListbyUserid(bbsClientRequest);
+		}
+		if(bbsClientRequest.getMethod().equals("getSunForumListByForumid")){
+			result = getSunForumListByForumid(bbsClientRequest);
+		}
+		if(bbsClientRequest.getMethod().equals("getTodayNewNoteListByFid")){
+			result = getTodayNewNoteListByFid(bbsClientRequest);
+		}
+		if(bbsClientRequest.getMethod().equals("newNoteByFid")){
+			result = newNoteByFid(bbsClientRequest);
+		}
 		
 		logger.info("bodyoutput="+result.toString());
 		return result;
 	}
 	
+	
+	/** 某圈子最新帖子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object newNoteByFid(BbSClientRequest bbsClientRequest){
+		return noteService.newNoteByFid(bbsClientRequest);
+	}
+	/** 某圈子今日最新帖子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object getTodayNewNoteListByFid(BbSClientRequest bbsClientRequest){
+		return noteService.getTodayNewNoteListByFid(bbsClientRequest);
+	}
+	/** 根据父级圈子id获取子圈子集合
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object getSunForumListByForumid(BbSClientRequest bbsClientRequest){
+		return forumService.getSunForumListByForumid(bbsClientRequest);
+	}
+	/** 我关注的圈子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object getUserForumListbyUserid(BbSClientRequest bbsClientRequest){
+		return userForumRelService.getUserForumListbyUserid(bbsClientRequest);
+	}
+	
+	
+	/**
+	 * 获取所有父级圈子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object getForumList(BbSClientRequest bbsClientRequest){
+		return forumService.getForumList(bbsClientRequest);
+	}
 	
 	/**
 	 * 根据id举报帖子

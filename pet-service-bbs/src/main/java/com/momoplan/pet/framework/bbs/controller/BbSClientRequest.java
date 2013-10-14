@@ -23,6 +23,7 @@ public class BbSClientRequest extends ForumRequest{
 	public void setMethod(String method) {
 		this.method = method;
 	}
-
+	
+	
 	
 }

@@ -35,13 +35,6 @@ public interface NoteService {
 	 */
 	public Object delNote(BbSClientRequest bbsClientRequest);
 
-	/**
-	 * 获取最新帖子
-	 * 
-	 * @param bbsClientRequest
-	 * @return
-	 */
-	public Object newNote(BbSClientRequest bbsClientRequest);
 
 	/**
 	 * 根据id举报帖子
@@ -76,4 +69,23 @@ public interface NoteService {
 	public Object getTodayNewNoteList(BbSClientRequest bbsClientRequest);
 	
 	
+	/**
+	 * 获取最新帖子
+	 * 
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object newNote(BbSClientRequest bbsClientRequest);
+	/**
+	 *某圈子今日新增帖子列表
+	 * 
+	 */
+	public Object getTodayNewNoteListByFid(BbSClientRequest bbsClientRequest);
+	/**
+	 * 某圈子获取最新帖子
+	 * 
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object newNoteByFid(BbSClientRequest bbsClientRequest);
 }

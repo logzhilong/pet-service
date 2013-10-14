@@ -139,33 +139,6 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	
-	/**
-	 * 获取最新帖子
-	 * 
-	 * @param bbsClientRequest
-	 * @return
-	 */
-	@Override
-	public Object newNote(BbSClientRequest bbsClientRequest) {
-		try {
-			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
-			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
-			noteCriteria.setMysqlLength(pageSize);
-			noteCriteria.setOrderByClause("ct desc");
-			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-			criteria.andIsTopEqualTo(false);
-			criteria.andIsDelEqualTo(false);
-			criteria.andIsEuteEqualTo(false);
-			criteria.andTypeEqualTo("0");
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "newNoteFail";
-		}
-	}
 
 	
 	
@@ -278,4 +251,88 @@ public class NoteServiceImpl implements NoteService {
 		}
 	}
 	
+	/**
+	 * 获取最新帖子
+	 * 
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	@Override
+	public Object newNote(BbSClientRequest bbsClientRequest) {
+		try {
+			NoteCriteria noteCriteria = new NoteCriteria();
+			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteCriteria.setMysqlLength(pageSize);
+			noteCriteria.setOrderByClause("ct desc");
+			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+			criteria.andIsTopEqualTo(false);
+			criteria.andIsDelEqualTo(false);
+			criteria.andTypeEqualTo("0");
+			criteria.andIsEuteEqualTo(false);
+			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			return notelist;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "newNoteFail";
+		}
+	}
+	/**
+	 *今日新增帖子列表
+	 * 
+	 */
+	public Object getTodayNewNoteListByFid(BbSClientRequest bbsClientRequest){
+		try {
+			NoteCriteria noteCriteria=new NoteCriteria();
+			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
+			String fid=PetUtil.getParameter(bbsClientRequest, "forumPid");
+			criteria.andForumIdEqualTo(fid);
+			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteCriteria.setMysqlLength(pageSize);
+			noteCriteria.setOrderByClause("ct desc");
+			Calendar currentDate = new GregorianCalendar();   
+			currentDate.set(Calendar.HOUR_OF_DAY, 0);  
+			currentDate.set(Calendar.MINUTE, 0);  
+			currentDate.set(Calendar.SECOND, 0);  
+			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate.getTime().clone()));
+			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			return notelist;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "getTodayNewNoteListFail";
+		}
+	}
+	
+	/**
+	 * 获取最新帖子
+	 * 
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	@Override
+	public Object newNoteByFid(BbSClientRequest bbsClientRequest) {
+		try {
+			NoteCriteria noteCriteria = new NoteCriteria();
+			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			String fid=PetUtil.getParameter(bbsClientRequest, "forumPid");
+			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteCriteria.setMysqlLength(pageSize);
+			noteCriteria.setOrderByClause("ct desc");
+			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+			criteria.andForumIdEqualTo(fid);
+			criteria.andIsTopEqualTo(false);
+			criteria.andIsDelEqualTo(false);
+			criteria.andTypeEqualTo("0");
+			criteria.andIsEuteEqualTo(false);
+			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			return notelist;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "newNoteFail";
+		}
+	}
 }
