@@ -20,6 +20,7 @@
     <result column="city" property="city" jdbcType="VARCHAR" />
     <result column="if_fraudulent" property="ifFraudulent" jdbcType="VARCHAR" />
     <result column="device_token" property="deviceToken" jdbcType="VARCHAR" />
+    <result column="background_img" property="backgroundImg" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -81,7 +82,8 @@
   </sql>
   <sql id="Base_Column_List" >
     id, hobby, nickname, password, realname, signature, username, version, birth_date, 
-    gender, img, email, phone_number, birthdate, create_time, city, if_fraudulent, device_token
+    gender, img, email, phone_number, birthdate, create_time, city, if_fraudulent, device_token, 
+    background_img
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoUserCriteria" >
     select
@@ -119,10 +121,10 @@
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoUser" >
     insert into pet_user (id, hobby, nickname, password, realname, signature, username, 
       version, birth_date, gender, img, email, phone_number, birthdate, 
-      create_time, city, if_fraudulent, device_token)
+      create_time, city, if_fraudulent, device_token, background_img)
     values (#{id}, #{hobby}, #{nickname}, #{password}, #{realname}, #{signature}, #{username}, 
       #{version}, #{birthDate}, #{gender}, #{img}, #{email}, #{phoneNumber}, #{birthdate}, 
-      #{createTime}, #{city}, #{ifFraudulent}, #{deviceToken})
+      #{createTime}, #{city}, #{ifFraudulent}, #{deviceToken}, #{backgroundImg})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoUser" >
     insert into pet_user
@@ -181,6 +183,9 @@
       <if test="deviceToken != null" >
         device_token,
       </if>
+      <if test="backgroundImg != null" >
+        background_img,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -236,6 +241,9 @@
       </if>
       <if test="deviceToken != null" >
         #{deviceToken},
+      </if>
+      <if test="backgroundImg != null" >
+        #{backgroundImg},
       </if>
     </trim>
   </insert>
@@ -302,6 +310,9 @@
       <if test="record.deviceToken != null" >
         device_token = #{record.deviceToken},
       </if>
+      <if test="record.backgroundImg != null" >
+        background_img = #{record.backgroundImg},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -326,7 +337,8 @@
       create_time = #{record.createTime},
       city = #{record.city},
       if_fraudulent = #{record.ifFraudulent},
-      device_token = #{record.deviceToken}
+      device_token = #{record.deviceToken},
+      background_img = #{record.backgroundImg}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -385,6 +397,9 @@
       <if test="deviceToken != null" >
         device_token = #{deviceToken},
       </if>
+      <if test="backgroundImg != null" >
+        background_img = #{backgroundImg},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -406,7 +421,8 @@
       create_time = #{createTime},
       city = #{city},
       if_fraudulent = #{ifFraudulent},
-      device_token = #{deviceToken}
+      device_token = #{deviceToken},
+      background_img = #{backgroundImg}
     where id = #{id}
   </update>
 </mapper>

@@ -11,7 +11,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-14 17:18:26
+* @date 2013-10-14 21:09:18
 */
 public class SsoUserCriteria {
     protected String orderByClause;
@@ -1407,6 +1407,76 @@ public class SsoUserCriteria {
 
         public Criteria andDeviceTokenNotBetween(String value1, String value2) {
             addCriterion("device_token not between", value1, value2, "deviceToken");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgIsNull() {
+            addCriterion("background_img is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgIsNotNull() {
+            addCriterion("background_img is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgEqualTo(String value) {
+            addCriterion("background_img =", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgNotEqualTo(String value) {
+            addCriterion("background_img <>", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgGreaterThan(String value) {
+            addCriterion("background_img >", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgGreaterThanOrEqualTo(String value) {
+            addCriterion("background_img >=", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgLessThan(String value) {
+            addCriterion("background_img <", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgLessThanOrEqualTo(String value) {
+            addCriterion("background_img <=", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgLike(String value) {
+            addCriterion("background_img like", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgNotLike(String value) {
+            addCriterion("background_img not like", value, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgIn(List<String> values) {
+            addCriterion("background_img in", values, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgNotIn(List<String> values) {
+            addCriterion("background_img not in", values, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgBetween(String value1, String value2) {
+            addCriterion("background_img between", value1, value2, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andBackgroundImgNotBetween(String value1, String value2) {
+            addCriterion("background_img not between", value1, value2, "backgroundImg");
             return (Criteria) this;
         }
     }

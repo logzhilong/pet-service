@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-14 17:18:26
+* @date 2013-10-14 21:09:18
 */
 public class SsoUser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -55,6 +55,8 @@ public class SsoUser implements Serializable {
     private String ifFraudulent;
 
     private String deviceToken;
+
+    private String backgroundImg;
 
     public Long getId() {
         return id;
@@ -207,6 +209,14 @@ public class SsoUser implements Serializable {
         this.deviceToken = deviceToken;
     }
 
+    public String getBackgroundImg() {
+        return backgroundImg;
+    }
+
+    public void setBackgroundImg(String backgroundImg) {
+        this.backgroundImg = backgroundImg;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -236,7 +246,8 @@ public class SsoUser implements Serializable {
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCity() == null ? other.getCity() == null : this.getCity().equals(other.getCity()))
             && (this.getIfFraudulent() == null ? other.getIfFraudulent() == null : this.getIfFraudulent().equals(other.getIfFraudulent()))
-            && (this.getDeviceToken() == null ? other.getDeviceToken() == null : this.getDeviceToken().equals(other.getDeviceToken()));
+            && (this.getDeviceToken() == null ? other.getDeviceToken() == null : this.getDeviceToken().equals(other.getDeviceToken()))
+            && (this.getBackgroundImg() == null ? other.getBackgroundImg() == null : this.getBackgroundImg().equals(other.getBackgroundImg()));
     }
 
     @Override
@@ -261,6 +272,7 @@ public class SsoUser implements Serializable {
         result = prime * result + ((getCity() == null) ? 0 : getCity().hashCode());
         result = prime * result + ((getIfFraudulent() == null) ? 0 : getIfFraudulent().hashCode());
         result = prime * result + ((getDeviceToken() == null) ? 0 : getDeviceToken().hashCode());
+        result = prime * result + ((getBackgroundImg() == null) ? 0 : getBackgroundImg().hashCode());
         return result;
     }
 
