@@ -40,4 +40,6 @@ public class PetUser {
     private String city;
     
     private String deviceToken;
+    
+    private String backgroundImg;
 }
