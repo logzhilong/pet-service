@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.httpclient.HttpException;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -52,6 +51,7 @@ import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
 import com.momoplan.pet.commons.spring.Bootstrap;
+import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
@@ -107,6 +107,9 @@ public class ClientController {
 	UserFriendshipService userFriendshipService;
 	@Autowired
 	ChatServerService chatServerService;
+	
+	@Resource
+	CommonConfig commonConfig = null;
 //	@Autowired
 //	JmsService jmsService;
 
@@ -161,11 +164,16 @@ public class ClientController {
 	private Map<String,String> proxyJms(String body,String ret){
 		try {
 			JSONObject bodyJson = new JSONObject(body);
-			JSONObject retJson = new JSONObject();;
+			JSONObject retJson = new JSONObject();
+			String token = "";
 			if(!ret.contains("null")){
 				retJson =  new JSONObject(ret);
 			}
-			String token = bodyJson.get("token")!=null?bodyJson.get("token").toString():retJson.get("token").toString();
+			if(bodyJson.get("method").toString().contains("register")){
+				token = retJson.get("token").toString();
+			}else{
+				token = bodyJson.get("token")!=null?bodyJson.get("token").toString():retJson.get("token").toString();
+			}
 			if(!StringUtils.hasLength(token)){
 				return null;
 			}
@@ -176,11 +184,11 @@ public class ClientController {
 			JSONObject newbody = new JSONObject(body);
 			JSONObject newparams = newbody.getJSONObject("params");
 			JSONObject newret = new JSONObject();
-			newparams.accumulate("jsmuserid", String.valueOf(userid));
+			newparams.accumulate("jmsuserid", String.valueOf(userid));
 			newbody.remove("params");
 			newbody.accumulate("params", newparams);
 			newret.accumulate("method", bodyJson.get("method"));
-			newret.accumulate("params", new JSONObject().accumulate("jsmuserid", String.valueOf(userid)));
+			newret.accumulate("params", new JSONObject().accumulate("jmsuserid", String.valueOf(userid)));
 			Map<String,String> map = new HashMap<String, String>();
 			map.put("body", newbody.toString());
 			map.put("ret", newret.toString());
@@ -453,10 +461,33 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("reportContent")) {
 			return handleReportContent(clientRequest);
 		}
+		//添加背景图片
+		if (clientRequest.getMethod().equals("addBackgroundImg")) {
+			return handleAddBackgroundImg(clientRequest);
+		}
 		
 		return clientRequest;
 		
 		
+	}
+
+	private Object handleAddBackgroundImg(ClientRequest clientRequest) throws Exception {
+		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		if (null == authenticationToken) {
+			return "false";
+		}
+		PetUser petUser = PetUser.findPetUser(authenticationToken.getUserid());
+		if(null==petUser){
+			return "false";
+		}
+		try {
+			petUser.setBackgroundImg(PetUtil.getParameter(clientRequest, "backImg"));
+			petUser.merge();
+		} catch (Exception e) {
+			logger.debug("backgroundImg marged error");
+			throw e;
+		}
+		return "success";
 	}
 
 	private Object handleProxyRequest(ClientRequest clientRequest) {
@@ -464,7 +495,7 @@ public class ClientController {
 		if (null == authenticationToken) {
 			return "false";
 		}
-		return "needProxy:" + Bootstrap.configWatcher.getProperty(PetConstants.SERVICE_URI_PET_BBS, null);
+		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 
 //	private Object handleSendNote(ClientRequest clientRequest) {
@@ -655,10 +686,11 @@ public class ClientController {
 		xr.setPrams(replyComments.getUserStateid());
 		xr.setWords(replyComments.getCommentsMsg());
 		xr.setMsgTime(replyComments.getCommentTime());
-		xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+		
+		xr.setRegion("@"+commonConfig.get(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 		xr.setFromHeadImg(sendUser.getImg());
 		xr.setFromNickname(sendUser.getNickname());
-		xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
+		xr.setXmpppath(commonConfig.get(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 		try {
 			xr.SendMessage();
 		} catch (Exception e) {
@@ -675,10 +707,10 @@ public class ClientController {
 		xr2.setType("reply");
 		xr2.setPrams(replyComments.getUserStateid());
 		xr2.setWords(replyComments.getCommentsMsg());
-		xr2.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+		xr2.setRegion("@"+commonConfig.get(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 		xr2.setFromHeadImg(sendUser2.getImg());
 		xr2.setFromNickname(sendUser2.getNickname());
-		xr2.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
+		xr2.setXmpppath(commonConfig.get(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 		try {
 			xr2.SendMessage();
 		} catch (Exception e) {
@@ -733,10 +765,10 @@ public class ClientController {
 			xr.setPrams(reply.getUserStateid());
 			xr.setWords(reply.getMsg());
 			xr.setMsgTime(reply.getReplyTime());
-			xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+			xr.setRegion("@"+commonConfig.get(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
-			xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
+			xr.setXmpppath(commonConfig.get(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 			try {
 				xr.SendMessage();
 			} catch (HttpException e) {
@@ -882,8 +914,8 @@ public class ClientController {
 			}
 			xr.setFromHeadImg(sendUser.getImg());
 			xr.setFromNickname(sendUser.getNickname());
-			xr.setRegion("@"+Bootstrap.configWatcher.getProperty(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
-			xr.setXmpppath(Bootstrap.configWatcher.getProperty(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
+			xr.setRegion("@"+commonConfig.get(PetConstants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+			xr.setXmpppath(commonConfig.get(PetConstants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
 			xr.SendMessage();
 		} catch (Exception e) {
 			return userZan;
@@ -985,8 +1017,7 @@ public class ClientController {
 	 * @param userid
 	 * @return
 	 */
-	private StateView getStateView(UserStates userState, long userid,
-			String whos) {
+	private StateView getStateView(UserStates userState, long userid, String whos) {
 		if (null == userState) {
 			return null;
 		}
@@ -1003,6 +1034,13 @@ public class ClientController {
 		stateView.setTransmitMsg(userState.getTransmitMsg());
 		stateView.setTransmitUrl(userState.getTransmitUrl());
 		stateView.setStateType(userState.getStateType());
+		try {
+			stateView.setUserZan(UserZan.findUserZansByStateid(userState.getId(),userid).getResultList());
+		} catch (Exception e) {
+			logger.debug("get userZanList error");
+			stateView.setUserZan(null);
+		}
+		
 		if(userState.getStateType().contains("1")||userState.getStateType().contains("2")){
 			stateView.setCountZan(UserZan.countUserZans(userid, userState.getId(),
 					userState.getPetUserid(), -1, "0")+12);
@@ -1318,13 +1356,13 @@ public class ClientController {
 				verification.persist();
 			}
 			Map<String, String> map = new LinkedHashMap<String, String>();
-			map.put("userId",Bootstrap.configWatcher.getProperty(PetConstants.SMS_USERNAME, null));
-			map.put("password", Bootstrap.configWatcher.getProperty(PetConstants.SMS_PASSWORD, null));
+			map.put("userId",commonConfig.get(PetConstants.SMS_USERNAME, null));
+			map.put("password", commonConfig.get(PetConstants.SMS_PASSWORD, null));
 			map.put("pszMobis", phoneNum);
 			map.put("pszMsg", verificationCode);
 			map.put("iMobiCount", "1");
 			map.put("pszSubPort", "***********");
-			HttpRequestProxy.doPost(Bootstrap.configWatcher.getProperty(PetConstants.SMS_PATH, null),map, "utf-8");
+			HttpRequestProxy.doPost(commonConfig.get(PetConstants.SMS_PATH, null),map, "utf-8");
 			return "success";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2050,6 +2088,7 @@ public class ClientController {
 	private PetUserView getPetUserview(long userid) {
 		PetUser petUser = PetUser.findPetUser(userid);
 		PetUserView petUserView = new PetUserView();
+		petUserView.setBackgroundImg(petUser.getBackgroundImg());//背景图片
 		petUserView.setUserid(petUser.getId());
 		petUserView.setSignature(petUser.getSignature());
 		petUserView.setUsername(petUser.getUsername());

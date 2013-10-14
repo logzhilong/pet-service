@@ -1,6 +1,7 @@
 package com.momoplan.pet.domain;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -53,6 +54,14 @@ public class UserZan {
         EntityManager em = UserZan.entityManager();
         TypedQuery<UserZan> q = em.createQuery("SELECT o FROM UserZan AS o WHERE o.zanUserid = :zanUserid", UserZan.class);
         q.setParameter("zanUserid", zanUserid);
+        return q;
+    }
+    
+    public static Query findUserZansByStateid(long stateid,long userid) {
+        EntityManager em = UserZan.entityManager();
+        Query q = em.createNativeQuery(" select * from user_zan uz where uz.user_stateid = :stateid and func_if_friend(uz.zan_userid,:userid)>0 ", UserZan.class);
+        q.setParameter("stateid", stateid);
+        q.setParameter("userid", userid);
         return q;
     }
     
