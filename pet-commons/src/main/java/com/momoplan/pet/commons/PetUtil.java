@@ -1,20 +1,32 @@
 package com.momoplan.pet.commons;
 
-import java.sql.Date;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.momoplan.pet.commons.bean.ClientRequest;
 
 
 public class PetUtil {
 	
-	public static String getParameter(ForumRequest request, String key) {
+	private static Logger logger = LoggerFactory.getLogger(PetUtil.class);
+	
+	public static String getParameter(PetRequest request, String key) {
 		Object value = request.getParams().get(key);
 		return value==null?"": value.toString();
 	}
 	
-	public static long getParameterLong(ForumRequest request, String key) {
+	public static long getParameterLong(PetRequest request, String key) {
 		
 		try {
 			if(null==getParameter(request, key)||""==getParameter(request, key)){
@@ -27,7 +39,7 @@ public class PetUtil {
 		}
 	}
 	
-	public static Double getParameterDouble(ForumRequest request, String key) {
+	public static Double getParameterDouble(PetRequest request, String key) {
 		
 		try {
 			if(null==getParameter(request, key)||""==getParameter(request, key)){
@@ -40,7 +52,7 @@ public class PetUtil {
 		}
 	}
 	
-	public static Integer getParameterInteger(ForumRequest request, String key) {
+	public static Integer getParameterInteger(PetRequest request, String key) {
 		
 		try {
 			if(null==getParameter(request, key)||""==getParameter(request, key)){
@@ -53,7 +65,7 @@ public class PetUtil {
 		}
 	}
 	
-	public static Date getParameterDate(ForumRequest request, String key)
+	public static Date getParameterDate(PetRequest request, String key)
 			throws ParseException {
 		request.getParams().get(key);
 		Object value = request.getParams().get(key);
@@ -64,7 +76,7 @@ public class PetUtil {
 		}
 	}
 	
-	public static Timestamp getParameterTimestamp(ForumRequest request, String key)
+	public static Timestamp getParameterTimestamp(PetRequest request, String key)
 			throws ParseException {
 		request.getParams().get(key);
 		Object value = request.getParams().get(key);
@@ -80,8 +92,7 @@ public class PetUtil {
         return Long.valueOf(obj+"");
 	}
 	
-	public static double getDistance(double wd1, double jd1, double wd2,
-			double jd2) {
+	public static double getDistance(double wd1, double jd1, double wd2,double jd2) {
 		double x, y, out;
 		double PI = 3.14159265;
 		double R = 6.371229 * 1e6;
@@ -103,5 +114,33 @@ public class PetUtil {
 		}
 		return newImg.toString().substring(0,newImg.length()-1);
 	}
+	
+	//add by liangc >>>>>>>>>>>>>>
+	public static void writeStringToResponse(String str,HttpServletResponse response) throws Exception{
+		response.setCharacterEncoding("UTF-8");
+		try {
+			OutputStream os = response.getOutputStream();
+			IOUtils.write(str, os);
+		} catch (IOException e) {
+			logger.error("写入 response 失败 : ",e);
+			throw new Exception("写入 response 失败 : ",e);
+		}
+	}
+	
+	public static void writeStringToResponse(Object obj,HttpServletResponse response) throws Exception{
+		writeStringToResponse(obj.toString(),response);
+	}
+	
+	public static ClientRequest reviceClientRequest(String body) throws Exception{
+		try{
+			ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
+			return clientRequest;
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("ClientRequest 参数反序列化异常",e);
+			throw new Exception("ClientRequest 参数反序列化异常",e);
+		}
+	}	
+	//add by liangc <<<<<<<<<<<<<<
 	
 }
