@@ -120,4 +120,12 @@ privileged aspect PetUser_Roo_JavaBean {
         this.deviceToken = deviceToken;
     }
     
+    public String PetUser.getBackgroundImg() {
+        return this.backgroundImg;
+    }
+    
+    public void PetUser.setBackgroundImg(String backgroundImg) {
+        this.backgroundImg = backgroundImg;
+    }
+    
 }
