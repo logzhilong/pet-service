@@ -316,8 +316,9 @@ public class StatisticServiceImpl implements StatisticService {
 	public void UpdateDataUsers1() throws Exception {
 		JdbcTemplate updateDataUsers1 = new JdbcTemplate(statisticDataSource);
 		StringBuffer sql = new StringBuffer();
-		sql.append("delete from data_users_1 where (to_days(du.connect_time) between to_days(now())-2 and to_days(now())-2) or （to_days(du.connect_time) between to_days(now())-2 and to_days(now())-2）");
+		sql.append(" delete from data_users_1 where (to_days(connect_time)<to_days(now())-2) or (to_days(create_time)<to_days(now())-2) ");
 		updateDataUsers1.execute(sql.toString());
+		logger.info("updateDataUsers1 finished.");
 	}
 
 }

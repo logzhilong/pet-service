@@ -19,7 +19,7 @@ public class productDailyRegistorsTask {
     public void productDailyRegistors(){
     	logger.info("this is productDailyRegistors...");
     	try {
-			statisticService.productDailyRegistorsTask();
+			statisticService.UpdateDataUsers1();
 		} catch (Exception e) {
 			logger.debug(" producting DailyRegistorsTask error ");
 			e.printStackTrace();
