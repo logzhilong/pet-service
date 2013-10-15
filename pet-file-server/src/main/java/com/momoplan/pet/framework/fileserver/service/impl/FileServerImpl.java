@@ -82,12 +82,17 @@ public class FileServerImpl implements FileServer{
 		logger.debug("删除索引 : "+id);
 	}
 
-	private String getRealPath(String id){
+	private String getRealPath(String id) throws Exception {
 		FileIndex index = fileIndexMapper.selectByPrimaryKey(id);
 		String basePath = commonConfig.get("uploadPath","/home/appusr/static");
 		String filePath = index.getFilePath();
 		String realPath = basePath+filePath;
-		return realPath;
+		if(new File(realPath).exists())
+			return realPath;
+		else if(new File(basePath+"/"+id).exists())
+			return basePath+"/"+id;
+		else
+			throw new Exception("文件不存在 "+id);
 	}
 
 	@Override
