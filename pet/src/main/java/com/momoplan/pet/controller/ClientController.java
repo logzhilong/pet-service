@@ -1997,8 +1997,7 @@ public class ClientController {
 		authenticationToken.persist();
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setAuthenticationToken(authenticationToken);
-		loginResponse.setChatserver(chatServerService
-				.getAvailableauthenticationTokenServer(authenticationToken.getUserid()));
+		loginResponse.setChatserver(chatServerService.getAvailableServer(authenticationToken.getUserid()));
 
 		return loginResponse;
 	}
