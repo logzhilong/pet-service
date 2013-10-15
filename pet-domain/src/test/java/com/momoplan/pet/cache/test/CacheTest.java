@@ -24,7 +24,7 @@ public class CacheTest extends AbstractTest {
 		ShardedJedis jedis = redisPool.getConn();
 		jedis.setex("fuck",30,"fuck you fuck you");
 		redisPool.closeConn(jedis);
-		System.out.println("OK...");
+		System.out.println("OK..."+jedis.get("fuck"));
 	}
 	
 	//@Test
