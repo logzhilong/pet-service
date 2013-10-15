@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
@@ -50,17 +51,12 @@ public class PwdInterceptor implements HandlerInterceptor {
 		logger.debug("preHandle....."+request.getContextPath());
 		String token = request.getParameter("token");
 		if(isWrongPwd(token)){
-			response.setCharacterEncoding("UTF-8");
-			JsonObject json = new JsonObject();
-			json.addProperty("returnCode", "ERROR");
-			json.addProperty("returnValue", "Wrong password");
-			json.addProperty("returnError", "Wrong password");
-			response.getWriter().write(json.toString());
-			return false;
+			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
 		}else{
 			logger.debug(token);
 			return true;
 		}
+		return false;
 	}
 
 	@Override
