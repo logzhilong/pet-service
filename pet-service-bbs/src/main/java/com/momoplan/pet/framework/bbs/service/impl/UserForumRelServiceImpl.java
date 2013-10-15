@@ -11,11 +11,11 @@ import vo.BbsNoteCount;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
-import com.momoplan.pet.framework.bbs.controller.BbSClientRequest;
 import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
@@ -33,11 +33,11 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object quitForum(BbSClientRequest bbsClientRequest){
+	public Object quitForum(ClientRequest ClientRequest){
 		try {
 			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
 			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
-			String forumid=PetUtil.getParameter(bbsClientRequest, "forumid");
+			String forumid=PetUtil.getParameter(ClientRequest, "forumid");
 			criteria.andIdEqualTo(forumid);
 			userForumRelMapper.deleteByExample(userForumRelCriteria);
 			return "quitForumSuccss";
@@ -52,12 +52,12 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object attentionForum(BbSClientRequest bbsClientRequest){
+	public Object attentionForum(ClientRequest ClientRequest){
 		try {
 			UserForumRel userForumRel=new UserForumRel();
 			userForumRel.setId(IDCreater.uuid());
-			userForumRel.setUserId(PetUtil.getParameter(bbsClientRequest, "userId"));
-			userForumRel.setForumId(PetUtil.getParameter(bbsClientRequest, "forumid"));
+			userForumRel.setUserId(PetUtil.getParameter(ClientRequest, "userId"));
+			userForumRel.setForumId(PetUtil.getParameter(ClientRequest, "forumid"));
 			userForumRelMapper.insertSelective(userForumRel);
 			return "attentionForumSuccess";
 		} catch (Exception e) {
@@ -68,20 +68,20 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	
 	/**
 	 *我关注的圈子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getUserForumListbyUserid(BbSClientRequest bbsClientRequest){
+	public Object getUserForumListbyUserid(ClientRequest ClientRequest){
 		try {
 			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
 			
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			userForumRelCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			userForumRelCriteria.setMysqlLength(pageSize);
 			
 			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
-			criteria.andUserIdEqualTo(PetUtil.getParameter(bbsClientRequest,"userId"));
+			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest,"userId"));
 			List<UserForumRel> userForumRels=userForumRelMapper.selectByExample(userForumRelCriteria);
 			List<Forum> forums=new ArrayList<Forum>();
 			for(UserForumRel forumRel:userForumRels){
@@ -116,7 +116,7 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	}
 	/**
 	 * 根据用户id和圈子id查看是否关注该圈子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	public int isAttentionForum(String uid,String fid){

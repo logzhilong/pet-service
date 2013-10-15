@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import vo.BbsNoteCount;
 
 import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
-import com.momoplan.pet.framework.bbs.controller.BbSClientRequest;
 import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
@@ -31,16 +31,16 @@ public class ForumServiceImpl implements ForumService {
 	private static Logger logger = LoggerFactory.getLogger(ForumServiceImpl.class);
 	/**
 	 * 获取所有父级圈子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getForumList(BbSClientRequest bbsClientRequest){
+	public Object getForumList(ClientRequest ClientRequest){
 		try {
 				ForumCriteria  forumCriteria=new ForumCriteria();
 				ForumCriteria.Criteria criteria=forumCriteria.createCriteria();
 				criteria.andPidIsNull();
-				int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-				int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+				int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+				int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 				forumCriteria.setMysqlOffset((pageNo-1)*pageSize);
 				forumCriteria.setMysqlLength(pageSize);
 				forumCriteria.setOrderByClause("ct desc");
@@ -55,19 +55,19 @@ public class ForumServiceImpl implements ForumService {
 	
 	/**
 	 * 根据父级id获取子集圈子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getSunForumListByForumid(BbSClientRequest bbsClientRequest){
+	public Object getSunForumListByForumid(ClientRequest ClientRequest){
 		try {
 			ForumCriteria forumCriteria=new ForumCriteria();
 			ForumCriteria.Criteria criteria=forumCriteria.createCriteria();
-			criteria.andPidEqualTo(PetUtil.getParameter(bbsClientRequest, "forumPid"));
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			criteria.andPidEqualTo(PetUtil.getParameter(ClientRequest, "forumPid"));
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			forumCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			forumCriteria.setMysqlLength(pageSize);
-			String userid=PetUtil.getParameter(bbsClientRequest, "userId");
+			String userid=PetUtil.getParameter(ClientRequest, "userId");
 			
 			List<Forum> forums=forumMapper.selectByExample(forumCriteria);
 			List<BbsNoteCount> noteCounts=new ArrayList<BbsNoteCount>();
@@ -99,7 +99,7 @@ public class ForumServiceImpl implements ForumService {
 	
 	/**
 	 * 根据id获取圈子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	public Forum getForumByid(Forum forum){
