@@ -1,12 +1,14 @@
 package com.momoplan.pet.commons.bean;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import com.google.gson.Gson;
 
+@JsonIgnoreProperties(ignoreUnknown=true) 
 public class Success {
 	
 	private boolean success = true;
 	
-	private Object entity = new Object();
+	private Object entity = null;
 
 	public Success(boolean success, Object entity) {
 		super();

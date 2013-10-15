@@ -303,7 +303,8 @@ public class ConfigWatcher extends Config implements Watcher {
 		 * uri.pet_bbs = http://192.168.2.115:8080/pet-service-bbs/forum/request.html?
 		 * service.uri.pet_bbs
 		 */
-		app1.store.write("/config-manager/service.uri.pet_bbs", "http://192.168.2.115:8080/pet-service-bbs/forum/request.html?");
+		app1.store.write("/config-manager/service.uri.pet_bbs", "http://123.178.27.74/pet-service-bbs/request");
+		app1.store.write("/config-manager/service.uri.pet_sso", "http://123.178.27.74/pet-sso-server/request");
 		
 		/**
 		 * xmppserver.properties
