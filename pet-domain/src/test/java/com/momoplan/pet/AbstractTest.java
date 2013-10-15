@@ -1,4 +1,4 @@
-package com.momoplan.pet.domain.test;
+package com.momoplan.pet;
 
 import java.util.UUID;
 

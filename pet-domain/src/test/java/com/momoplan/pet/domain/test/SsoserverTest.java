@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 
+import com.momoplan.pet.AbstractTest;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoAuthenticationTokenMapper;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationTokenCriteria;
