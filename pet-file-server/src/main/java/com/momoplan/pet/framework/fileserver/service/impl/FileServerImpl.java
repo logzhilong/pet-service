@@ -98,6 +98,7 @@ public class FileServerImpl implements FileServer{
 	@Override
 	public InputStream getFileAsStream(String id) throws Exception {
 		String realPath = getRealPath(id);
+		logger.debug("realPath : "+realPath);
 		InputStream is = new FileInputStream(realPath);
 		return is;
 	}
