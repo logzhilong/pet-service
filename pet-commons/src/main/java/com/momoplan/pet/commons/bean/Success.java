@@ -10,6 +10,10 @@ public class Success {
 	
 	private Object entity = null;
 
+	public Success() {
+		super();
+	}
+
 	public Success(boolean success, Object entity) {
 		super();
 		this.success = success;
