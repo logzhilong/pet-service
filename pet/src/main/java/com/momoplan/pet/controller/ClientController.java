@@ -1960,7 +1960,7 @@ public class ClientController {
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setAuthenticationToken(authenticationToken);
 		loginResponse.setChatserver(chatServerService
-				.getAvailableServer(authenticationToken.getUserid()));
+				.getAvailableauthenticationTokenServer(authenticationToken.getUserid()));
 
 		return loginResponse;
 	}
