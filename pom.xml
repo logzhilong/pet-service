@@ -16,6 +16,7 @@
 		<module>pet-statistic</module>
 		<module>pet-wordfilter</module>
 		<module>pet-file-server</module>
+		<module>pet-sso-server</module>
 		<module>pet-service-bbs</module>
 		<module>pet-service-manager</module>
 	</modules>
