@@ -25,8 +25,15 @@ public class PetUserView implements Comparable<PetUserView>{
 	private String ifIZaned;
 	private String city;
 	private String aliasName;
+	private String backgroundImg;
 	
 	
+	public String getBackgroundImg() {
+		return backgroundImg;
+	}
+	public void setBackgroundImg(String backgroundImg) {
+		this.backgroundImg = backgroundImg;
+	}
 	public String getAliasName() {
 		return aliasName;
 	}

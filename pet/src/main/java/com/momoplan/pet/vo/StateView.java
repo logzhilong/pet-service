@@ -3,6 +3,8 @@ package com.momoplan.pet.vo;
 import java.util.Date;
 import java.util.List;
 
+import com.momoplan.pet.domain.UserZan;
+
 public class StateView implements Comparable<StateView>{
 	private long id;
 	private String transmitMsg;
@@ -16,11 +18,18 @@ public class StateView implements Comparable<StateView>{
 	private int pageIndex;
 	private List<ReplyView> replyViews;
 	private long countZan;
+	private List<UserZan> userZan;
 	private String ifIZaned;
 	private long countReplys;
 	private String stateType;
 	
 	
+	public List<UserZan> getUserZan() {
+		return userZan;
+	}
+	public void setUserZan(List<UserZan> userZan) {
+		this.userZan = userZan;
+	}
 	public String getStateType() {
 		return stateType;
 	}

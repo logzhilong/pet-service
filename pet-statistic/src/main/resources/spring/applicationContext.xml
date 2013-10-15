@@ -38,5 +38,6 @@
 	<import resource="classpath:spring/applicationContext-mybatis-statistic.xml"/>
 
 	<import resource="jms-context.xml"/>
+	<import resource="quartz-context.xml"/>
 
 </beans>

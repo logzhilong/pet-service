@@ -1,20 +1,32 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import vo.BbsNoteCount;
+
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
+import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.framework.bbs.controller.BbSClientRequest;
+import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
+import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
 @Service
 public class UserForumRelServiceImpl implements UserForumRelService {
 	@Resource
 	private UserForumRelMapper userForumRelMapper=null;
+	@Resource
+	private ForumService forumService=null;
+	@Resource
+	BbsNoteCountService bbsNoteCountService=null;
 	/**
 	 * 
 	 * 退出圈子
@@ -54,4 +66,66 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 		}
 	}
 	
+	/**
+	 *我关注的圈子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public Object getUserForumListbyUserid(BbSClientRequest bbsClientRequest){
+		try {
+			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
+			
+			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			userForumRelCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			userForumRelCriteria.setMysqlLength(pageSize);
+			
+			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
+			criteria.andUserIdEqualTo(PetUtil.getParameter(bbsClientRequest,"userId"));
+			List<UserForumRel> userForumRels=userForumRelMapper.selectByExample(userForumRelCriteria);
+			List<Forum> forums=new ArrayList<Forum>();
+			for(UserForumRel forumRel:userForumRels){
+				Forum forum=new Forum();
+				forum.setId(forumRel.getForumId());
+				Forum forum2=forumService.getForumByid(forum);
+				forums.add(forum2);
+			}
+			
+			
+			List<BbsNoteCount> noteCounts=new ArrayList<BbsNoteCount>();
+			for(Forum forum:forums){
+				BbsNoteCount noteCount=new BbsNoteCount();
+				noteCount.setId(forum.getId());
+				String NewNoteNum=bbsNoteCountService.getNewNoteNumByForumid(forum.getId());
+				String NoteNum=bbsNoteCountService.getNoteNumByForumid(forum.getId());
+				String NoteRelNum=bbsNoteCountService.getNoteRelNumByForumid(forum.getId());
+				noteCount.setNoteCount(NoteNum);
+				noteCount.setNoteRelCount(NoteRelNum);
+				noteCount.setTodayNewNoteCount(NewNoteNum);
+				noteCount.setName(forum.getName());
+				noteCount.setImgId(forum.getLogoImg());
+				noteCounts.add(noteCount);
+			}
+			
+			return noteCounts;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "getUserForumListbyUseridFail";
+		}
+		
+	}
+	/**
+	 * 根据用户id和圈子id查看是否关注该圈子
+	 * @param bbsClientRequest
+	 * @return
+	 */
+	public int isAttentionForum(String uid,String fid){
+		UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
+		UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
+		criteria.andUserIdEqualTo(uid);
+		criteria.andForumIdEqualTo(fid);
+		List<UserForumRel> forumRels=userForumRelMapper.selectByExample(userForumRelCriteria);
+		
+		return forumRels.size();
+	}
 }
