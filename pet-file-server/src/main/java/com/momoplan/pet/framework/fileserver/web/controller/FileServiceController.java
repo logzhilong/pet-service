@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.JsonObject;
+import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.fileserver.service.FileServer;
 import com.momoplan.pet.framework.fileserver.vo.FileBean;
@@ -36,12 +37,11 @@ public class FileServiceController {
 	 * 获取集合配置信息
 	 * @param model
 	 * @return
-	 * @throws IOException
+	 * @throws Exception 
 	 */
 	@RequestMapping("/put")
-	public void putFile(FileBean form, MultipartFile file, HttpServletRequest request,HttpServletResponse response) throws IOException{
-		response.setCharacterEncoding("UTF-8");
-		JsonObject json = new JsonObject();
+	public void putFile(FileBean form, MultipartFile file, HttpServletRequest request,HttpServletResponse response) throws Exception{
+		String rtn = null;
 		try{
 			String realPath = commonConfig.get("uploadPath","/home/appusr/static");
 	        logger.debug("========================================"+realPath);
@@ -52,16 +52,14 @@ public class FileServiceController {
 	        logger.debug("========================================"+realPath);
 	        form.setFileStream(file.getInputStream());
 	        String fileId = fileServer.put(form);
-	        json.addProperty("returnCode", "OK");
-	        json.addProperty("returnValue", fileId);
+	        rtn = new Success(true,fileId).toString();
 		}catch(Exception e){
 			logger.error("上传异常",e);
-			json.addProperty("returnCode", "ERROR");
-			json.addProperty("returnValue", "上传失败");
-			json.addProperty("returnError", e.getMessage());
+	        rtn = new Success(false,e.getMessage()).toString();
+		}finally{
+			logger.debug(rtn);
+			PetUtil.writeStringToResponse(rtn, response);
 		}
-		logger.debug(json.toString());
-        response.getWriter().write(json.toString());
 	}
 	@RequestMapping("/get/{fileId}")
 	public void getFile(@PathVariable("fileId") String fileId,HttpServletResponse response){
@@ -77,7 +75,7 @@ public class FileServiceController {
 			}
 			os.flush();
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("get file",e);
 		}finally{
 			try{
 				is.close();
@@ -87,20 +85,16 @@ public class FileServiceController {
 	@RequestMapping("/delete/{fileId}")
 	public void deleteFile(@PathVariable("fileId") String fileId,HttpServletResponse response) throws IOException{
 		logger.debug("getFile : fileId="+fileId);
-		response.setCharacterEncoding("UTF-8");
-		JsonObject json = new JsonObject();
+		String rtn = null;
 		try{
 			fileServer.delete(fileId);
-			json.addProperty("returnCode", "OK");
-			json.addProperty("returnValue", "删除成功");
+			rtn = new Success(true,fileId).toString();
 		}catch(Exception e){
 			logger.error("删除异常",e);
-			json.addProperty("returnCode", "ERROR");
-			json.addProperty("returnValue", "删除失败");
-			json.addProperty("returnError", e.getMessage());
+			rtn = new Success(false,fileId).toString();
 		}
-		logger.debug(json.toString());
-        response.getWriter().write(json.toString());
+		logger.debug(rtn);
+        response.getWriter().write(rtn);
 	}
 	
 }

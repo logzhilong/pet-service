@@ -50,7 +50,8 @@ public class SsoServiceImpl implements SsoService {
 		if(getSsoUserByName(user.getUsername())!=null){
 			throw new Exception("用户名 "+user.getUsername()+" 已存在");
 		}
-		ssoUserMapper.insertSelective(user);
+		ssoUserMapper.insert(user);
+		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
 		SsoAuthenticationToken token = createToken(user.getId());
 		logger.debug("token : "+gson.toJson(token));

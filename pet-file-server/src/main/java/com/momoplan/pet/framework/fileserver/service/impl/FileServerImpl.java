@@ -36,7 +36,7 @@ public class FileServerImpl implements FileServer{
 
 	private String buildFilePath(String id){
 		String basePath = commonConfig.get("uploadPath","/home/appusr/static");
-		SimpleDateFormat format = new SimpleDateFormat("yyyymmdd");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String today = format.format(new Date());
 		File realPath = new File(basePath+"/"+today);
 		if(!(realPath.exists()&&realPath.isDirectory())){
@@ -82,17 +82,25 @@ public class FileServerImpl implements FileServer{
 		logger.debug("删除索引 : "+id);
 	}
 
-	private String getRealPath(String id){
-		FileIndex index = fileIndexMapper.selectByPrimaryKey(id);
+	private String getRealPath(String id) throws Exception {
 		String basePath = commonConfig.get("uploadPath","/home/appusr/static");
-		String filePath = index.getFilePath();
-		String realPath = basePath+filePath;
-		return realPath;
+		if(new File(basePath+"/"+id).exists())
+			return basePath+"/"+id;
+		else {
+			FileIndex index = fileIndexMapper.selectByPrimaryKey(id);
+			String filePath = index.getFilePath();
+			String realPath = basePath+filePath;
+			if(new File(realPath).exists())
+				return realPath;
+			else
+				throw new Exception("文件不存在 "+id);
+		}
 	}
 
 	@Override
 	public InputStream getFileAsStream(String id) throws Exception {
 		String realPath = getRealPath(id);
+		logger.debug("realPath : "+realPath);
 		InputStream is = new FileInputStream(realPath);
 		return is;
 	}

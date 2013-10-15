@@ -1,50 +1,62 @@
 package com.momoplan.pet.framework.fileserver.web.interceptor;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.spring.CommonConfig;
 
 public class PwdInterceptor implements HandlerInterceptor {
 	
 	private Logger logger = LoggerFactory.getLogger(PwdInterceptor.class);
-	private Md5PasswordEncoder encode = new Md5PasswordEncoder();
-
-	private boolean isWrongPwd(String _pwd){
-		String pwd = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		pwd = encode.encodePassword(pwd, null);
-		logger.debug("real pwd is\t: "+pwd);
-		logger.debug("input pwd is\t: "+_pwd);
-		if(pwd.equalsIgnoreCase(_pwd)){
+	
+	@Resource
+	private CommonConfig commonConfig = null;
+	
+	private boolean isWrongPwd(String token){
+		String sso_server = commonConfig.get("service.uri.pet_sso");
+		try {
+			ClientRequest request = new ClientRequest();
+			request.setMethod("token");
+			request.setChannel("1");
+			HashMap<String,Object> params = new HashMap<String,Object>();
+			params.put("token", token);
+			request.setParams(params);
+			String json = PostRequest.postText(sso_server, "body",new Gson().toJson(request));
+			logger.debug("token : "+json);
+			Success success = new Gson().fromJson(json, Success.class);
+			if(success.isSuccess())
+				return true;
 			return false;
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
 		}
-		return true;
+		return false;
 	}
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		logger.debug("preHandle....."+request.getContextPath());
-		String pwd = request.getParameter("pwd");
-		if(isWrongPwd(pwd)){
-			response.setCharacterEncoding("UTF-8");
-			JsonObject json = new JsonObject();
-			json.addProperty("returnCode", "ERROR");
-			json.addProperty("returnValue", "Wrong password");
-			json.addProperty("returnError", "Wrong password");
-			response.getWriter().write(json.toString());
-			return false;
+		String token = request.getParameter("token");
+		if(isWrongPwd(token)){
+			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
 		}else{
-			logger.debug(pwd);
+			logger.debug(token);
 			return true;
 		}
+		return false;
 	}
 
 	@Override
