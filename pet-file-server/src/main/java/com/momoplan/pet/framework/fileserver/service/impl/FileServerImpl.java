@@ -36,7 +36,7 @@ public class FileServerImpl implements FileServer{
 
 	private String buildFilePath(String id){
 		String basePath = commonConfig.get("uploadPath","/home/appusr/static");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy/mm/dd");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String today = format.format(new Date());
 		File realPath = new File(basePath+"/"+today);
 		if(!(realPath.exists()&&realPath.isDirectory())){
