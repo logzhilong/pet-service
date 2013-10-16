@@ -1,34 +1,43 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import vo.BbsNoteCount;
-import vo.ForumsNote;
-
+import com.google.gson.Gson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
+import com.momoplan.pet.framework.bbs.vo.BbsNoteCount;
+import com.momoplan.pet.framework.bbs.vo.ForumNode;
+import com.momoplan.pet.framework.bbs.vo.ForumsNote;
 @Service
 public class ForumServiceImpl implements ForumService {
-
 	@Resource
-	ForumMapper forumMapper=null;
+	private UserForumRelMapper userForumRelMapper=null;
 	@Resource
-	BbsNoteCountService bbsNoteCountService=null;
+	private ForumMapper forumMapper=null;
 	@Resource
-	UserForumRelService userForumRelService=null;
+	private BbsNoteCountService bbsNoteCountService=null;
+	@Resource
+	private UserForumRelService userForumRelService=null;
+	
 	private static Logger logger = LoggerFactory.getLogger(ForumServiceImpl.class);
 	/**
 	 * 获取所有父级圈子
@@ -117,7 +126,92 @@ public class ForumServiceImpl implements ForumService {
 		}
 	}
 	
+	public ForumNode buildTree(List<Forum> rootList,Map<String,List<Forum>> pMap,Map<String,String> userForumRelMap){
+		ForumNode tree = new ForumNode();
+		List<ForumNode> child = new ArrayList<ForumNode>();
+		if(rootList!=null&&rootList.size()>0)
+			for(Forum pnode : rootList){
+				String pid = pnode.getId();//树根
+				tree.setId(pnode.getId());
+				tree.setName(pnode.getName());
+				List<Forum> nList = pMap.get(pid);
+				if(nList!=null&&nList.size()>0){
+					List<ForumNode> no = new ArrayList<ForumNode>();
+					for(Forum n : nList){
+						ForumNode f = new ForumNode();
+						f.setId(n.getId());
+						f.setName(n.getName());//名字
+						/**
+						 * 是否关注：在字典里找不到则没有关注
+						 */
+						String userId = userForumRelMap.get(n.getId());
+						if(StringUtils.isEmpty(userId)){
+							f.setAtte(false);//未关注
+						}else{
+							f.setAtte(true);//关注
+						}
+						f.setLogoImg(n.getLogoImg());//图标
+						
+						//TODO : 叶子节点 当天总数
+						//TODO : 叶子节点 总帖子数
+						//TODO : 叶子节点 总回复数
+						//在缓存里取
+						
+						no.add(f);
+					}
+					tree.setChild(no);
+				}
+				
+				pMap.remove(pid);
+				child.add(buildTree(nList,pMap,userForumRelMap));
+			}
+		return tree;
+	}
 	
+	public List<ForumNode> getAllForumAsTree(String userId){
+		ForumCriteria  forumCriteria=new ForumCriteria();
+		//所有的圈子
+		List<Forum> forumlist=forumMapper.selectByExample(forumCriteria);
+		//我关注的圈子
+		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
+		userForumRelCriteria.createCriteria().andUserIdEqualTo(userId);
+		List<UserForumRel> userForumRelList = userForumRelMapper.selectByExample(userForumRelCriteria);
+		//转换成 hash 结构，当作字典用
+		Map<String,String> userForumRelMap = new HashMap<String,String>();
+		if(userForumRelList!=null&&userForumRelList.size()>0)
+		for(UserForumRel userForumRel : userForumRelList){
+			userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
+		}
+		
+		//1、获取所有树根节点
+		//else
+		//2、以父节点为索引，分组所有节点
+		List<Forum> rootList = new ArrayList<Forum>();
+		Map<String,List<Forum>> pMap = new HashMap<String,List<Forum>>();
+		for(Forum forum : forumlist){//构建基础数据结构
+			//1
+			if(StringUtils.isEmpty(forum.getPid())){
+				rootList.add(forum);
+			}else{
+				//2
+				List<Forum> group = pMap.get(forum.getPid());
+				if(group==null)
+					group = new ArrayList<Forum>();
+				group.add(forum);
+				pMap.put(forum.getPid(), group);
+			}
+		}
+		System.err.println("ROOT: "+new Gson().toJson(rootList));
+		System.err.println("GROUP : "+new Gson().toJson(pMap));
+		List<ForumNode> treeList = new ArrayList<ForumNode>();
+		for(Forum root : rootList){
+			List<Forum> r = new ArrayList<Forum>();
+			r.add(root);
+			ForumNode tree = buildTree(r,pMap,userForumRelMap);
+			treeList.add(tree);
+		}
+		return treeList;
+	}
 
 	/**
 	 * 获取所有圈子(父级和子集)

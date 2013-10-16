@@ -7,8 +7,6 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import vo.BbsNoteCount;
-
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -19,6 +17,7 @@ import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
+import com.momoplan.pet.framework.bbs.vo.BbsNoteCount;
 @Service
 public class UserForumRelServiceImpl implements UserForumRelService {
 	@Resource

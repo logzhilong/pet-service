@@ -1,7 +1,10 @@
 package com.momoplan.pet.framework.bbs.service;
 
+import java.util.List;
+
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
+import com.momoplan.pet.framework.bbs.vo.ForumNode;
 
 
 
@@ -37,7 +40,7 @@ public interface ForumService {
 			public Object getAllForum(ClientRequest ClientRequest);
 			
 			
-			
+			public List<ForumNode> getAllForumAsTree(String userId)throws Exception;
 			
 			
 			

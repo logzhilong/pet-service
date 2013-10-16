@@ -1,4 +1,4 @@
-package vo;
+package com.momoplan.pet.framework.bbs.vo;
 
 public class ForumsNote {
 		//父级圈id

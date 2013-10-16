@@ -1,4 +1,4 @@
-package vo;
+package com.momoplan.pet.framework.bbs.vo;
 
 public class BbsNoteCount {
 	private String id;
