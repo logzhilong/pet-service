@@ -32,7 +32,7 @@ public class TokenHandler extends AbstractHandler {
 			rtn = new Success(true,token).toString();
 		}catch(Exception e){
 			logger.debug("token无效 body="+gson.toJson(clientRequest));
-			logger.error("token : ",e);
+			logger.debug(e.getMessage());
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
