@@ -169,11 +169,19 @@ public class SsoServiceImpl implements SsoService {
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			String json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
+			String json = null;
+			try{
+				jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
+			}catch(Exception e){
+				throw new Exception("TOKEN 无效或已过期");
+			}
+			if(StringUtils.isEmpty(json))
+				throw new Exception("TOKEN 无效或已过期");
 			logger.debug("getToken 成功 : "+token);
 			return json;
 		}catch(Exception e){
-			throw new Exception("TOKEN 无效或已过期");
+			logger.debug("error : "+e.getMessage());
+			throw e;
 		}finally{
 			redisPool.closeConn(jedis);
 		}
