@@ -1,6 +1,6 @@
 package com.momoplan.pet.framework.ssoserver.service;
 
-public interface SsoUserIndexConstance {
+public interface CacheKeysConstance {
 	/**
 	 * 列族名，存储 用户表 username 列的索引
 	 */

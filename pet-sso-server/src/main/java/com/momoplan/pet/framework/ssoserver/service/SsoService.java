@@ -8,7 +8,7 @@ import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
  * 注册、登录、重设密码、注销登录、token校验
  * @author liangc
  */
-public interface SsoService extends SsoUserIndexConstance{
+public interface SsoService extends CacheKeysConstance{
 	
 	/**
 	 * 新用户注册
