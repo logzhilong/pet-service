@@ -1,6 +1,5 @@
 package com.momoplan.pet.framework.ssoserver.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -145,7 +144,12 @@ public class SsoServiceImpl implements SsoService {
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			String useridStr = jedis.hget(CF_INDEX_USER_USERNAME, username);
+			String useridStr = null;
+			try{
+				useridStr = jedis.hget(CF_INDEX_USER_USERNAME, username);
+			}catch(Exception e){
+				logger.debug(username+" login error [hget]: "+e.getMessage());
+			}
 			if(StringUtils.isEmpty(useridStr)){
 				SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
 				ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
@@ -153,7 +157,11 @@ public class SsoServiceImpl implements SsoService {
 				if(ssoUserList!=null&&ssoUserList.size()>0){
 					SsoUser user = ssoUserList.get(0);
 					useridStr = user.getId()+"";
-					jedis.hset(CF_INDEX_USER_USERNAME, username, useridStr);
+					try{
+						jedis.hset(CF_INDEX_USER_USERNAME, username, useridStr);
+					}catch(Exception e){
+						logger.debug(username+" login error [hset] : "+e.getMessage());
+					}
 				}
 			}
 			return mapperOnCache.selectByPrimaryKey(SsoUser.class, Long.parseLong(useridStr));
