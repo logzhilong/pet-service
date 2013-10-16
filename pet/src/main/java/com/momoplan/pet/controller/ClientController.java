@@ -156,15 +156,15 @@ public class ClientController {
 				tm.setStringProperty("ret", proxyJms.get("ret"));
 				apprequestTemplate.convertAndSend(tm);
 			} catch (Exception e) {
-				if(null==ret||ret.compareTo("null")==0){
-					ret = "false";
-				}
+//				if(null==ret||ret.compareTo("null")==0){
+//					ret = "false";
+//				}
 				return ret;
 			}
 		}
-		if(null==ret||ret.compareTo("null")==0){
-			ret = "false";
-		}
+//		if(null==ret||ret.compareTo("null")==0){
+//			ret = "false";
+//		}
 		return ret;
 	}
 
