@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -15,12 +17,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,13 +29,11 @@ import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.httpclient.HttpException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -82,6 +80,7 @@ import com.momoplan.pet.vo.PetUserWithPetInfoView;
 import com.momoplan.pet.vo.ReplyCommentViews;
 import com.momoplan.pet.vo.ReplyView;
 import com.momoplan.pet.vo.StateView;
+import com.momoplan.pet.vo.Token;
 
 @RequestMapping("/client")
 @Controller
@@ -157,9 +156,15 @@ public class ClientController {
 				tm.setStringProperty("ret", proxyJms.get("ret"));
 				apprequestTemplate.convertAndSend(tm);
 			} catch (Exception e) {
+//				if(null==ret||ret.compareTo("null")==0){
+//					ret = "false";
+//				}
 				return ret;
 			}
 		}
+//		if(null==ret||ret.compareTo("null")==0){
+//			ret = "false";
+//		}
 		return ret;
 	}
 
@@ -179,7 +184,8 @@ public class ClientController {
 			if(!StringUtils.hasLength(token)){
 				return null;
 			}
-			long userid = AuthenticationToken.findAuthenticationToken(token).getUserid();
+			Token authenticationToken = verifyToken(token);
+			long userid = authenticationToken.getUserid();
 			if(userid == 0){
 				return null;
 			}
@@ -476,6 +482,11 @@ public class ClientController {
 			return handleAddBackgroundImg(clientRequest);
 		}
 		
+		//添加背景图片
+		if (clientRequest.getMethod().equals("verifyToken")) {
+			return verifyToken(clientRequest);
+		}
+		
 		return clientRequest;
 		
 		
@@ -529,45 +540,46 @@ public class ClientController {
 		}
 	}
 	
-//	public static void main(String[] args){
-//		String str = "{\"success\":true,\"entity\":{\"userid\":\"866\"}}";
-//		Success success;
-////		Success success;
-//		try {
-////			success  = new Gson().fromJson(str, Success2.class);
-//			success = new ObjectMapper().reader(Success.class).readValue(str);
-//			System.out.println(success.isSuccess());
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//			
-//	}
 	
-	
-	private Object verifyToken(ClientRequest clientRequest){
+	private Token verifyToken(ClientRequest clientRequest){
 		String token = clientRequest.getToken();
 		JSONObject bodyJson = new JSONObject();
 		try {
 			bodyJson.accumulate("method", "token");
 			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
-			String body = bodyJson.toString();
-			return ssoProxyRequest(body);
-		} catch (JSONException e) {
+			String str = ssoProxyRequest(bodyJson.toString()).toString();
+			if(str.contains("false")){
+				return null;
+			}
+			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
+			DateFormat df = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+			authenticationToken.setCreateDate(df.format(new Date(Long.parseLong(authenticationToken.getCreateDate()))));
+			return authenticationToken;
+		} catch (Exception e) {
 			logger.debug("token verify error...");
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-
-//	private Object handleSendNote(ClientRequest clientRequest) {
-//		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
-//		if(null==authenticationToken){
-//			return null;
-//		}
-//		return "needProxy:"+pet_bbs;
-//	}
+	private Token verifyToken(String token){
+		JSONObject bodyJson = new JSONObject();
+		try {
+			bodyJson.accumulate("method", "token");
+			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			String str = ssoProxyRequest(bodyJson.toString()).toString();
+			if(str.contains("false")){
+				return null;
+			}
+			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
+			authenticationToken.setCreateDate(authenticationToken.getCreateDate());
+			return authenticationToken;
+		} catch (Exception e) {
+			logger.debug("token verify error...");
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	/**
 	 * 举报一条动态
@@ -575,7 +587,7 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleReportContent(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return "false";
 		}
@@ -598,7 +610,7 @@ public class ClientController {
 	}
 	
 	private Object handleFindOneState(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		long stateid = PetUtil.getParameterLong(clientRequest,"stateid");
 		UserStates userState = UserStates.findUserStates(stateid);
 		StateView stateView  = new StateView();
@@ -611,8 +623,7 @@ public class ClientController {
 	}
 
 	private void handleFeedback(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		Feedback feedback = new Feedback();
 		feedback.setFeedback(PetUtil.getParameter(clientRequest, "feedback"));
 		feedback.setUserid(authenticationToken.getUserid());
@@ -622,8 +633,7 @@ public class ClientController {
 	}
 
 	private UserLocation handleSetUserLocation(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return null;
 		}
@@ -641,9 +651,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object changeFriendRemark(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken.findAuthenticationToken(clientRequest
-					.getToken());
 			Long aId = PetUtil.getParameterLong(clientRequest, "aId");
 			Long bId = PetUtil.getParameterLong(clientRequest, "bId");
 			String newremark = PetUtil.getParameter(clientRequest, "aliasB");
@@ -674,9 +686,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelCommentReply(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken.findAuthenticationToken(clientRequest
-					.getToken());
 			ReplyComments replyComments = new ReplyComments();
 			replyComments.setId(PetUtil.getParameterLong(clientRequest,
 					"replyCommonid"));
@@ -695,9 +709,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelReply(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken.findAuthenticationToken(clientRequest
-					.getToken());
 			Reply reply = new Reply();
 			reply.setId(PetUtil.getParameterLong(clientRequest, "replyId"));
 			reply.remove();
@@ -715,7 +731,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleAddCommentReply(ClientRequest clientRequest) {
-		AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		ReplyComments replyComments = new ReplyComments();
 		// 评论者id:commentuserid
 		replyComments.setCommentUserid(PetUtil.getParameterLong(clientRequest,
@@ -804,8 +823,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleAddReply(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
 			Reply reply = new Reply();
 			// 评论者id:petuserid
 			reply.setPetUserid(PetUtil.getParameterLong(clientRequest, "petuserId"));
@@ -870,8 +892,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetCommentsByTimeIndex(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		Reply reply = Reply.findReply(PetUtil.getParameterLong(clientRequest,
 				"replyid"));
 		int lastComment = PetUtil.getParameterInteger(clientRequest,
@@ -888,8 +912,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetRepliesByTimeIndex(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long petUserid = authenticationToken.getUserid();
 		UserStates ustate = UserStates.findUserStates(PetUtil.getParameterLong(
 				clientRequest, "userStateid"));
@@ -908,8 +934,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelZan(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long userid = authenticationToken.getUserid();
 		long zanUserid = PetUtil.getParameterLong(clientRequest, "zanUserid");// 被赞的人
 		long userStateid = PetUtil.getParameterLong(clientRequest,
@@ -938,8 +966,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleAddZan(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long userid = authenticationToken.getUserid();
 		long zanUserid = PetUtil.getParameterLong(clientRequest, "zanUserid");// 被赞的人
 		long userStateid = PetUtil.getParameterLong(clientRequest,
@@ -995,8 +1025,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetAllFriendStates(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long userid = authenticationToken.getUserid();
 		// int pageIndex = getParameterInteger(clientRequest, "pageIndex");
 		long lastStateid = PetUtil.getParameterLong(clientRequest,
@@ -1025,14 +1057,15 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleFindFriendStates(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long userid = PetUtil.getParameterLong(clientRequest, "userid");
 		// int pageIndex = getParameterInteger(clientRequest, "pageIndex");
 		long lastStateid = PetUtil.getParameterLong(clientRequest,
 				"lastStateid");
-		List<UserStates> userStates = UserStates.findUserStatesesByPetUserid(
-				userid, lastStateid,"others").getResultList();
+		List<UserStates> userStates = UserStates.findUserStatesesByPetUserid(userid, lastStateid,"others").getResultList();
 		List<StateView> userViews = new ArrayList<StateView>();// 用户状态视图
 		for (UserStates userState : userStates) {
 			// 获取状态视图
@@ -1056,8 +1089,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleFindMyStates(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		long userid = authenticationToken.getUserid();
 		// int pageIndex = getParameterInteger(clientRequest, "pageIndex");
 		long lastStateid = PetUtil.getParameterLong(clientRequest,
@@ -1163,7 +1198,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelUserState(ClientRequest clientRequest) {
-		AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		UserStates userState = UserStates.findUserStates(PetUtil
 				.getParameterLong(clientRequest, "userStateId"));
 		userState.remove();
@@ -1178,9 +1216,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleAddUserState(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken authenticationToken = AuthenticationToken
-					.findAuthenticationToken(clientRequest.getToken());
 			UserStates userState = new UserStates();
 			userState.setPetUserid(PetUtil.getParameterLong(clientRequest,
 					"userid"));
@@ -1237,8 +1277,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetUserState(ClientRequest clientRequest) throws Exception{
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		double longitude = Double.parseDouble(clientRequest.getParams()
 				.get("longitude").toString());
 		double latitude = Double.parseDouble(clientRequest.getParams()
@@ -1301,8 +1343,7 @@ public class ClientController {
 	 */
 	private List<ReplyView> getReplyViews(UserStates ustate, long petUserid,
 			int lastReplyid, String whos) {
-		List<Reply> replys = Reply.findReplysByUserStateid(ustate, petUserid,
-				lastReplyid, whos).getResultList();
+		List<Reply> replys = Reply.findReplysByUserStateid(ustate, petUserid,lastReplyid, whos).getResultList();
 		List<ReplyView> replyViews = new ArrayList<ReplyView>();
 		// 将评论的list封装到评论视图
 		for (int i = 0; i < replys.size(); i++) {
@@ -1364,9 +1405,11 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelOneImg(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		try {
-			AuthenticationToken authenticationToken = AuthenticationToken
-					.findAuthenticationToken(clientRequest.getToken());
 			PetUser petUser = PetUser.findPetUser(authenticationToken
 					.getUserid());
 			return PetUtil.delOneImg(petUser.getImg(),
@@ -1451,8 +1494,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetFriends(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = new PetUser();
 		// long id = authenticationToken.getUserid();
 		petUser.setId(authenticationToken.getUserid());
@@ -1470,8 +1515,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleGetOneFriend(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = new PetUser();
 		// long id = authenticationToken.getUserid();
 		// petUser.setId(authenticationToken.getUserid());
@@ -1488,8 +1535,11 @@ public class ClientController {
 	 * @param clientRequest
 	 */
 	private Object handleGetUser(ClientRequest clientRequest) {
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = new PetUser();
-		AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
 		petUser.setUsername(PetUtil.getParameter(clientRequest, "unname"));
 		List<PetUserWithPetInfoView> petUserViews = new ArrayList<PetUserWithPetInfoView>();
 		petUserViews = petUserService.getPetUserViews(petUser, Integer
@@ -1498,14 +1548,18 @@ public class ClientController {
 	}
 
 	private Object handleGetUserInfo(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		return getPetUserview(authenticationToken.getUserid());
 	}
 
 	private Object handleSavePetInfo(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetInfo petInfo = new PetInfo();
 		petInfo.setUserid(authenticationToken.getUserid());
 		petInfo.setType(PetUtil.getParameterLong(clientRequest, "type"));
@@ -1525,8 +1579,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleUpdatePetInfo(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetInfo petInfo = PetInfo.findPetInfo(PetUtil.getParameterLong(
 				clientRequest, "id"));
 		// petInfo.setUserid(authenticationToken.getUserid());
@@ -1554,20 +1610,20 @@ public class ClientController {
 	 * @param clientRequest
 	 * @return
 	 */
-	private Object handleResetPassword(ClientRequest clientRequest) {
-		String password = PetUtil.getParameter(clientRequest, "password");
-		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
-		PetUser petUser = PetUser.findPetUsersByUsername(phoneNumber)
-				.getSingleResult();
-		petUser.setPassword(this.passwordEncoder.encodePassword(password,
-				this.salt));
-		try {
-			petUser.merge();
-		} catch (DataAccessException e) {
-			return false;
-		}
-		return true;
-	}
+//	private Object handleResetPassword(ClientRequest clientRequest) {
+//		String password = PetUtil.getParameter(clientRequest, "password");
+//		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
+//		PetUser petUser = PetUser.findPetUsersByUsername(phoneNumber)
+//				.getSingleResult();
+//		petUser.setPassword(this.passwordEncoder.encodePassword(password,
+//				this.salt));
+//		try {
+//			petUser.merge();
+//		} catch (DataAccessException e) {
+//			return false;
+//		}
+//		return true;
+//	}
 
 	/**
 	 * 删除宠物信息
@@ -1576,8 +1632,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleDelPetInfo(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetInfo petInfo = PetInfo.findPetInfo(PetUtil.getParameterLong(
 				clientRequest, "id"));
 		petInfo.remove();
@@ -1591,7 +1649,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleSelectUserByNameOrUserId(ClientRequest clientRequest) {
-		AuthenticationToken.findAuthenticationToken(clientRequest.getToken());// 校验token
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = new PetUser();
 		// petUser.setUserId(getParameterLong(clientRequest, "userid"));
 		// petUser.setUsername(getParameter(clientRequest, "username"));
@@ -1606,7 +1667,10 @@ public class ClientController {
 	 * @return
 	 */
 	private Object handleSelectUserViewByUserName(ClientRequest clientRequest) {
-		AuthenticationToken.findAuthenticationToken(clientRequest.getToken());// 校验token
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = PetUser.findPetUsersByUsername(
 				PetUtil.getParameter(clientRequest, "username"))
 				.getSingleResult();
@@ -1672,8 +1736,10 @@ public class ClientController {
 
 	private Object handleOpen(ClientRequest clientRequest) {
 		OpenResponse openResponse = new OpenResponse();
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		if (authenticationToken != null) {
 			int type = PetUtil.getParameterInteger(clientRequest, "type");
 			openResponse.setPetUserView(getPetUserview(
@@ -1700,8 +1766,10 @@ public class ClientController {
 
 
 	private Object handleSaveUserInfo(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = PetUser.findPetUser(authenticationToken.getUserid());
 		petUser.setNickname(PetUtil.getParameter(clientRequest, "nickname"));
 		petUser.setGender(PetUtil.getParameter(clientRequest, "gender"));
@@ -1714,8 +1782,10 @@ public class ClientController {
 	}
 
 	private Object handleSaveUserInfo2(ClientRequest clientRequest) {// v2
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		PetUser petUser = PetUser.findPetUser(authenticationToken.getUserid());
 		petUser.setNickname(PetUtil.getParameter(clientRequest, "nickname"));
 		petUser.setGender(PetUtil.getParameter(clientRequest, "gender"));
@@ -1746,9 +1816,10 @@ public class ClientController {
 		long userId = 0;
 
 		try {
-			String token = clientRequest.getToken();
-			AuthenticationToken authenticationToken = AuthenticationToken
-					.findAuthenticationToken(token);
+			Token authenticationToken = verifyToken(clientRequest);
+			if (null == authenticationToken) {
+				return null;
+			}
 			userId = authenticationToken.getUserid();
 
 		} catch (Exception e) {
@@ -1778,11 +1849,6 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
-//					if(distance<=1000){
-//						return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
-//					}else{
-//						petUserview.setDistance((distance / 100 * 100/1000 + 0.1) + "千米以内");
-//					}
 					petUserview.setDistance(distance / 100 * 100 + 100
 							+ "米以内");
 					distance = distance + 50;
@@ -1855,9 +1921,10 @@ public class ClientController {
 		long userId = 0;
 
 		try {
-			String token = clientRequest.getToken();
-			AuthenticationToken authenticationToken = AuthenticationToken
-					.findAuthenticationToken(token);
+			Token authenticationToken = verifyToken(clientRequest);
+			if (null == authenticationToken) {
+				return null;
+			}
 			userId = authenticationToken.getUserid();
 
 		} catch (Exception e) {
@@ -1989,157 +2056,159 @@ public class ClientController {
 	}
 
 	private Object handleGetChatServerList(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken
-				.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
+		if (null == authenticationToken) {
+			return null;
+		}
 		return chatServerService.getAvailableServer(authenticationToken
 				.getUserid());
 	}
 
-	private Object handlelogin(ClientRequest clientRequest) {
-		String username = PetUtil.getParameter(clientRequest, "username");
-		String password = PetUtil.getParameter(clientRequest, "password");
-		PetUser petUser;
-		try {
-			List<PetUser> resultList = PetUser.findPetUsersByUsername(username)
-					.getResultList();
-			if (resultList.size() <= 0) {
-				return "用户不存在";
-			}
-			petUser = PetUser.findPetUsersByUsername(username)
-					.getSingleResult();
-		} catch (NoResultException e) {
-			throw new PetException("用户不存在");
-		}
-
-		if (!petUser.getPassword().equals(
-				this.passwordEncoder.encodePassword(password, this.salt))) {
-			return "密码错误";
-		}
-		AuthenticationToken authenticationToken = new AuthenticationToken();
-		authenticationToken.setExpire(-1);
-		authenticationToken.setToken(UUID.randomUUID().toString());
-		authenticationToken.setUserid(petUser.getId());
-		authenticationToken.setCreateDate(new Date());
-		authenticationToken.persist();
-		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setAuthenticationToken(authenticationToken);
-		loginResponse.setChatserver(chatServerService
-				.getAvailableServer(authenticationToken.getUserid()));
-
-		return loginResponse;
-	}
-
-	private Object handlelogin2(ClientRequest clientRequest) {
-		String username = PetUtil.getParameter(clientRequest, "username");
-		String password = PetUtil.getParameter(clientRequest, "password");
-		String deviceToken = PetUtil.getParameter(clientRequest, "deviceToken");
-		PetUser petUser;
-		try {
-			List<PetUser> resultList = PetUser.findPetUsersByUsername(username)
-					.getResultList();
-			if (resultList.size() <= 0) {
-				return "用户不存在";
-			}
-			petUser = PetUser.findPetUsersByUsername(username)
-					.getSingleResult();
-			petUser.setDeviceToken(deviceToken);
-			petUser.merge();
-		} catch (NoResultException e) {
-			throw new PetException("用户不存在");
-		}
-
-		if (!petUser.getPassword().equals(
-				this.passwordEncoder.encodePassword(password, this.salt))) {
-			return "密码错误";
-		}
-		AuthenticationToken authenticationToken = new AuthenticationToken();
-		authenticationToken.setExpire(-1);
-		authenticationToken.setToken(UUID.randomUUID().toString());
-		authenticationToken.setUserid(petUser.getId());
-		authenticationToken.setCreateDate(new Date());
-		authenticationToken.persist();
-		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setAuthenticationToken(authenticationToken);
-		loginResponse.setChatserver(chatServerService.getAvailableServer(authenticationToken.getUserid()));
-
-		return loginResponse;
-	}
-
-	private Object handleRegister(ClientRequest clientRequest) {
-
-		String username = PetUtil.getParameter(clientRequest, "username");
-		String password = PetUtil.getParameter(clientRequest, "password");
-		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
-		String email = PetUtil.getParameter(clientRequest, "email");
-		PetUser petUser = new PetUser();
-		petUser.setUsername(username);
-		petUser.setNickname(username);// 移动端只传过来username,保存时将用户名同时保存到昵称里
-		petUser.setPhoneNumber(phoneNumber);
-		petUser.setEmail(email);
-		petUser.setPassword(this.passwordEncoder.encodePassword(password,
-				this.salt));
-		petUser.setIfFraudulent("0");
-		try {
-			petUser.setCreateTime(PetUtil.getParameterDate(clientRequest,
-					"createTime"));
-			petUser.persist();
-		} catch (DataAccessException e) {
-			throw new DuplicatedUsernameException(e.getMessage());
-		} catch (ParseException e) {
-			throw new DuplicatedUsernameException(e.getMessage());
-		}
-		AuthenticationToken authenticationToken = new AuthenticationToken();
-		authenticationToken.setExpire(-1);
-		authenticationToken.setToken(UUID.randomUUID().toString());
-		authenticationToken.setUserid(petUser.getId());
-		authenticationToken.setCreateDate(new Date());
-		authenticationToken.persist();
-		return authenticationToken;
-	}
-
-	private Object handleRegister2(ClientRequest clientRequest) {
-
-		// String username = getParameter(clientRequest, "username");
-		String password = PetUtil.getParameter(clientRequest, "password");
-		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
-		// String email = getParameter(clientRequest, "email");
-		String nickname = PetUtil.getParameter(clientRequest, "nickname");
-		String birthdate = PetUtil.getParameter(clientRequest, "birthdate");
-		String gender = PetUtil.getParameter(clientRequest, "gender");
-		String city = PetUtil.getParameter(clientRequest, "city");
-		String signature = PetUtil.getParameter(clientRequest, "signature");
-		String img = PetUtil.getParameter(clientRequest, "img");
-		String hobby = PetUtil.getParameter(clientRequest, "hobby");
-		String deviceToken = PetUtil.getParameter(clientRequest, "deviceToken");
-		PetUser petUser = new PetUser();
-		petUser.setUsername(phoneNumber);// 将手机号作为用户名
-		petUser.setSignature(signature);
-		// petUser.setEmail(email);
-		petUser.setBirthdate(birthdate);
-		petUser.setGender(gender);
-		petUser.setCity(city);
-		petUser.setNickname(nickname);
-		petUser.setPhoneNumber(phoneNumber);
-		petUser.setHobby(hobby);
-		petUser.setImg(img);
-		petUser.setIfFraudulent("0");
-		petUser.setDeviceToken(deviceToken);
-		petUser.setPassword(this.passwordEncoder.encodePassword(password,
-				this.salt));
-		try {
-			petUser.setCreateTime(new Date(System.currentTimeMillis()));
-			petUser.persist();
-		} catch (DataAccessException e) {
-			throw new DuplicatedUsernameException(e.getMessage());
-		}
-		AuthenticationToken authenticationToken = new AuthenticationToken();
-		authenticationToken.setExpire(-1);
-		authenticationToken.setToken(UUID.randomUUID().toString());
-		authenticationToken.setUserid(petUser.getId());
-		authenticationToken.setCreateDate(new Date());
-		authenticationToken.persist();
-		return authenticationToken;
-	}
+//	private Object handlelogin(ClientRequest clientRequest) {
+//		String username = PetUtil.getParameter(clientRequest, "username");
+//		String password = PetUtil.getParameter(clientRequest, "password");
+//		PetUser petUser;
+//		try {
+//			List<PetUser> resultList = PetUser.findPetUsersByUsername(username)
+//					.getResultList();
+//			if (resultList.size() <= 0) {
+//				return "用户不存在";
+//			}
+//			petUser = PetUser.findPetUsersByUsername(username)
+//					.getSingleResult();
+//		} catch (NoResultException e) {
+//			throw new PetException("用户不存在");
+//		}
+//
+//		if (!petUser.getPassword().equals(
+//				this.passwordEncoder.encodePassword(password, this.salt))) {
+//			return "密码错误";
+//		}
+//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		authenticationToken.setExpire(-1);
+//		authenticationToken.setToken(UUID.randomUUID().toString());
+//		authenticationToken.setUserid(petUser.getId());
+//		authenticationToken.setCreateDate(new Date());
+//		authenticationToken.persist();
+//		LoginResponse loginResponse = new LoginResponse();
+//		loginResponse.setAuthenticationToken(authenticationToken);
+//		loginResponse.setChatserver(chatServerService
+//				.getAvailableServer(authenticationToken.getUserid()));
+//
+//		return loginResponse;
+//	}
+//
+//	private Object handlelogin2(ClientRequest clientRequest) {
+//		String username = PetUtil.getParameter(clientRequest, "username");
+//		String password = PetUtil.getParameter(clientRequest, "password");
+//		String deviceToken = PetUtil.getParameter(clientRequest, "deviceToken");
+//		PetUser petUser;
+//		try {
+//			List<PetUser> resultList = PetUser.findPetUsersByUsername(username)
+//					.getResultList();
+//			if (resultList.size() <= 0) {
+//				return "用户不存在";
+//			}
+//			petUser = PetUser.findPetUsersByUsername(username)
+//					.getSingleResult();
+//			petUser.setDeviceToken(deviceToken);
+//			petUser.merge();
+//		} catch (NoResultException e) {
+//			throw new PetException("用户不存在");
+//		}
+//
+//		if (!petUser.getPassword().equals(
+//				this.passwordEncoder.encodePassword(password, this.salt))) {
+//			return "密码错误";
+//		}
+//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		authenticationToken.setExpire(-1);
+//		authenticationToken.setToken(UUID.randomUUID().toString());
+//		authenticationToken.setUserid(petUser.getId());
+//		authenticationToken.setCreateDate(new Date());
+//		authenticationToken.persist();
+//		LoginResponse loginResponse = new LoginResponse();
+//		loginResponse.setAuthenticationToken(authenticationToken);
+//		loginResponse.setChatserver(chatServerService.getAvailableServer(authenticationToken.getUserid()));
+//
+//		return loginResponse;
+//	}
+//
+//	private Object handleRegister(ClientRequest clientRequest) {
+//
+//		String username = PetUtil.getParameter(clientRequest, "username");
+//		String password = PetUtil.getParameter(clientRequest, "password");
+//		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
+//		String email = PetUtil.getParameter(clientRequest, "email");
+//		PetUser petUser = new PetUser();
+//		petUser.setUsername(username);
+//		petUser.setNickname(username);// 移动端只传过来username,保存时将用户名同时保存到昵称里
+//		petUser.setPhoneNumber(phoneNumber);
+//		petUser.setEmail(email);
+//		petUser.setPassword(this.passwordEncoder.encodePassword(password,
+//				this.salt));
+//		petUser.setIfFraudulent("0");
+//		try {
+//			petUser.setCreateTime(PetUtil.getParameterDate(clientRequest,
+//					"createTime"));
+//			petUser.persist();
+//		} catch (DataAccessException e) {
+//			throw new DuplicatedUsernameException(e.getMessage());
+//		} catch (ParseException e) {
+//			throw new DuplicatedUsernameException(e.getMessage());
+//		}
+//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		authenticationToken.setExpire(-1);
+//		authenticationToken.setToken(UUID.randomUUID().toString());
+//		authenticationToken.setUserid(petUser.getId());
+//		authenticationToken.setCreateDate(new Date());
+//		authenticationToken.persist();
+//		return authenticationToken;
+//	}
+//
+//	private Object handleRegister2(ClientRequest clientRequest) {
+//
+//		// String username = getParameter(clientRequest, "username");
+//		String password = PetUtil.getParameter(clientRequest, "password");
+//		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
+//		// String email = getParameter(clientRequest, "email");
+//		String nickname = PetUtil.getParameter(clientRequest, "nickname");
+//		String birthdate = PetUtil.getParameter(clientRequest, "birthdate");
+//		String gender = PetUtil.getParameter(clientRequest, "gender");
+//		String city = PetUtil.getParameter(clientRequest, "city");
+//		String signature = PetUtil.getParameter(clientRequest, "signature");
+//		String img = PetUtil.getParameter(clientRequest, "img");
+//		String hobby = PetUtil.getParameter(clientRequest, "hobby");
+//		String deviceToken = PetUtil.getParameter(clientRequest, "deviceToken");
+//		PetUser petUser = new PetUser();
+//		petUser.setUsername(phoneNumber);// 将手机号作为用户名
+//		petUser.setSignature(signature);
+//		// petUser.setEmail(email);
+//		petUser.setBirthdate(birthdate);
+//		petUser.setGender(gender);
+//		petUser.setCity(city);
+//		petUser.setNickname(nickname);
+//		petUser.setPhoneNumber(phoneNumber);
+//		petUser.setHobby(hobby);
+//		petUser.setImg(img);
+//		petUser.setIfFraudulent("0");
+//		petUser.setDeviceToken(deviceToken);
+//		petUser.setPassword(this.passwordEncoder.encodePassword(password,
+//				this.salt));
+//		try {
+//			petUser.setCreateTime(new Date(System.currentTimeMillis()));
+//			petUser.persist();
+//		} catch (DataAccessException e) {
+//			throw new DuplicatedUsernameException(e.getMessage());
+//		}
+//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		authenticationToken.setExpire(-1);
+//		authenticationToken.setToken(UUID.randomUUID().toString());
+//		authenticationToken.setUserid(petUser.getId());
+//		authenticationToken.setCreateDate(new Date());
+//		authenticationToken.persist();
+//		return authenticationToken;
+//	}
 
 	/**
 	 * 获取用户视图
