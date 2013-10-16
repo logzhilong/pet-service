@@ -58,6 +58,7 @@ public class SsoServiceImpl implements SsoService {
 		if(getSsoUserByName(user.getUsername())!=null){
 			throw new Exception("用户名 "+user.getUsername()+" 已存在");
 		}
+		user.setVersion(0);
 		ssoUserMapper.insertSelective(user);
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
