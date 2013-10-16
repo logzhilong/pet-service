@@ -1,91 +1,90 @@
 package com.momoplan.pet.framework.bbs.service;
 
-import com.momoplan.pet.framework.bbs.controller.BbSClientRequest;
+import com.momoplan.pet.commons.bean.ClientRequest;
 
 public interface NoteService {
 
 	/**
 	 * 发送帖子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object sendNote(BbSClientRequest bbsClientRequest);
+	public Object sendNote(ClientRequest ClientRequest);
 
 	/**
 	 * 根据帖子name搜索
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object searchNote(BbSClientRequest bbsClientRequest);
+	public Object searchNote(ClientRequest ClientRequest);
 
 	/**
 	 * 查看帖子详情
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object detailNote(BbSClientRequest bbsClientRequest);
+	public Object detailNote(ClientRequest ClientRequest);
 
 	/**
 	 * 删除帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object delNote(BbSClientRequest bbsClientRequest);
+	public Object delNote(ClientRequest ClientRequest);
 
 
 	/**
 	 * 根据id举报帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object reportNote(BbSClientRequest bbsClientRequest);
+	public Object reportNote(ClientRequest ClientRequest);
 	
 	
 	
 	/**
 	 * 更新帖子点击数
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(BbSClientRequest bbsClientRequest);
+	public Object updateClickCount(ClientRequest ClientRequest);
 	/**
 	 * 获取某圈子下所有帖子数
 	 * 
 	 */
-	public Object getNoteCountByForumid(BbSClientRequest bbsClientRequest);
+	public Object getNoteCountByForumid(ClientRequest ClientRequest);
 	/**
 	 * 我发表过的帖子列表
 	 * 
 	 */
-	public Object getMyNotedListByuserid(BbSClientRequest bbsClientRequest);
-	/**
-	 *今日新增帖子列表
-	 * 
-	 */
-	public Object getTodayNewNoteList(BbSClientRequest bbsClientRequest);
+	public Object getMyNotedListByuserid(ClientRequest ClientRequest);
 	
-	
-	/**
-	 * 获取最新帖子
-	 * 
-	 * @param bbsClientRequest
-	 * @return
-	 */
-	public Object newNote(BbSClientRequest bbsClientRequest);
 	/**
 	 *某圈子今日新增帖子列表
 	 * 
 	 */
-	public Object getTodayNewNoteListByFid(BbSClientRequest bbsClientRequest);
+	public Object getTodayNewNoteListByFid(ClientRequest ClientRequest);
 	/**
-	 * 某圈子获取最新帖子
+	 * 获取最新帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object newNoteByFid(BbSClientRequest bbsClientRequest);
+	public Object newNoteByFid(ClientRequest ClientRequest);
+	/**
+	 * 获取全站精华
+	 * @param ClientRequest
+	 * @return
+	 */
+	public Object getEuteNoteList(ClientRequest ClientRequest);
+	
+	/**
+	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})
+	 */
+	public Object getNewReplysByReplyct(ClientRequest ClientRequest);
+	
 }

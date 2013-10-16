@@ -9,22 +9,33 @@
 	default-lazy-init="false" default-autowire="byName">
 	<description>Spring</description>
 
-	<bean
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<bean id="locations" class="java.util.ArrayList" >
+  		<constructor-arg>
+		   	<list>
+				<value>classpath:properties/application-db.properties</value>
+				<value>classpath:properties/cache.properties</value>
+			</list>
+	  	</constructor-arg>
+  	</bean>
+  	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean" lazy-init="false">
+  		<property name="locations" ref="locations" />
+  	</bean>
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="locations">
-			<list>
-				<value>classpath:properties/application-db.properties</value>
-			</list>
-		</property>
+  		<property name="locations" ref="locations" />
 	</bean>
-	<bean	class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 	<!-- 扫描service层 -->
-    <context:component-scan base-package="com.momoplan.pet.domain" />
+    <context:component-scan base-package="com.momoplan.pet" />
 	<import resource="applicationContext-mybatis-transaction.xml"/>
 
+    <bean id="cacheServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="${cache.server}" />
+    </bean>
+	
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="applicationContext-mybatis-bbs.xml"/>
 	<import resource="applicationContext-mybatis-states.xml"/>

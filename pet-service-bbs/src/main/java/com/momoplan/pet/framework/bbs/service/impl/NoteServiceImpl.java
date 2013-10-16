@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,41 +14,46 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
-import com.momoplan.pet.framework.bbs.controller.BbSClientRequest;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 @Service
 public class NoteServiceImpl implements NoteService {
 	@Resource
 	private NoteMapper noteMapper=null;
-
+	@Resource
+	private NoteSubMapper noteSubMapper=null;
+	
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 	
 	/**
 	 * 发送帖子
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object sendNote(BbSClientRequest bbsClientRequest) {
+	public Object sendNote(ClientRequest ClientRequest) {
 		try {
 			Note bbsNote = new Note();
 			bbsNote.setId(IDCreater.uuid());
-			bbsNote.setUserId(PetUtil.getParameter(bbsClientRequest,"userId"));
+			bbsNote.setUserId(PetUtil.getParameter(ClientRequest,"userId"));
 			bbsNote.setClientCount(null);
 			bbsNote.setCt(new Date());
 			bbsNote.setEt(new Date());
-			bbsNote.setForumId(PetUtil.getParameter(bbsClientRequest,"forumId"));
+			bbsNote.setForumId(PetUtil.getParameter(ClientRequest,"forumId"));
 			bbsNote.setIsDel(false);
 			bbsNote.setIsEute(false);
 			bbsNote.setIsTop(false);
 			bbsNote.setState("0");
 			bbsNote.setType("0");
 			bbsNote.setClientCount((long) 0);
-			bbsNote.setName(PetUtil.getParameter(bbsClientRequest, "name"));
-			bbsNote.setContent(PetUtil.getParameter(bbsClientRequest, "content"));
+			bbsNote.setName(PetUtil.getParameter(ClientRequest, "name"));
+			bbsNote.setContent(PetUtil.getParameter(ClientRequest, "content"));
 			logger.debug(""+bbsNote.toString());
 			noteMapper.insertSelective(bbsNote);
 			return "sendNoteSuccess";
@@ -61,16 +67,16 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 根据帖子name搜索
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object searchNote(BbSClientRequest bbsClientRequest) {
+	public Object searchNote(ClientRequest ClientRequest) {
 		try {
 			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
-			String  forumid=PetUtil.getParameter(bbsClientRequest, "forumid");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
+			String  forumid=PetUtil.getParameter(ClientRequest, "forumid");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
@@ -79,7 +85,7 @@ public class NoteServiceImpl implements NoteService {
 				}else{
 					criteria.andForumIdEqualTo(forumid);
 				}
-			String name=PetUtil.getParameter(bbsClientRequest, "notename");
+			String name=PetUtil.getParameter(ClientRequest, "notename");
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
 			criteria.andNameLike("%"+name+"%");
@@ -96,13 +102,13 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 根据noteid查看帖子详情
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object detailNote(BbSClientRequest bbsClientRequest) {
+	public Object detailNote(ClientRequest ClientRequest) {
 		try {
-			String noteid=PetUtil.getParameter(bbsClientRequest, "noteid");
+			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			NoteCriteria noteCriteria = new NoteCriteria();
 			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
 			criteria.andIsDelEqualTo(false);
@@ -120,13 +126,13 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 删除帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object delNote(BbSClientRequest bbsClientRequest) {
+	public Object delNote(ClientRequest ClientRequest) {
 		try {
-			String noteid=PetUtil.getParameter(bbsClientRequest, "noteid");
+			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 			note.setIsDel(true);
 			note.setEt(new Date());
@@ -145,13 +151,13 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 根据id举报帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object reportNote(BbSClientRequest bbsClientRequest) {
+	public Object reportNote(ClientRequest ClientRequest) {
 		try {
-			String noteid=PetUtil.getParameter(bbsClientRequest, "noteid");
+			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 			note.setState("1");
 			note.setEt(new Date());
@@ -167,12 +173,12 @@ public class NoteServiceImpl implements NoteService {
 	
 	/**
 	 * 更新帖子点击数
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(BbSClientRequest bbsClientRequest){
+	public Object updateClickCount(ClientRequest ClientRequest){
 		try {
-			String noteid=PetUtil.getParameter(bbsClientRequest, "noteid");
+			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 				if(note.equals(null)){
 					return "updateClickCountFail";
@@ -191,11 +197,11 @@ public class NoteServiceImpl implements NoteService {
 	 * 获取某圈子下所有帖子数
 	 * 
 	 */
-	public Object getNoteCountByForumid(BbSClientRequest bbsClientRequest){
+	public Object getNoteCountByForumid(ClientRequest ClientRequest){
 		try {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			criteria.andForumIdEqualTo(PetUtil.getParameter(bbsClientRequest, "forumId"));
+			criteria.andForumIdEqualTo(PetUtil.getParameter(ClientRequest, "forumId"));
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			return notelist.size();
 		} catch (Exception e) {
@@ -207,16 +213,16 @@ public class NoteServiceImpl implements NoteService {
 	 * 我发表过的帖子列表
 	 * 
 	 */
-	public Object getMyNotedListByuserid(BbSClientRequest bbsClientRequest){
+	public Object getMyNotedListByuserid(ClientRequest ClientRequest){
 		try {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
-			criteria.andUserIdEqualTo(PetUtil.getParameter(bbsClientRequest, "userid"));
+			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userid"));
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			return notelist;
 		} catch (Exception e) {
@@ -224,27 +230,65 @@ public class NoteServiceImpl implements NoteService {
 			return "getMyNotedCountByuseridFail";
 		}
 	}
+
 	/**
 	 *今日新增帖子列表
 	 * 
 	 */
-	public Object getTodayNewNoteList(BbSClientRequest bbsClientRequest){
+	public Object getTodayNewNoteListByFid(ClientRequest ClientRequest){
 		try {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+			criteria.andIsTopEqualTo(false);
+			criteria.andIsDelEqualTo(false);
+			criteria.andTypeEqualTo("0");
+			if(fid.equals("0")){
+				criteria.andForumIdEqualTo(fid);
+			}
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
+			Calendar currentDate = new GregorianCalendar();   
+			currentDate.set(Calendar.HOUR_OF_DAY, 0);  
+			currentDate.set(Calendar.MINUTE, 0);  
+			currentDate.set(Calendar.SECOND, 0);  
+			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate.getTime().clone()));
+			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			
-			Calendar currentDate = new GregorianCalendar();   
-			currentDate.set(Calendar.HOUR_OF_DAY, 0);  
-			currentDate.set(Calendar.MINUTE, 0);  
-			currentDate.set(Calendar.SECOND, 0);  
-			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate.getTime().clone()));
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist;
+			
+			
+			
+			NoteCriteria noteCriteria1=new NoteCriteria();
+			NoteCriteria.Criteria criteria1=noteCriteria1.createCriteria();
+			criteria1.andIsTopEqualTo(true);
+			criteria1.andIsDelEqualTo(false);
+			criteria1.andTypeEqualTo("0");
+			String fid1=PetUtil.getParameter(ClientRequest, "forumPid");
+			if(fid1.equals("0")){
+				criteria1.andForumIdEqualTo(fid1);
+			}
+			noteCriteria1.setMysqlLength(5);
+			noteCriteria1.setOrderByClause("ct desc");
+			Calendar currentDate1 = new GregorianCalendar();   
+			currentDate1.set(Calendar.HOUR_OF_DAY, 0);  
+			currentDate1.set(Calendar.MINUTE, 0);  
+			currentDate1.set(Calendar.SECOND, 0);  
+			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate1.getTime().clone()));
+			List<Note> notelist1 = noteMapper.selectByExample(noteCriteria1);
+			
+			
+			List<Note> notes=new ArrayList<Note>();
+			for(Note note2:notelist1){
+				notes.add(note2);
+			}
+			for(Note note:notelist){
+					notes.add(note);
+			}
+			
+			return notes;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "getTodayNewNoteListFail";
@@ -252,87 +296,117 @@ public class NoteServiceImpl implements NoteService {
 	}
 	
 	/**
-	 * 获取最新帖子
+	 * 某圈子获取最新帖子
 	 * 
-	 * @param bbsClientRequest
+	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object newNote(BbSClientRequest bbsClientRequest) {
+	public Object newNoteByFid(ClientRequest ClientRequest) {
 		try {
 			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
 			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+			if(fid.equals("0")){
+			}else {
+				criteria.andForumIdEqualTo(fid);
+			}
 			criteria.andIsTopEqualTo(false);
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
-			criteria.andIsEuteEqualTo(false);
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist;
+			
+			//获取置顶帖子
+			NoteCriteria noteCriteria1 = new NoteCriteria();
+			noteCriteria1.setMysqlOffset((1-1)*5);
+			noteCriteria1.setMysqlLength(5);
+			noteCriteria1.setOrderByClause("ct desc");
+			NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
+			String fid1=PetUtil.getParameter(ClientRequest, "forumPid");
+			if(fid1.equals("0")){
+			}else {
+				criteria1.andForumIdEqualTo(fid);
+			}
+			criteria1.andIsTopEqualTo(true);
+			criteria1.andIsDelEqualTo(false);
+			criteria1.andTypeEqualTo("0");
+			List<Note> notelist1 = noteMapper.selectByExample(noteCriteria1);
+			
+			//获取置顶帖子+普通帖子(按时间排序)
+			List<Note> notes=new ArrayList<Note>();
+			for(Note  note2:notelist1){
+				notes.add(note2);
+			}
+			for(Note note:notelist){
+				notes.add(note);
+			}
+			
+			
+			return notes;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "newNoteFail";
+			return "newNotesByidFail";
 		}
 	}
+	
+	
 	/**
-	 *今日新增帖子列表
-	 * 
+	 * 获取全站精华
+	 * @param ClientRequest
+	 * @return
 	 */
-	public Object getTodayNewNoteListByFid(BbSClientRequest bbsClientRequest){
+	public Object getEuteNoteList(ClientRequest ClientRequest){
 		try {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			String fid=PetUtil.getParameter(bbsClientRequest, "forumPid");
-			criteria.andForumIdEqualTo(fid);
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
+			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+			if(fid.equals("0")){
+			}else {
+				criteria.andForumIdEqualTo(fid);
+			}
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
-			Calendar currentDate = new GregorianCalendar();   
-			currentDate.set(Calendar.HOUR_OF_DAY, 0);  
-			currentDate.set(Calendar.MINUTE, 0);  
-			currentDate.set(Calendar.SECOND, 0);  
-			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate.getTime().clone()));
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getTodayNewNoteListFail";
-		}
-	}
-	
-	/**
-	 * 获取最新帖子
-	 * 
-	 * @param bbsClientRequest
-	 * @return
-	 */
-	@Override
-	public Object newNoteByFid(BbSClientRequest bbsClientRequest) {
-		try {
-			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(bbsClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(bbsClientRequest, "pageSize");
-			String fid=PetUtil.getParameter(bbsClientRequest, "forumPid");
-			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
-			noteCriteria.setMysqlLength(pageSize);
-			noteCriteria.setOrderByClause("ct desc");
-			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-			criteria.andForumIdEqualTo(fid);
+			criteria.andIsEuteEqualTo(true);
 			criteria.andIsTopEqualTo(false);
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
-			criteria.andIsEuteEqualTo(false);
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "newNoteFail";
+			return "getEuteNoteListFail";
+		}
+	}
+	
+	
+	
+	/**
+	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})
+	 */
+	public Object getNewReplysByReplyct(ClientRequest ClientRequest){
+		try {
+		    NoteCriteria noteCriteria=new NoteCriteria();
+			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
+			criteria.andIsTopEqualTo(false);
+			criteria.andIsDelEqualTo(false);
+			criteria.andTypeEqualTo("0");
+			noteCriteria.setOrderByClause("et desc");
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
+			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteCriteria.setMysqlLength(pageSize);
+			return noteMapper.selectByExample(noteCriteria);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "getNewReplysByReplyct";
 		}
 	}
 }

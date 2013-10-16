@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 
+import com.momoplan.pet.AbstractTest;
 import com.momoplan.pet.commons.domain.statistic.mapper.DataUsers0Mapper;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers0;
 
