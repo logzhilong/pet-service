@@ -116,6 +116,27 @@ public class HttpRequestProxy {
 		}
 	}
 	
+//	public static String doPostHttpClientByObj(String url, Object request){
+//		HttpClient httpClient = new HttpClient();
+//		PostMethod postMethod = new PostMethod(url);
+//		try {
+////			PostRequest.postText(url, args)
+////			stringRequestEntity = new StringRequestEntity("body="+body, "application/json", requestEncoding);
+////			postMethod.setRequestEntity(stringRequestEntity);
+//			postMethod.set
+//			postMethod.setParameter("body", request);
+////			postMethod.addRequestHeader("Accept-Language", "zh-CN");
+////			postMethod.addRequestHeader("Content-Type", "application/json;charset=utf-8");
+//			httpClient.executeMethod(postMethod);
+//			String respronse = postMethod.getResponseBodyAsString();
+//			postMethod.releaseConnection();
+//			return respronse;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
+	
 //	public static void main(String[] args) {
 //		Map map = new HashMap<String, String>();
 //		map.put("userId","J00348");

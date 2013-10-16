@@ -8,4 +8,5 @@ public class PetConstants {
 	public static String XMPP_DOMAIN = "xmpp.domain";
 	public static String UPLOADPATH = "uploadPath";
 	public static String XMPP_SERVER = "xmpp.server";
+	public static String SERVICE_URI_PET_SSO = "service.uri.pet_sso";
 }
