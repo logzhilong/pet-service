@@ -19,8 +19,7 @@ import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
-import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
-import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
+import com.momoplan.pet.framework.bbs.repository.NoteRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -28,6 +27,8 @@ public class NoteServiceImpl implements NoteService {
 	private NoteMapper noteMapper=null;
 	@Resource
 	private NoteSubMapper noteSubMapper=null;
+	@Resource
+	private NoteRepository noteRepository = null;
 	
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 	
@@ -55,9 +56,8 @@ public class NoteServiceImpl implements NoteService {
 			bbsNote.setName(PetUtil.getParameter(ClientRequest, "name"));
 			bbsNote.setContent(PetUtil.getParameter(ClientRequest, "content"));
 			logger.debug(""+bbsNote.toString());
-			noteMapper.insertSelective(bbsNote);
+			noteRepository.insertSelective(bbsNote);
 			return "sendNoteSuccess";
-				
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "sendNoteFail";

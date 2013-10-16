@@ -21,6 +21,8 @@ import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
+import com.momoplan.pet.framework.bbs.repository.NoteRepository;
+import com.momoplan.pet.framework.bbs.repository.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
@@ -37,6 +39,10 @@ public class ForumServiceImpl implements ForumService {
 	private BbsNoteCountService bbsNoteCountService=null;
 	@Resource
 	private UserForumRelService userForumRelService=null;
+	@Resource
+	private NoteRepository noteRepository = null;
+	@Resource
+	private NoteSubRepository noteSubRepository = null;
 	
 	private static Logger logger = LoggerFactory.getLogger(ForumServiceImpl.class);
 	/**
@@ -126,6 +132,14 @@ public class ForumServiceImpl implements ForumService {
 		}
 	}
 	
+	/**
+	 * add by liangc
+	 * 构建一颗栏目树
+	 * @param rootList
+	 * @param pMap
+	 * @param userForumRelMap
+	 * @return
+	 */
 	public ForumNode buildTree(List<Forum> rootList,Map<String,List<Forum>> pMap,Map<String,String> userForumRelMap){
 		ForumNode tree = new ForumNode();
 		List<ForumNode> child = new ArrayList<ForumNode>();
@@ -152,22 +166,30 @@ public class ForumServiceImpl implements ForumService {
 						}
 						f.setLogoImg(n.getLogoImg());//图标
 						
+						String forumId = n.getId();
 						//TODO : 叶子节点 当天总数
+						Long totalToday = noteRepository.totalToday(forumId);
 						//TODO : 叶子节点 总帖子数
+						Long totalCount = noteRepository.totalCount(forumId);
 						//TODO : 叶子节点 总回复数
-						//在缓存里取
-						
+						Long totalReply = noteSubRepository.totalCount(forumId);
+						f.setTotalToday(totalToday);
+						f.setTotalCount(totalCount);
+						f.setTotalReply(totalReply);
 						no.add(f);
 					}
 					tree.setChild(no);
 				}
-				
 				pMap.remove(pid);
 				child.add(buildTree(nList,pMap,userForumRelMap));
 			}
 		return tree;
 	}
 	
+	/**
+	 * add by liangc
+	 * 获取所有栏目，以树的集合形式
+	 */
 	public List<ForumNode> getAllForumAsTree(String userId){
 		ForumCriteria  forumCriteria=new ForumCriteria();
 		//所有的圈子
@@ -182,7 +204,6 @@ public class ForumServiceImpl implements ForumService {
 		for(UserForumRel userForumRel : userForumRelList){
 			userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
 		}
-		
 		//1、获取所有树根节点
 		//else
 		//2、以父节点为索引，分组所有节点
@@ -201,8 +222,8 @@ public class ForumServiceImpl implements ForumService {
 				pMap.put(forum.getPid(), group);
 			}
 		}
-		System.err.println("ROOT: "+new Gson().toJson(rootList));
-		System.err.println("GROUP : "+new Gson().toJson(pMap));
+		logger.debug("ROOT: "+new Gson().toJson(rootList));
+		logger.debug("GROUP : "+new Gson().toJson(pMap));
 		List<ForumNode> treeList = new ArrayList<ForumNode>();
 		for(Forum root : rootList){
 			List<Forum> r = new ArrayList<Forum>();
@@ -210,6 +231,7 @@ public class ForumServiceImpl implements ForumService {
 			ForumNode tree = buildTree(r,pMap,userForumRelMap);
 			treeList.add(tree);
 		}
+		logger.debug("getAllForumAsTree : "+new Gson().toJson(treeList));
 		return treeList;
 	}
 

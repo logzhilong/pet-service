@@ -5,17 +5,21 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
+import com.momoplan.pet.framework.bbs.repository.NoteRepository;
+import com.momoplan.pet.framework.bbs.repository.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteSubService;
 
 @Service
@@ -24,7 +28,10 @@ public class NoteSubServiceImpl implements NoteSubService {
 	private NoteSubMapper noteSubMapper = null;
 	@Resource
 	private NoteMapper noteMapper = null;
-
+	@Resource
+	private NoteSubRepository noteSubRepository = null;
+	@Autowired
+	private MapperOnCache mapperOnCache = null;
 	
 	/**
 	 * 回复帖子
@@ -41,10 +48,11 @@ public class NoteSubServiceImpl implements NoteSubService {
 			bbsNoteSub.setCt(new Date());
 			bbsNoteSub.setArea(PetUtil.getParameter(ClientRequest, "area"));
 			bbsNoteSub.setPid(PetUtil.getParameter(ClientRequest,"pid"));
-			noteSubMapper.insertSelective(bbsNoteSub);
-			Note note=noteMapper.selectByPrimaryKey(PetUtil.getParameter(ClientRequest,"noteId"));
+			noteSubRepository.insertSelective(bbsNoteSub);
+			String noteId = PetUtil.getParameter(ClientRequest,"noteId");
+			Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
 			note.setEt(new Date());
-			noteMapper.updateByPrimaryKey(note);
+			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
 			return "replySuccss";
 		} catch (Exception e) {
 			e.printStackTrace();
