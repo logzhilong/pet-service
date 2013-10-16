@@ -11,24 +11,24 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
- * 回复过我的帖子列表
+ *获取圈子
  * @author  qiyongc
  */
-@Component("attentionForum")
-public class ReplyMeByReplyctHandler extends AbstractHandler {
+@Component("getAllForum")
+public class GetAllForumsHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(ReplyMeByReplyctHandler.class);
+	private Logger logger = LoggerFactory.getLogger(GetAllForumsHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-		Object object=userForumRelService.attentionForum(clientRequest);
-			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));
+		Object object=forumService.getAllForum(clientRequest);
+			logger.debug("获取圈子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
-			logger.debug("关注圈子失败 body="+gson.toJson(clientRequest));
-			logger.error("login : ",e);
+			logger.debug("获取圈子失败 body="+gson.toJson(clientRequest));
+			logger.error("getAllForum : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
