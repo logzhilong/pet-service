@@ -124,7 +124,7 @@ public class SsoServiceImpl implements SsoService {
 	public void updatePassword(SsoUser user) throws Exception {
 		SsoUser ssoUser = getSsoUserByName(user.getUsername());
 		ssoUser.setPassword(user.getPassword());
-		ssoUserMapper.insertSelective(ssoUser);
+		ssoUserMapper.updateByPrimaryKey(ssoUser);
 	}
 
 	@Override
