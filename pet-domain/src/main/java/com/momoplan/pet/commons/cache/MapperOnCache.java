@@ -99,6 +99,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 			if(jedis!=null){
 				try {
 					json = jedis.get(cacheKey);
+					logger.debug("cacheKey = "+cacheKey);
 				} catch (Exception e) {
 					logger.debug("连接缓存失败：" + e.getMessage());
 				}
