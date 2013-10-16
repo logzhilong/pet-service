@@ -3,13 +3,18 @@ package com.momoplan.pet.framework.ssoserver.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import redis.clients.jedis.ShardedJedis;
+
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoAuthenticationTokenMapper;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoChatServerMapper;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoUserMapper;
@@ -35,14 +40,20 @@ public class SsoServiceImpl implements SsoService {
 	private SsoChatServerMapper ssoChatServerMapper = null;
 	private Gson gson = new Gson();
 	private CommonConfig commonConfig = null;
-
+	
+	private MapperOnCache mapperOnCache = null;
+	private RedisPool redisPool = null;
+	
 	@Autowired
-	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoAuthenticationTokenMapper ssoAuthenticationTokenMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig) {
+	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoAuthenticationTokenMapper ssoAuthenticationTokenMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig,
+			MapperOnCache mapperOnCache, RedisPool redisPool) {
 		super();
 		this.ssoUserMapper = ssoUserMapper;
 		this.ssoAuthenticationTokenMapper = ssoAuthenticationTokenMapper;
 		this.ssoChatServerMapper = ssoChatServerMapper;
 		this.commonConfig = commonConfig;
+		this.mapperOnCache = mapperOnCache;
+		this.redisPool = redisPool;
 	}
 
 	@Override
@@ -50,7 +61,7 @@ public class SsoServiceImpl implements SsoService {
 		if(getSsoUserByName(user.getUsername())!=null){
 			throw new Exception("用户名 "+user.getUsername()+" 已存在");
 		}
-		ssoUserMapper.insert(user);
+		ssoUserMapper.insertSelective(user);
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
 		SsoAuthenticationToken token = createToken(user.getId());
@@ -74,41 +85,75 @@ public class SsoServiceImpl implements SsoService {
 		return authenticationToken;
 	}
 
+	private SsoChatServer getSsoChatServer(){
+		String xmppDomain = commonConfig.get("xmpp.domain");
+		ShardedJedis jedis = null;
+		String key = "chatserver."+xmppDomain;
+		int sec = 60*60*4;//4小时更新一次
+		try{
+			jedis = redisPool.getConn();
+			String json = jedis.get(key);
+			if(StringUtils.isEmpty(json)){
+				SsoChatServerCriteria ssoChatServerCriteria = new SsoChatServerCriteria();
+				ssoChatServerCriteria.createCriteria().andNameEqualTo(xmppDomain);
+				List<SsoChatServer> ssoChatServerList = ssoChatServerMapper.selectByExample(ssoChatServerCriteria);
+				SsoChatServer ssoChatServer = ssoChatServerList.get(0);
+				json = gson.toJson(ssoChatServer);
+				jedis.setex(key, sec, json);
+				logger.debug("set json to cache : "+json);
+			}
+			logger.debug("getSsoChatServer on cache : "+json);
+			SsoChatServer ssoChatServer = gson.fromJson(json, SsoChatServer.class);
+			return ssoChatServer;
+		}catch(Exception e){
+			logger.error("getSsoChatServer 异常",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return null;
+	}
+	
 	@Override
 	public LoginResponse login(SsoUser user) throws Exception {
 		try{
-			SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
-			ssoUserCriteria.createCriteria().andUsernameEqualTo(user.getUsername());
-			List<SsoUser> ssoUserList = ssoUserMapper.selectByExample(ssoUserCriteria);
-			if(ssoUserList==null||ssoUserList.size()<=0){
+			SsoUser u = getSsoUserByName(user.getUsername());
+			if(u==null){
 				throw new Exception("用户不存在");
 			}
-			SsoUser u = ssoUserList.get(0);
 			if(user.getPassword()==null||!user.getPassword().equals(u.getPassword())){
 				throw new Exception("密码错误");
 			}
 			u.setDeviceToken(user.getDeviceToken());
-			ssoUserMapper.updateByPrimaryKeySelective(u);
+			mapperOnCache.updateByPrimaryKeySelective(u, u.getId());
 			SsoAuthenticationToken token = createToken(u.getId());
-			
-			String xmppDomain = commonConfig.get("xmpp.domain");
-			SsoChatServerCriteria ssoChatServerCriteria = new SsoChatServerCriteria();
-			ssoChatServerCriteria.createCriteria().andNameEqualTo(xmppDomain);
-			List<SsoChatServer> ssoChatServerList = ssoChatServerMapper.selectByExample(ssoChatServerCriteria);
-			SsoChatServer ssoChatServer = ssoChatServerList.get(0);
-			LoginResponse response = new LoginResponse(token,ssoChatServer);
+			LoginResponse response = new LoginResponse(token,getSsoChatServer());
 			return response;
 		}catch(Exception e){
 			throw new Exception("login error :",e);
 		}
 	}
 	
-	private SsoUser getSsoUserByName(String username){
-		SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
-		ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
-		List<SsoUser> ssoUserList = ssoUserMapper.selectByExample(ssoUserCriteria);
-		if(ssoUserList!=null&&ssoUserList.size()>0)
-			return ssoUserList.get(0);
+	private SsoUser getSsoUserByName(String username) {
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			String useridStr = jedis.hget(INDEX_USERNAME, username);
+			if(StringUtils.isEmpty(useridStr)){
+				SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
+				ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
+				List<SsoUser> ssoUserList = ssoUserMapper.selectByExample(ssoUserCriteria);
+				if(ssoUserList!=null&&ssoUserList.size()>0){
+					SsoUser user = ssoUserList.get(0);
+					useridStr = user.getId()+"";
+					jedis.hset(INDEX_USERNAME, username, useridStr);
+				}
+			}
+			return mapperOnCache.selectByPrimaryKey(SsoUser.class, Long.parseLong(useridStr));
+		}catch(Exception e){
+			logger.error("getSsoUserByName 异常",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
 		return null;
 	}
 
@@ -124,9 +169,13 @@ public class SsoServiceImpl implements SsoService {
 	public void updatePassword(SsoUser user) throws Exception {
 		SsoUser ssoUser = getSsoUserByName(user.getUsername());
 		ssoUser.setPassword(user.getPassword());
-		ssoUserMapper.updateByPrimaryKey(ssoUser);
+		mapperOnCache.updateByPrimaryKey(ssoUser, ssoUser.getId());
 	}
-
+	/**
+	 * TODO 交给缓存处理
+	 * @param token
+	 * @throws Exception
+	 */
 	@Override
 	public void logout(String token) throws Exception {
 		ssoAuthenticationTokenMapper.deleteByPrimaryKey(token);
