@@ -77,7 +77,7 @@ public class SsoServiceImpl implements SsoService {
 		authenticationToken.setExpire(-1L);
 		authenticationToken.setToken(IDCreater.uuid());
 		authenticationToken.setUserid(userId);
-		authenticationToken.setCreateDate(new Date());
+		authenticationToken.setCreateDate(System.currentTimeMillis()+"");
 		String json = gson.toJson(authenticationToken);
 		ShardedJedis jedis = null;
 		try{
