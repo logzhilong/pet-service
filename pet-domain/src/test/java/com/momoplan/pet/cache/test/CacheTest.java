@@ -19,15 +19,15 @@ public class CacheTest extends AbstractTest {
 	@Autowired 
 	MapperOnCache mapperOnCache = null;
 	
-	@Test
+	//@Test
 	public void testPool() {
 		ShardedJedis jedis = redisPool.getConn();
-		jedis.setex("fuck",30,"fuck you fuck you");
+		jedis.setex("fuck",300,"fuck you fuck you");
 		redisPool.closeConn(jedis);
 		System.out.println("OK..."+jedis.get("fuck"));
 	}
 	
-	//@Test
+	@Test
 	public void testMapper() throws Exception{
 		Long id = new Long("701");
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class,id);

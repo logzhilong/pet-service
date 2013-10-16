@@ -29,35 +29,57 @@ public class RedisPool {
 	private ShardedJedisPool shardedJedisPool = null;
 	
 	@Value("#{config['cache.enable']}")
-	private boolean cacheEnable = true;
+	private boolean cacheEnable = false;
 	@Value("#{config['cache.pwd']}")
 	private String cachePwd = null;
+
+	@Value("#{config['cache.pool.max.active']}")
+	private Integer cachePoolMaxActive = 200;
+	@Value("#{config['cache.pool.max.idle']}")
+	private Integer cachePoolMaxIdle = 50;
+	@Value("#{config['cache.pool.max.wait']}")
+	private Long cachePoolMaxWait = 2000L;
+	@Value("#{config['cache.pool.test.on.borrow']}")
+	private Boolean cachePoolTestOnBorrow = false;
 	
 	private String cacheServer = null;
 	private JedisPoolConfig jedisPoolConfig = null;
-	
-	@Autowired
-	public RedisPool(String cacheServer, JedisPoolConfig jedisPoolConfig) {
-		super();
-		this.cacheServer = cacheServer;
-		this.jedisPoolConfig = jedisPoolConfig;
+	private void initJedisPoolConfig(){
+		jedisPoolConfig = new JedisPoolConfig();
+		jedisPoolConfig.setMaxActive(cachePoolMaxActive);
+		jedisPoolConfig.setMaxIdle(cachePoolMaxIdle);
+		jedisPoolConfig.setMaxWait(cachePoolMaxWait);
+		jedisPoolConfig.setTestOnBorrow(cachePoolTestOnBorrow);
 	}
 
+	@Autowired
+	public RedisPool(String cacheServer) {
+		super();
+		this.cacheServer = cacheServer;
+	}
+	
 	@PostConstruct
 	public void init(){
-		logger.debug("cacheServer = "+cacheServer);
 		logger.debug("cacheEnable = "+cacheEnable);
-		logger.debug("cachePwd = "+cachePwd);
-		String[] hostPortArr = cacheServer.split(",");
-		List<JedisShardInfo> JedisShardInfoList = new ArrayList<JedisShardInfo>();
-		for(String portHost : hostPortArr){
-			String[] ph = portHost.split(":");
-			JedisShardInfo jedisShardInfo = new JedisShardInfo(ph[0].trim(),Integer.parseInt(ph[1].trim()));
-			if(StringUtils.isNotEmpty(cachePwd))
-				jedisShardInfo.setPassword(cachePwd);
-			JedisShardInfoList.add(jedisShardInfo);
+		logger.debug("cacheServer = "+cacheServer);
+		if( cacheEnable && StringUtils.isNotEmpty(cacheServer) )
+		try{
+			initJedisPoolConfig();
+			logger.debug("cachePwd = "+cachePwd);
+			String[] hostPortArr = cacheServer.split(",");
+			List<JedisShardInfo> JedisShardInfoList = new ArrayList<JedisShardInfo>();
+			for(String portHost : hostPortArr){
+				String[] ph = portHost.split(":");
+				JedisShardInfo jedisShardInfo = new JedisShardInfo(ph[0].trim(),Integer.parseInt(ph[1].trim()));
+				if(StringUtils.isNotEmpty(cachePwd))
+					jedisShardInfo.setPassword(cachePwd);
+				JedisShardInfoList.add(jedisShardInfo);
+			}
+			shardedJedisPool = new ShardedJedisPool(jedisPoolConfig,JedisShardInfoList);
+			logger.error("cache 初始化成功");
+		}catch(Exception e){
+			logger.error("cache 初始化失败",e);
 		}
-		shardedJedisPool = new ShardedJedisPool(jedisPoolConfig,JedisShardInfoList);
 	}
 	
 	/**
