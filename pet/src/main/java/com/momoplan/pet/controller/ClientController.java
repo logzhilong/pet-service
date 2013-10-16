@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -544,6 +546,8 @@ public class ClientController {
 				return null;
 			}
 			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
+			DateFormat df = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+			authenticationToken.setCreateDate(df.format(new Date(Long.parseLong(authenticationToken.getCreateDate()))));
 			return authenticationToken;
 		} catch (Exception e) {
 			logger.debug("token verify error...");
@@ -562,6 +566,7 @@ public class ClientController {
 				return null;
 			}
 			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
+			authenticationToken.setCreateDate(authenticationToken.getCreateDate());
 			return authenticationToken;
 		} catch (Exception e) {
 			logger.debug("token verify error...");
