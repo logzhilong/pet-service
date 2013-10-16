@@ -25,7 +25,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;要插入的对象中的主键，做缓存的KEY
 	 * @throws Exception
 	 */
-	public <T> int insert(T t, String pk) throws Exception {
+	public <T,K> int insert(T t, K pk) throws Exception {
 		return insertOrUpdate(t,pk,"insert");
 	}
 	/**
@@ -35,7 +35,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;要插入的对象中的主键，做缓存的KEY
 	 * @throws Exception
 	 */
-	public <T> int insertSelective(T t, String pk) throws Exception {
+	public <T,K> int insertSelective(T t, K pk) throws Exception {
 		return insertOrUpdate(t,pk,"insertSelective");
 	}
 	/**
@@ -45,7 +45,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;要更新的对象中的主键，做缓存的KEY
 	 * @throws Exception
 	 */
-	public <T> int updateByPrimaryKey(T t, String pk) throws Exception {
+	public <T,K> int updateByPrimaryKey(T t, K pk) throws Exception {
 		return insertOrUpdate(t,pk,"updateByPrimaryKey");
 	}
 	/**
@@ -55,7 +55,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;要更新的对象中的主键，做缓存的KEY
 	 * @throws Exception
 	 */
-	public <T> int updateByPrimaryKeySelective(T t, String pk) throws Exception {
+	public <T,K> int updateByPrimaryKeySelective(T t, K pk) throws Exception {
 		return insertOrUpdate(t,pk,"updateByPrimaryKeySelective");
 	}
 	/**
@@ -64,7 +64,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;PO的主键
 	 * @throws Exception
 	 */
-	public <T> int deleteByPrimaryKey(Class<T> clazz,String pk) throws Exception {
+	public <T,K> int deleteByPrimaryKey(Class<T> clazz,K pk) throws Exception {
 		RedisPool redisPool = SpringContextHolder.getBean(RedisPool.class);
 		ShardedJedis jedis = redisPool.getConn();
 		String mapper = getMapperName(clazz);
@@ -73,7 +73,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 		try {
 			logger.debug("删除缓存 deleteByPrimaryKey : k="+cacheKey);
 			Object obj = SpringContextHolder.getBean(mapper);
-			r = (Integer)obj.getClass().getMethod("deleteByPrimaryKey", String.class).invoke(obj, pk);
+			r = (Integer)obj.getClass().getMethod("deleteByPrimaryKey", pk.getClass()).invoke(obj, pk);
 			logger.debug("删除数据 deleteByPrimaryKey : pk="+pk);
 		} catch (Exception e) {
 			logger.debug("缓存 deleteByPrimaryKey 方法异常 : " + e.getMessage());
@@ -117,9 +117,8 @@ public class MapperOnCache extends MapperOnCacheSupport {
 			}
 			return t;
 		} catch (Exception e) {
-			logger.debug("缓存 selectByPrimaryKey 方法异常 : " + e.getMessage());
 			logger.debug("param : mapper="+mapper+" ; cacheKey="+cacheKey);
-			logger.error("",e);
+			logger.error("缓存 selectByPrimaryKey 方法异常 : ",e);
 			throw e;
 		} finally {
 			if (redisPool != null && jedis != null) {

@@ -27,7 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.httpclient.HttpException;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
-import com.momoplan.pet.commons.spring.Bootstrap;
+import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
@@ -117,10 +119,10 @@ public class ClientController {
 //	@Value("#{config['xmpp.server']}")
 //	private String xmpppath = null;
 	//add by liangc 130929 : XMPP的域不能写死，正式跟测试环境会用到不同的域，所以把这块配置到 spring 中，然后用 pom.xml 中的 profile 重写
-	@Autowired
-	private String xmppServer = null;
-	@Autowired
-	private String xmppDomain = null;
+//	@Autowired
+//	private String xmppServer = null;
+//	@Autowired
+//	private String xmppDomain = null;
 			
 	@Resource
 	private JmsTemplate apprequestTemplate;
@@ -138,7 +140,7 @@ public class ClientController {
 		String ret = null;
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
-			Object retObj = doRequest(clientRequest, response);
+			Object retObj = doRequest(body,clientRequest, response);
 			ret = new ObjectMapper().writeValueAsString(retObj);
 			if(ret.contains("needProxy")){
 				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
@@ -198,20 +200,23 @@ public class ClientController {
 		}
 	}
 	
-	private Object doRequest(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
+	private Object doRequest(String body,ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		// ClientRequest clientRequest = new
 		// ObjectMapper().reader(ClientRequest.class).readValue(body);
 		if (clientRequest.getMethod().equals("open")) {
 			return handleOpen(clientRequest);
 		}
 		if (clientRequest.getMethod().equals("register")) {
-			return handleRegister(clientRequest);
+//			return handleRegister(clientRequest);
+			return ssoProxyRequest(body);
 		}
 		if (clientRequest.getMethod().equals("register2")) {// v2
-			return handleRegister2(clientRequest);
+//			return handleRegister2(clientRequest);
+			return ssoProxyRequest(body);
 		}
 		if (clientRequest.getMethod().equals("resetPassword")) {
-			return handleResetPassword(clientRequest);
+//			return handleResetPassword(clientRequest);
+			return ssoProxyRequest(body);
 		}
 		if (clientRequest.getMethod().equals("isUsernameInuse")) {
 			return handleIsUsernameInuse(clientRequest);
@@ -220,10 +225,15 @@ public class ClientController {
 			return handleGetChatServerList(clientRequest);
 		}
 		if (clientRequest.getMethod().equals("login")) {
-			return handlelogin(clientRequest);
+//			return handlelogin(clientRequest);
+			return ssoProxyRequest(body);
 		}
 		if (clientRequest.getMethod().equals("login2")) {
-			return handlelogin2(clientRequest);
+//			return handlelogin2(clientRequest);
+			return ssoProxyRequest(body);
+		}
+		if (clientRequest.getMethod().equals("logout")) {
+			return ssoProxyRequest(body);
 		}
 		if (clientRequest.getMethod().equals("getNearbyUser")) {
 			return handleNearbyUser(clientRequest);
@@ -497,6 +507,59 @@ public class ClientController {
 		}
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
+	
+	private Object ssoProxyRequest(String body){
+		String responseStr = HttpRequestProxy.doPostHttpClient(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), body);
+		Success success;
+		try {
+			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
+			if(success.isSuccess()){
+				return success.getEntity();
+			}else{
+				return "false";
+			}
+		} catch (JsonProcessingException e) {
+			logger.debug("json processing error...");
+			e.printStackTrace();
+			return "false";
+		} catch (IOException e) {
+			logger.debug("sso request errro...");
+			e.printStackTrace();
+			return "false";
+		}
+	}
+	
+//	public static void main(String[] args){
+//		String str = "{\"success\":true,\"entity\":{\"userid\":\"866\"}}";
+//		Success success;
+////		Success success;
+//		try {
+////			success  = new Gson().fromJson(str, Success2.class);
+//			success = new ObjectMapper().reader(Success.class).readValue(str);
+//			System.out.println(success.isSuccess());
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
+//			
+//	}
+	
+	
+	private Object verifyToken(ClientRequest clientRequest){
+		String token = clientRequest.getToken();
+		JSONObject bodyJson = new JSONObject();
+		try {
+			bodyJson.accumulate("method", "token");
+			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			String body = bodyJson.toString();
+			return ssoProxyRequest(body);
+		} catch (JSONException e) {
+			logger.debug("token verify error...");
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 
 //	private Object handleSendNote(ClientRequest clientRequest) {
 //		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());

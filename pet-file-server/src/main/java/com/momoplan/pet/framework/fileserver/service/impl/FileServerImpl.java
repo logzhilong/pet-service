@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.domain.fileserver.mapper.FileIndexMapper;
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.fileserver.po.FileIndex;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.fileserver.service.FileServer;
@@ -25,13 +25,13 @@ public class FileServerImpl implements FileServer{
 	private Logger logger = LoggerFactory.getLogger(FileServerImpl.class);
 
 	private CommonConfig commonConfig = null;
-	private FileIndexMapper fileIndexMapper = null;
-	
+	private MapperOnCache mapperOnCache = null;
+
 	@Autowired
-	public FileServerImpl(CommonConfig commonConfig, FileIndexMapper fileIndexMapper) {
+	public FileServerImpl(CommonConfig commonConfig, MapperOnCache mapperOnCache) {
 		super();
 		this.commonConfig = commonConfig;
-		this.fileIndexMapper = fileIndexMapper;
+		this.mapperOnCache = mapperOnCache;
 	}
 
 	private String buildFilePath(String id){
@@ -65,7 +65,7 @@ public class FileServerImpl implements FileServer{
         fileIndex.setFilePath(filePath);
         fileIndex.setFileSrc(fileBean.getFileSrc());
         fileIndex.setCt(new Date());
-        fileIndexMapper.insertSelective(fileIndex);
+        mapperOnCache.insertSelective(fileIndex,id);
         logger.debug("成功加入索引 ："+fileIndex.toString());
         return id;
 	}
@@ -78,7 +78,7 @@ public class FileServerImpl implements FileServer{
 			f.deleteOnExit();
 			logger.debug("删除文件 : "+realPath);
 		}
-		fileIndexMapper.deleteByPrimaryKey(id);
+		mapperOnCache.deleteByPrimaryKey(FileIndex.class, id);
 		logger.debug("删除索引 : "+id);
 	}
 
@@ -87,7 +87,7 @@ public class FileServerImpl implements FileServer{
 		if(new File(basePath+"/"+id).exists())
 			return basePath+"/"+id;
 		else {
-			FileIndex index = fileIndexMapper.selectByPrimaryKey(id);
+			FileIndex index = mapperOnCache.selectByPrimaryKey(FileIndex.class, id);
 			String filePath = index.getFilePath();
 			String realPath = basePath+filePath;
 			if(new File(realPath).exists())

@@ -27,8 +27,8 @@ public class TokenHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			String _token = PetUtil.getParameter(clientRequest, "token");
-			SsoAuthenticationToken token = ssoService.getToken(_token);
-			logger.debug("token有效 body="+gson.toJson(clientRequest));
+			String token = ssoService.getToken(_token);
+			logger.debug("token有效 body="+token);
 			rtn = new Success(true,token).toString();
 		}catch(Exception e){
 			logger.debug("token无效 body="+gson.toJson(clientRequest));

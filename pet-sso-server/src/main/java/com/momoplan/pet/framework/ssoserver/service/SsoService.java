@@ -8,7 +8,7 @@ import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
  * 注册、登录、重设密码、注销登录、token校验
  * @author liangc
  */
-public interface SsoService {
+public interface SsoService extends SsoUserIndexConstance{
 	
 	/**
 	 * 新用户注册
@@ -36,7 +36,7 @@ public interface SsoService {
 	 * @return
 	 * @throws Exception
 	 */
-	public SsoAuthenticationToken getToken(String token) throws Exception ;
+	public String getToken(String token) throws Exception ;
 	/**
 	 * 重设密码
 	 * @param user
