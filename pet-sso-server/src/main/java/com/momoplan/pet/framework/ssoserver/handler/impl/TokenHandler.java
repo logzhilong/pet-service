@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 
 /**
