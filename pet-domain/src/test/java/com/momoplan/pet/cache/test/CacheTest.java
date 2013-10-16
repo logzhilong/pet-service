@@ -1,5 +1,7 @@
 package com.momoplan.pet.cache.test;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -31,6 +33,10 @@ public class CacheTest extends AbstractTest {
 	public void testMapper() throws Exception{
 		Long id = new Long("701");
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class,id);
+		System.out.println(user.toString());
+		user.setCreateTime(new Date());
+		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
+		user = mapperOnCache.selectByPrimaryKey(SsoUser.class,id);
 		System.out.println(user.toString());
 	}
 	

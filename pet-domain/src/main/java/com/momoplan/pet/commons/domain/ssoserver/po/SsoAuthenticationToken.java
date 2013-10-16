@@ -19,13 +19,11 @@ public class SsoAuthenticationToken implements Serializable {
 
     private String token;
 
-    private Date createDate;
+    private String createDate;
 
     private Long expire;
 
     private Long userid;
-
-    private Integer version;
 
     public String getToken() {
         return token;
@@ -35,15 +33,15 @@ public class SsoAuthenticationToken implements Serializable {
         this.token = token;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+    public String getCreateDate() {
+		return createDate;
+	}
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
 
-    public Long getExpire() {
+	public Long getExpire() {
         return expire;
     }
 
@@ -57,14 +55,6 @@ public class SsoAuthenticationToken implements Serializable {
 
     public void setUserid(Long userid) {
         this.userid = userid;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 
     @Override
@@ -82,8 +72,7 @@ public class SsoAuthenticationToken implements Serializable {
         return (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
             && (this.getExpire() == null ? other.getExpire() == null : this.getExpire().equals(other.getExpire()))
-            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()));
     }
 
     @Override
@@ -94,7 +83,6 @@ public class SsoAuthenticationToken implements Serializable {
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         result = prime * result + ((getExpire() == null) ? 0 : getExpire().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
 
