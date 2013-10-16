@@ -171,7 +171,7 @@ public class SsoServiceImpl implements SsoService {
 			jedis = redisPool.getConn();
 			String json = null;
 			try{
-				jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
+				json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
 			}catch(Exception e){
 				throw new Exception("TOKEN 无效或已过期");
 			}
