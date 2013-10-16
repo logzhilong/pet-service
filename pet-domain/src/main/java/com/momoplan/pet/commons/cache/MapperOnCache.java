@@ -55,7 +55,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 	 * @param pk &nbsp;&nbsp;要更新的对象中的主键，做缓存的KEY
 	 * @throws Exception
 	 */
-	public <T> int updateByPrimaryKeySelective(T t, String pk) throws Exception {
+	public <T,K> int updateByPrimaryKeySelective(T t, K pk) throws Exception {
 		return insertOrUpdate(t,pk,"updateByPrimaryKeySelective");
 	}
 	/**
@@ -117,9 +117,8 @@ public class MapperOnCache extends MapperOnCacheSupport {
 			}
 			return t;
 		} catch (Exception e) {
-			logger.debug("缓存 selectByPrimaryKey 方法异常 : " + e.getMessage());
 			logger.debug("param : mapper="+mapper+" ; cacheKey="+cacheKey);
-			logger.error("",e);
+			logger.error("缓存 selectByPrimaryKey 方法异常 : ",e);
 			throw e;
 		} finally {
 			if (redisPool != null && jedis != null) {

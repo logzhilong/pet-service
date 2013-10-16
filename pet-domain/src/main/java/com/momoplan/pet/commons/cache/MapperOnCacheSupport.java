@@ -21,7 +21,7 @@ public class MapperOnCacheSupport {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <T> int insertOrUpdate(T t, String pk,String method) throws Exception {
+	protected <T,K> int insertOrUpdate(T t, K pk,String method) throws Exception {
 		RedisPool redisPool = SpringContextHolder.getBean(RedisPool.class);
 		ShardedJedis jedis = redisPool.getConn();
 		Class<?> clazz = t.getClass();
