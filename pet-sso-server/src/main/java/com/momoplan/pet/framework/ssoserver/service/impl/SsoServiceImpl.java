@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
-import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoAuthenticationTokenMapper;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoChatServerMapper;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
@@ -36,20 +35,18 @@ public class SsoServiceImpl implements SsoService {
 	private Logger logger = LoggerFactory.getLogger(SsoServiceImpl.class);
 	
 	private SsoUserMapper ssoUserMapper = null;
-	private SsoAuthenticationTokenMapper ssoAuthenticationTokenMapper = null;
 	private SsoChatServerMapper ssoChatServerMapper = null;
-	private Gson gson = new Gson();
-	private CommonConfig commonConfig = null;
-	
 	private MapperOnCache mapperOnCache = null;
 	private RedisPool redisPool = null;
+
+	private CommonConfig commonConfig = null;
+	private Gson gson = new Gson();
 	
 	@Autowired
-	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoAuthenticationTokenMapper ssoAuthenticationTokenMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig,
+	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig,
 			MapperOnCache mapperOnCache, RedisPool redisPool) {
 		super();
 		this.ssoUserMapper = ssoUserMapper;
-		this.ssoAuthenticationTokenMapper = ssoAuthenticationTokenMapper;
 		this.ssoChatServerMapper = ssoChatServerMapper;
 		this.commonConfig = commonConfig;
 		this.mapperOnCache = mapperOnCache;
@@ -81,7 +78,17 @@ public class SsoServiceImpl implements SsoService {
 		authenticationToken.setToken(IDCreater.uuid());
 		authenticationToken.setUserid(userId);
 		authenticationToken.setCreateDate(new Date());
-		ssoAuthenticationTokenMapper.insertSelective(authenticationToken);
+		String json = gson.toJson(authenticationToken);
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			jedis.hset(CF_TOKEN, authenticationToken.getToken(), json);
+			logger.debug("createToken 成功 : "+json);
+		}catch(Exception e){
+			logger.error("createToken 异常",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
 		return authenticationToken;
 	}
 
@@ -137,7 +144,7 @@ public class SsoServiceImpl implements SsoService {
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			String useridStr = jedis.hget(INDEX_USERNAME, username);
+			String useridStr = jedis.hget(CF_INDEX_USER_USERNAME, username);
 			if(StringUtils.isEmpty(useridStr)){
 				SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
 				ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
@@ -145,7 +152,7 @@ public class SsoServiceImpl implements SsoService {
 				if(ssoUserList!=null&&ssoUserList.size()>0){
 					SsoUser user = ssoUserList.get(0);
 					useridStr = user.getId()+"";
-					jedis.hset(INDEX_USERNAME, username, useridStr);
+					jedis.hset(CF_INDEX_USER_USERNAME, username, useridStr);
 				}
 			}
 			return mapperOnCache.selectByPrimaryKey(SsoUser.class, Long.parseLong(useridStr));
@@ -158,11 +165,20 @@ public class SsoServiceImpl implements SsoService {
 	}
 
 	@Override
-	public SsoAuthenticationToken getToken(String token) throws Exception {
-		SsoAuthenticationToken obj = ssoAuthenticationTokenMapper.selectByPrimaryKey(token);
-		if(obj==null)
-			throw new Exception("TOKEN 无效或已过期");
-		return obj;
+	public String getToken(String token) throws Exception {
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			String json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
+			if(StringUtils.isEmpty(json))
+				throw new Exception("TOKEN 无效或已过期");
+			logger.debug("getToken 成功 : "+token);
+			return json;
+		}catch(Exception e){
+			throw e;
+		}finally{
+			redisPool.closeConn(jedis);
+		}
 	}
 
 	@Override
@@ -178,6 +194,17 @@ public class SsoServiceImpl implements SsoService {
 	 */
 	@Override
 	public void logout(String token) throws Exception {
-		ssoAuthenticationTokenMapper.deleteByPrimaryKey(token);
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			jedis.hdel(CF_TOKEN, token);
+			logger.debug("logout 成功 : "+token);
+		}catch(Exception e){
+			logger.error("logout 失败",e);
+			throw e;
+		}finally{
+			redisPool.closeConn(jedis);
+		}
 	}
+	
 }

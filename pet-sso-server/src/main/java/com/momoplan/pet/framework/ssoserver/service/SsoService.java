@@ -36,7 +36,7 @@ public interface SsoService extends SsoUserIndexConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public SsoAuthenticationToken getToken(String token) throws Exception ;
+	public String getToken(String token) throws Exception ;
 	/**
 	 * 重设密码
 	 * @param user
