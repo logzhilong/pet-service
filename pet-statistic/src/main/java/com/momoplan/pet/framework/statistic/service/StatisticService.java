@@ -24,4 +24,6 @@ public interface StatisticService {
 	public void productDailyRegistorsTask() throws Exception;
 	
 	public void UpdateDataUsers1() throws Exception;
+	
+
 }

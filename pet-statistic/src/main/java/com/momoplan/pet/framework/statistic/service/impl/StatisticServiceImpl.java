@@ -23,13 +23,17 @@ import org.springframework.util.StringUtils;
 import com.google.gson.Gson;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.domain.statistic.mapper.BizDailyLiveMapper;
+import com.momoplan.pet.commons.domain.statistic.mapper.BizDailyRegistorMapper;
 import com.momoplan.pet.commons.domain.statistic.mapper.DataUsers0Mapper;
 import com.momoplan.pet.commons.domain.statistic.mapper.DataUsers1Mapper;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyLive;
+import com.momoplan.pet.commons.domain.statistic.po.BizDailyLiveCriteria;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers0;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers0Criteria;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers1;
+import com.momoplan.pet.commons.domain.statistic.po.DataUsers1Criteria;
 import com.momoplan.pet.framework.statistic.common.PetStatisticUtil;
 import com.momoplan.pet.framework.statistic.service.StatisticService;
 import com.momoplan.pet.framework.statistic.vo.ClientRequest;
@@ -62,12 +66,16 @@ public class StatisticServiceImpl implements StatisticService {
 	
 	DataUsers0Mapper dataUsers0Mapper = null;
 	DataUsers1Mapper dataUsers1Mapper = null;
+	BizDailyLiveMapper bizDailyLiveMapper = null;
+	BizDailyRegistorMapper bizDailyRegistorMapper = null;
 	
 	@Autowired
-	public StatisticServiceImpl(DataUsers0Mapper dataUsers0Mapper, DataUsers1Mapper dataUsers1Mapper) {
+	public StatisticServiceImpl(DataUsers0Mapper dataUsers0Mapper, DataUsers1Mapper dataUsers1Mapper,BizDailyLiveMapper bizDailyLiveMapper,BizDailyRegistorMapper bizDailyRegistorMapper) {
 		super();
 		this.dataUsers0Mapper = dataUsers0Mapper;
 		this.dataUsers1Mapper = dataUsers1Mapper;
+		this.bizDailyLiveMapper = bizDailyLiveMapper;
+		this.bizDailyRegistorMapper = bizDailyRegistorMapper;
 	}
 
 	@Override
@@ -321,5 +329,50 @@ public class StatisticServiceImpl implements StatisticService {
 		logger.info("updateDataUsers1 finished.");
 	}
 
+	
+//	DataUsers0Mapper dataUsers0Mapper = null;
+//	DataUsers1Mapper dataUsers1Mapper = null;
+//	BizDailyLiveMapper bizDailyLiveMapper = null;
+//	BizDailyRegistorMapper bizDailyRegistorMapper = null;
+	
+	/**
+	 * 当天的用户活跃量从dataUser1mapper中取出
+	 */
+	public void dailyUsersByChannel(){
+//		DataUsers1Criteria dataUsers1Criteria = new DataUsers1Criteria();
+//		DataUsers1Criteria.Criteria criteria = dataUsers1Criteria.createCriteria();
+//		criteria.
+	}
+	
+	/**
+	 * 
+	 */
+	public void weeklyUsersByChannel(){
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void monthlyUsersByChannel(){
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void dailyRegistorsByChannel(){
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void totallyUsersByChannel(){
+//		BizDailyLiveCriteria bizDailyLiveCriteria = new BizDailyLiveCriteria();
+//		BizDailyLiveCriteria.Criteria criteria = bizDailyLiveCriteria.createCriteria();
+//		criteria.and
+//		bizDailyLiveMapper.countByExample(bizDailyLiveCriteria)
+	}
 }
 
