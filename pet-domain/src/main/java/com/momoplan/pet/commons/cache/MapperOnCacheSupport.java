@@ -40,7 +40,7 @@ public class MapperOnCacheSupport {
 		} finally {
 			if ( redisPool != null && jedis != null && obj!=null ) {
 				if(method.startsWith("update")){
-					t = (T) obj.getClass().getMethod("selectByPrimaryKey", String.class).invoke(obj, pk);
+					t = (T) obj.getClass().getMethod("selectByPrimaryKey", pk.getClass()).invoke(obj, pk);
 				}
 				json = myGson.toJson(t);
 				logger.debug("写入缓存"+method+" :  k="+cacheKey+" ; v="+json);
