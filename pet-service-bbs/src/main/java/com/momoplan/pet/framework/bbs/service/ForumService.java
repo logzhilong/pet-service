@@ -29,5 +29,18 @@ public interface ForumService {
 			
 			
 			
+			/**
+			 * 获取所有圈子(父级和子集)
+			 * @param ClientRequest
+			 * @return
+			 */
+			public Object getAllForum(ClientRequest ClientRequest);
+			
+			
+			
+			
+			
+			
+			
 			
 }
