@@ -518,7 +518,7 @@ public class ClientController {
 	}
 
 	private Object handleProxyRequest(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return "false";
 		}
