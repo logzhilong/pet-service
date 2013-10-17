@@ -86,11 +86,12 @@ public class NoteRepository implements CacheKeysConstance{
 			//init key 对应的堆
 			if(!jedis.exists(key)||jedis.llen(key)==0){
 				initListNote(jedis,po,key);
+			}else{//初始化时的总数，已经包括了当前的这次请求，不必再插入
+				Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
+				String noteJson = gson.toJson(note);
+				jedis.lpush(key,noteJson);
+				logger.debug(key+" lpush "+noteJson);
 			}
-			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
-			String noteJson = gson.toJson(note);
-			jedis.lpush(key,noteJson);
-			logger.debug(key+" lpush "+noteJson);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw e;
