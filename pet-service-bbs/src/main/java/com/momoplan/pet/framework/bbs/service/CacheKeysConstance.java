@@ -21,8 +21,16 @@ public interface CacheKeysConstance {
 	 */
 	public static final String LIST_NOTE_TOTALTODAY = "service_bbs.list.note.totalToday:";
 	/**
+	 * 栏目的帖子缓存，key后面加上 forumId，缓存的帖子是【堆栈】结构
+	 */
+	public static final String LIST_NOTE = "service_bbs.list.note:";
+	/**
 	 * 每个栏目的回帖总数,key后面要加上 forumId
 	 */
 	public static final String LIST_NOTE_SUB_TOTALCOUNT = "service_bbs.list.note_sub.totalCount:";
+	/**
+	 * 每个主题的回帖缓存, key后面要加上 noteId，缓存的回帖是【队列】结构
+	 */
+	public static final String LIST_NOTE_SUB = "service_bbs.list.note_sub:";
 	
 }
