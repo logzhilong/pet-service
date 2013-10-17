@@ -524,12 +524,13 @@ public class ClientController {
 		if (null == authenticationToken) {
 			return "false";
 		}
-//		System.out.println(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
+		System.out.println(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 	
 	private Object ssoProxyRequest(String body){
 		String responseStr = HttpRequestProxy.doPostHttpClient(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), body);
+		logger.debug("\nresponseStr:"+responseStr);
 		Success success;
 		try {
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
