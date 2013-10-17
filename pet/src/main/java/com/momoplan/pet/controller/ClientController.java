@@ -159,12 +159,14 @@ public class ClientController {
 //				if(null==ret||ret.compareTo("null")==0){
 //					ret = "false";
 //				}
+				logger.debug("\nret:"+ret);
 				return ret;
 			}
 		}
 //		if(null==ret||ret.compareTo("null")==0){
 //			ret = "false";
 //		}
+		logger.debug("\nret:"+ret);
 		return ret;
 	}
 
