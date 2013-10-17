@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
-import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.manager.po.MgrRole;
+import com.momoplan.pet.commons.domain.manager.po.MgrUser;
+import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
+import com.momoplan.pet.framework.manager.service.MgrUserService;
 import com.momoplan.pet.framework.manager.service.RoleManageService;
+import com.momoplan.pet.framework.manager.service.RoleUserManageService;
+import com.momoplan.pet.framework.manager.service.UserManageService;
 
 @Controller
 public class RoleManageController {
@@ -25,6 +29,10 @@ public class RoleManageController {
 	
 	@Autowired
 	private RoleManageService roleManageService;
+	@Autowired
+	private RoleUserManageService roleUserManageService=null;
+	@Autowired
+	private UserManageService userManageService=null;
 	/**
 	 * 获取角色列表获取列表
 	 * @param model
@@ -117,6 +125,37 @@ public class RoleManageController {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
 	}
+	
+	/**
+	 * 选中角色时跳转至此
+	 * 获取当前角色下用户
+	 * @param role
+	 * @param model
+	 * @throws Exception
+	 */
+	@RequestMapping("/manager/mgrrolemanage/Torolemanageuserlist.html")
+	public String Torolemanageuserlist(MgrRole role,Model model) throws Exception{
+		try {
+			String id=role.getId();
+			MgrUserRoleRel mgrUserRoleRel=new MgrUserRoleRel();
+			mgrUserRoleRel.setRoleId(id);
+			List<MgrUserRoleRel> rels=roleUserManageService.getRoleUserListbyRoleid(mgrUserRoleRel);
+			List<MgrUser> mgrUsers=new ArrayList<MgrUser>();
+			for(MgrUserRoleRel rel:rels){
+				MgrUser mgrUser=new MgrUser();
+				mgrUser.setId(rel.getUserId());
+				MgrUser user=userManageService.getUserByid(mgrUser);
+				mgrUsers.add(user);
+			}
+			model.addAttribute("mgrUsers", mgrUsers);
+			return "/manager/rolemanage/roleManageUserList";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/manager/rolemanage/roleManageUserList";
+		}
+	}
+	
+	
 	
 	
 }

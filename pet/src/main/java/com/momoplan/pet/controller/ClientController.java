@@ -133,8 +133,8 @@ public class ClientController {
 	 * @throws Exception
 	 */
 	@RequestMapping("request")
-	public @ResponseBody
-	Object request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
+	public void request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
+		response.setCharacterEncoding("UTF-8");
 		logger.debug("request input : "+body);
 		String ret = null;
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
@@ -159,15 +159,17 @@ public class ClientController {
 //				if(null==ret||ret.compareTo("null")==0){
 //					ret = "false";
 //				}
-				return ret;
+				logger.debug("\nret:"+ret);
+				com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
 			}
 		}
 //		if(null==ret||ret.compareTo("null")==0){
 //			ret = "false";
 //		}
-		return ret;
+		logger.debug("\nret:"+ret);
+		com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
 	}
-
+	
 	private Map<String,String> proxyJms(String body,String ret){
 		try {
 			JSONObject bodyJson = new JSONObject(body);
