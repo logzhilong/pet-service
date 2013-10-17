@@ -32,7 +32,6 @@
 			<tr>
 				<th width="30" align="left">编号</th>
 				<th width="100" align="left">用户名称</th>
-				<th width="100" align="left">密码</th>
 				<th width="100" align="left">创建时间</th>
 				<th width="100" align="left">修改时间</th>
 				<th width="100" align="left">创建人</th>
@@ -45,7 +44,6 @@
 				<tr target="id" rel="${ite.id }">
 					<td align="left">${idx.index+1 }</td>
 					<td align="left">${ite.name}</td>
-					<td align="left">${ite.password}</td>
 					<td align="left">${ite.ct }</td>
 					<td align="left">${ite.et }</td>
 					<td align="left">${ite.cb }</td>

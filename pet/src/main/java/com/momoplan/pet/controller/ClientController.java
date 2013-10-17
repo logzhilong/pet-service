@@ -473,6 +473,12 @@ public class ClientController {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
+		//proxy查看圈子列表
+		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		
 		//举报
 		if (clientRequest.getMethod().equals("reportContent")) {
 			return handleReportContent(clientRequest);
@@ -516,6 +522,7 @@ public class ClientController {
 		if (null == authenticationToken) {
 			return "false";
 		}
+//		System.out.println(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 	

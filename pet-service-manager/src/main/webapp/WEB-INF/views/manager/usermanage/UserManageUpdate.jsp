@@ -14,12 +14,7 @@
 					<input type="text" name="name" value="${mgrUser2.name }" />
 				</dd>
 			</dl>
-			<dl>
-				<dt>用户密码：</dt>
-				<dd>
-					<input type="text" name="password" value="${mgrUser2.password }" />
-				</dd>
-			</dl>
+			
 			
 			<dl>
 				<dt>是否可用：</dt>
@@ -41,16 +36,21 @@
 				<dt>选择角色：</dt>
 				<dd>
 					</label><input type="checkbox" class="checkboxCtrl" group="roletype" />全选</label>
-					<c:forEach var="itr" items="${roles }">
-						<label><input type="checkbox" name="roletype" value="${itr.id }" />${itr.name }</label>
-					</c:forEach>
-				</dd>
+						
+						<c:forEach var="itrr" items="${list }">
+						<label><input type="checkbox" name="roletype"  <c:if test="${itrr.rcheck }">checked="checked" </c:if> value="${itrr.rid }" />${itrr.rname }</label>
+						
+						</c:forEach>
+					</dd>
 				</dl>
 			</fieldset>
 		</div>
 
 		<div class="formBar">
 			<ul>
+				<li>
+					<div class="buttonContent"><button type="button" class="checkboxCtrl" group="roletype" selectType="invert">反选</button></div>
+				</li>
 				<li>
 					<div class="buttonActive">
 						<div class="buttonContent">
