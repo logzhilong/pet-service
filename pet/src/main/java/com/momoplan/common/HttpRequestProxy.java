@@ -104,11 +104,11 @@ public class HttpRequestProxy {
 //			PostRequest.postText(url, args)
 //			stringRequestEntity = new StringRequestEntity("body="+body, "application/json", requestEncoding);
 //			postMethod.setRequestEntity(stringRequestEntity);
+			postMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET,"utf-8");
 			postMethod.setParameter("body", body);
 //			postMethod.addRequestHeader("Accept-Language", "zh-CN");
-			postMethod.addRequestHeader("Content-Type", "charset=utf-8");
-			postMethod.addRequestHeader("charset", "utf-8");
-			postMethod.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET,"utf-8");
+//			postMethod.addRequestHeader("Content-Type", "charset=utf-8");
+//			postMethod.addRequestHeader("charset", "utf-8");
 			httpClient.executeMethod(postMethod);
 			String respronse = postMethod.getResponseBodyAsString();
 			postMethod.releaseConnection();
