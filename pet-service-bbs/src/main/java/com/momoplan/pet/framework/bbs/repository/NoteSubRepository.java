@@ -48,15 +48,15 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 */
 	public void insertSelective(NoteSub po)throws Exception{
 		//入库并加入缓存
-		mapperOnCache.insertSelective(po, po);
+		mapperOnCache.insertSelective(po, po.getId());
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
 			//增加到 回帖总数列表
 			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getNoteId());
 			String forumId = note.getForumId();
-			//forumId 对应栏目的 回帖总数
-			jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, "n");
+			//forumId 圈子的 回帖总数
+			lpushNoteSubTotalCount(jedis,LIST_NOTE_SUB_TOTALCOUNT+forumId,forumId);
 			//需求是：最新的回帖排在最下面,【队列】结构
 			rpushListNoteSub(jedis,po);
 		}catch(Exception e){
@@ -68,6 +68,19 @@ public class NoteSubRepository implements CacheKeysConstance{
 	}
 	
 	/**
+	 * 针对 forumId 圈子的回帖总数
+	 * @param jedis
+	 * @param key
+	 * @param forumId
+	 */
+	private void lpushNoteSubTotalCount(ShardedJedis jedis,String key,String forumId){
+		if(!jedis.exists(key))
+			initTotalCount(jedis,key,forumId);
+		else//初始化时的总数，已经包括了当前的这次请求
+			jedis.lpush(key, "n");
+	}
+	
+	/**
 	 * 需求是：最新的回帖排在最下面,【队列】结构
 	 * @param po
 	 */
@@ -76,12 +89,15 @@ public class NoteSubRepository implements CacheKeysConstance{
 		try {
 			//init key 对应的队列
 			if(!jedis.exists(key)||jedis.llen(key)==0){
+				//初始化将加载所有的数据到缓存
 				initListNoteSub(jedis,po,key);
+			}else{
+				//如果不初始化，则将最新的放入缓存即可
+				NoteSub noteSub = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
+				String noteSubJson = gson.toJson(noteSub);
+				jedis.rpush(key,noteSubJson);
+				logger.debug(key+" rpush "+noteSubJson);
 			}
-			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
-			String noteSubJson = gson.toJson(noteSub);
-			jedis.lpush(key,noteSubJson);
-			logger.debug(key+" lpush "+noteSubJson);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			throw e;
@@ -109,9 +125,41 @@ public class NoteSubRepository implements CacheKeysConstance{
 			arr[i++] = json;
 			logger.debug(key+" rpush "+json);
 		}
-		jedis.lpush(key, arr);
+		jedis.rpush(key, arr);
 		logger.info("初始化 回帖 缓存队列 完成.");
 	}	
+	
+	/**
+	 * 初始化 forumId 圈子的回帖总数
+	 * @param jedis
+	 * @param key
+	 * @param forumId
+	 * @return
+	 */
+	private Long initTotalCount(ShardedJedis jedis,String key,String forumId){
+		NoteCriteria noteCriteria = new NoteCriteria();
+		noteCriteria.createCriteria().andForumIdEqualTo(forumId);
+		List<Note> noteList = noteMapper.selectByExample(noteCriteria);
+		List<String> noteIds = new ArrayList<String>();
+		if(noteList!=null&&noteList.size()>0)
+		for(Note note : noteList){
+			noteIds.add(note.getId());
+		}
+		int count = -1;
+		if(noteIds.size()>0){
+			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+			noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
+			count = noteSubMapper.countByExample(noteSubCriteria);
+			logger.debug("初始化 回帖总数 数据库取值 " + key + " : "+count);
+			String[] array = new String[count];
+			for(int i=0;i<count;i++){
+				array[i] = "n";
+			}
+			if(array!=null&&array.length>0)
+				jedis.lpush(key, array);
+		}
+		return Long.valueOf(count);
+	}
 	
 	/**
 	 * 指定帖子 总回帖数
@@ -122,36 +170,17 @@ public class NoteSubRepository implements CacheKeysConstance{
 		try{
 			jedis = redisPool.getConn();
 			Long total = 0L;
+			String key = LIST_NOTE_SUB_TOTALCOUNT+forumId;
 			try{
-				total = jedis.llen(LIST_NOTE_SUB_TOTALCOUNT+forumId);
+				total = jedis.llen(key);
 			}catch(Exception e){}
-			if(total>0){
+			if(jedis.exists(key) && total>0){
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("帖子总数 缓存取值 : "+total);
 				return total;
 			}
-			NoteCriteria noteCriteria = new NoteCriteria();
-			noteCriteria.createCriteria().andForumIdEqualTo(forumId);
-			List<Note> noteList = noteMapper.selectByExample(noteCriteria);
-			List<String> noteIds = new ArrayList<String>();
-			if(noteList!=null&&noteList.size()>0)
-			for(Note note : noteList){
-				noteIds.add(note.getId());
-			}
-			int count = -1;
-			if(noteIds.size()>0){
-				NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-				noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
-				count = noteSubMapper.countByExample(noteSubCriteria);
-				logger.debug("初始化 回帖总数 数据库取值 : "+count);
-				String[] array = new String[count];
-				for(int i=0;i<count;i++){
-					array[i] = "n";
-				}
-				if(array!=null&&array.length>0)
-					jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, array);
-			}
-			return Long.valueOf(count);
+			//TODO 
+			return initTotalCount(jedis,key,forumId);
 		}catch(Exception e){
 			logger.debug(e.getMessage());
 		}finally{
