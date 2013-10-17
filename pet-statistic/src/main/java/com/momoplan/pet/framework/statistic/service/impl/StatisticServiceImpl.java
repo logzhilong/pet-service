@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -336,33 +337,120 @@ public class StatisticServiceImpl implements StatisticService {
 //	BizDailyRegistorMapper bizDailyRegistorMapper = null;
 	
 	/**
-	 * 当天的用户活跃量从dataUser1mapper中取出
+	 * 当天的用户活跃量jdbc
 	 */
-	public void dailyUsersByChannel(){
-//		DataUsers1Criteria dataUsers1Criteria = new DataUsers1Criteria();
-//		DataUsers1Criteria.Criteria criteria = dataUsers1Criteria.createCriteria();
-//		criteria.
+	public List<BizDailyLive> dailyUsersByChannel(){
+		
+		JdbcTemplate getBizDailyLives = new JdbcTemplate(statisticDataSource);
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select t.channel as channel,count(*) as totally_user from (select distinct du.userid,du.channel, to_days(connect_time) from data_users_1 du where du.connect_time is not null and du.userid !='' and to_days(now()) = to_days(du.connect_time)) t group by t.channel ");
+		List<BizDailyLive> bizDailyLives = getBizDailyLives.query(sql.toString(), new RowMapper<BizDailyLive>(){
+			@Override
+			public BizDailyLive mapRow(ResultSet rs, int rowNum) throws SQLException {
+				BizDailyLive bizDailyLive = new BizDailyLive();
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.DAY_OF_MONTH, -1);
+				String channel = rs.getString("channel");
+				String total = rs.getString("totally_user");
+				bizDailyLive.setChannel(channel);
+				bizDailyLive.setTotallyUser(total);
+				bizDailyLive.setBizDate(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+				return bizDailyLive;
+			}
+		});
+		if(bizDailyLives.size()<=0){
+			logger.debug("no dailyLives data ....");
+		}
+		return bizDailyLives;
 	}
 	
 	/**
 	 * 
 	 */
-	public void weeklyUsersByChannel(){
-		
+	public List<BizDailyLive> weeklyUsersByChannel(){
+		BizDailyLiveCriteria bizDailyLiveCriteria = new BizDailyLiveCriteria();
+		BizDailyLiveCriteria.Criteria criteria = bizDailyLiveCriteria.createCriteria();
+		Calendar cal = Calendar.getInstance();
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		//时间标移到7天前
+		cal.add(Calendar.DAY_OF_MONTH, -7);
+		String weekBefore = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		criteria.andBizDateBetween(weekBefore, today);
+		List<BizDailyLive> bizDailyLives = bizDailyLiveMapper.selectByExample(bizDailyLiveCriteria);
+		if(bizDailyLives.size()<=0){
+			logger.debug("no dailyLives data ....");
+		}
+		List<BizDailyLive> weeklyLives = new ArrayList<BizDailyLive>();
+		for (int i = 0; i < bizDailyLives.size(); i++) {
+			BizDailyLive weeklyLive = new BizDailyLive();
+			weeklyLive.setTotallyUser("0");
+			for (int j = 0; j < bizDailyLives.size(); j++) {
+				if(bizDailyLives.get(i).getChannel().compareTo(bizDailyLives.get(j).getChannel())==0){
+					weeklyLive.setChannel(bizDailyLives.get(i).getChannel());
+					weeklyLive.setTotallyUser(Long.parseLong(weeklyLive.getTotallyUser())+Long.parseLong(bizDailyLives.get(j).getTotallyUser())+"");
+				}
+			}
+			weeklyLives.add(weeklyLive);
+		}
+		return weeklyLives;
 	}
 	
 	/**
 	 * 
 	 */
-	public void monthlyUsersByChannel(){
-		
+	public List<BizDailyLive> monthlyUsersByChannel(){
+		BizDailyLiveCriteria bizDailyLiveCriteria = new BizDailyLiveCriteria();
+		BizDailyLiveCriteria.Criteria criteria = bizDailyLiveCriteria.createCriteria();
+		Calendar cal = Calendar.getInstance();
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		//时间标移到7天前
+		cal.add(Calendar.DAY_OF_MONTH, -30);
+		String weekBefore = new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
+		criteria.andBizDateBetween(weekBefore, today);
+		List<BizDailyLive> bizDailyLives = bizDailyLiveMapper.selectByExample(bizDailyLiveCriteria);
+		if(bizDailyLives.size()<=0){
+			logger.debug("no dailyLives data ....");
+		}
+		List<BizDailyLive> monthlyLives = new ArrayList<BizDailyLive>();
+		for (int i = 0; i < bizDailyLives.size(); i++) {
+			BizDailyLive monthlyLive = new BizDailyLive();
+			monthlyLive.setTotallyUser("0");
+			for (int j = 0; j < bizDailyLives.size(); j++) {
+				if(bizDailyLives.get(i).getChannel().compareTo(bizDailyLives.get(j).getChannel())==0){
+					monthlyLive.setChannel(bizDailyLives.get(i).getChannel());
+					monthlyLive.setTotallyUser(Long.parseLong(monthlyLive.getTotallyUser())+Long.parseLong(bizDailyLives.get(j).getTotallyUser())+"");
+				}
+			}
+			monthlyLives.add(monthlyLive);
+		}
+		return monthlyLives;
 	}
 	
 	/**
-	 * 
+	 * 当天的用户注册量jdbc获取
 	 */
-	public void dailyRegistorsByChannel(){
-		
+	public List<BizDailyRegistor> dailyRegistorsByChannel(){
+		JdbcTemplate getBizDailyRegistor = new JdbcTemplate(statisticDataSource);
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select t.channel as channel,count(*) as totally_user from (select distinct du.userid,du.channel, to_days(create_time) from data_users_1 du where du.create_time is not null and du.userid !='' and to_days(now()) = to_days(du.create_time)) t group by t.channel ");
+		List<BizDailyRegistor> bizDailyRegistors = getBizDailyRegistor.query(sql.toString(), new RowMapper<BizDailyRegistor>(){
+			@Override
+			public BizDailyRegistor mapRow(ResultSet rs, int rowNum) throws SQLException {
+				BizDailyRegistor bizDailyRegistor = new BizDailyRegistor();
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.DAY_OF_MONTH, -1);
+				String channel = rs.getString("channel");
+				String total = rs.getString("totally_user");
+				bizDailyRegistor.setChannel(channel);
+				bizDailyRegistor.setTotallyUser(total);
+				bizDailyRegistor.setBizDate(new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
+				return bizDailyRegistor;
+			}
+		});
+		if(bizDailyRegistors.size()<=0){
+			logger.debug("no dailyRegistors data ....");
+		}
+		return bizDailyRegistors;
 	}
 	
 	/**
