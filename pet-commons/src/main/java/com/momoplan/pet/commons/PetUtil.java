@@ -137,6 +137,7 @@ public class PetUtil {
 			return clientRequest;
 		}catch(Exception e){
 			e.printStackTrace();
+			logger.debug("body = "+body);
 			logger.error("ClientRequest 参数反序列化异常",e);
 			throw new Exception("ClientRequest 参数反序列化异常",e);
 		}

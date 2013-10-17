@@ -51,8 +51,8 @@ import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
 import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
-import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
 import com.momoplan.pet.domain.PetInfo;
@@ -524,14 +524,17 @@ public class ClientController {
 		if (null == authenticationToken) {
 			return "false";
 		}
-//		System.out.println(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
+		logger.debug(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 	
 	private Object ssoProxyRequest(String body){
-		String responseStr = HttpRequestProxy.doPostHttpClient(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), body);
-		Success success;
+		logger.debug("\nbody:"+body);
+		String responseStr;
 		try {
+			responseStr = PostRequest.postText(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), "body",body);
+			logger.debug("\nresponseStr:"+responseStr);
+			Success success;
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
 			if(success.isSuccess()){
 				return success.getEntity();
@@ -546,6 +549,10 @@ public class ClientController {
 			logger.debug("sso request errro...");
 			e.printStackTrace();
 			return "false";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "false";
 		}
 	}
 	
@@ -556,6 +563,7 @@ public class ClientController {
 		try {
 			bodyJson.accumulate("method", "token");
 			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			logger.debug("\nbodyJsonStr:"+bodyJson.toString());
 			String str = ssoProxyRequest(bodyJson.toString()).toString();
 			if(str.contains("false")){
 				return null;
