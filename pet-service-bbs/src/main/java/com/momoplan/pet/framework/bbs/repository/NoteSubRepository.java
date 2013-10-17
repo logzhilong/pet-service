@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import redis.clients.jedis.ShardedJedis;
 
+import com.google.gson.Gson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
@@ -24,7 +25,8 @@ import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
 public class NoteSubRepository implements CacheKeysConstance{
 
 	private static Logger logger = LoggerFactory.getLogger(NoteSubRepository.class);
-	
+	private static Gson gson = new Gson();
+
 	private RedisPool redisPool= null;
 	private MapperOnCache mapperOnCache = null;
 	private NoteMapper noteMapper = null;
@@ -55,8 +57,16 @@ public class NoteSubRepository implements CacheKeysConstance{
 			String forumId = note.getForumId();
 			//forumId 对应栏目的 回帖总数
 			jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, "n");
+			
+			//需求是：最新的回帖排在最下面,【队列】结构
+			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(NoteSub.class, po.getId());
+			String noteJson = gson.toJson(noteSub);
+			jedis.rpush(LIST_NOTE_SUB,noteJson);
+			logger.debug(LIST_NOTE_SUB+" rpush "+noteJson);
+			
 		}catch(Exception e){
-			e.printStackTrace();
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("insertSelective",e);
 		}finally{
 			redisPool.closeConn(jedis);
 		}
@@ -83,19 +93,23 @@ public class NoteSubRepository implements CacheKeysConstance{
 			noteCriteria.createCriteria().andForumIdEqualTo(forumId);
 			List<Note> noteList = noteMapper.selectByExample(noteCriteria);
 			List<String> noteIds = new ArrayList<String>();
+			if(noteList!=null&&noteList.size()>0)
 			for(Note note : noteList){
 				noteIds.add(note.getId());
 			}
-			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-			noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
-			int count = noteSubMapper.countByExample(noteSubCriteria);
-			logger.debug("初始化 回帖总数 数据库取值 : "+count);
-			String[] array = new String[count];
-			for(int i=0;i<count;i++){
-				array[i] = "n";
+			int count = -1;
+			if(noteIds.size()>0){
+				NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+				noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
+				count = noteSubMapper.countByExample(noteSubCriteria);
+				logger.debug("初始化 回帖总数 数据库取值 : "+count);
+				String[] array = new String[count];
+				for(int i=0;i<count;i++){
+					array[i] = "n";
+				}
+				if(array!=null&&array.length>0)
+					jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, array);
 			}
-			if(array!=null&&array.length>0)
-				jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, array);
 			return Long.valueOf(count);
 		}catch(Exception e){
 			logger.debug(e.getMessage());

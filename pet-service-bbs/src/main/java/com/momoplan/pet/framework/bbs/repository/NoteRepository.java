@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import redis.clients.jedis.ShardedJedis;
 
+import com.google.gson.Gson;
 import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
@@ -21,6 +22,7 @@ import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
 public class NoteRepository implements CacheKeysConstance{
 
 	private static Logger logger = LoggerFactory.getLogger(NoteRepository.class);
+	private static Gson gson = new Gson();
 	
 	private RedisPool redisPool= null;
 	private MapperOnCache mapperOnCache = null;
@@ -49,8 +51,14 @@ public class NoteRepository implements CacheKeysConstance{
 			jedis.lpush(LIST_NOTE_TOTALCOUNT+po.getForumId(), "n");
 			//增加到 当天帖子总数
 			jedis.lpush(LIST_NOTE_TOTALTODAY+DateUtils.getTodayStr(), "n");
+			//需求是：最新的帖子排在最上面,【堆栈】结构
+			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
+			String noteJson = gson.toJson(note);
+			jedis.lpush(LIST_NOTE,noteJson);
+			logger.debug(LIST_NOTE+" lpush "+noteJson);
 		}catch(Exception e){
-			e.printStackTrace();
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("insertSelective",e);
 		}finally{
 			redisPool.closeConn(jedis);
 		}
