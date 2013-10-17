@@ -44,14 +44,15 @@ public class NoteRepository implements CacheKeysConstance{
 	 */
 	public void insertSelective(Note po)throws Exception{
 		//入库并加入缓存
-		mapperOnCache.insertSelective(po, po);
+		mapperOnCache.insertSelective(po,po.getId());
 		ShardedJedis jedis = null;
+		String forumId = po.getForumId() ; 
 		try{
 			jedis = redisPool.getConn();
 			//增加到 帖子总数列表
-			jedis.lpush(LIST_NOTE_TOTALCOUNT+po.getForumId(), "n");
+			lpushTotalCount(jedis,LIST_NOTE_TOTALCOUNT+forumId,forumId);
 			//增加到 当天帖子总数
-			jedis.lpush(LIST_NOTE_TOTALTODAY+DateUtils.getTodayStr(), "n");
+			lpushTotalToday(jedis,LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr(),forumId);
 			//需求是：最新的帖子排在最上面,【堆栈】结构
 			lpushListNote(jedis,po);
 		}catch(Exception e){
@@ -61,7 +62,20 @@ public class NoteRepository implements CacheKeysConstance{
 			redisPool.closeConn(jedis);
 		}
 	}
-	
+	private void lpushTotalCount(ShardedJedis jedis,String key,String forumId){
+		if(!jedis.exists(key)){
+			initTotalCount(jedis, key, forumId);
+		}else{//初始化时的总数，已经包括了当前的这次请求
+			jedis.lpush(key, "n");
+		}
+	}
+	private void lpushTotalToday(ShardedJedis jedis,String key,String forumId){
+		if(!jedis.exists(key)){
+			initTotalToday(jedis, key, forumId);
+		}else{//初始化时的总数，已经包括了当前的这次请求
+			jedis.lpush(key, "n");
+		}
+	}
 	/**
 	 * 需求是：最新的帖子排在最上面,【堆栈】结构
 	 * @param po
@@ -107,34 +121,47 @@ public class NoteRepository implements CacheKeysConstance{
 		jedis.lpush(key, arr);
 		logger.info("初始化 帖子 缓存堆 完成.");
 	}
+	
+	/**
+	 * 初始化 指定圈子 总帖子数
+	 * @param jedis
+	 * @param key
+	 * @param forumId
+	 * @return
+	 */
+	private Long initTotalCount(ShardedJedis jedis,String key,String forumId){
+		NoteCriteria noteCriteria = new NoteCriteria();
+		noteCriteria.createCriteria().andForumIdEqualTo(forumId);
+		int count = noteMapper.countByExample(noteCriteria);
+		logger.debug("key="+key+" forumId="+forumId+ " 初始化 帖子总数 数据库取值 : "+count);
+		String[] array = new String[count];
+		for(int i=0;i<count;i++){
+			array[i] = "n";
+		}
+		if(array!=null&&array.length>0)
+			jedis.lpush(key, array);
+		return Long.valueOf(count);
+	}
+	
 	/**
 	 * 指定圈子 总帖子数
 	 * @return
 	 */
 	public Long totalCount(String forumId){
 		ShardedJedis jedis = null;
+		String key = LIST_NOTE_TOTALCOUNT+forumId;
 		try{
 			jedis = redisPool.getConn();
-			Long total = 0L;
+			Long total = -1L;
 			try{
-				total = jedis.llen(LIST_NOTE_TOTALCOUNT+forumId);
+				total = jedis.llen(key);
 			}catch(Exception e){}
-			if(total>0){
+			if(jedis.exists(key) && total>0){
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("帖子总数 缓存取值 : "+total);
 				return total;
 			}
-			NoteCriteria noteCriteria = new NoteCriteria();
-			noteCriteria.createCriteria().andForumIdEqualTo(forumId);
-			int count = noteMapper.countByExample(noteCriteria);
-			logger.debug("初始化 帖子总数 数据库取值 : "+count);
-			String[] array = new String[count];
-			for(int i=0;i<count;i++){
-				array[i] = "n";
-			}
-			if(array!=null&&array.length>0)
-				jedis.lpush(LIST_NOTE_TOTALCOUNT+forumId, array);
-			return Long.valueOf(count);
+			return initTotalCount(jedis,key,forumId);
 		}catch(Exception e){
 			logger.debug(e.getMessage());
 		}finally{
@@ -143,6 +170,21 @@ public class NoteRepository implements CacheKeysConstance{
 		return -1L;
 	}
 	
+	
+	private Long initTotalToday(ShardedJedis jedis,String key,String forumId){
+		NoteCriteria noteCriteria = new NoteCriteria();
+		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+		criteria.andCtGreaterThan(DateUtils.minusDays(new Date(),1));//大于昨天，就是今天
+		criteria.andForumIdEqualTo(forumId);
+		int count = noteMapper.countByExample(noteCriteria);
+		logger.debug("初始化 今天 帖子总数 数据库取值 : "+count);
+		String[] array = new String[count];
+		for(int i=0;i<count;i++){
+			array[i] = "n";
+		}
+		jedis.lpush(key, array);
+		return Long.valueOf(count);
+	}
 	/**
 	 * 指定圈子 当天的帖子总数
 	 * @return
@@ -150,29 +192,19 @@ public class NoteRepository implements CacheKeysConstance{
 	public Long totalToday(String forumId){
 		ShardedJedis jedis = null;
 		String today = DateUtils.getTodayStr();
+		String key = LIST_NOTE_TOTALTODAY+forumId+":"+today;
 		try{
 			jedis = redisPool.getConn();
 			Long total = 0L;
 			try{
-				total = jedis.llen(LIST_NOTE_TOTALTODAY+forumId+":"+today);
+				total = jedis.llen(key);
 			}catch(Exception e){}
-			if(total>0){
+			if(jedis.exists(key) && total>0){
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("今天 帖子总数 缓存取值 : "+total);
 				return total;
 			}
-			NoteCriteria noteCriteria = new NoteCriteria();
-			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-			criteria.andCtGreaterThan(DateUtils.minusDays(new Date(),1));//大于昨天，就是今天
-			criteria.andForumIdEqualTo(forumId);
-			int count = noteMapper.countByExample(noteCriteria);
-			logger.debug("初始化 今天 帖子总数 数据库取值 : "+count);
-			String[] array = new String[count];
-			for(int i=0;i<count;i++){
-				array[i] = "n";
-			}
-			jedis.lpush(LIST_NOTE_TOTALTODAY+forumId+":"+today, array);
-			return Long.valueOf(count);
+			return initTotalToday(jedis, key, forumId);
 		}catch(Exception e){
 			logger.debug(e.getMessage());
 		}finally{
