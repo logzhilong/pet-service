@@ -58,7 +58,6 @@ public class CommonConfig {
 		return Bootstrap.configWatcher.getStore().read(buildPath(key), Bootstrap.configWatcher);
 	}
 	public Map<String, String> getPublicPropertys() throws Exception {
-		Thread.sleep(2000);//等2秒,不然也许得不到最新结果
 		return Bootstrap.configWatcher.publicConfig;
 	}
 	

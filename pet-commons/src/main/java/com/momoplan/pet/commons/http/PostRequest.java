@@ -9,6 +9,7 @@ public class PostRequest {
 	public static String postText(String url,String ... args) throws Exception{
 		HttpClient httpClient = new HttpClient();
 		PostMethod post = new PostMethod(url);
+		post.getParams().setContentCharset("UTF-8");
 		for(int i=0;i<args.length;i+=2){
 			String k = args[i];
 			String v = args[i+1];
@@ -22,8 +23,9 @@ public class PostRequest {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String url = "http://192.168.2.115:8080/pet-service-bbs/forum/request.html";
-		String body = "{\"method\":\"getReplyNoteSubByReplyNoteid\",\"token\":\"\",\"params\":{\"noteSubid\":\"640D576BC02245418B34949616C0059C\"}}";
+//		http://123.178.27.74/pet-service-bbs/request?body={%22method%22:%22getAllForumAsTree%22,%22token%22:%22%22,%22params%22:{%22userId%22:%226%22}}
+		String url = "http://123.178.27.74/pet-service-bbs/request";
+		String body = "{\"method\":\"getAllForumAsTree\",\"token\":\"\",\"params\":{\"userId\":\"6\"}}";
 		String res = PostRequest.postText(url, "body",body);
 		System.out.println(res);
 	}
