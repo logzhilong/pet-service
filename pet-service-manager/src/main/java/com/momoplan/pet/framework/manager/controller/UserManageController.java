@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.momoplan.pet.commons.domain.manager.po.MgrRole;
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
+import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 import com.momoplan.pet.framework.manager.service.RoleManageService;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;
 import com.momoplan.pet.framework.manager.service.UserManageService;
+import com.momoplan.pet.framework.manager.vo.RoleUserUpdate;
 
 @Controller
 public class UserManageController {
@@ -62,11 +65,31 @@ public class UserManageController {
 				model.addAttribute("roles", roles);
 				return "/manager/usermanage/UserManageAdd";
 			}else{
+				//获取当前用户信息
 				MgrUser  mgrUser2=userManageService.getUserByid(mgrUser);
 				model.addAttribute("mgrUser2",mgrUser2);
-				logger.debug("wlcome to pet usermanage userupdate......");		
+				logger.debug("wlcome to pet usermanage userupdate......");	
+				//获取所有的角色
 				List<MgrRole> roles=roleManageService.getAllRole();
 				model.addAttribute("roles", roles);
+				//获取当前用户角色
+				MgrUserRoleRel userRoleRel=new MgrUserRoleRel();
+				userRoleRel.setUserId(mgrUser.getId());
+				List<MgrUserRoleRel> roles1=roleUserManageService.getRoleUserListbyUserid(userRoleRel);
+				List<RoleUserUpdate> list=new ArrayList<RoleUserUpdate>();
+				for(MgrRole role:roles){
+						RoleUserUpdate roleUserUpdate=new RoleUserUpdate();
+						for(MgrUserRoleRel  roleRel:roles1){
+							if(role.getId().equals(roleRel.getRoleId())){
+								roleUserUpdate.setRcheck(true);
+							}
+						}
+						roleUserUpdate.setRid(role.getId());
+						roleUserUpdate.setRname(role.getName());
+						list.add(roleUserUpdate);
+				}
+				model.addAttribute("roles1", roles1);	
+				model.addAttribute("list", list);	
 				return "/manager/usermanage/UserManageUpdate";
 			}
 		} catch (Exception e) {

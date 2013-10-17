@@ -75,17 +75,9 @@ public class UserManageServiceImpl implements UserManageService {
 			 for(int i=0;i<ruty.length;i++){
 					MgrUserRoleRel rel1=new MgrUserRoleRel();
 					rel1.setRoleId(ruty[i]);
-					rel1.setId(id);
 					rel1.setUserId(mgrUser.getId());
 				    roleUserManageService.saveOrUpdateRoleUser(rel1);
 			 }
-		
-			
-			
-			
-			
-			
-			
 			return mgrUserMapper.updateByPrimaryKeySelective(mgrUser);
 		}else{
 			mgrUser.setId(IDCreater.uuid());

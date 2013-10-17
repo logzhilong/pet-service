@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserRoleRelMapper;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRelCriteria;
@@ -82,6 +84,7 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 				logger.debug("selectByPK.po="+ur.toString());
 				 userRoleRelMapper.updateByPrimaryKeySelective(userRoleRel);
 			}else{
+				userRoleRel.setId(IDCreater.uuid());
 				 userRoleRelMapper.insertSelective(userRoleRel);
 			}
 		} catch (Exception e) {

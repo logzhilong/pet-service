@@ -18,7 +18,7 @@
 				<dl>
 					<dt>密码：</dt>
 					<dd>
-						<input type="text" name="password" />
+						<input type="password" name="password" />
 					</dd>
 				</dl>
 				<dl>
