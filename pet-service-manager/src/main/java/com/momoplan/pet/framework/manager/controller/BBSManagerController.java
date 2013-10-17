@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
-import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
@@ -226,7 +225,7 @@ public class BBSManagerController {
 	public String forumrightmanagelist(String id,Model model){
 		try {
 			Forum forum=new Forum();
-			forum.setId("5A4F0290CF0648319F6AB4CFF6B02F12");
+			forum.setId("92DE9E82807142A293107DFFC4368177");
 			List<Note> forums=bBSManagerService.getAllNotesByForumId(forum);
 			model.addAttribute("forums", forums);
 		} catch (Exception e) {
