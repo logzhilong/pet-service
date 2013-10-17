@@ -133,8 +133,8 @@ public class ClientController {
 	 * @throws Exception
 	 */
 	@RequestMapping("request")
-	public @ResponseBody
-	Object request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
+	public void request(@RequestParam("body") String body,HttpServletResponse response) throws Exception {
+		response.setCharacterEncoding("UTF-8");
 		logger.debug("request input : "+body);
 		String ret = null;
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
@@ -159,15 +159,17 @@ public class ClientController {
 //				if(null==ret||ret.compareTo("null")==0){
 //					ret = "false";
 //				}
-				return ret;
+				logger.debug("\nret:"+ret);
+				com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
 			}
 		}
 //		if(null==ret||ret.compareTo("null")==0){
 //			ret = "false";
 //		}
-		return ret;
+		logger.debug("\nret:"+ret);
+		com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
 	}
-
+	
 	private Map<String,String> proxyJms(String body,String ret){
 		try {
 			JSONObject bodyJson = new JSONObject(body);
@@ -473,6 +475,12 @@ public class ClientController {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
+		//proxy查看圈子列表
+		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		
 		//举报
 		if (clientRequest.getMethod().equals("reportContent")) {
 			return handleReportContent(clientRequest);
@@ -493,7 +501,7 @@ public class ClientController {
 	}
 
 	private Object handleAddBackgroundImg(ClientRequest clientRequest) throws Exception {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return "false";
 		}
@@ -512,10 +520,11 @@ public class ClientController {
 	}
 
 	private Object handleProxyRequest(ClientRequest clientRequest) {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return "false";
 		}
+//		System.out.println(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
 	

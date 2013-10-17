@@ -230,6 +230,75 @@ public class StatisticListener implements MessageListener {
 		if (clientRequest.getMethod().equals("addBackgroundImg")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
+		//添加背景图片
+		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy发帖
+		if (clientRequest.getMethod().equals("sendNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy回帖
+		if (clientRequest.getMethod().equals("replyNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy搜索
+		if (clientRequest.getMethod().equals("searchNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy根据id查看帖子详情
+		if (clientRequest.getMethod().equals("detailNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy删除帖子
+		if (clientRequest.getMethod().equals("delNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy关注圈子
+		if (clientRequest.getMethod().equals("attentionForum")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy退出圈子
+		if (clientRequest.getMethod().equals("quitForum")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy获取最新帖子
+		if (clientRequest.getMethod().equals("newNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy举报帖子
+		if (clientRequest.getMethod().equals("reportNote")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy获取当前帖子所有回复
+		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy根据回帖id获取回帖
+		if (clientRequest.getMethod().equals("getReplyNoteSubByReplyNoteid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy今日新增帖子列表
+		if (clientRequest.getMethod().equals("getTodayNewNoteList")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy我发表过的帖子列表
+		if (clientRequest.getMethod().equals("getMyNotedListByuserid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy我回复过的帖子列表
+		if (clientRequest.getMethod().equals("getMyReplyNoteListByUserid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy获取某圈子下所有帖子数
+		if (clientRequest.getMethod().equals("getNoteCountByForumid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		//proxy获取某圈子下所有回复数
+		if (clientRequest.getMethod().equals("getNoteSubCountByForumid")) {
+			statisticService.mergeUsageState(clientRequest);
+		}
+		
 	}
 	
 
