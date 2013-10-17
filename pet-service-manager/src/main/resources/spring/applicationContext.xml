@@ -14,6 +14,7 @@
 		   	<list>
 				<value>classpath:properties/application-db.properties</value>
 				<value>classpath:properties/zoo.properties</value>
+				<value>classpath:properties/cache.properties</value>
 			</list>
 	  	</constructor-arg>
   	</bean>
@@ -37,6 +38,9 @@
 	<!-- 配置管理服务器地址 -->
     <bean id="zooServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${zoo.server}" />
+    </bean>
+    <bean id="cacheServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="${cache.server}" />
     </bean>
 
 	<import resource="classpath:spring/applicationContext-security.xml"/>
