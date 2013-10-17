@@ -161,6 +161,7 @@ public class ClientController {
 //				}
 				logger.debug("\nret:"+ret);
 				com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
+				return;
 			}
 		}
 //		if(null==ret||ret.compareTo("null")==0){
@@ -168,6 +169,7 @@ public class ClientController {
 //		}
 		logger.debug("\nret:"+ret);
 		com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
+		return;
 	}
 	
 	private Map<String,String> proxyJms(String body,String ret){
@@ -379,104 +381,73 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("findOneState")) {
 			return handleFindOneState(clientRequest);
 		}
-		//proxy发帖
-		if (clientRequest.getMethod().equals("sendNote")) {
-//			Object petResponse = handleSendNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy回帖
-		if (clientRequest.getMethod().equals("replyNote")) {
-//			Object petResponse = handleReplyNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy搜索
-		if (clientRequest.getMethod().equals("searchNote")) {
-//			Object petResponse = handleSearchNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy根据id查看帖子详情
-		if (clientRequest.getMethod().equals("detailNote")) {
-//			Object petResponse = handleDetailNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy删除帖子
-		if (clientRequest.getMethod().equals("delNote")) {
-//			Object petResponse = handleDelNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy关注圈子
-		if (clientRequest.getMethod().equals("attentionForum")) {
-//			Object petResponse = handleAttentionForum(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy退出圈子
-		if (clientRequest.getMethod().equals("quitForum")) {
-//			Object petResponse = handleQuitForum(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy获取最新帖子
-		if (clientRequest.getMethod().equals("newNote")) {
-//			Object petResponse = handleNewNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy举报帖子
-		if (clientRequest.getMethod().equals("reportNote")) {
-//			Object petResponse = handleReportNote(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
+		//proxy发帖																									
+		if (clientRequest.getMethod().equals("sendNote")) {         
+			Object petResponse = handleProxyRequest(clientRequest);   
+			return petResponse;                                       
+		}                                                           
+		//proxy回帖                                                 
+		if (clientRequest.getMethod().equals("replyNote")) {        
+			Object petResponse = handleProxyRequest(clientRequest);   
+			return petResponse;                                       
+		}                                                           
+		//proxy搜索                                                 
+		if (clientRequest.getMethod().equals("searchNote")) {       
+			Object petResponse = handleProxyRequest(clientRequest);                                                                                                             
+			return petResponse;                                       		
+		}                                                               
+		//proxy根据id查看帖子详情                                       
+		if (clientRequest.getMethod().equals("detailNote")) {           
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                               
+		//proxy删除帖子                                                 
+		if (clientRequest.getMethod().equals("delNote")) {              
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                               
+		//proxy关注圈子                                                 
+		if (clientRequest.getMethod().equals("attentionForum")) {       
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                               
+		//proxy退出圈子                                                 
+		if (clientRequest.getMethod().equals("quitForum")) {            
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                                           
+		//proxy最新帖子(forumid为0则表示全站搜索否则圈子内部搜索)                                                                       
+		if (clientRequest.getMethod().equals("newNoteByFid")) {         
+			Object petResponse = handleProxyRequest(clientRequest);                                    
+			return petResponse;                                           
+		}                                                                   
+		//proxy举报帖子                                                                                                                                              
+		if (clientRequest.getMethod().equals("reportNote")) {                                                                   
+			Object petResponse = handleProxyRequest(clientRequest);                                                                   
+			return petResponse;                                                                                                                                        
 		}
 		//proxy获取当前帖子所有回复
 		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {
-//			Object petResponse = handleGetAllReplyNoteByNoteid(clientRequest);
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
-		//proxy根据回帖id获取回帖
-		if (clientRequest.getMethod().equals("getReplyNoteSubByReplyNoteid")) {
-//			Object petResponse = handleGetReplyNoteSubByReplyNoteid(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy今日新增帖子列表
-		if (clientRequest.getMethod().equals("getTodayNewNoteList")) {
-//			Object petResponse = handleGetTodayNewNoteList(clientRequest);
+		//proxy(forumPid为0则全站搜索,否则为圈子内部搜索) 
+		if (clientRequest.getMethod().equals("getTodayNewNoteListByFid")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
 		//proxy我发表过的帖子列表
 		if (clientRequest.getMethod().equals("getMyNotedListByuserid")) {
-//			Object petResponse = handleGetMyNotedListByuserid(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy我回复过的帖子列表
-		if (clientRequest.getMethod().equals("getMyReplyNoteListByUserid")) {
-//			Object petResponse = handleGetMyReplyNoteListByUserid(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy获取某圈子下所有帖子数
-		if (clientRequest.getMethod().equals("getNoteCountByForumid")) {
-//			Object petResponse = handleGetNoteCountByForumid(clientRequest);
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy获取某圈子下所有回复数
-		if (clientRequest.getMethod().equals("getNoteSubCountByForumid")) {
-//			Object petResponse = handleGetNoteSubCountByForumid(clientRequest);
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
 		//proxy查看圈子列表
 		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy(全站)最新回复(根据回复时间将帖子显示{不显示置顶帖子})
+		if (clientRequest.getMethod().equals("getNewReplysByReplyct")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
