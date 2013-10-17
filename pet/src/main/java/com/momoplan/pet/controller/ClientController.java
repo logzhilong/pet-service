@@ -499,7 +499,7 @@ public class ClientController {
 	}
 
 	private Object handleAddBackgroundImg(ClientRequest clientRequest) throws Exception {
-		AuthenticationToken authenticationToken = AuthenticationToken.findAuthenticationToken(clientRequest.getToken());
+		Token authenticationToken = verifyToken(clientRequest);
 		if (null == authenticationToken) {
 			return "false";
 		}
