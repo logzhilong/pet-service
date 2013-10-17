@@ -225,6 +225,9 @@ public class ForumServiceImpl implements ForumService {
 		logger.debug("ROOT: "+new Gson().toJson(rootList));
 		logger.debug("GROUP : "+new Gson().toJson(pMap));
 		List<ForumNode> treeList = new ArrayList<ForumNode>();
+		//TODO 把我关注的圈子，放在最前面的一个元素里
+		ForumNode node0 = getAtteForum(forumlist,userForumRelMap);
+		treeList.add(node0);
 		for(Forum root : rootList){
 			List<Forum> r = new ArrayList<Forum>();
 			r.add(root);
@@ -234,7 +237,43 @@ public class ForumServiceImpl implements ForumService {
 		logger.debug("getAllForumAsTree : "+new Gson().toJson(treeList));
 		return treeList;
 	}
-
+	/**
+	 * 我关注的圈子作为圈子树的第一个节点，只有一级关系
+	 * @param forumlist
+	 * @param userForumRelMap
+	 * @return
+	 */
+	private ForumNode getAtteForum(List<Forum> forumlist,Map<String,String> userForumRelMap){
+		ForumNode node0 = new ForumNode();
+		node0.setAtte(true);
+		node0.setId("0");
+		node0.setName("我关注的圈子");
+		List<ForumNode> no = new ArrayList<ForumNode>();
+		for(Forum n : forumlist){
+			String forumId = n.getId();
+			String userId = userForumRelMap.get(forumId);
+			if(StringUtils.isNotEmpty(userId)){
+				ForumNode f = new ForumNode();
+				f.setId(n.getId());
+				f.setName(n.getName());//名字
+				f.setAtte(true);//关注
+				f.setLogoImg(n.getLogoImg());//图标
+				//TODO : 叶子节点 当天总数
+				Long totalToday = noteRepository.totalToday(forumId);
+				//TODO : 叶子节点 总帖子数
+				Long totalCount = noteRepository.totalCount(forumId);
+				//TODO : 叶子节点 总回复数
+				Long totalReply = noteSubRepository.totalCount(forumId);
+				f.setTotalToday(totalToday);
+				f.setTotalCount(totalCount);
+				f.setTotalReply(totalReply);
+				no.add(f);
+			}
+		}
+		node0.setChild(no);
+		return node0;
+	}
+		
 	/**
 	 * 获取所有圈子(父级和子集)
 	 * @param ClientRequest
