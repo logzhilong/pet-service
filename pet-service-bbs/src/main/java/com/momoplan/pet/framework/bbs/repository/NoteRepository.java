@@ -1,6 +1,7 @@
 package com.momoplan.pet.framework.bbs.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +53,7 @@ public class NoteRepository implements CacheKeysConstance{
 			//增加到 当天帖子总数
 			jedis.lpush(LIST_NOTE_TOTALTODAY+DateUtils.getTodayStr(), "n");
 			//需求是：最新的帖子排在最上面,【堆栈】结构
-			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
-			String noteJson = gson.toJson(note);
-			jedis.lpush(LIST_NOTE,noteJson);
-			logger.debug(LIST_NOTE+" lpush "+noteJson);
+			lpushListNote(jedis,po);
 		}catch(Exception e){
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
@@ -64,6 +62,51 @@ public class NoteRepository implements CacheKeysConstance{
 		}
 	}
 	
+	/**
+	 * 需求是：最新的帖子排在最上面,【堆栈】结构
+	 * @param po
+	 */
+	private void lpushListNote(ShardedJedis jedis,Note po) throws Exception {
+		String key = LIST_NOTE+po.getForumId();
+		try {
+			//init key 对应的堆
+			if(!jedis.exists(key)||jedis.llen(key)==0){
+				initListNote(jedis,po,key);
+			}
+			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
+			String noteJson = gson.toJson(note);
+			jedis.lpush(key,noteJson);
+			logger.debug(key+" lpush "+noteJson);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			throw e;
+		}
+	}
+	
+	/**
+	 * 初始化缓存堆，如果手动清除了缓存，此处可以重新构建
+	 * @param jedis
+	 * @param po
+	 * @param key
+	 */
+	private void initListNote(ShardedJedis jedis,Note po,String key){
+		NoteCriteria noteCriteria = new NoteCriteria();
+		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+		criteria.andForumIdEqualTo(po.getForumId());
+		noteCriteria.setOrderByClause("et desc");
+		List<Note> noteList = noteMapper.selectByExample(noteCriteria);
+		logger.info("初始化 帖子 缓存堆 key="+key);
+		logger.info("初始化 帖子 缓存堆 noteList.size="+noteList.size());
+		String[] arr = new String[noteList.size()];
+		int i=0;
+		for(Note note : noteList){
+			String json = gson.toJson(note);
+			arr[i++] = json;
+			logger.debug(key+" lpush "+json);
+		}
+		jedis.lpush(key, arr);
+		logger.info("初始化 帖子 缓存堆 完成.");
+	}
 	/**
 	 * 指定圈子 总帖子数
 	 * @return

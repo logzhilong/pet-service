@@ -57,13 +57,8 @@ public class NoteSubRepository implements CacheKeysConstance{
 			String forumId = note.getForumId();
 			//forumId 对应栏目的 回帖总数
 			jedis.lpush(LIST_NOTE_SUB_TOTALCOUNT+forumId, "n");
-			
 			//需求是：最新的回帖排在最下面,【队列】结构
-			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(NoteSub.class, po.getId());
-			String noteJson = gson.toJson(noteSub);
-			jedis.rpush(LIST_NOTE_SUB,noteJson);
-			logger.debug(LIST_NOTE_SUB+" rpush "+noteJson);
-			
+			rpushListNoteSub(jedis,po);
 		}catch(Exception e){
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
@@ -71,6 +66,52 @@ public class NoteSubRepository implements CacheKeysConstance{
 			redisPool.closeConn(jedis);
 		}
 	}
+	
+	/**
+	 * 需求是：最新的回帖排在最下面,【队列】结构
+	 * @param po
+	 */
+	private void rpushListNoteSub(ShardedJedis jedis,NoteSub po) throws Exception {
+		String key = LIST_NOTE_SUB+po.getNoteId();
+		try {
+			//init key 对应的队列
+			if(!jedis.exists(key)||jedis.llen(key)==0){
+				initListNoteSub(jedis,po,key);
+			}
+			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
+			String noteSubJson = gson.toJson(noteSub);
+			jedis.lpush(key,noteSubJson);
+			logger.debug(key+" lpush "+noteSubJson);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			throw e;
+		}
+	}
+	
+	/**
+	 * 初始化缓存堆，如果手动清除了缓存，此处可以重新构建
+	 * @param jedis
+	 * @param po
+	 * @param key
+	 */
+	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key){
+		NoteSubCriteria noteCriteria = new NoteSubCriteria();
+		NoteSubCriteria.Criteria criteria = noteCriteria.createCriteria();
+		criteria.andNoteIdEqualTo(po.getNoteId());
+		noteCriteria.setOrderByClause("ct asc");
+		List<NoteSub> noteList = noteSubMapper.selectByExample(noteCriteria);
+		logger.info("初始化 回帖 缓存队列 key="+key);
+		logger.info("初始化 回帖 缓存队列 noteSubList.size="+noteList.size());
+		String[] arr = new String[noteList.size()];
+		int i=0;
+		for(NoteSub note : noteList){
+			String json = gson.toJson(note);
+			arr[i++] = json;
+			logger.debug(key+" rpush "+json);
+		}
+		jedis.lpush(key, arr);
+		logger.info("初始化 回帖 缓存队列 完成.");
+	}	
 	
 	/**
 	 * 指定帖子 总回帖数
