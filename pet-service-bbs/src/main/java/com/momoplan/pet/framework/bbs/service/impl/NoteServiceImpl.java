@@ -90,7 +90,13 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andTypeEqualTo("0");
 			criteria.andNameLike("%"+name+"%");
 			criteria.andStateEqualTo("0");
+			
+			
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			for(Note noteeli:notelist){
+				long f=	noteeli.getCt().getTime();
+				System.out.println("aaaaa"+f);
+			}
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();
