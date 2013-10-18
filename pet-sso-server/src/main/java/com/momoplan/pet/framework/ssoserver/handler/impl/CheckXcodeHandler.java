@@ -20,7 +20,7 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
  * 校验验证码
  * @author liangc
  */
-@Component("checkXcode")
+@Component("verifyCode")
 public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConstance {
 	
 	private Logger logger = LoggerFactory.getLogger(CheckXcodeHandler.class);
@@ -31,8 +31,8 @@ public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConst
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
-			String xcode = PetUtil.getParameter(clientRequest, "xcode");
+			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNum");
+			String xcode = PetUtil.getParameter(clientRequest, "verificationCode");
 			String _xcode = getXcode(phoneNumber);
 			if(!xcode.equals(_xcode)){
 				logger.debug("revice xcode="+xcode);
