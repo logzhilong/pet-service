@@ -20,6 +20,7 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 /**
  * 注册
  * @author liangc
+ * body={"method":"getXcode","params":{"phoneNumber":"15199999999"}}
  */
 @Component("getVerificationCode")
 public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstance{

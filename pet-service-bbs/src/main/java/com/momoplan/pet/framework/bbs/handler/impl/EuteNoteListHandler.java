@@ -23,7 +23,7 @@ public class EuteNoteListHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-		Object object=noteService.getEuteNoteList(clientRequest);
+			Object object=noteService.getEuteNoteList(clientRequest);
 			logger.debug("获取精华成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
