@@ -19,6 +19,7 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 /**
  * 校验验证码
  * @author liangc
+ * body={"method":"checkXcode","params":{"phoneNumber":"15199999999","xcode":"JDL3"}}
  */
 @Component("checkXcode")
 public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConstance {
@@ -34,7 +35,7 @@ public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConst
 			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
 			String xcode = PetUtil.getParameter(clientRequest, "xcode");
 			String _xcode = getXcode(phoneNumber);
-			if(!xcode.equals(_xcode)){
+			if(!xcode.equalsIgnoreCase(_xcode)){
 				logger.debug("revice xcode="+xcode);
 				logger.debug("get xcode="+_xcode);
 				throw new Exception("随机无效");
