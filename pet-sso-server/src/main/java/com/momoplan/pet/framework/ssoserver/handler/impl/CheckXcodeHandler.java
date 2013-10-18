@@ -41,7 +41,7 @@ public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConst
 				throw new Exception("随机无效");
 			}
 			logger.debug("XCODE 校验成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,xcode).toString();
+			rtn = new Success(true,"true").toString();
 		}catch(Exception e){
 			logger.debug("XCODE 校验失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
