@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.ssoserver.service;
+package com.momoplan.pet.framework.ssoserver;
 
 public interface CacheKeysConstance {
 	/**
@@ -9,5 +9,9 @@ public interface CacheKeysConstance {
 	 * 列族名，存储 用户 TOKEN
 	 */
 	public static final String CF_TOKEN = "sso_server.cf.token";
+	/**
+	 * 随机码 xcode 存储，后面加上 phoneNumber 每个值有效期为 10分钟
+	 */
+	public static final String CF_XCODE = "sso_server.xcode:";
 	
 }
