@@ -10,17 +10,23 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
+import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
 import com.momoplan.pet.framework.bbs.repository.NoteRepository;
+import com.momoplan.pet.framework.bbs.repository.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
+import com.momoplan.pet.framework.bbs.vo.NoteVo;
 @Service
 public class NoteServiceImpl implements NoteService {
 	@Resource
@@ -29,6 +35,10 @@ public class NoteServiceImpl implements NoteService {
 	private NoteSubMapper noteSubMapper=null;
 	@Resource
 	private NoteRepository noteRepository = null;
+	@Resource
+	private NoteSubRepository noteSubRepository = null;
+	@Autowired
+	private MapperOnCache mapperOnCache = null;
 	
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 	
@@ -379,6 +389,20 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			//add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
+			List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
+			for(Note note : notelist){
+				NoteVo vo = new NoteVo();
+				BeanUtils.copyProperties(note, vo);
+				String uid = note.getUserId();
+				String nid = note.getId();
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);//在缓存中获取用户
+				vo.setNickname(user.getNickname());
+				vo.setUserIcon(user.getImg());
+				Long totalReply = noteSubRepository.totalReply(nid);
+				vo.setTotalReply(totalReply);
+				noteVoList.add(vo);
+			}
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();

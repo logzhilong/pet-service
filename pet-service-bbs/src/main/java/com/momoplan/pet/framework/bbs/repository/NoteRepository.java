@@ -54,7 +54,8 @@ public class NoteRepository implements CacheKeysConstance{
 			//增加到 当天帖子总数
 			lpushTotalToday(jedis,LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr(),forumId);
 			//需求是：最新的帖子排在最上面,【堆栈】结构
-			lpushListNote(jedis,po);
+			//这个逻辑不成立，更新帖子时，顺序会发生变化，所以不适合做缓存
+			//lpushListNote(jedis,po);
 		}catch(Exception e){
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
@@ -78,8 +79,13 @@ public class NoteRepository implements CacheKeysConstance{
 	}
 	/**
 	 * 需求是：最新的帖子排在最上面,【堆栈】结构
+	 * <br/>
+	 *  2013-10-18 : 这个逻辑不成立，更新帖子时，顺序会发生变化，所以不适合做缓存
+	 * @param jedis
 	 * @param po
+	 * @throws Exception
 	 */
+	@Deprecated
 	private void lpushListNote(ShardedJedis jedis,Note po) throws Exception {
 		String key = LIST_NOTE+po.getForumId();
 		try {
@@ -87,7 +93,7 @@ public class NoteRepository implements CacheKeysConstance{
 			if(!jedis.exists(key)||jedis.llen(key)==0){
 				initListNote(jedis,po,key);
 			}else{//初始化时的总数，已经包括了当前的这次请求，不必再插入
-				Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getId());
+				Note note = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
 				String noteJson = gson.toJson(note);
 				jedis.lpush(key,noteJson);
 				logger.debug(key+" lpush "+noteJson);
@@ -104,6 +110,7 @@ public class NoteRepository implements CacheKeysConstance{
 	 * @param po
 	 * @param key
 	 */
+	@Deprecated
 	private void initListNote(ShardedJedis jedis,Note po,String key){
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
