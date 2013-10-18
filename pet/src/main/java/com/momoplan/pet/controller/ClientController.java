@@ -391,58 +391,58 @@ public class ClientController {
 			Object petResponse = handleProxyRequest(clientRequest);   
 			return petResponse;                                       
 		}                                                           
-		//proxy搜索                                                 
-		if (clientRequest.getMethod().equals("searchNote")) {       
+		//proxy关注圈子                                                 
+		if (clientRequest.getMethod().equals("attentionForum")) {       
 			Object petResponse = handleProxyRequest(clientRequest);                                                                                                             
 			return petResponse;                                       		
 		}                                                               
-		//proxy根据id查看帖子详情                                       
-		if (clientRequest.getMethod().equals("detailNote")) {           
+		//proxy退出圈子                                   
+		if (clientRequest.getMethod().equals("quitForum")) {           
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                               
+		//proxy搜索(如果Forumid为0则全站搜索,否则圈子内搜索)                                                
+		if (clientRequest.getMethod().equals("searchNote")) {              
+			Object petResponse = handleProxyRequest(clientRequest);       
+			return petResponse;                                           
+		}                                                               
+		//proxy根据id查看帖子详情                                                 
+		if (clientRequest.getMethod().equals("detailNote")) {       
 			Object petResponse = handleProxyRequest(clientRequest);       
 			return petResponse;                                           
 		}                                                               
 		//proxy删除帖子                                                 
-		if (clientRequest.getMethod().equals("delNote")) {              
-			Object petResponse = handleProxyRequest(clientRequest);       
-			return petResponse;                                           
-		}                                                               
-		//proxy关注圈子                                                 
-		if (clientRequest.getMethod().equals("attentionForum")) {       
-			Object petResponse = handleProxyRequest(clientRequest);       
-			return petResponse;                                           
-		}                                                               
-		//proxy退出圈子                                                 
-		if (clientRequest.getMethod().equals("quitForum")) {            
+		if (clientRequest.getMethod().equals("delNote")) {            
 			Object petResponse = handleProxyRequest(clientRequest);       
 			return petResponse;                                           
 		}                                                                           
-		//proxy最新帖子(forumid为0则表示全站搜索否则圈子内部搜索)                                                                       
-		if (clientRequest.getMethod().equals("newNoteByFid")) {         
+		//proxy举报帖子                                                                      
+		if (clientRequest.getMethod().equals("reportNote")) {         
 			Object petResponse = handleProxyRequest(clientRequest);                                    
 			return petResponse;                                           
 		}                                                                   
-		//proxy举报帖子                                                                                                                                              
-		if (clientRequest.getMethod().equals("reportNote")) {                                                                   
+		//proxy根据帖子id获取所有回复                                                                                                                                           
+		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {                                                                   
 			Object petResponse = handleProxyRequest(clientRequest);                                                                   
 			return petResponse;                                                                                                                                        
 		}
-		//proxy获取当前帖子所有回复
-		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy(forumPid为0则全站搜索,否则为圈子内部搜索) 
-		if (clientRequest.getMethod().equals("getTodayNewNoteListByFid")) {
-			Object petResponse = handleProxyRequest(clientRequest);
-			return petResponse;
-		}
-		//proxy我发表过的帖子列表
+		//proxy(全站)我发表过的帖子列表
 		if (clientRequest.getMethod().equals("getMyNotedListByuserid")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
-		//proxy查看圈子列表
-		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+		//proxy最新帖子(forumid为0则表示全站搜索否则圈子内部搜索)
+		if (clientRequest.getMethod().equals("newNoteByFid")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy今日新增帖子列表(forumPid为0则全站搜索,否则为圈子内部搜索)
+		if (clientRequest.getMethod().equals("getTodayNewNoteListByFid")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}
+		//proxy获取精华(forumPid为0则全站搜索,否则为圈子内部搜索)
+		if (clientRequest.getMethod().equals("getEuteNoteList")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
 		}
@@ -450,16 +450,12 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("getNewReplysByReplyct")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
-		}
-		
-		//举报
-		if (clientRequest.getMethod().equals("reportContent")) {
-			return handleReportContent(clientRequest);
-		}
-		//添加背景图片
-		if (clientRequest.getMethod().equals("addBackgroundImg")) {
-			return handleAddBackgroundImg(clientRequest);
-		}
+		} 
+		//proxy查看圈子列表
+		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}      
 		
 		//添加背景图片
 		if (clientRequest.getMethod().equals("verifyToken")) {
