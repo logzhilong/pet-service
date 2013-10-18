@@ -21,7 +21,7 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
  * 注册
  * @author liangc
  */
-@Component("getXcode")
+@Component("getVerificationCode")
 public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstance{
 	
 	private Logger logger = LoggerFactory.getLogger(GetXcodeHandler.class);
