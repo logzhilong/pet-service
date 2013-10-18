@@ -18,7 +18,6 @@ import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
-import com.momoplan.pet.framework.bbs.repository.NoteRepository;
 import com.momoplan.pet.framework.bbs.repository.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteSubService;
 

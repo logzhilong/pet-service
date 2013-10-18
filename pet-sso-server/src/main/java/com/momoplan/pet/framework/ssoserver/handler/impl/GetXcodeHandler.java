@@ -20,8 +20,9 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 /**
  * 注册
  * @author liangc
+ * body={"method":"getXcode","params":{"phoneNumber":"15199999999"}}
  */
-@Component("getXcode")
+@Component("getVerificationCode")
 public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstance{
 	
 	private Logger logger = LoggerFactory.getLogger(GetXcodeHandler.class);
@@ -33,7 +34,7 @@ public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstan
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
+			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNum");
 			String xcode = NumberUtils.getIdentifyingCode();
 			saveXcode(phoneNumber,xcode);
 			logger.debug("获取验证码 成功 body="+gson.toJson(clientRequest)+"; xcode="+xcode);

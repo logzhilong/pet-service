@@ -81,6 +81,27 @@ public class NoteSubRepository implements CacheKeysConstance{
 	}
 	
 	/**
+	 * 获取noteId的回帖数
+	 * @param noteId
+	 * @return
+	 */
+	public Long totalReply(String noteId){
+		String key = LIST_NOTE_SUB+noteId;
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			Long totalReply = jedis.llen(key);
+			logger.debug("noteId="+noteId+" ; totalReply="+totalReply);
+			return totalReply;
+		}catch(Exception e){
+			logger.error("totalReply",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return -1L;
+	}
+	
+	/**
 	 * 需求是：最新的回帖排在最下面,【队列】结构
 	 * @param po
 	 */

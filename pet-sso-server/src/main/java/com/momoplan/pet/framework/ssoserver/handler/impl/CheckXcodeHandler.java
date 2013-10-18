@@ -19,8 +19,9 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 /**
  * 校验验证码
  * @author liangc
+ * body={"method":"checkXcode","params":{"phoneNumber":"15199999999","xcode":"JDL3"}}
  */
-@Component("checkXcode")
+@Component("verifyCode")
 public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConstance {
 	
 	private Logger logger = LoggerFactory.getLogger(CheckXcodeHandler.class);
@@ -31,16 +32,16 @@ public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConst
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
-			String xcode = PetUtil.getParameter(clientRequest, "xcode");
+			String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNum");
+			String xcode = PetUtil.getParameter(clientRequest, "verificationCode");
 			String _xcode = getXcode(phoneNumber);
-			if(!xcode.equals(_xcode)){
+			if(!xcode.equalsIgnoreCase(_xcode)){
 				logger.debug("revice xcode="+xcode);
 				logger.debug("get xcode="+_xcode);
 				throw new Exception("随机无效");
 			}
 			logger.debug("XCODE 校验成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,xcode).toString();
+			rtn = new Success(true,"true").toString();
 		}catch(Exception e){
 			logger.debug("XCODE 校验失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
