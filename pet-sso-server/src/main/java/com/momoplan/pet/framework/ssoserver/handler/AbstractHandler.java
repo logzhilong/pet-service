@@ -8,6 +8,7 @@ import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
@@ -19,7 +20,7 @@ import com.momoplan.pet.framework.ssoserver.service.impl.SsoServiceImpl;
 public abstract class AbstractHandler extends PetUtil implements RequestHandler {
 	
 	protected SsoService ssoService = Bootstrap.getBean(SsoServiceImpl.class);
-	protected Gson gson = new Gson();
+	protected Gson gson = MyGson.getInstance();
 	
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 	

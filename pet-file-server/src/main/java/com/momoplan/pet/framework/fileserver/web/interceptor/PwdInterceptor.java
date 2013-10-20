@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
@@ -35,9 +36,9 @@ public class PwdInterceptor implements HandlerInterceptor {
 			HashMap<String,Object> params = new HashMap<String,Object>();
 			params.put("token", token);
 			request.setParams(params);
-			String json = PostRequest.postText(sso_server, "body",new Gson().toJson(request));
+			String json = PostRequest.postText(sso_server, "body",MyGson.getInstance().toJson(request));
 			logger.debug("token : "+json);
-			Success success = new Gson().fromJson(json, Success.class);
+			Success success = MyGson.getInstance().fromJson(json, Success.class);
 			if(success.isSuccess())
 				return true;
 			return false;

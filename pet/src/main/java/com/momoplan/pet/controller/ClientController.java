@@ -50,6 +50,7 @@ import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
 import com.momoplan.exception.DuplicatedUsernameException;
 import com.momoplan.exception.PetException;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
@@ -1324,7 +1325,7 @@ public class ClientController {
 		}
 		if(userViews!=null && userViews.size()>0){
 			Collections.sort(userViews);
-			logger.debug("suerViews output : "+new Gson().toJson(userViews));
+			logger.debug("suerViews output : "+MyGson.getInstance().toJson(userViews));
 			return userViews;
 		}
 		logger.debug("suerViews output : NULL 有问题");

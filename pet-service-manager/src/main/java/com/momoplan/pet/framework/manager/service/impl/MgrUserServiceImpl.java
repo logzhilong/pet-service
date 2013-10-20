@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrRoleMapper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserMapper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserRoleRelMapper;
@@ -53,7 +54,7 @@ public class MgrUserServiceImpl implements MgrUserService{
 		List<MgrRole> roles = mgrRoleMapper.selectByExample(mgrRoleCriteria);
 		
 		if(roles!=null&&roles.size()>0)
-			logger.debug("GET ROLES : "+new Gson().toJson(roles));
+			logger.debug("GET ROLES : "+MyGson.getInstance().toJson(roles));
 		return roles;
 	}
 
@@ -69,7 +70,7 @@ public class MgrUserServiceImpl implements MgrUserService{
 			user = userList.get(0);
 			if("root".equals(username))
 				user.setEnable(true);//管理员总是有效的
-			logger.debug("GET USER : "+new Gson().toJson(user));
+			logger.debug("GET USER : "+MyGson.getInstance().toJson(user));
 			return user;
 	}
 

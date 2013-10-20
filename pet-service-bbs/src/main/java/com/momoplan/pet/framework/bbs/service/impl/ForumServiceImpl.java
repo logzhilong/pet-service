@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
@@ -222,8 +222,8 @@ public class ForumServiceImpl implements ForumService {
 				pMap.put(forum.getPid(), group);
 			}
 		}
-		logger.debug("ROOT: "+new Gson().toJson(rootList));
-		logger.debug("GROUP : "+new Gson().toJson(pMap));
+		logger.debug("ROOT: "+MyGson.getInstance().toJson(rootList));
+		logger.debug("GROUP : "+MyGson.getInstance().toJson(pMap));
 		List<ForumNode> treeList = new ArrayList<ForumNode>();
 		//TODO 把我关注的圈子，放在最前面的一个元素里
 		ForumNode node0 = getAtteForum(forumlist,userForumRelMap);
@@ -234,7 +234,7 @@ public class ForumServiceImpl implements ForumService {
 			ForumNode tree = buildTree(r,pMap,userForumRelMap);
 			treeList.add(tree);
 		}
-		logger.debug("getAllForumAsTree : "+new Gson().toJson(treeList));
+		logger.debug("getAllForumAsTree : "+MyGson.getInstance().toJson(treeList));
 		return treeList;
 	}
 	/**

@@ -5,7 +5,7 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.vo.ForumNode;
 
@@ -17,6 +17,6 @@ public class ForumServiceTest extends AbstractTest {
 	@Test
 	public void forumTreeTest() throws Exception{
 		List<ForumNode> tree = forumService.getAllForumAsTree("");
-		System.out.println(new Gson().toJson(tree));
+		System.out.println(MyGson.getInstance().toJson(tree));
 	}
 }

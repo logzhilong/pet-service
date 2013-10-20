@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
@@ -25,7 +26,7 @@ import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
 public class NoteSubRepository implements CacheKeysConstance{
 
 	private static Logger logger = LoggerFactory.getLogger(NoteSubRepository.class);
-	private static Gson gson = new Gson();
+	private static Gson gson = MyGson.getInstance();
 
 	private RedisPool redisPool= null;
 	private MapperOnCache mapperOnCache = null;

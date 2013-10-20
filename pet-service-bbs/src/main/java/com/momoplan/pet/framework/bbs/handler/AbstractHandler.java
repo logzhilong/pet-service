@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.commons.spring.Bootstrap;
@@ -25,7 +26,7 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 	protected NoteSubService noteSubService=Bootstrap.getBean(NoteSubServiceImpl.class);
 	protected UserForumRelService userForumRelService=Bootstrap.getBean(UserForumRelServiceImpl.class);
 	protected BbsNoteCountService bbsNoteCountService=Bootstrap.getBean(BbsNoteCountServiceImpl.class);
-	protected Gson gson = new Gson();
+	protected Gson gson = MyGson.getInstance();
 	
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 }

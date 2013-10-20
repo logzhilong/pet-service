@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.framework.manager.vo.TreeBean;
 
 @Controller
@@ -50,7 +51,7 @@ public class IndexController {
 		tree.add(common);
 		tree.add(commonAreaCode);
 		
-		Gson g = new Gson();
+		Gson g = MyGson.getInstance();
 		String json = g.toJson(tree);
 		logger.debug(json);
 		model.addAttribute("funTree", json);

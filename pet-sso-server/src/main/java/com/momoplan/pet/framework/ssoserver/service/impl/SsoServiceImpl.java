@@ -12,6 +12,7 @@ import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoChatServerMapper;
@@ -39,7 +40,7 @@ public class SsoServiceImpl implements SsoService {
 	private RedisPool redisPool = null;
 
 	private CommonConfig commonConfig = null;
-	private Gson gson = new Gson();
+	private Gson gson = MyGson.getInstance();
 	
 	@Autowired
 	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig,
