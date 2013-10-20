@@ -17,10 +17,17 @@ public class NumberUtils {
 	protected static Map<String,String> nsMap = new LinkedHashMap<String,String>();
 	protected static Map<String,String> _nsMap = new LinkedHashMap<String,String>();
 	static {
-		for(int i=10;i<37;i++){
-			_nsMap.put((char)(i+54)+"", i+"");
-			nsMap.put(i+"", (char)(i+54)+"");
+		for(int i=10;i<36;i++){
+			_nsMap.put((char)(i+55)+"", i+"");
+			nsMap.put(i+"", (char)(i+55)+"");
 		}
+		for(int i=36;i<(36+26);i++){
+			_nsMap.put((char)(i+61)+"", i+"");
+			nsMap.put(i+"", (char)(i+61)+"");
+		}
+		System.out.println(_nsMap);
+		System.out.println(nsMap);
+		
 	}
 	/**
 	 * 10进制到N进制运算
@@ -101,7 +108,7 @@ public class NumberUtils {
 	public static void main(String[] args) throws Exception {
 		int x = new Random().nextInt();
 		x = x<0?x*-1:x;
-		String res = (x+"").substring(0, 6);
+		String res = (x+"").substring(0, 7);
 		System.out.println(x);
 		System.out.println(res);
 		String num39 = num10ToN(res);

@@ -1,7 +1,8 @@
 package com.momoplan.pet.commons.bean;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import com.google.gson.Gson;
+
+import com.momoplan.pet.commons.MyGson;
 
 @JsonIgnoreProperties(ignoreUnknown=true) 
 public class Success {
@@ -34,7 +35,7 @@ public class Success {
 	}
 	@Override
 	public String toString() {
-		return new Gson().toJson(this);
+		return MyGson.getInstance().toJson(this);
 	}
 	
 }
