@@ -26,6 +26,11 @@
 			<groupId>c3p0</groupId>
 			<artifactId>c3p0</artifactId>
 		</dependency>
+		<dependency>
+		  	<groupId>com.momoplan.pet</groupId>
+		  	<artifactId>pet-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

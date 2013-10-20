@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.bbs.repository;
+package com.momoplan.pet.commons.repository.bbs;
 
 import java.util.Date;
 import java.util.List;
@@ -18,7 +18,6 @@ import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
-import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
 
 @Repository
 public class NoteRepository implements CacheKeysConstance{

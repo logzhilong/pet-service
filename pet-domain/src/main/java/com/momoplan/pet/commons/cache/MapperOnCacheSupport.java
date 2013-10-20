@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.utils.SpringContextHolder;
 
@@ -15,7 +15,7 @@ public class MapperOnCacheSupport {
 
 	private static Logger logger = LoggerFactory.getLogger(MapperOnCacheSupport.class);
 
-	protected Gson myGson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+	protected Gson myGson = MyGson.getInstance();
 	
 	protected String getMapperName(Class<?> clazz) {
 		return StringUtils.uncapitalize(clazz.getSimpleName()) + "Mapper";

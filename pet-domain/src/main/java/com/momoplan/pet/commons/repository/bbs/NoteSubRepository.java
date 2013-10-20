@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.bbs.repository;
+package com.momoplan.pet.commons.repository.bbs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,6 @@ import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
-import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
 
 @Repository
 public class NoteSubRepository implements CacheKeysConstance{
