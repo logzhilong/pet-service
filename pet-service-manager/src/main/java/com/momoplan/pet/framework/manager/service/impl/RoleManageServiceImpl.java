@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrRoleMapper;
 import com.momoplan.pet.commons.domain.manager.po.MgrRole;
 import com.momoplan.pet.commons.domain.manager.po.MgrRoleCriteria;

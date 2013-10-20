@@ -140,9 +140,13 @@ public class ClientController {
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
+//			if(){
+//				
+//			}
 			ret = new ObjectMapper().writeValueAsString(retObj);
 			if(ret.contains("needProxy")){
-				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
+//				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
+				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
 		}catch(Exception e){
 			logger.error("request error",e);
@@ -164,9 +168,9 @@ public class ClientController {
 				return;
 			}
 		}
-//		if(null==ret||ret.compareTo("null")==0){
-//			ret = "false";
-//		}
+		if(null==ret||ret.compareTo("null")==0){
+			ret = "false";
+		}
 		logger.debug("\nret:"+ret);
 		com.momoplan.pet.commons.PetUtil.writeStringToResponse(ret, response);
 		return;
@@ -295,11 +299,15 @@ public class ClientController {
 		}
 		// 获取验证码
 		if (clientRequest.getMethod().equals("getVerificationCode")) {
-			return handldGetVerificationCode(clientRequest);
+//			Object petResponse = handleProxyRequestWithoutToken(clientRequest,commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));   
+//			logger.debug("getVerificationCode path : "+commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));
+			return ssoProxyRequest(body);
 		}
 		// 验证随机码
 		if (clientRequest.getMethod().equals("verifyCode")) {
-			return handldVerifyCode(clientRequest);
+//			Object petResponse = handleProxyRequestWithoutToken(clientRequest,commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));   
+//			logger.debug("getVerificationCode path : "+commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));
+			return ssoProxyRequest(body);
 		}
 		// 根据用户名查询一个用户的所有信息
 		if (clientRequest.getMethod().equals("selectUserViewByUserName")) {
@@ -458,8 +466,8 @@ public class ClientController {
 		}      
 		
 		//添加背景图片
-		if (clientRequest.getMethod().equals("verifyToken")) {
-			return verifyToken(clientRequest);
+		if (clientRequest.getMethod().equals("addBackgroundImg")) {
+			return handleAddBackgroundImg(clientRequest);
 		}
 		
 		return clientRequest;
@@ -494,6 +502,10 @@ public class ClientController {
 		logger.debug(commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null));
 		return "needProxy:" + commonConfig.get(PetConstants.SERVICE_URI_PET_BBS, null);
 	}
+	
+//	private Object handleProxyRequestWithoutToken(ClientRequest clientRequest,String path) {
+//		return "needProxy:" + path;
+//	}
 	
 	private Object ssoProxyRequest(String body){
 		logger.debug("\nbody:"+body);
