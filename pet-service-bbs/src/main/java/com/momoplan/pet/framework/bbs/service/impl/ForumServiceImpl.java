@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
@@ -23,7 +23,6 @@ import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
-import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
 import com.momoplan.pet.framework.bbs.vo.BbsNoteCount;
@@ -31,26 +30,33 @@ import com.momoplan.pet.framework.bbs.vo.ForumNode;
 import com.momoplan.pet.framework.bbs.vo.ForumsNote;
 @Service
 public class ForumServiceImpl implements ForumService {
-	@Resource
+
 	private UserForumRelMapper userForumRelMapper=null;
-	@Resource
 	private ForumMapper forumMapper=null;
-	@Resource
-	private BbsNoteCountService bbsNoteCountService=null;
-	@Resource
 	private UserForumRelService userForumRelService=null;
-	@Resource
 	private NoteRepository noteRepository = null;
-	@Resource
 	private NoteSubRepository noteSubRepository = null;
+	private MapperOnCache mapperOnCache = null;
 	
+	@Autowired
+	public ForumServiceImpl(UserForumRelMapper userForumRelMapper, ForumMapper forumMapper, UserForumRelService userForumRelService,
+			NoteRepository noteRepository, NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
+		super();
+		this.userForumRelMapper = userForumRelMapper;
+		this.forumMapper = forumMapper;
+		this.userForumRelService = userForumRelService;
+		this.noteRepository = noteRepository;
+		this.noteSubRepository = noteSubRepository;
+		this.mapperOnCache = mapperOnCache;
+	}
+
 	private static Logger logger = LoggerFactory.getLogger(ForumServiceImpl.class);
 	/**
 	 * 获取所有父级圈子
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getForumList(ClientRequest ClientRequest){
+	public Object getForumList(ClientRequest ClientRequest) throws Exception{
 		try {
 				ForumCriteria  forumCriteria=new ForumCriteria();
 				ForumCriteria.Criteria criteria=forumCriteria.createCriteria();
@@ -65,7 +71,7 @@ public class ForumServiceImpl implements ForumService {
 				return forumlist;
 		} catch (Exception e) {
 			e.printStackTrace();
-		return "getForumListFail";
+			throw e;
 		}
 	}
 	
@@ -96,12 +102,18 @@ public class ForumServiceImpl implements ForumService {
 				}else{
 					noteCount.setIsattention("0");
 				}
-				String NewNoteNum=bbsNoteCountService.getNewNoteNumByForumid(forum.getId());
-				String NoteNum=bbsNoteCountService.getNoteNumByForumid(forum.getId());
-				String NoteRelNum=bbsNoteCountService.getNoteRelNumByForumid(forum.getId());
-				noteCount.setNoteCount(NoteNum);
-				noteCount.setNoteRelCount(NoteRelNum);
-				noteCount.setTodayNewNoteCount(NewNoteNum);
+				String forumId = forum.getId();
+				//圈子当天总帖数
+				Long totalToday = noteRepository.totalToday(forumId);
+				//圈子的总帖子数
+				Long totalCount = noteRepository.totalCount(forumId);
+				//圈子的总回复数
+				Long totalReply = noteSubRepository.totalCount(forumId);
+				
+				noteCount.setTotalToday(totalToday);
+				noteCount.setTotalCount(totalCount);
+				noteCount.setTotalReply(totalReply);
+				
 				noteCount.setName(forum.getName());
 				noteCount.setImgId(forum.getLogoImg());
 				noteCounts.add(noteCount);
@@ -118,18 +130,19 @@ public class ForumServiceImpl implements ForumService {
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Forum getForumByid(Forum forum){
+	public Forum getForumByid(Forum forum) throws Exception{
 		try {
-			if("" != forum.getId() && null != forum.getId()){
-				Forum forum2=forumMapper.selectByPrimaryKey(forum.getId());
-				return forum2;
-			}else {
-				return null; 
+			if(StringUtils.isNotEmpty(forum.getId())){
+				Forum res = mapperOnCache.selectByPrimaryKey(forum.getClass(), forum.getId());
+				return res;
+			}else{
+				new Exception("参数不合法, forumId 为空");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			logger.error("getForumByid",e);
+			throw e;
 		}
+		return null;
 	}
 	
 	/**
@@ -321,12 +334,18 @@ public class ForumServiceImpl implements ForumService {
 					}else{
 						forumsNote.setIsAtt("0");
 					}
-					String NewNoteNum=bbsNoteCountService.getNewNoteNumByForumid(forum.getId());
-					String NoteNum=bbsNoteCountService.getNoteNumByForumid(forum.getId());
-					String NoteRelNum=bbsNoteCountService.getNoteRelNumByForumid(forum.getId());
-					forumsNote.setsAllnoteCount(NoteNum);
-					forumsNote.setsTodayNewNoteCount(NewNoteNum);
-					forumsNote.setsAllnoteRelCount(NoteRelNum);
+					String forumId = forum.getId();
+					//圈子当天总帖数
+					Long totalToday = noteRepository.totalToday(forumId);
+					//圈子的总帖子数
+					Long totalCount = noteRepository.totalCount(forumId);
+					//圈子的总回复数
+					Long totalReply = noteSubRepository.totalCount(forumId);
+					
+					forumsNote.setTotalToday(totalToday);
+					forumsNote.setTotalCount(totalCount);
+					forumsNote.setTotalReply(totalReply);
+					
 					notes.add(forumsNote);
 				}
 			}

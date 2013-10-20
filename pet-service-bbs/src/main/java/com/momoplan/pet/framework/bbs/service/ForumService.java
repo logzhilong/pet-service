@@ -14,20 +14,20 @@ public interface ForumService {
 			 * @param ClientRequest
 			 * @return
 			 */
-			public Object getForumList(ClientRequest ClientRequest);
+			public Object getForumList(ClientRequest ClientRequest) throws Exception;
 			/**
 			 * 根据圈子id获取圈子
 			 * @param ClientRequest
 			 * @return
 			 */
-			public Forum getForumByid(Forum forum);
+			public Forum getForumByid(Forum forum) throws Exception;
 			
 			/**
 			 * 根据父级圈子id获取子集圈子
 			 * @param ClientRequest
 			 * @return
 			 */
-			public Object getSunForumListByForumid(ClientRequest ClientRequest);
+			public Object getSunForumListByForumid(ClientRequest ClientRequest)throws Exception;
 			
 			
 			

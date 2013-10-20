@@ -8,67 +8,53 @@ public class BbsNoteCount {
 	private String name;
 	// 是否关注
 	private String isattention;
-	// 今日新增帖子数
-	private String todayNewNoteCount;
-	// 所有帖子数
-	private String noteCount;
-	// 所有回复数
-	private String noteRelCount;
-
-	public String getImgId() {
-		return imgId;
-	}
-
-	public void setImgId(String imgId) {
-		this.imgId = imgId;
-	}
-
+	//圈子当天总帖数
+	private Long totalToday = 0L;
+	//圈子的总帖子数
+	private Long totalCount = 0L;
+	//圈子的总回复数
+	private Long totalReply = 0L;
 	public String getId() {
 		return id;
 	}
-
 	public void setId(String id) {
 		this.id = id;
 	}
-
-	public String getTodayNewNoteCount() {
-		return todayNewNoteCount;
+	public String getImgId() {
+		return imgId;
 	}
-
-	public void setTodayNewNoteCount(String todayNewNoteCount) {
-		this.todayNewNoteCount = todayNewNoteCount;
+	public void setImgId(String imgId) {
+		this.imgId = imgId;
 	}
-
-	public String getNoteCount() {
-		return noteCount;
-	}
-
-	public void setNoteCount(String noteCount) {
-		this.noteCount = noteCount;
-	}
-
-	public String getNoteRelCount() {
-		return noteRelCount;
-	}
-
-	public void setNoteRelCount(String noteRelCount) {
-		this.noteRelCount = noteRelCount;
-	}
-
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getIsattention() {
 		return isattention;
 	}
-
 	public void setIsattention(String isattention) {
 		this.isattention = isattention;
 	}
+	public Long getTotalToday() {
+		return totalToday;
+	}
+	public void setTotalToday(Long totalToday) {
+		this.totalToday = totalToday;
+	}
+	public Long getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(Long totalCount) {
+		this.totalCount = totalCount;
+	}
+	public Long getTotalReply() {
+		return totalReply;
+	}
+	public void setTotalReply(Long totalReply) {
+		this.totalReply = totalReply;
+	}		
 
 }

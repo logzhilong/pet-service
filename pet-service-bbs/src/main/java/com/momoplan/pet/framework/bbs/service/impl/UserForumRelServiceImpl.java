@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
@@ -14,7 +15,8 @@ import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
-import com.momoplan.pet.framework.bbs.service.BbsNoteCountService;
+import com.momoplan.pet.commons.repository.bbs.NoteRepository;
+import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.service.UserForumRelService;
 import com.momoplan.pet.framework.bbs.vo.BbsNoteCount;
@@ -24,8 +26,10 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	private UserForumRelMapper userForumRelMapper=null;
 	@Resource
 	private ForumService forumService=null;
-	@Resource
-	BbsNoteCountService bbsNoteCountService=null;
+	@Autowired
+	private NoteRepository noteRepository = null;
+	@Autowired
+	private NoteSubRepository noteSubRepository = null;
 	/**
 	 * 
 	 * 退出圈子
@@ -95,12 +99,20 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 			for(Forum forum:forums){
 				BbsNoteCount noteCount=new BbsNoteCount();
 				noteCount.setId(forum.getId());
-				String NewNoteNum=bbsNoteCountService.getNewNoteNumByForumid(forum.getId());
-				String NoteNum=bbsNoteCountService.getNoteNumByForumid(forum.getId());
-				String NoteRelNum=bbsNoteCountService.getNoteRelNumByForumid(forum.getId());
-				noteCount.setNoteCount(NoteNum);
-				noteCount.setNoteRelCount(NoteRelNum);
-				noteCount.setTodayNewNoteCount(NewNoteNum);
+				
+				
+				String forumId = forum.getId();
+				//圈子当天总帖数
+				Long totalToday = noteRepository.totalToday(forumId);
+				//圈子的总帖子数
+				Long totalCount = noteRepository.totalCount(forumId);
+				//圈子的总回复数
+				Long totalReply = noteSubRepository.totalCount(forumId);
+				
+				noteCount.setTotalToday(totalToday);
+				noteCount.setTotalCount(totalCount);
+				noteCount.setTotalReply(totalReply);
+				
 				noteCount.setName(forum.getName());
 				noteCount.setImgId(forum.getLogoImg());
 				noteCounts.add(noteCount);

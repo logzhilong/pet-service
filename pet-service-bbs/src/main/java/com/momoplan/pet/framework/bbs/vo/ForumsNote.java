@@ -10,7 +10,6 @@ public class ForumsNote {
 		//父级圈子img
 		private String	fLogoimg;
 		
-		
 		//圈子id
 		private String  sid; 
 		//圈子name
@@ -19,15 +18,15 @@ public class ForumsNote {
 		private String 	sDescript;
 		//圈子图片
 		private String	sLogoimg;
-		// 今日新增帖子数
-		private String sTodayNewNoteCount;
-		// 所有帖子数
-		private String sAllnoteCount;
+
 		private String isAtt;
-		
-		
-		// 所有回复数
-		private String sAllnoteRelCount;
+
+		//圈子当天总帖数
+		private Long totalToday = 0L;
+		//圈子的总帖子数
+		private Long totalCount = 0L;
+		//圈子的总回复数
+		private Long totalReply = 0L;		
 		
 		public String getfFid() {
 			return fFid;
@@ -83,23 +82,23 @@ public class ForumsNote {
 		public void setsLogoimg(String sLogoimg) {
 			this.sLogoimg = sLogoimg;
 		}
-		public String getsTodayNewNoteCount() {
-			return sTodayNewNoteCount;
+		public Long getTotalToday() {
+			return totalToday;
 		}
-		public void setsTodayNewNoteCount(String sTodayNewNoteCount) {
-			this.sTodayNewNoteCount = sTodayNewNoteCount;
+		public void setTotalToday(Long totalToday) {
+			this.totalToday = totalToday;
 		}
-		public String getsAllnoteCount() {
-			return sAllnoteCount;
+		public Long getTotalCount() {
+			return totalCount;
 		}
-		public void setsAllnoteCount(String sAllnoteCount) {
-			this.sAllnoteCount = sAllnoteCount;
+		public void setTotalCount(Long totalCount) {
+			this.totalCount = totalCount;
 		}
-		public String getsAllnoteRelCount() {
-			return sAllnoteRelCount;
+		public Long getTotalReply() {
+			return totalReply;
 		}
-		public void setsAllnoteRelCount(String sAllnoteRelCount) {
-			this.sAllnoteRelCount = sAllnoteRelCount;
+		public void setTotalReply(Long totalReply) {
+			this.totalReply = totalReply;
 		}
 
 }
