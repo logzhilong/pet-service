@@ -403,7 +403,7 @@ public class NoteServiceImpl implements NoteService {
 				vo.setTotalReply(totalReply);
 				noteVoList.add(vo);
 			}
-			return notelist;
+			return noteVoList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "getEuteNoteListFail";
