@@ -37,7 +37,7 @@ public interface SsoService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public String getToken(String token) throws Exception ;
+	public LoginResponse getToken(String token) throws Exception ;
 	/**
 	 * 重设密码
 	 * @param user

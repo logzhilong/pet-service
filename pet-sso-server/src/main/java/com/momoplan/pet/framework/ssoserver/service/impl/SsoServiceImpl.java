@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
-import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
@@ -79,7 +78,7 @@ public class SsoServiceImpl implements SsoService {
 		authenticationToken.setExpire(-1L);
 		authenticationToken.setToken(IDCreater.uuid());
 		authenticationToken.setUserid(userId);
-		authenticationToken.setCreateDate(DateUtils.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss"));
+		authenticationToken.setCreateDate(new Date());
 		String json = gson.toJson(authenticationToken);
 		ShardedJedis jedis = null;
 		try{
@@ -176,7 +175,7 @@ public class SsoServiceImpl implements SsoService {
 	}
 
 	@Override
-	public String getToken(String token) throws Exception {
+	public LoginResponse getToken(String token) throws Exception {
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
@@ -189,7 +188,10 @@ public class SsoServiceImpl implements SsoService {
 			if(StringUtils.isEmpty(json))
 				throw new Exception("TOKEN 无效或已过期");
 			logger.debug("getToken 成功 : "+token);
-			return json;
+			
+			SsoAuthenticationToken tk = gson.fromJson(json, SsoAuthenticationToken.class);
+			LoginResponse response = new LoginResponse(tk,getSsoChatServer());
+			return response;
 		}catch(Exception e){
 			logger.debug("error : "+e.getMessage());
 			throw e;
