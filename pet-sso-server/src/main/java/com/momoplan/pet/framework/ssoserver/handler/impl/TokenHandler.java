@@ -10,6 +10,7 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
+import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
 
 /**
  * 注册
@@ -25,9 +26,9 @@ public class TokenHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			String _token = PetUtil.getParameter(clientRequest, "token");
-			String token = ssoService.getToken(_token);
-			logger.debug("token有效 body="+token);
-			rtn = new Success(true,token).toString();
+			LoginResponse loginResponse = ssoService.getToken(_token);
+			logger.debug("token有效 body="+_token);
+			rtn = new Success(true,loginResponse).toString();
 		}catch(Exception e){
 			logger.debug("token无效 body="+gson.toJson(clientRequest));
 			logger.debug(e.getMessage());
