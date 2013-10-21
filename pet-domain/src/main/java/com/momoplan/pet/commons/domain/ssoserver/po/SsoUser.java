@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-21 19:11:28
+* @date 2013-10-21 19:21:27
 */
 public class SsoUser implements Serializable {
     private static final long serialVersionUID = 1L;

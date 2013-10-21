@@ -6,33 +6,33 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
-* SsoAuthenticationToken
-* table:authentication_token
+* UserLocation
+* table:user_location
 * 
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
 * @date 2013-10-21 19:21:27
 */
-public class SsoAuthenticationToken implements Serializable {
+public class UserLocation implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private String token;
-
-    private Date createDate;
-
-    private Long expire;
 
     private Long userid;
 
+    private Date createDate;
+
+    private Double latitude;
+
+    private Double longitude;
+
     private Integer version;
 
-    public String getToken() {
-        return token;
+    public Long getUserid() {
+        return userid;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUserid(Long userid) {
+        this.userid = userid;
     }
 
     public Date getCreateDate() {
@@ -43,20 +43,20 @@ public class SsoAuthenticationToken implements Serializable {
         this.createDate = createDate;
     }
 
-    public Long getExpire() {
-        return expire;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setExpire(Long expire) {
-        this.expire = expire;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 
-    public Long getUserid() {
-        return userid;
+    public Double getLongitude() {
+        return longitude;
     }
 
-    public void setUserid(Long userid) {
-        this.userid = userid;
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public Integer getVersion() {
@@ -78,11 +78,11 @@ public class SsoAuthenticationToken implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        SsoAuthenticationToken other = (SsoAuthenticationToken) that;
-        return (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
+        UserLocation other = (UserLocation) that;
+        return (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
-            && (this.getExpire() == null ? other.getExpire() == null : this.getExpire().equals(other.getExpire()))
-            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
+            && (this.getLatitude() == null ? other.getLatitude() == null : this.getLatitude().equals(other.getLatitude()))
+            && (this.getLongitude() == null ? other.getLongitude() == null : this.getLongitude().equals(other.getLongitude()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
 
@@ -90,10 +90,10 @@ public class SsoAuthenticationToken implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getToken() == null) ? 0 : getToken().hashCode());
-        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
-        result = prime * result + ((getExpire() == null) ? 0 : getExpire().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
+        result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
+        result = prime * result + ((getLatitude() == null) ? 0 : getLatitude().hashCode());
+        result = prime * result + ((getLongitude() == null) ? 0 : getLongitude().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
