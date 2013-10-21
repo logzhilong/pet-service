@@ -9,18 +9,12 @@ public class Success {
 	
 	private boolean success = true;
 	
-	private String entity = null;
+	private Object entity = null;
 
 	public Success() {
 		super();
 	}
 
-	public Success(boolean success, String entity) {
-		super();
-		this.success = success;
-		this.entity = entity;
-	}
-	
 	public Success(boolean success, Object entity) {
 		super();
 		this.success = success;
@@ -33,17 +27,15 @@ public class Success {
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
-	public String getEntity() {
+	
+	public Object getEntity() {
 		return entity;
 	}
-	public void setEntity(String entity) {
+
+	public void setEntity(Object entity) {
 		this.entity = entity;
 	}
-	
-	public void setEntity(Object _entity) {
-		this.entity = MyGson.getInstance().toJson(_entity);
-	}
-	
+
 	@Override
 	public String toString() {
 		return MyGson.getInstance().toJson(this);
