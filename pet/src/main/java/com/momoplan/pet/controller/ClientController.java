@@ -1900,7 +1900,7 @@ public class ClientController {
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -1943,7 +1943,7 @@ public class ClientController {
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -2007,7 +2007,7 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -2050,7 +2050,7 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -2085,9 +2085,9 @@ public class ClientController {
 		// return String.valueOf((int) distance / 50 * 50) + "米";
 		// }
 		if(distance<=1000){
-			return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+			return String.valueOf((int) distance / 100 * 100 + 100) + "m";
 		}else{
-			return String.valueOf((int) distance / 100 * 100/1000 + 0.1) + "千米以内";
+			return String.valueOf((int) (distance / 100 * 100/1000 + 0.1)) + "km";
 		}
 	}
 
@@ -2098,9 +2098,9 @@ public class ClientController {
 		double distance = PetUtil.getDistance(uLongitude, uLatitude, longitude,
 				latitude);
 		if(distance<=1000){
-			return String.valueOf((int) distance / 100 * 100 + 100) + "米以内";
+			return String.valueOf((int) distance / 100 * 100 + 100) + "m";
 		}else{
-			return String.valueOf((int) distance / 100 * 100/1000 + 0.1) + "千米以内";
+			return String.valueOf((int) (distance / 100 * 100/1000 + 0.1)) + "km";
 		}
 		
 	}
