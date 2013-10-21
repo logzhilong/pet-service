@@ -23,4 +23,8 @@ public interface NoteService {
 	 * @throws Exception
 	 */
 	public void NoteDel(Note note) throws Exception;
+	/**
+	 * 更新帖子点击数
+	 */
+	public void updateClickCount(String noteid)throws Exception;
 }
