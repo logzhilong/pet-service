@@ -189,7 +189,7 @@ public class SsoServiceImpl implements SsoService {
 				throw new Exception("TOKEN 无效或已过期");
 			logger.debug("getToken 成功 : "+token);
 			
-			SsoAuthenticationToken tk = gson.fromJson(token, SsoAuthenticationToken.class);
+			SsoAuthenticationToken tk = gson.fromJson(json, SsoAuthenticationToken.class);
 			LoginResponse response = new LoginResponse(tk,getSsoChatServer());
 			return response;
 		}catch(Exception e){
