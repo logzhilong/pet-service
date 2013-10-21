@@ -1900,7 +1900,7 @@ public class ClientController {
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -1943,7 +1943,7 @@ public class ClientController {
 					PetUserView petUserview = this.getPetUserview(userLocation
 							.getUserid());
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -2007,7 +2007,7 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
@@ -2050,7 +2050,7 @@ public class ClientController {
 					
 					PetUserView petUserview = this.getPetUserviewByPet(userLocation.getUserid(),PetUtil.getParameterInteger(clientRequest, "type"));
 					petUserview.setDistance(distance / 100 * 100 + 100
-							+ "米以内");
+							+ "m");
 					distance = distance + 50;
 					petUserview.setPageIndex(pageIndex++);
 					if (null != userLocation.getCreateDate()) {
