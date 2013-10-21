@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-21 15:14:36
+* @date 2013-10-21 17:03:13
 */
 public class StatesUserStates implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -38,6 +38,11 @@ public class StatesUserStates implements Serializable {
     private String state;
 
     private Integer reportTimes;
+
+    /**
+     * 转发附带的评论
+     */
+    private String transmitMsg;
 
     public String getId() {
         return id;
@@ -127,6 +132,21 @@ public class StatesUserStates implements Serializable {
         this.reportTimes = reportTimes;
     }
 
+    /**
+     * @return 转发附带的评论
+     */
+    public String getTransmitMsg() {
+        return transmitMsg;
+    }
+
+    /**
+     * @param transmitMsg 
+	 *            转发附带的评论
+     */
+    public void setTransmitMsg(String transmitMsg) {
+        this.transmitMsg = transmitMsg;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -149,7 +169,8 @@ public class StatesUserStates implements Serializable {
             && (this.getLatitude() == null ? other.getLatitude() == null : this.getLatitude().equals(other.getLatitude()))
             && (this.getLongitude() == null ? other.getLongitude() == null : this.getLongitude().equals(other.getLongitude()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
-            && (this.getReportTimes() == null ? other.getReportTimes() == null : this.getReportTimes().equals(other.getReportTimes()));
+            && (this.getReportTimes() == null ? other.getReportTimes() == null : this.getReportTimes().equals(other.getReportTimes()))
+            && (this.getTransmitMsg() == null ? other.getTransmitMsg() == null : this.getTransmitMsg().equals(other.getTransmitMsg()));
     }
 
     @Override
@@ -167,6 +188,7 @@ public class StatesUserStates implements Serializable {
         result = prime * result + ((getLongitude() == null) ? 0 : getLongitude().hashCode());
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getReportTimes() == null) ? 0 : getReportTimes().hashCode());
+        result = prime * result + ((getTransmitMsg() == null) ? 0 : getTransmitMsg().hashCode());
         return result;
     }
 

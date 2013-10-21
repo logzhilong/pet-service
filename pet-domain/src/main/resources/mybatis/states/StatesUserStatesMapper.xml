@@ -13,6 +13,7 @@
     <result column="longitude" property="longitude" jdbcType="DOUBLE" />
     <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="report_times" property="reportTimes" jdbcType="INTEGER" />
+    <result column="transmit_msg" property="transmitMsg" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -74,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, latitude, longitude, state, 
-    report_times
+    report_times, transmit_msg
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
     select
@@ -111,9 +112,9 @@
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
     insert into user_states (id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, 
-      latitude, longitude, state, report_times)
+      latitude, longitude, state, report_times, transmit_msg)
     values (#{id}, #{ifTransmitMsg}, #{imgid}, #{msg}, #{userid}, #{ct}, #{transmitUrl}, 
-      #{latitude}, #{longitude}, #{state}, #{reportTimes})
+      #{latitude}, #{longitude}, #{state}, #{reportTimes}, #{transmitMsg})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
     insert into user_states
@@ -151,6 +152,9 @@
       <if test="reportTimes != null" >
         report_times,
       </if>
+      <if test="transmitMsg != null" >
+        transmit_msg,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -185,6 +189,9 @@
       </if>
       <if test="reportTimes != null" >
         #{reportTimes},
+      </if>
+      <if test="transmitMsg != null" >
+        #{transmitMsg},
       </if>
     </trim>
   </insert>
@@ -230,6 +237,9 @@
       <if test="record.reportTimes != null" >
         report_times = #{record.reportTimes},
       </if>
+      <if test="record.transmitMsg != null" >
+        transmit_msg = #{record.transmitMsg},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -247,7 +257,8 @@
       latitude = #{record.latitude},
       longitude = #{record.longitude},
       state = #{record.state},
-      report_times = #{record.reportTimes}
+      report_times = #{record.reportTimes},
+      transmit_msg = #{record.transmitMsg}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -285,6 +296,9 @@
       <if test="reportTimes != null" >
         report_times = #{reportTimes},
       </if>
+      <if test="transmitMsg != null" >
+        transmit_msg = #{transmitMsg},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -299,7 +313,8 @@
       latitude = #{latitude},
       longitude = #{longitude},
       state = #{state},
-      report_times = #{reportTimes}
+      report_times = #{reportTimes},
+      transmit_msg = #{transmitMsg}
     where id = #{id}
   </update>
 </mapper>

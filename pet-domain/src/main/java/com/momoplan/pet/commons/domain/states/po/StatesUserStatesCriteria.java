@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-21 15:14:36
+* @date 2013-10-21 17:03:13
 */
 public class StatesUserStatesCriteria {
     protected String orderByClause;
@@ -870,6 +870,76 @@ public class StatesUserStatesCriteria {
 
         public Criteria andReportTimesNotBetween(Integer value1, Integer value2) {
             addCriterion("report_times not between", value1, value2, "reportTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgIsNull() {
+            addCriterion("transmit_msg is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgIsNotNull() {
+            addCriterion("transmit_msg is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgEqualTo(String value) {
+            addCriterion("transmit_msg =", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgNotEqualTo(String value) {
+            addCriterion("transmit_msg <>", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgGreaterThan(String value) {
+            addCriterion("transmit_msg >", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgGreaterThanOrEqualTo(String value) {
+            addCriterion("transmit_msg >=", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgLessThan(String value) {
+            addCriterion("transmit_msg <", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgLessThanOrEqualTo(String value) {
+            addCriterion("transmit_msg <=", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgLike(String value) {
+            addCriterion("transmit_msg like", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgNotLike(String value) {
+            addCriterion("transmit_msg not like", value, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgIn(List<String> values) {
+            addCriterion("transmit_msg in", values, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgNotIn(List<String> values) {
+            addCriterion("transmit_msg not in", values, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgBetween(String value1, String value2) {
+            addCriterion("transmit_msg between", value1, value2, "transmitMsg");
+            return (Criteria) this;
+        }
+
+        public Criteria andTransmitMsgNotBetween(String value1, String value2) {
+            addCriterion("transmit_msg not between", value1, value2, "transmitMsg");
             return (Criteria) this;
         }
     }

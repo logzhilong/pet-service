@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-21 15:14:36
+* @date 2013-10-21 17:03:14
 */
 public class StatesUserStatesReplyCriteria {
     protected String orderByClause;
