@@ -164,7 +164,7 @@ public class BBSManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/bbs/forumManager.html")
-	public String forumManager(Forum myForm,PageBean<Forum> pageBean,Model model){
+	public String forumManager(String sss,Forum myForm,PageBean<Forum> pageBean,Model model){	
 		logger.debug("wlcome to pet-service-bbs manager forumManager ......");
 		try {
 			//测试时先写死，分页尚未实现 >>>>>>>>>>
@@ -222,9 +222,8 @@ public class BBSManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/bbs/forumrightmanagelist.html")
-	public String forumrightmanagelist(String id,Model model){
+	public String forumrightmanagelist(Forum forum,Model model){
 		try {
-			Forum forum=new Forum();
 			forum.setId("92DE9E82807142A293107DFFC4368177");
 			List<Note> forums=bBSManagerService.getAllNotesByForumId(forum);
 			model.addAttribute("forums", forums);

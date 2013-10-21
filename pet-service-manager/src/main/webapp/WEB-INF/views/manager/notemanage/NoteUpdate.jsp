@@ -9,7 +9,7 @@
 	<div class="pageContent">
 		<div class="pageFormContent" layoutH="80">
 			<fieldset>
-				<input type="hidden"  name="id" value="${note2.id }" />
+				<input type="hidden" name="id" value="${note2.id }" />
 				<legend>创建帖子信息</legend>
 				<dl>
 					<dt>帖子名字：</dt>
@@ -20,16 +20,69 @@
 				<dl>
 					<dt>帖子内容：</dt>
 					<dd>
-						<input type="text" readonly="readonly" name="content" value="${note2.content }" />
+						<input type="text" readonly="readonly" name="content"
+							value="${note2.content }" />
 					</dd>
 				</dl>
 				<dl>
 					<dt>点击数量:</dt>
 					<dd>
-						<input type="text"  readonly="readonly" name="clientCount" value="${note2.clientCount }" />
+						<input type="text" readonly="readonly" name="clientCount"
+							value="${note2.clientCount }" />
 					</dd>
 				</dl>
-			
+				<dl>
+					<dt>是否可用：</dt>
+					<dd>
+						<select name="isDel">
+							<c:choose>
+								<c:when test="${note2.isDel }">
+									<option value="true">true</option>
+									<option value="false">false</option>
+								</c:when>
+								<c:otherwise>
+									<option value="false">false</option>
+									<option value="true">true</option>
+								</c:otherwise>
+							</c:choose>
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt>是否精华：</dt>
+					<dd>
+						<select name="isEute">
+							<c:choose>
+								<c:when test="${note2.isEute }">
+									<option value="true">true</option>
+									<option value="false">false</option>
+								</c:when>
+								<c:otherwise>
+									<option value="false">false</option>
+									<option value="true">true</option>
+								</c:otherwise>
+							</c:choose>
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt>是否置顶：</dt>
+					<dd>
+						<select name="isTop">
+							<c:choose>
+								<c:when test="${note2.isTop }">
+									<option value="true">true</option>
+									<option value="false">false</option>
+								</c:when>
+								<c:otherwise>
+									<option value="false">false</option>
+									<option value="true">true</option>
+								</c:otherwise>
+							</c:choose>
+						</select>
+					</dd>
+				</dl>
+
 			</fieldset>
 		</div>
 

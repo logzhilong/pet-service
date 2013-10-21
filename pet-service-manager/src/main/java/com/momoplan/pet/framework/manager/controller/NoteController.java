@@ -40,11 +40,13 @@ public class NoteController {
 		logger.debug("wlcome to note notemanager Notedetail......");
 		try {
 			Note note2=noteService.getNotebyid(note.getId());
+			noteService.updateClickCount(note2.getId());
 			logger.debug("获取帖子详情"+note2.toString());
 			model.addAttribute("note2", note2);
 			return "/manager/notemanage/NoteDetail";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.debug("获取详情异常"+e);
 			return "/manager/notemanage/NoteDetail";
 		}
 	}
@@ -102,7 +104,7 @@ public class NoteController {
 		}
 	}
 	/**
-	 * 删除帖子帖子
+	 * 删除帖子
 	 * @param model
 	 * @return
 	 */

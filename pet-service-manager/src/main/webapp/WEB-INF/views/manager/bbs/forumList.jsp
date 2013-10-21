@@ -83,7 +83,8 @@
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>
-						<a class="add" href="${ctx }/manager/bbs/forumManager.html?id={id}" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="1000" height="600" close="forum.refresh" param="'${itm.id }'" >
+					<input type="hidden" name="id" value="${itm.id }">
+						<a  href="${ctx }/manager/bbs/forumManager.html?id={id}" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="1000" height="600" close="forum.refresh" param="id" >
 							${itm.name }
 						</a>
 					</td>
