@@ -141,12 +141,8 @@ public class ClientController {
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
-//			if(){
-//				
-//			}
 			ret = new ObjectMapper().writeValueAsString(retObj);
 			if(ret.contains("needProxy")){
-//				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
 				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
 		}catch(Exception e){
@@ -470,6 +466,11 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("addBackgroundImg")) {
 			return handleAddBackgroundImg(clientRequest);
 		}
+		//添加背景图片
+		if (clientRequest.getMethod().equals("reportContent")) {
+			return handleReportContent(clientRequest);
+		}
+		
 		
 		return clientRequest;
 		
