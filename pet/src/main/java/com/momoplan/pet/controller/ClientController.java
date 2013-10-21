@@ -530,7 +530,7 @@ public class ClientController {
 			if(success.isSuccess()){
 				JsonParser parser = new JsonParser();
 				JsonElement je = parser.parse(success.getEntity());
-				logger.debug("XXX : "+je.getAsString());
+				logger.debug("XXX : "+success.getEntity());
 				AuthenticationToken token = MyGson.getInstance().fromJson(je, AuthenticationToken.class);
 				return token;
 			}else{
