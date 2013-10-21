@@ -530,7 +530,6 @@ public class ClientController {
 				JsonParser parser = new JsonParser();
 				JsonElement je = parser.parse(success.getEntity());
 				logger.debug("XXX : "+success.getEntity());
-				JsonObject json = new JsonObject();
 				LoginResponse login = MyGson.getInstance().fromJson(je, LoginResponse.class);
 				return login;
 			}else{
