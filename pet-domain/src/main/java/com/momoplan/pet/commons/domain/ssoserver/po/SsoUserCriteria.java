@@ -11,7 +11,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-21 17:10:57
+* @date 2013-10-21 19:11:28
 */
 public class SsoUserCriteria {
     protected String orderByClause;
