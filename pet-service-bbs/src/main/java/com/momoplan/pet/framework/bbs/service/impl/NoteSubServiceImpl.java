@@ -15,7 +15,6 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
-import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
@@ -94,29 +93,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 			return "getAllReplyNoteByNoteidFail";
 		}
 	}
-	/**
-	 * 获取某圈子下所有回复数
-	 * 
-	 */
-	public Object getNoteSubCountByForumid(ClientRequest ClientRequest){
-		try {
-			int count=0;
-			NoteCriteria noteCriteria=new NoteCriteria();
-			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			criteria.andForumIdEqualTo(PetUtil.getParameter(ClientRequest, "forumId"));
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			for(Note note:notelist){
-				NoteSubCriteria noteSubCriteria=new NoteSubCriteria();
-				NoteSubCriteria.Criteria criteriaw=noteSubCriteria.createCriteria();
-				criteriaw.andNoteIdEqualTo(note.getId());
-				List<NoteSub> noteSubs=noteSubMapper.selectByExample(noteSubCriteria);
-				count=noteSubs.size()+count;
-			}
-			return count;
-		} catch (Exception e) {
-			return "getNoteSubCountByForumidFail";
-		}
-	}
+	
 	/**
 	 *我回复过的帖子列表
 	 * 

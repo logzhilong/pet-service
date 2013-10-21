@@ -52,11 +52,7 @@ public interface NoteService {
 	 * @return
 	 */
 	public Object updateClickCount(ClientRequest ClientRequest);
-	/**
-	 * 获取某圈子下所有帖子数
-	 * 
-	 */
-	public Object getNoteCountByForumid(ClientRequest ClientRequest);
+	
 	/**
 	 * 我发表过的帖子列表
 	 * 

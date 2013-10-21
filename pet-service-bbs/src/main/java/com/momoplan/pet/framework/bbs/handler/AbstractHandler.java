@@ -19,7 +19,7 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 	protected ForumService  forumService = Bootstrap.getBean(ForumServiceImpl.class);
 	protected NoteService noteService= Bootstrap.getBean(NoteServiceImpl.class);
 	protected NoteSubService noteSubService=Bootstrap.getBean(NoteSubServiceImpl.class);
-	protected UserForumRelService userForumRelService=Bootstrap.getBean(UserForumRelServiceImpl.class);
+	protected UserForumRelService userForumRelService =Bootstrap.getBean(UserForumRelServiceImpl.class);
 	protected Gson gson = MyGson.getInstance();
 	
 }
