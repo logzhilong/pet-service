@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.MyGson;
-import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
@@ -33,17 +32,15 @@ public class ForumServiceImpl implements ForumService {
 	private ForumMapper forumMapper = null;
 	private NoteRepository noteRepository = null;
 	private NoteSubRepository noteSubRepository = null;
-	private MapperOnCache mapperOnCache = null;
 
 	@Autowired
 	public ForumServiceImpl(UserForumRelMapper userForumRelMapper, ForumMapper forumMapper , NoteRepository noteRepository,
-			NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
+			NoteSubRepository noteSubRepository) {
 		super();
 		this.userForumRelMapper = userForumRelMapper;
 		this.forumMapper = forumMapper;
 		this.noteRepository = noteRepository;
 		this.noteSubRepository = noteSubRepository;
-		this.mapperOnCache = mapperOnCache;
 	}
 
 	/**
@@ -190,74 +187,5 @@ public class ForumServiceImpl implements ForumService {
 		return node0;
 	}
 
-	/**
-	 * 获取所有圈子(父级和子集)
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	/*
-	@Override
-	public Object getAllForum(ClientRequest ClientRequest) {
-		try {
-			// 获取所有父级
-			ForumCriteria forumCriteria = new ForumCriteria();
-			ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
-			criteria.andPidIsNull();
-			int pageNo = PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize = PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			String userid = PetUtil.getParameter(ClientRequest, "userId");
-			forumCriteria.setMysqlOffset((pageNo - 1) * pageSize);
-			forumCriteria.setMysqlLength(pageSize);
-			forumCriteria.setOrderByClause("ct desc");
-			List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
 
-			// 获取所有子集
-			List<ForumsNote> notes = new ArrayList<ForumsNote>();
-			for (Forum forum : forumlist) {
-
-				String fforumid = forum.getId();
-				ForumCriteria sfforumCriteria = new ForumCriteria();
-				ForumCriteria.Criteria sfcriteria = sfforumCriteria.createCriteria();
-				sfcriteria.andPidEqualTo(fforumid);
-				List<Forum> forumstt = forumMapper.selectByExample(sfforumCriteria);
-				for (Forum forum2 : forumstt) {
-					ForumsNote forumsNote = new ForumsNote();
-					forumsNote.setfFid(forum.getPid());
-					forumsNote.setfForumName(forum.getName());
-					forumsNote.setfDescript(forum.getDescript());
-					forumsNote.setfDescript(forum.getDescript());
-					forumsNote.setfLogoimg(forum.getLogoImg());
-
-					forumsNote.setSid(forum2.getId());
-					forumsNote.setsLogoimg(forum2.getLogoImg());
-					forumsNote.setsDescript(forum2.getDescript());
-					forumsNote.setsForumName(forum2.getName());
-					// 是否关注此圈子
-					if (userForumRelService.isAttentionForum(userid, forum2.getId()) > 0) {
-						forumsNote.setIsAtt("1");
-					} else {
-						forumsNote.setIsAtt("0");
-					}
-					String forumId = forum.getId();
-					// 圈子当天总帖数
-					Long totalToday = noteRepository.totalToday(forumId);
-					// 圈子的总帖子数
-					Long totalCount = noteRepository.totalCount(forumId);
-					// 圈子的总回复数
-					Long totalReply = noteSubRepository.totalCount(forumId);
-
-					forumsNote.setTotalToday(totalToday);
-					forumsNote.setTotalCount(totalCount);
-					forumsNote.setTotalReply(totalReply);
-
-					notes.add(forumsNote);
-				}
-			}
-			return notes;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getAllForumFail";
-		}
-	}*/
 }

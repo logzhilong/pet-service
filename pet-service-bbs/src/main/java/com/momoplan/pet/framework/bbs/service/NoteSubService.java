@@ -17,11 +17,7 @@ public interface NoteSubService {
 	 * 获取当前帖子所有回复
 	 */
 	public Object getAllReplyNoteByNoteid(ClientRequest ClientRequest);
-	/**
-	 * 获取某圈子下所有回复数
-	 * 
-	 */
-	public Object getNoteSubCountByForumid(ClientRequest ClientRequest);
+	
 	/**
 	 *我回复过的帖子列表
 	 * 
