@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.gson.JsonObject;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
@@ -140,7 +141,10 @@ public class ClientController {
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
-			ret = new ObjectMapper().writeValueAsString(retObj);
+			JSONObject jsonObj = new JSONObject(retObj);
+			logger.debug("XXXXX ="+jsonObj);
+//			ret = new ObjectMapper().writeValueAsString(retObj);
+			ret = jsonObj.toString();
 			if(ret.contains("needProxy")){
 				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
