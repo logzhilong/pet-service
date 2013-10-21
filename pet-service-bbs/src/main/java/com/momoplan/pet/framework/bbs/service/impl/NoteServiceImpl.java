@@ -209,22 +209,7 @@ public class NoteServiceImpl implements NoteService {
 			return "updateClickCountFail";
 		}
 	}
-	/**
-	 * 获取某圈子下所有帖子数
-	 * 
-	 */
-	public Object getNoteCountByForumid(ClientRequest ClientRequest){
-		try {
-			NoteCriteria noteCriteria=new NoteCriteria();
-			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			criteria.andForumIdEqualTo(PetUtil.getParameter(ClientRequest, "forumId"));
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist.size();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getNoteCountByForumidFail";
-		}
-	}
+	
 	/**
 	 * 我发表过的帖子列表
 	 * 
@@ -419,18 +404,24 @@ public class NoteServiceImpl implements NoteService {
 	
 	
 	/**
-	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})
+	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid是否为0判断是否全站或者某圈子内)
 	 */
 	public Object getNewReplysByReplyct(ClientRequest ClientRequest){
 		try {
+			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
+			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
+			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+
 		    NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
 			criteria.andIsTopEqualTo(false);
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
+			if(fid.equals("0")){
+			}else {
+				criteria.andForumIdEqualTo(fid);
+			}
 			noteCriteria.setOrderByClause("et desc");
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			return noteMapper.selectByExample(noteCriteria);
