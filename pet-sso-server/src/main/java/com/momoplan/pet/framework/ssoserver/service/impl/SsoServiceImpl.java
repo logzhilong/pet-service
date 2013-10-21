@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.ssoserver.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
@@ -66,7 +68,6 @@ public class SsoServiceImpl implements SsoService {
 		logger.debug("token : "+gson.toJson(token));
 		return token;
 	}
-	
 	/**
 	 * 产生一个 token
 	 * TODO 每个 TOKEN 都是临时的，要找到一个对策来清理过期不用的 TOKEN，等解耦以后再处理
@@ -78,7 +79,7 @@ public class SsoServiceImpl implements SsoService {
 		authenticationToken.setExpire(-1L);
 		authenticationToken.setToken(IDCreater.uuid());
 		authenticationToken.setUserid(userId);
-		authenticationToken.setCreateDate(System.currentTimeMillis()+"");
+		authenticationToken.setCreateDate(DateUtils.formatDate(new Date(),"yyyy-MM-dd HH:mm:ss"));
 		String json = gson.toJson(authenticationToken);
 		ShardedJedis jedis = null;
 		try{
