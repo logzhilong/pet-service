@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
-* StatesUserStatesCriteria 条件查询类.
+* StatesUserStatesReplyCriteria 条件查询类.
 * 
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
 * @date 2013-10-21 15:14:36
 */
-public class StatesUserStatesCriteria {
+public class StatesUserStatesReplyCriteria {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -23,7 +23,7 @@ public class StatesUserStatesCriteria {
 
     protected Integer mysqlLength;
 
-    public StatesUserStatesCriteria() {
+    public StatesUserStatesReplyCriteria() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -223,133 +223,143 @@ public class StatesUserStatesCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgIsNull() {
-            addCriterion("if_transmit_msg is null");
+        public Criteria andStateidIsNull() {
+            addCriterion("stateid is null");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgIsNotNull() {
-            addCriterion("if_transmit_msg is not null");
+        public Criteria andStateidIsNotNull() {
+            addCriterion("stateid is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgEqualTo(Boolean value) {
-            addCriterion("if_transmit_msg =", value, "ifTransmitMsg");
+        public Criteria andStateidEqualTo(String value) {
+            addCriterion("stateid =", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgNotEqualTo(Boolean value) {
-            addCriterion("if_transmit_msg <>", value, "ifTransmitMsg");
+        public Criteria andStateidNotEqualTo(String value) {
+            addCriterion("stateid <>", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgGreaterThan(Boolean value) {
-            addCriterion("if_transmit_msg >", value, "ifTransmitMsg");
+        public Criteria andStateidGreaterThan(String value) {
+            addCriterion("stateid >", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("if_transmit_msg >=", value, "ifTransmitMsg");
+        public Criteria andStateidGreaterThanOrEqualTo(String value) {
+            addCriterion("stateid >=", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgLessThan(Boolean value) {
-            addCriterion("if_transmit_msg <", value, "ifTransmitMsg");
+        public Criteria andStateidLessThan(String value) {
+            addCriterion("stateid <", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgLessThanOrEqualTo(Boolean value) {
-            addCriterion("if_transmit_msg <=", value, "ifTransmitMsg");
+        public Criteria andStateidLessThanOrEqualTo(String value) {
+            addCriterion("stateid <=", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgIn(List<Boolean> values) {
-            addCriterion("if_transmit_msg in", values, "ifTransmitMsg");
+        public Criteria andStateidLike(String value) {
+            addCriterion("stateid like", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgNotIn(List<Boolean> values) {
-            addCriterion("if_transmit_msg not in", values, "ifTransmitMsg");
+        public Criteria andStateidNotLike(String value) {
+            addCriterion("stateid not like", value, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgBetween(Boolean value1, Boolean value2) {
-            addCriterion("if_transmit_msg between", value1, value2, "ifTransmitMsg");
+        public Criteria andStateidIn(List<String> values) {
+            addCriterion("stateid in", values, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andIfTransmitMsgNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("if_transmit_msg not between", value1, value2, "ifTransmitMsg");
+        public Criteria andStateidNotIn(List<String> values) {
+            addCriterion("stateid not in", values, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidIsNull() {
-            addCriterion("imgid is null");
+        public Criteria andStateidBetween(String value1, String value2) {
+            addCriterion("stateid between", value1, value2, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidIsNotNull() {
-            addCriterion("imgid is not null");
+        public Criteria andStateidNotBetween(String value1, String value2) {
+            addCriterion("stateid not between", value1, value2, "stateid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidEqualTo(String value) {
-            addCriterion("imgid =", value, "imgid");
+        public Criteria andPidIsNull() {
+            addCriterion("pid is null");
             return (Criteria) this;
         }
 
-        public Criteria andImgidNotEqualTo(String value) {
-            addCriterion("imgid <>", value, "imgid");
+        public Criteria andPidIsNotNull() {
+            addCriterion("pid is not null");
             return (Criteria) this;
         }
 
-        public Criteria andImgidGreaterThan(String value) {
-            addCriterion("imgid >", value, "imgid");
+        public Criteria andPidEqualTo(String value) {
+            addCriterion("pid =", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidGreaterThanOrEqualTo(String value) {
-            addCriterion("imgid >=", value, "imgid");
+        public Criteria andPidNotEqualTo(String value) {
+            addCriterion("pid <>", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidLessThan(String value) {
-            addCriterion("imgid <", value, "imgid");
+        public Criteria andPidGreaterThan(String value) {
+            addCriterion("pid >", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidLessThanOrEqualTo(String value) {
-            addCriterion("imgid <=", value, "imgid");
+        public Criteria andPidGreaterThanOrEqualTo(String value) {
+            addCriterion("pid >=", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidLike(String value) {
-            addCriterion("imgid like", value, "imgid");
+        public Criteria andPidLessThan(String value) {
+            addCriterion("pid <", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidNotLike(String value) {
-            addCriterion("imgid not like", value, "imgid");
+        public Criteria andPidLessThanOrEqualTo(String value) {
+            addCriterion("pid <=", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidIn(List<String> values) {
-            addCriterion("imgid in", values, "imgid");
+        public Criteria andPidLike(String value) {
+            addCriterion("pid like", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidNotIn(List<String> values) {
-            addCriterion("imgid not in", values, "imgid");
+        public Criteria andPidNotLike(String value) {
+            addCriterion("pid not like", value, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidBetween(String value1, String value2) {
-            addCriterion("imgid between", value1, value2, "imgid");
+        public Criteria andPidIn(List<String> values) {
+            addCriterion("pid in", values, "pid");
             return (Criteria) this;
         }
 
-        public Criteria andImgidNotBetween(String value1, String value2) {
-            addCriterion("imgid not between", value1, value2, "imgid");
+        public Criteria andPidNotIn(List<String> values) {
+            addCriterion("pid not in", values, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidBetween(String value1, String value2) {
+            addCriterion("pid between", value1, value2, "pid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPidNotBetween(String value1, String value2) {
+            addCriterion("pid not between", value1, value2, "pid");
             return (Criteria) this;
         }
 
@@ -420,6 +430,76 @@ public class StatesUserStatesCriteria {
 
         public Criteria andMsgNotBetween(String value1, String value2) {
             addCriterion("msg not between", value1, value2, "msg");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridIsNull() {
+            addCriterion("puserid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridIsNotNull() {
+            addCriterion("puserid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridEqualTo(String value) {
+            addCriterion("puserid =", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridNotEqualTo(String value) {
+            addCriterion("puserid <>", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridGreaterThan(String value) {
+            addCriterion("puserid >", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridGreaterThanOrEqualTo(String value) {
+            addCriterion("puserid >=", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridLessThan(String value) {
+            addCriterion("puserid <", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridLessThanOrEqualTo(String value) {
+            addCriterion("puserid <=", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridLike(String value) {
+            addCriterion("puserid like", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridNotLike(String value) {
+            addCriterion("puserid not like", value, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridIn(List<String> values) {
+            addCriterion("puserid in", values, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridNotIn(List<String> values) {
+            addCriterion("puserid not in", values, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridBetween(String value1, String value2) {
+            addCriterion("puserid between", value1, value2, "puserid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPuseridNotBetween(String value1, String value2) {
+            addCriterion("puserid not between", value1, value2, "puserid");
             return (Criteria) this;
         }
 
@@ -550,326 +630,6 @@ public class StatesUserStatesCriteria {
 
         public Criteria andCtNotBetween(Date value1, Date value2) {
             addCriterion("ct not between", value1, value2, "ct");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlIsNull() {
-            addCriterion("transmit_url is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlIsNotNull() {
-            addCriterion("transmit_url is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlEqualTo(String value) {
-            addCriterion("transmit_url =", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlNotEqualTo(String value) {
-            addCriterion("transmit_url <>", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlGreaterThan(String value) {
-            addCriterion("transmit_url >", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlGreaterThanOrEqualTo(String value) {
-            addCriterion("transmit_url >=", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlLessThan(String value) {
-            addCriterion("transmit_url <", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlLessThanOrEqualTo(String value) {
-            addCriterion("transmit_url <=", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlLike(String value) {
-            addCriterion("transmit_url like", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlNotLike(String value) {
-            addCriterion("transmit_url not like", value, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlIn(List<String> values) {
-            addCriterion("transmit_url in", values, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlNotIn(List<String> values) {
-            addCriterion("transmit_url not in", values, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlBetween(String value1, String value2) {
-            addCriterion("transmit_url between", value1, value2, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andTransmitUrlNotBetween(String value1, String value2) {
-            addCriterion("transmit_url not between", value1, value2, "transmitUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeIsNull() {
-            addCriterion("latitude is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeIsNotNull() {
-            addCriterion("latitude is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeEqualTo(Double value) {
-            addCriterion("latitude =", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeNotEqualTo(Double value) {
-            addCriterion("latitude <>", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeGreaterThan(Double value) {
-            addCriterion("latitude >", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeGreaterThanOrEqualTo(Double value) {
-            addCriterion("latitude >=", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeLessThan(Double value) {
-            addCriterion("latitude <", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeLessThanOrEqualTo(Double value) {
-            addCriterion("latitude <=", value, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeIn(List<Double> values) {
-            addCriterion("latitude in", values, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeNotIn(List<Double> values) {
-            addCriterion("latitude not in", values, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeBetween(Double value1, Double value2) {
-            addCriterion("latitude between", value1, value2, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLatitudeNotBetween(Double value1, Double value2) {
-            addCriterion("latitude not between", value1, value2, "latitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeIsNull() {
-            addCriterion("longitude is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeIsNotNull() {
-            addCriterion("longitude is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeEqualTo(Double value) {
-            addCriterion("longitude =", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeNotEqualTo(Double value) {
-            addCriterion("longitude <>", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeGreaterThan(Double value) {
-            addCriterion("longitude >", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeGreaterThanOrEqualTo(Double value) {
-            addCriterion("longitude >=", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeLessThan(Double value) {
-            addCriterion("longitude <", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeLessThanOrEqualTo(Double value) {
-            addCriterion("longitude <=", value, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeIn(List<Double> values) {
-            addCriterion("longitude in", values, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeNotIn(List<Double> values) {
-            addCriterion("longitude not in", values, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeBetween(Double value1, Double value2) {
-            addCriterion("longitude between", value1, value2, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andLongitudeNotBetween(Double value1, Double value2) {
-            addCriterion("longitude not between", value1, value2, "longitude");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateIsNull() {
-            addCriterion("state is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateIsNotNull() {
-            addCriterion("state is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateEqualTo(String value) {
-            addCriterion("state =", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateNotEqualTo(String value) {
-            addCriterion("state <>", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateGreaterThan(String value) {
-            addCriterion("state >", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateGreaterThanOrEqualTo(String value) {
-            addCriterion("state >=", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateLessThan(String value) {
-            addCriterion("state <", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateLessThanOrEqualTo(String value) {
-            addCriterion("state <=", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateLike(String value) {
-            addCriterion("state like", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateNotLike(String value) {
-            addCriterion("state not like", value, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateIn(List<String> values) {
-            addCriterion("state in", values, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateNotIn(List<String> values) {
-            addCriterion("state not in", values, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateBetween(String value1, String value2) {
-            addCriterion("state between", value1, value2, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andStateNotBetween(String value1, String value2) {
-            addCriterion("state not between", value1, value2, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesIsNull() {
-            addCriterion("report_times is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesIsNotNull() {
-            addCriterion("report_times is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesEqualTo(Integer value) {
-            addCriterion("report_times =", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesNotEqualTo(Integer value) {
-            addCriterion("report_times <>", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesGreaterThan(Integer value) {
-            addCriterion("report_times >", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesGreaterThanOrEqualTo(Integer value) {
-            addCriterion("report_times >=", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesLessThan(Integer value) {
-            addCriterion("report_times <", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesLessThanOrEqualTo(Integer value) {
-            addCriterion("report_times <=", value, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesIn(List<Integer> values) {
-            addCriterion("report_times in", values, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesNotIn(List<Integer> values) {
-            addCriterion("report_times not in", values, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesBetween(Integer value1, Integer value2) {
-            addCriterion("report_times between", value1, value2, "reportTimes");
-            return (Criteria) this;
-        }
-
-        public Criteria andReportTimesNotBetween(Integer value1, Integer value2) {
-            addCriterion("report_times not between", value1, value2, "reportTimes");
             return (Criteria) this;
         }
     }

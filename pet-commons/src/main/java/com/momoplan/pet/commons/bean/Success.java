@@ -18,7 +18,7 @@ public class Success {
 	public Success(boolean success, Object entity) {
 		super();
 		this.success = success;
-		this.entity = entity;
+		this.entity = MyGson.getInstance().toJson(entity);
 	}
 
 	public boolean isSuccess() {
@@ -27,12 +27,15 @@ public class Success {
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
+	
 	public Object getEntity() {
 		return entity;
 	}
+
 	public void setEntity(Object entity) {
 		this.entity = entity;
 	}
+
 	@Override
 	public String toString() {
 		return MyGson.getInstance().toJson(this);

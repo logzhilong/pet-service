@@ -1,7 +1,7 @@
 package com.momoplan.pet.commons.domain.ssoserver.po;
 
 import java.io.Serializable;
-import java.util.Date;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
