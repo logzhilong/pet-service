@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper" >
-  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
+<mapper namespace="com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesReplyMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="if_transmit_msg" property="ifTransmitMsg" jdbcType="BIT" />
-    <result column="imgid" property="imgid" jdbcType="VARCHAR" />
+    <result column="stateid" property="stateid" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
     <result column="msg" property="msg" jdbcType="VARCHAR" />
+    <result column="puserid" property="puserid" jdbcType="VARCHAR" />
     <result column="userid" property="userid" jdbcType="VARCHAR" />
     <result column="ct" property="ct" jdbcType="TIMESTAMP" />
-    <result column="transmit_url" property="transmitUrl" jdbcType="VARCHAR" />
-    <result column="latitude" property="latitude" jdbcType="DOUBLE" />
-    <result column="longitude" property="longitude" jdbcType="DOUBLE" />
-    <result column="state" property="state" jdbcType="VARCHAR" />
-    <result column="report_times" property="reportTimes" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -73,16 +69,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, latitude, longitude, state, 
-    report_times
+    id, stateid, pid, msg, puserid, userid, ct
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from user_states
+    from user_states_reply
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -96,39 +91,40 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from user_states
+    from user_states_reply
     where id = #{id}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from user_states
+    delete from user_states_reply
     where id = #{id}
   </delete>
-  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
-    delete from user_states
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria" >
+    delete from user_states_reply
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    insert into user_states (id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, 
-      latitude, longitude, state, report_times)
-    values (#{id}, #{ifTransmitMsg}, #{imgid}, #{msg}, #{userid}, #{ct}, #{transmitUrl}, 
-      #{latitude}, #{longitude}, #{state}, #{reportTimes})
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply" >
+    insert into user_states_reply (id, stateid, pid, msg, puserid, userid, ct)
+    values (#{id}, #{stateid}, #{pid}, #{msg}, #{puserid}, #{userid}, #{ct})
   </insert>
-  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    insert into user_states
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply" >
+    insert into user_states_reply
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="ifTransmitMsg != null" >
-        if_transmit_msg,
+      <if test="stateid != null" >
+        stateid,
       </if>
-      <if test="imgid != null" >
-        imgid,
+      <if test="pid != null" >
+        pid,
       </if>
       <if test="msg != null" >
         msg,
+      </if>
+      <if test="puserid != null" >
+        puserid,
       </if>
       <if test="userid != null" >
         userid,
@@ -136,34 +132,22 @@
       <if test="ct != null" >
         ct,
       </if>
-      <if test="transmitUrl != null" >
-        transmit_url,
-      </if>
-      <if test="latitude != null" >
-        latitude,
-      </if>
-      <if test="longitude != null" >
-        longitude,
-      </if>
-      <if test="state != null" >
-        state,
-      </if>
-      <if test="reportTimes != null" >
-        report_times,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id},
       </if>
-      <if test="ifTransmitMsg != null" >
-        #{ifTransmitMsg},
+      <if test="stateid != null" >
+        #{stateid},
       </if>
-      <if test="imgid != null" >
-        #{imgid},
+      <if test="pid != null" >
+        #{pid},
       </if>
       <if test="msg != null" >
         #{msg},
+      </if>
+      <if test="puserid != null" >
+        #{puserid},
       </if>
       <if test="userid != null" >
         #{userid},
@@ -171,43 +155,31 @@
       <if test="ct != null" >
         #{ct},
       </if>
-      <if test="transmitUrl != null" >
-        #{transmitUrl},
-      </if>
-      <if test="latitude != null" >
-        #{latitude},
-      </if>
-      <if test="longitude != null" >
-        #{longitude},
-      </if>
-      <if test="state != null" >
-        #{state},
-      </if>
-      <if test="reportTimes != null" >
-        #{reportTimes},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" resultType="java.lang.Integer" >
-    select count(*) from user_states
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria" resultType="java.lang.Integer" >
+    select count(*) from user_states_reply
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update user_states
+    update user_states_reply
     <set >
       <if test="record.id != null" >
         id = #{record.id},
       </if>
-      <if test="record.ifTransmitMsg != null" >
-        if_transmit_msg = #{record.ifTransmitMsg},
+      <if test="record.stateid != null" >
+        stateid = #{record.stateid},
       </if>
-      <if test="record.imgid != null" >
-        imgid = #{record.imgid},
+      <if test="record.pid != null" >
+        pid = #{record.pid},
       </if>
       <if test="record.msg != null" >
         msg = #{record.msg},
+      </if>
+      <if test="record.puserid != null" >
+        puserid = #{record.puserid},
       </if>
       <if test="record.userid != null" >
         userid = #{record.userid},
@@ -215,54 +187,38 @@
       <if test="record.ct != null" >
         ct = #{record.ct},
       </if>
-      <if test="record.transmitUrl != null" >
-        transmit_url = #{record.transmitUrl},
-      </if>
-      <if test="record.latitude != null" >
-        latitude = #{record.latitude},
-      </if>
-      <if test="record.longitude != null" >
-        longitude = #{record.longitude},
-      </if>
-      <if test="record.state != null" >
-        state = #{record.state},
-      </if>
-      <if test="record.reportTimes != null" >
-        report_times = #{record.reportTimes},
-      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update user_states
+    update user_states_reply
     set id = #{record.id},
-      if_transmit_msg = #{record.ifTransmitMsg},
-      imgid = #{record.imgid},
+      stateid = #{record.stateid},
+      pid = #{record.pid},
       msg = #{record.msg},
+      puserid = #{record.puserid},
       userid = #{record.userid},
-      ct = #{record.ct},
-      transmit_url = #{record.transmitUrl},
-      latitude = #{record.latitude},
-      longitude = #{record.longitude},
-      state = #{record.state},
-      report_times = #{record.reportTimes}
+      ct = #{record.ct}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    update user_states
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply" >
+    update user_states_reply
     <set >
-      <if test="ifTransmitMsg != null" >
-        if_transmit_msg = #{ifTransmitMsg},
+      <if test="stateid != null" >
+        stateid = #{stateid},
       </if>
-      <if test="imgid != null" >
-        imgid = #{imgid},
+      <if test="pid != null" >
+        pid = #{pid},
       </if>
       <if test="msg != null" >
         msg = #{msg},
+      </if>
+      <if test="puserid != null" >
+        puserid = #{puserid},
       </if>
       <if test="userid != null" >
         userid = #{userid},
@@ -270,36 +226,17 @@
       <if test="ct != null" >
         ct = #{ct},
       </if>
-      <if test="transmitUrl != null" >
-        transmit_url = #{transmitUrl},
-      </if>
-      <if test="latitude != null" >
-        latitude = #{latitude},
-      </if>
-      <if test="longitude != null" >
-        longitude = #{longitude},
-      </if>
-      <if test="state != null" >
-        state = #{state},
-      </if>
-      <if test="reportTimes != null" >
-        report_times = #{reportTimes},
-      </if>
     </set>
     where id = #{id}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    update user_states
-    set if_transmit_msg = #{ifTransmitMsg},
-      imgid = #{imgid},
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply" >
+    update user_states_reply
+    set stateid = #{stateid},
+      pid = #{pid},
       msg = #{msg},
+      puserid = #{puserid},
       userid = #{userid},
-      ct = #{ct},
-      transmit_url = #{transmitUrl},
-      latitude = #{latitude},
-      longitude = #{longitude},
-      state = #{state},
-      report_times = #{reportTimes}
+      ct = #{ct}
     where id = #{id}
   </update>
 </mapper>
