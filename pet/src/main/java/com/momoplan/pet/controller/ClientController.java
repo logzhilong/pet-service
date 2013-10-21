@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
@@ -56,7 +55,6 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
-import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
 import com.momoplan.pet.domain.PetInfo;
@@ -527,11 +525,7 @@ public class ClientController {
 			Success success;
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
 			if(success.isSuccess()){
-				JsonParser parser = new JsonParser();
-				JsonElement je = parser.parse(success.getEntity());
-				logger.debug("XXX : "+success.getEntity());
-				LoginResponse login = MyGson.getInstance().fromJson(je, LoginResponse.class);
-				return login;
+				return success.getEntity();
 			}else{
 				return "false";
 			}
