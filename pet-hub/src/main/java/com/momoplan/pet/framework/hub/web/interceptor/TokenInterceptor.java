@@ -97,7 +97,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 			Success success = gson.fromJson(rtn, Success.class);
 			if(success.isSuccess()){
 				String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
-				String xcode = success.getEntity();
+				Object xcode = success.getEntity();
 				String userId = commonConfig.get("sms.username");
 				String password = commonConfig.get("sms.password");
 				String url = commonConfig.get("sms.path");
@@ -105,7 +105,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 						"userId",userId,
 						"password",password,
 						"pszMobis",phoneNumber,
-						"pszMsg","验证码:"+xcode,
+						"pszMsg","验证码:"+xcode.toString(),
 						"iMobiCount","1",
 						"pszSubPort","***********"
 				};
