@@ -44,7 +44,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
@@ -54,6 +56,7 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
 import com.momoplan.pet.domain.PetInfo;
@@ -127,6 +130,7 @@ public class ClientController {
 	@Resource
 	private JmsTemplate apprequestTemplate;
 	
+	
 	/**
 	 * @param body
 	 * @param response
@@ -141,12 +145,8 @@ public class ClientController {
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
-//			if(){
-//				
-//			}
 			ret = new ObjectMapper().writeValueAsString(retObj);
 			if(ret.contains("needProxy")){
-//				ret = HttpRequestProxy.doPostHttpClient(retObj.toString().substring(10), body);
 				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
 		}catch(Exception e){
@@ -302,7 +302,7 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("getVerificationCode")) {
 //			Object petResponse = handleProxyRequestWithoutToken(clientRequest,commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));   
 //			logger.debug("getVerificationCode path : "+commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null));
-			return ssoProxyRequest(body);
+			return ssoProxyRequest(clientRequest,body,"getCode");
 		}
 		// 验证随机码
 		if (clientRequest.getMethod().equals("verifyCode")) {
@@ -464,12 +464,22 @@ public class ClientController {
 		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
 			Object petResponse = handleProxyRequest(clientRequest);
 			return petResponse;
-		}      
+		} 
+		//proxy最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid为0则全站最新回复,否则为圈子内部最新回复)
+		if (clientRequest.getMethod().equals("getNewReplysByReplyct")) {
+			Object petResponse = handleProxyRequest(clientRequest);
+			return petResponse;
+		}     
 		
 		//添加背景图片
 		if (clientRequest.getMethod().equals("addBackgroundImg")) {
 			return handleAddBackgroundImg(clientRequest);
 		}
+		//添加背景图片
+		if (clientRequest.getMethod().equals("reportContent")) {
+			return handleReportContent(clientRequest);
+		}
+		
 		
 		return clientRequest;
 		
@@ -507,7 +517,7 @@ public class ClientController {
 //	private Object handleProxyRequestWithoutToken(ClientRequest clientRequest,String path) {
 //		return "needProxy:" + path;
 //	}
-	
+
 	private Object ssoProxyRequest(String body){
 		logger.debug("\nbody:"+body);
 		String responseStr;
@@ -516,6 +526,54 @@ public class ClientController {
 			logger.debug("\nresponseStr:"+responseStr);
 			Success success;
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
+			if(success.isSuccess()){
+				JsonParser parser = new JsonParser();
+				JsonElement je = parser.parse(success.getEntity());
+				logger.debug("XXX : "+success.getEntity());
+				LoginResponse login = MyGson.getInstance().fromJson(je, LoginResponse.class);
+				return login;
+			}else{
+				return "false";
+			}
+		} catch (JsonProcessingException e) {
+			logger.debug("json processing error...");
+			e.printStackTrace();
+			return "false";
+		} catch (IOException e) {
+			logger.debug("sso request errro...");
+			e.printStackTrace();
+			return "false";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "false";
+		}
+	}
+	
+	private Object ssoProxyRequest(ClientRequest clientRequest,String body,String getCode){
+		logger.debug("\nbody:"+body);
+		String responseStr;
+		try {
+			responseStr = PostRequest.postText(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), "body",body);
+			logger.debug("\nresponseStr:"+responseStr);
+			Success success;
+			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
+			
+			if(getCode.contains("getCode")){
+				String phoneNum = PetUtil.getParameter(clientRequest, "phoneNum");
+				Map<String, String> map = new LinkedHashMap<String, String>();
+				map.put("userId",commonConfig.get(PetConstants.SMS_USERNAME, null));
+				map.put("password", commonConfig.get(PetConstants.SMS_PASSWORD, null));
+				map.put("pszMobis", phoneNum);
+				map.put("pszMsg", success.getEntity().toString());
+				map.put("iMobiCount", "1");
+				map.put("pszSubPort", "***********");
+				HttpRequestProxy.doPost(commonConfig.get(PetConstants.SMS_PATH, null),map, "utf-8");
+				return "success";
+			}
+			
+			
+			
 			if(success.isSuccess()){
 				return success.getEntity();
 			}else{
@@ -1244,7 +1302,7 @@ public class ClientController {
 		} catch (ParseException e) {
 			return null;
 		} 
-	}
+	} 
 
 	/**
 	 * 向校验内容的应用send消息
@@ -1446,9 +1504,7 @@ public class ClientController {
 			String phoneNum = PetUtil.getParameter(clientRequest, "phoneNum");
 			Verification verification = new Verification();
 			String verificationCode = verificationService.getCode();
-			List<Verification> verifications = Verification
-					.findVerificationsByPhoneNumEquals(phoneNum)
-					.getResultList();
+			List<Verification> verifications = Verification.findVerificationsByPhoneNumEquals(phoneNum).getResultList();
 			if (verifications.size() > 0) {
 				verification = verifications.get(0);
 				verification.setVerificationCode(verificationCode);

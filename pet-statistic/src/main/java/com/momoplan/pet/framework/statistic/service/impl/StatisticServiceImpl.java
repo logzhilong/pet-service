@@ -34,7 +34,6 @@ import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers0;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers0Criteria;
 import com.momoplan.pet.commons.domain.statistic.po.DataUsers1;
-import com.momoplan.pet.commons.domain.statistic.po.DataUsers1Criteria;
 import com.momoplan.pet.framework.statistic.common.PetStatisticUtil;
 import com.momoplan.pet.framework.statistic.service.StatisticService;
 import com.momoplan.pet.framework.statistic.vo.ClientRequest;

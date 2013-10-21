@@ -6,13 +6,21 @@ import com.momoplan.pet.commons.PetRequest;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ClientRequest extends PetRequest{
+	
 	String token;
+	String service;
 	String method;
 	String mac;
 	String imei;
 	String channel;
 	String version;
 
+	public String getService() {
+		return service;
+	}
+	public void setService(String service) {
+		this.service = service;
+	}
 	public String getVersion() {
 		return version;
 	}

@@ -27,43 +27,6 @@
 		</layout>
 	</appender>
 
-	<logger name="org.springframework">
-		<level value="error" />
-	</logger>
-
-	<logger name="org.springframework.core">
-		<level value="error" />
-	</logger>
-
-	<logger name="org.springframework.beans">
-		<level value="error" />
-	</logger>
-
-	<logger name="org.springframework.context">
-		<level value="error" />
-	</logger>
-
-	<logger name="org.springframework.web">
-		<level value="error" />
-	</logger>
-	
-	<logger name="org.apache.tools.ant">
-		<level value="error" />
-	</logger>
-
-	<!-- Turn off form validation messages -->
-	<logger name="org.apache.commons.validator.ValidatorResources">
-		<level value="OFF" />
-	</logger>
-
-	<logger name="com.mchange.v2">
-		<level value="INFO" />
-	</logger>
-
-    <logger name="org.apache.activemq.transport">
-        <level value="INFO"/>
-    </logger>
-
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
     </logger>
@@ -73,9 +36,7 @@
 	<!-- ======================= -->
 
 	<root>
-		<level value="DEBUG" />
-		<appender-ref ref="FILE" />
-		<appender-ref ref="CONSOLE" />
+		<level value="INFO" />
 	</root>
 	
 </log4j:configuration>

@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-09 16:26:51
+* @date 2013-10-21 17:03:13
 */
 public interface StatesUserStatesMapper {
     /**
@@ -27,7 +27,7 @@ public interface StatesUserStatesMapper {
     /**
      * 根据主键删除记录
      */
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(String id);
 
     /**
      * 保存记录,不管记录里面的属性是否为空
@@ -47,7 +47,7 @@ public interface StatesUserStatesMapper {
     /**
      * 根据主键查询记录
      */
-    StatesUserStates selectByPrimaryKey(Long id);
+    StatesUserStates selectByPrimaryKey(String id);
 
     /**
      * 根据条件更新属性不为空的记录

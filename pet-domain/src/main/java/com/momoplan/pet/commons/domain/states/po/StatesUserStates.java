@@ -12,50 +12,51 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-09 16:26:51
+* @date 2013-10-21 17:03:13
 */
 public class StatesUserStates implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private String id;
 
-    private String ifTransmitMsg;
+    private Boolean ifTransmitMsg;
 
     private String imgid;
 
     private String msg;
 
-    private Long petUserid;
+    private String userid;
 
-    private Date submitTime;
-
-    private String transmitMsg;
+    private Date ct;
 
     private String transmitUrl;
-
-    private Integer version;
 
     private Double latitude;
 
     private Double longitude;
 
-    private String stateType;
+    private String state;
 
     private Integer reportTimes;
 
-    public Long getId() {
+    /**
+     * 转发附带的评论
+     */
+    private String transmitMsg;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getIfTransmitMsg() {
+    public Boolean getIfTransmitMsg() {
         return ifTransmitMsg;
     }
 
-    public void setIfTransmitMsg(String ifTransmitMsg) {
+    public void setIfTransmitMsg(Boolean ifTransmitMsg) {
         this.ifTransmitMsg = ifTransmitMsg;
     }
 
@@ -75,28 +76,20 @@ public class StatesUserStates implements Serializable {
         this.msg = msg;
     }
 
-    public Long getPetUserid() {
-        return petUserid;
+    public String getUserid() {
+        return userid;
     }
 
-    public void setPetUserid(Long petUserid) {
-        this.petUserid = petUserid;
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
-    public Date getSubmitTime() {
-        return submitTime;
+    public Date getCt() {
+        return ct;
     }
 
-    public void setSubmitTime(Date submitTime) {
-        this.submitTime = submitTime;
-    }
-
-    public String getTransmitMsg() {
-        return transmitMsg;
-    }
-
-    public void setTransmitMsg(String transmitMsg) {
-        this.transmitMsg = transmitMsg;
+    public void setCt(Date ct) {
+        this.ct = ct;
     }
 
     public String getTransmitUrl() {
@@ -105,14 +98,6 @@ public class StatesUserStates implements Serializable {
 
     public void setTransmitUrl(String transmitUrl) {
         this.transmitUrl = transmitUrl;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 
     public Double getLatitude() {
@@ -131,12 +116,12 @@ public class StatesUserStates implements Serializable {
         this.longitude = longitude;
     }
 
-    public String getStateType() {
-        return stateType;
+    public String getState() {
+        return state;
     }
 
-    public void setStateType(String stateType) {
-        this.stateType = stateType;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Integer getReportTimes() {
@@ -145,6 +130,21 @@ public class StatesUserStates implements Serializable {
 
     public void setReportTimes(Integer reportTimes) {
         this.reportTimes = reportTimes;
+    }
+
+    /**
+     * @return 转发附带的评论
+     */
+    public String getTransmitMsg() {
+        return transmitMsg;
+    }
+
+    /**
+     * @param transmitMsg 
+	 *            转发附带的评论
+     */
+    public void setTransmitMsg(String transmitMsg) {
+        this.transmitMsg = transmitMsg;
     }
 
     @Override
@@ -163,15 +163,14 @@ public class StatesUserStates implements Serializable {
             && (this.getIfTransmitMsg() == null ? other.getIfTransmitMsg() == null : this.getIfTransmitMsg().equals(other.getIfTransmitMsg()))
             && (this.getImgid() == null ? other.getImgid() == null : this.getImgid().equals(other.getImgid()))
             && (this.getMsg() == null ? other.getMsg() == null : this.getMsg().equals(other.getMsg()))
-            && (this.getPetUserid() == null ? other.getPetUserid() == null : this.getPetUserid().equals(other.getPetUserid()))
-            && (this.getSubmitTime() == null ? other.getSubmitTime() == null : this.getSubmitTime().equals(other.getSubmitTime()))
-            && (this.getTransmitMsg() == null ? other.getTransmitMsg() == null : this.getTransmitMsg().equals(other.getTransmitMsg()))
+            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
+            && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getTransmitUrl() == null ? other.getTransmitUrl() == null : this.getTransmitUrl().equals(other.getTransmitUrl()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
             && (this.getLatitude() == null ? other.getLatitude() == null : this.getLatitude().equals(other.getLatitude()))
             && (this.getLongitude() == null ? other.getLongitude() == null : this.getLongitude().equals(other.getLongitude()))
-            && (this.getStateType() == null ? other.getStateType() == null : this.getStateType().equals(other.getStateType()))
-            && (this.getReportTimes() == null ? other.getReportTimes() == null : this.getReportTimes().equals(other.getReportTimes()));
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
+            && (this.getReportTimes() == null ? other.getReportTimes() == null : this.getReportTimes().equals(other.getReportTimes()))
+            && (this.getTransmitMsg() == null ? other.getTransmitMsg() == null : this.getTransmitMsg().equals(other.getTransmitMsg()));
     }
 
     @Override
@@ -182,15 +181,14 @@ public class StatesUserStates implements Serializable {
         result = prime * result + ((getIfTransmitMsg() == null) ? 0 : getIfTransmitMsg().hashCode());
         result = prime * result + ((getImgid() == null) ? 0 : getImgid().hashCode());
         result = prime * result + ((getMsg() == null) ? 0 : getMsg().hashCode());
-        result = prime * result + ((getPetUserid() == null) ? 0 : getPetUserid().hashCode());
-        result = prime * result + ((getSubmitTime() == null) ? 0 : getSubmitTime().hashCode());
-        result = prime * result + ((getTransmitMsg() == null) ? 0 : getTransmitMsg().hashCode());
+        result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
+        result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getTransmitUrl() == null) ? 0 : getTransmitUrl().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getLatitude() == null) ? 0 : getLatitude().hashCode());
         result = prime * result + ((getLongitude() == null) ? 0 : getLongitude().hashCode());
-        result = prime * result + ((getStateType() == null) ? 0 : getStateType().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getReportTimes() == null) ? 0 : getReportTimes().hashCode());
+        result = prime * result + ((getTransmitMsg() == null) ? 0 : getTransmitMsg().hashCode());
         return result;
     }
 

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.momoplan.pet.commons.domain.states.mapper.CommonContentAuditMapper" >
-  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.states.po.CommonContentAudit" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="biz" property="biz" jdbcType="VARCHAR" />
-    <result column="content" property="content" jdbcType="VARCHAR" />
-    <result column="bid" property="bid" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
+<mapper namespace="com.momoplan.pet.commons.domain.ssoserver.mapper.SsoVersionMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersion" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="pet_version" property="petVersion" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="phone_type" property="phoneType" jdbcType="VARCHAR" />
+    <result column="iosurl" property="iosurl" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -67,15 +68,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, biz, content, bid, version
+    id, version, pet_version, create_date, phone_type, iosurl
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAuditCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersionCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from content_audit
+    from pet_version
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -86,86 +87,95 @@
       <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from content_audit
+    from pet_version
     where id = #{id}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from content_audit
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from pet_version
     where id = #{id}
   </delete>
-  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAuditCriteria" >
-    delete from content_audit
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersionCriteria" >
+    delete from pet_version
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAudit" >
-    insert into content_audit (id, biz, content, bid, version)
-    values (#{id}, #{biz}, #{content}, #{bid}, #{version})
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersion" >
+    insert into pet_version (id, version, pet_version, create_date, phone_type, iosurl)
+    values (#{id}, #{version}, #{petVersion}, #{createDate}, #{phoneType}, #{iosurl})
   </insert>
-  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAudit" >
-    insert into content_audit
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersion" >
+    insert into pet_version
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="biz != null" >
-        biz,
-      </if>
-      <if test="content != null" >
-        content,
-      </if>
-      <if test="bid != null" >
-        bid,
-      </if>
       <if test="version != null" >
         version,
+      </if>
+      <if test="petVersion != null" >
+        pet_version,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="phoneType != null" >
+        phone_type,
+      </if>
+      <if test="iosurl != null" >
+        iosurl,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id},
       </if>
-      <if test="biz != null" >
-        #{biz},
-      </if>
-      <if test="content != null" >
-        #{content},
-      </if>
-      <if test="bid != null" >
-        #{bid},
-      </if>
       <if test="version != null" >
         #{version},
       </if>
+      <if test="petVersion != null" >
+        #{petVersion},
+      </if>
+      <if test="createDate != null" >
+        #{createDate},
+      </if>
+      <if test="phoneType != null" >
+        #{phoneType},
+      </if>
+      <if test="iosurl != null" >
+        #{iosurl},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAuditCriteria" resultType="java.lang.Integer" >
-    select count(*) from content_audit
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersionCriteria" resultType="java.lang.Integer" >
+    select count(*) from pet_version
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update content_audit
+    update pet_version
     <set >
       <if test="record.id != null" >
         id = #{record.id},
       </if>
-      <if test="record.biz != null" >
-        biz = #{record.biz},
-      </if>
-      <if test="record.content != null" >
-        content = #{record.content},
-      </if>
-      <if test="record.bid != null" >
-        bid = #{record.bid},
-      </if>
       <if test="record.version != null" >
         version = #{record.version},
+      </if>
+      <if test="record.petVersion != null" >
+        pet_version = #{record.petVersion},
+      </if>
+      <if test="record.createDate != null" >
+        create_date = #{record.createDate},
+      </if>
+      <if test="record.phoneType != null" >
+        phone_type = #{record.phoneType},
+      </if>
+      <if test="record.iosurl != null" >
+        iosurl = #{record.iosurl},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -173,40 +183,45 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update content_audit
+    update pet_version
     set id = #{record.id},
-      biz = #{record.biz},
-      content = #{record.content},
-      bid = #{record.bid},
-      version = #{record.version}
+      version = #{record.version},
+      pet_version = #{record.petVersion},
+      create_date = #{record.createDate},
+      phone_type = #{record.phoneType},
+      iosurl = #{record.iosurl}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAudit" >
-    update content_audit
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersion" >
+    update pet_version
     <set >
-      <if test="biz != null" >
-        biz = #{biz},
-      </if>
-      <if test="content != null" >
-        content = #{content},
-      </if>
-      <if test="bid != null" >
-        bid = #{bid},
-      </if>
       <if test="version != null" >
         version = #{version},
+      </if>
+      <if test="petVersion != null" >
+        pet_version = #{petVersion},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+      <if test="phoneType != null" >
+        phone_type = #{phoneType},
+      </if>
+      <if test="iosurl != null" >
+        iosurl = #{iosurl},
       </if>
     </set>
     where id = #{id}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.states.po.CommonContentAudit" >
-    update content_audit
-    set biz = #{biz},
-      content = #{content},
-      bid = #{bid},
-      version = #{version}
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.ssoserver.po.SsoVersion" >
+    update pet_version
+    set version = #{version},
+      pet_version = #{petVersion},
+      create_date = #{createDate},
+      phone_type = #{phoneType},
+      iosurl = #{iosurl}
     where id = #{id}
   </update>
 </mapper>

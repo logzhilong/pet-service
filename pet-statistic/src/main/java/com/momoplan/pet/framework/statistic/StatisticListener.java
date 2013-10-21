@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.momoplan.pet.commons.domain.statistic.po.DataUsers0;
 import com.momoplan.pet.framework.statistic.service.StatisticService;
 import com.momoplan.pet.framework.statistic.vo.ClientRequest;
 
@@ -234,76 +233,72 @@ public class StatisticListener implements MessageListener {
 		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
-		//proxy发帖
-		if (clientRequest.getMethod().equals("sendNote")) {
-			statisticService.mergeUsageState(clientRequest);
+		//proxy发帖																									
+		if (clientRequest.getMethod().equals("sendNote")) {         
+			statisticService.mergeUsageState(clientRequest);   
+		}                                                           
+		//proxy回帖                                                 
+		if (clientRequest.getMethod().equals("replyNote")) {        
+			statisticService.mergeUsageState(clientRequest);   
+		}                                                           
+		//proxy关注圈子                                                 
+		if (clientRequest.getMethod().equals("attentionForum")) {       
+			statisticService.mergeUsageState(clientRequest);                                                                                                             
+		}                                                               
+		//proxy退出圈子                                   
+		if (clientRequest.getMethod().equals("quitForum")) {           
+			statisticService.mergeUsageState(clientRequest);       
+		}                                                               
+		//proxy搜索(如果Forumid为0则全站搜索,否则圈子内搜索)                                                
+		if (clientRequest.getMethod().equals("searchNote")) {              
+			statisticService.mergeUsageState(clientRequest);       
+		}                                                               
+		//proxy根据id查看帖子详情                                                 
+		if (clientRequest.getMethod().equals("detailNote")) {       
+			statisticService.mergeUsageState(clientRequest);       
+		}                                                               
+		//proxy删除帖子                                                 
+		if (clientRequest.getMethod().equals("delNote")) {            
+			statisticService.mergeUsageState(clientRequest);       
+		}                                                                           
+		//proxy举报帖子                                                                      
+		if (clientRequest.getMethod().equals("reportNote")) {         
+			statisticService.mergeUsageState(clientRequest);                                    
+		}                                                                   
+		//proxy根据帖子id获取所有回复                                                                                                                                           
+		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {                                                                   
+			statisticService.mergeUsageState(clientRequest);                                                                   
 		}
-		//proxy回帖
-		if (clientRequest.getMethod().equals("replyNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy搜索
-		if (clientRequest.getMethod().equals("searchNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy根据id查看帖子详情
-		if (clientRequest.getMethod().equals("detailNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy删除帖子
-		if (clientRequest.getMethod().equals("delNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy关注圈子
-		if (clientRequest.getMethod().equals("attentionForum")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy退出圈子
-		if (clientRequest.getMethod().equals("quitForum")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy获取最新帖子
-		if (clientRequest.getMethod().equals("newNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy举报帖子
-		if (clientRequest.getMethod().equals("reportNote")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy获取当前帖子所有回复
-		if (clientRequest.getMethod().equals("getAllReplyNoteByNoteid")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy根据回帖id获取回帖
-		if (clientRequest.getMethod().equals("getReplyNoteSubByReplyNoteid")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy今日新增帖子列表
-		if (clientRequest.getMethod().equals("getTodayNewNoteList")) {
-			statisticService.mergeUsageState(clientRequest);
-		}
-		//proxy我发表过的帖子列表
+		//proxy(全站)我发表过的帖子列表
 		if (clientRequest.getMethod().equals("getMyNotedListByuserid")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
-		//proxy我回复过的帖子列表
-		if (clientRequest.getMethod().equals("getMyReplyNoteListByUserid")) {
+		//proxy最新帖子(forumid为0则表示全站搜索否则圈子内部搜索)
+		if (clientRequest.getMethod().equals("newNoteByFid")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
-		//proxy获取某圈子下所有帖子数
-		if (clientRequest.getMethod().equals("getNoteCountByForumid")) {
+		//proxy今日新增帖子列表(forumPid为0则全站搜索,否则为圈子内部搜索)
+		if (clientRequest.getMethod().equals("getTodayNewNoteListByFid")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
-		//proxy获取某圈子下所有回复数
-		if (clientRequest.getMethod().equals("getNoteSubCountByForumid")) {
+		//proxy获取精华(forumPid为0则全站搜索,否则为圈子内部搜索)
+		if (clientRequest.getMethod().equals("getEuteNoteList")) {
 			statisticService.mergeUsageState(clientRequest);
 		}
+		//proxy(全站)最新回复(根据回复时间将帖子显示{不显示置顶帖子})
+		if (clientRequest.getMethod().equals("getNewReplysByReplyct")) {
+			statisticService.mergeUsageState(clientRequest);
+		} 
+		//proxy查看圈子列表
+		if (clientRequest.getMethod().equals("getAllForumAsTree")) {
+			statisticService.mergeUsageState(clientRequest);
+		}  
+		//proxy最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid为0则全站最新回复,否则为圈子内部最新回复)
+		if (clientRequest.getMethod().equals("getNewReplysByReplyct")) {
+			statisticService.mergeUsageState(clientRequest);
+		}   
+		
 		
 	}
-	
-
-
-
-	
 
 }

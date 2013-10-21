@@ -2,19 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper" >
   <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="if_transmit_msg" property="ifTransmitMsg" jdbcType="VARCHAR" />
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="if_transmit_msg" property="ifTransmitMsg" jdbcType="BIT" />
     <result column="imgid" property="imgid" jdbcType="VARCHAR" />
     <result column="msg" property="msg" jdbcType="VARCHAR" />
-    <result column="pet_userid" property="petUserid" jdbcType="BIGINT" />
-    <result column="submit_time" property="submitTime" jdbcType="TIMESTAMP" />
-    <result column="transmit_msg" property="transmitMsg" jdbcType="VARCHAR" />
+    <result column="userid" property="userid" jdbcType="VARCHAR" />
+    <result column="ct" property="ct" jdbcType="TIMESTAMP" />
     <result column="transmit_url" property="transmitUrl" jdbcType="VARCHAR" />
-    <result column="version" property="version" jdbcType="INTEGER" />
     <result column="latitude" property="latitude" jdbcType="DOUBLE" />
     <result column="longitude" property="longitude" jdbcType="DOUBLE" />
-    <result column="state_type" property="stateType" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
     <result column="report_times" property="reportTimes" jdbcType="INTEGER" />
+    <result column="transmit_msg" property="transmitMsg" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,8 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, if_transmit_msg, imgid, msg, pet_userid, submit_time, transmit_msg, transmit_url, 
-    version, latitude, longitude, state_type, report_times
+    id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, latitude, longitude, state, 
+    report_times, transmit_msg
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria" >
     select
@@ -95,13 +94,13 @@
       <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
     from user_states
     where id = #{id}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from user_states
     where id = #{id}
   </delete>
@@ -112,12 +111,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
-    insert into user_states (id, if_transmit_msg, imgid, msg, pet_userid, submit_time, transmit_msg, 
-      transmit_url, version, latitude, longitude, state_type, report_times
-      )
-    values (#{id}, #{ifTransmitMsg}, #{imgid}, #{msg}, #{petUserid}, #{submitTime}, #{transmitMsg}, 
-      #{transmitUrl}, #{version}, #{latitude}, #{longitude}, #{stateType}, #{reportTimes}
-      )
+    insert into user_states (id, if_transmit_msg, imgid, msg, userid, ct, transmit_url, 
+      latitude, longitude, state, report_times, transmit_msg)
+    values (#{id}, #{ifTransmitMsg}, #{imgid}, #{msg}, #{userid}, #{ct}, #{transmitUrl}, 
+      #{latitude}, #{longitude}, #{state}, #{reportTimes}, #{transmitMsg})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.states.po.StatesUserStates" >
     insert into user_states
@@ -134,20 +131,14 @@
       <if test="msg != null" >
         msg,
       </if>
-      <if test="petUserid != null" >
-        pet_userid,
+      <if test="userid != null" >
+        userid,
       </if>
-      <if test="submitTime != null" >
-        submit_time,
-      </if>
-      <if test="transmitMsg != null" >
-        transmit_msg,
+      <if test="ct != null" >
+        ct,
       </if>
       <if test="transmitUrl != null" >
         transmit_url,
-      </if>
-      <if test="version != null" >
-        version,
       </if>
       <if test="latitude != null" >
         latitude,
@@ -155,11 +146,14 @@
       <if test="longitude != null" >
         longitude,
       </if>
-      <if test="stateType != null" >
-        state_type,
+      <if test="state != null" >
+        state,
       </if>
       <if test="reportTimes != null" >
         report_times,
+      </if>
+      <if test="transmitMsg != null" >
+        transmit_msg,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -175,20 +169,14 @@
       <if test="msg != null" >
         #{msg},
       </if>
-      <if test="petUserid != null" >
-        #{petUserid},
+      <if test="userid != null" >
+        #{userid},
       </if>
-      <if test="submitTime != null" >
-        #{submitTime},
-      </if>
-      <if test="transmitMsg != null" >
-        #{transmitMsg},
+      <if test="ct != null" >
+        #{ct},
       </if>
       <if test="transmitUrl != null" >
         #{transmitUrl},
-      </if>
-      <if test="version != null" >
-        #{version},
       </if>
       <if test="latitude != null" >
         #{latitude},
@@ -196,11 +184,14 @@
       <if test="longitude != null" >
         #{longitude},
       </if>
-      <if test="stateType != null" >
-        #{stateType},
+      <if test="state != null" >
+        #{state},
       </if>
       <if test="reportTimes != null" >
         #{reportTimes},
+      </if>
+      <if test="transmitMsg != null" >
+        #{transmitMsg},
       </if>
     </trim>
   </insert>
@@ -225,20 +216,14 @@
       <if test="record.msg != null" >
         msg = #{record.msg},
       </if>
-      <if test="record.petUserid != null" >
-        pet_userid = #{record.petUserid},
+      <if test="record.userid != null" >
+        userid = #{record.userid},
       </if>
-      <if test="record.submitTime != null" >
-        submit_time = #{record.submitTime},
-      </if>
-      <if test="record.transmitMsg != null" >
-        transmit_msg = #{record.transmitMsg},
+      <if test="record.ct != null" >
+        ct = #{record.ct},
       </if>
       <if test="record.transmitUrl != null" >
         transmit_url = #{record.transmitUrl},
-      </if>
-      <if test="record.version != null" >
-        version = #{record.version},
       </if>
       <if test="record.latitude != null" >
         latitude = #{record.latitude},
@@ -246,11 +231,14 @@
       <if test="record.longitude != null" >
         longitude = #{record.longitude},
       </if>
-      <if test="record.stateType != null" >
-        state_type = #{record.stateType},
+      <if test="record.state != null" >
+        state = #{record.state},
       </if>
       <if test="record.reportTimes != null" >
         report_times = #{record.reportTimes},
+      </if>
+      <if test="record.transmitMsg != null" >
+        transmit_msg = #{record.transmitMsg},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -263,15 +251,14 @@
       if_transmit_msg = #{record.ifTransmitMsg},
       imgid = #{record.imgid},
       msg = #{record.msg},
-      pet_userid = #{record.petUserid},
-      submit_time = #{record.submitTime},
-      transmit_msg = #{record.transmitMsg},
+      userid = #{record.userid},
+      ct = #{record.ct},
       transmit_url = #{record.transmitUrl},
-      version = #{record.version},
       latitude = #{record.latitude},
       longitude = #{record.longitude},
-      state_type = #{record.stateType},
-      report_times = #{record.reportTimes}
+      state = #{record.state},
+      report_times = #{record.reportTimes},
+      transmit_msg = #{record.transmitMsg}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -288,20 +275,14 @@
       <if test="msg != null" >
         msg = #{msg},
       </if>
-      <if test="petUserid != null" >
-        pet_userid = #{petUserid},
+      <if test="userid != null" >
+        userid = #{userid},
       </if>
-      <if test="submitTime != null" >
-        submit_time = #{submitTime},
-      </if>
-      <if test="transmitMsg != null" >
-        transmit_msg = #{transmitMsg},
+      <if test="ct != null" >
+        ct = #{ct},
       </if>
       <if test="transmitUrl != null" >
         transmit_url = #{transmitUrl},
-      </if>
-      <if test="version != null" >
-        version = #{version},
       </if>
       <if test="latitude != null" >
         latitude = #{latitude},
@@ -309,11 +290,14 @@
       <if test="longitude != null" >
         longitude = #{longitude},
       </if>
-      <if test="stateType != null" >
-        state_type = #{stateType},
+      <if test="state != null" >
+        state = #{state},
       </if>
       <if test="reportTimes != null" >
         report_times = #{reportTimes},
+      </if>
+      <if test="transmitMsg != null" >
+        transmit_msg = #{transmitMsg},
       </if>
     </set>
     where id = #{id}
@@ -323,15 +307,14 @@
     set if_transmit_msg = #{ifTransmitMsg},
       imgid = #{imgid},
       msg = #{msg},
-      pet_userid = #{petUserid},
-      submit_time = #{submitTime},
-      transmit_msg = #{transmitMsg},
+      userid = #{userid},
+      ct = #{ct},
       transmit_url = #{transmitUrl},
-      version = #{version},
       latitude = #{latitude},
       longitude = #{longitude},
-      state_type = #{stateType},
-      report_times = #{reportTimes}
+      state = #{state},
+      report_times = #{reportTimes},
+      transmit_msg = #{transmitMsg}
     where id = #{id}
   </update>
 </mapper>

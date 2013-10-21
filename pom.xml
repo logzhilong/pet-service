@@ -11,6 +11,7 @@
 	<modules>
 		<module>pet-parent</module>
 		<module>pet</module>
+		<module>pet-hub</module>
 		<module>pet-commons</module>
 		<module>pet-domain</module>
 		<module>pet-statistic</module>
@@ -18,7 +19,7 @@
 		<module>pet-file-server</module>
 		<module>pet-sso-server</module>
 		<module>pet-service-bbs</module>
-		<module>pet-service-manager</module>
+		<module>pet-service-manager</module>	
 	</modules>
 
 </project>

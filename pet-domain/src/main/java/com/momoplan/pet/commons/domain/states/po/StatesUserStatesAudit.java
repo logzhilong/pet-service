@@ -5,21 +5,26 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
-* CommonContentAudit
-* table:content_audit
+* StatesUserStatesAudit
+* table:user_states_audit
 * 
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-09 16:26:51
+* @date 2013-10-21 17:03:14
 */
-public class CommonContentAudit implements Serializable {
+public class StatesUserStatesAudit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
-    private Integer id;
+    private String id;
+
+    /**
+     * biz主键
+     */
+    private String bid;
 
     /**
      * 事件
@@ -31,17 +36,12 @@ public class CommonContentAudit implements Serializable {
      */
     private String content;
 
-    /**
-     * biz主键
-     */
-    private String bid;
-
     private Integer version;
 
     /**
      * @return 主键
      */
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
@@ -49,8 +49,23 @@ public class CommonContentAudit implements Serializable {
      * @param id 
 	 *            主键
      */
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * @return biz主键
+     */
+    public String getBid() {
+        return bid;
+    }
+
+    /**
+     * @param bid 
+	 *            biz主键
+     */
+    public void setBid(String bid) {
+        this.bid = bid;
     }
 
     /**
@@ -83,21 +98,6 @@ public class CommonContentAudit implements Serializable {
         this.content = content;
     }
 
-    /**
-     * @return biz主键
-     */
-    public String getBid() {
-        return bid;
-    }
-
-    /**
-     * @param bid 
-	 *            biz主键
-     */
-    public void setBid(String bid) {
-        this.bid = bid;
-    }
-
     public Integer getVersion() {
         return version;
     }
@@ -117,11 +117,11 @@ public class CommonContentAudit implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        CommonContentAudit other = (CommonContentAudit) that;
+        StatesUserStatesAudit other = (StatesUserStatesAudit) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()))
             && (this.getBiz() == null ? other.getBiz() == null : this.getBiz().equals(other.getBiz()))
             && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
-            && (this.getBid() == null ? other.getBid() == null : this.getBid().equals(other.getBid()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
 
@@ -130,9 +130,9 @@ public class CommonContentAudit implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
         result = prime * result + ((getBiz() == null) ? 0 : getBiz().hashCode());
         result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
-        result = prime * result + ((getBid() == null) ? 0 : getBid().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
