@@ -1293,7 +1293,7 @@ public class ClientController {
 		} catch (ParseException e) {
 			return null;
 		} 
-	}
+	} 
 
 	/**
 	 * 向校验内容的应用send消息
