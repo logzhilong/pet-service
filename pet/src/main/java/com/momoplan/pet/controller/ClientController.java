@@ -44,7 +44,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
@@ -54,6 +55,7 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.domain.AuthenticationToken;
 import com.momoplan.pet.domain.Feedback;
 import com.momoplan.pet.domain.PetFile;
 import com.momoplan.pet.domain.PetInfo;
@@ -127,6 +129,9 @@ public class ClientController {
 	@Resource
 	private JmsTemplate apprequestTemplate;
 	
+	public static void main(String[] args) {
+		
+	}
 	/**
 	 * @param body
 	 * @param response
@@ -141,10 +146,7 @@ public class ClientController {
 		ClientRequest clientRequest = new ObjectMapper().reader(ClientRequest.class).readValue(body);
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
-			JSONObject jsonObj = new JSONObject(retObj);
-			logger.debug("XXXXX ="+jsonObj);
-//			ret = new ObjectMapper().writeValueAsString(retObj);
-			ret = jsonObj.toString();
+			ret = new ObjectMapper().writeValueAsString(retObj);
 			if(ret.contains("needProxy")){
 				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
@@ -526,7 +528,11 @@ public class ClientController {
 			Success success;
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
 			if(success.isSuccess()){
-				return success.getEntity();
+				JsonParser parser = new JsonParser();
+				JsonElement je = parser.parse(success.getEntity());
+				logger.debug("XXX : "+je.getAsString());
+				AuthenticationToken token = MyGson.getInstance().fromJson(je, AuthenticationToken.class);
+				return token;
 			}else{
 				return "false";
 			}
