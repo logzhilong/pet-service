@@ -144,6 +144,9 @@ public class ClientController {
 		try {
 			Object retObj = doRequest(body,clientRequest, response);
 			ret = new ObjectMapper().writeValueAsString(retObj);
+			if(ret.contains("\\")){
+				ret = ret.replace("\\", "");
+			}
 			if(ret.contains("needProxy")){
 				ret = PostRequest.postText(retObj.toString().substring(10), "body",body);
 			}
