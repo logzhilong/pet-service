@@ -75,4 +75,7 @@
 		<property name="basePackage" value="com.momoplan.pet.commons.domain.bbs.mapper" />
 	</bean>
 
+	<bean class="com.momoplan.pet.commons.repository.bbs.NoteRepository" />
+	<bean class="com.momoplan.pet.commons.repository.bbs.NoteSubRepository" />
+
 </beans>

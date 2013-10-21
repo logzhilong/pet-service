@@ -6,7 +6,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import redis.clients.jedis.ShardedJedis;
 
@@ -21,7 +20,6 @@ import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 
-@Repository
 public class NoteSubRepository implements CacheKeysConstance{
 
 	private static Logger logger = LoggerFactory.getLogger(NoteSubRepository.class);
