@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
@@ -129,9 +130,7 @@ public class ClientController {
 	@Resource
 	private JmsTemplate apprequestTemplate;
 	
-	public static void main(String[] args) {
-		
-	}
+	
 	/**
 	 * @param body
 	 * @param response
@@ -518,7 +517,7 @@ public class ClientController {
 //	private Object handleProxyRequestWithoutToken(ClientRequest clientRequest,String path) {
 //		return "needProxy:" + path;
 //	}
-	
+
 	private Object ssoProxyRequest(String body){
 		logger.debug("\nbody:"+body);
 		String responseStr;
@@ -531,8 +530,9 @@ public class ClientController {
 				JsonParser parser = new JsonParser();
 				JsonElement je = parser.parse(success.getEntity());
 				logger.debug("XXX : "+success.getEntity());
-				AuthenticationToken token = MyGson.getInstance().fromJson(je, AuthenticationToken.class);
-				return token;
+				JsonObject json = new JsonObject();
+				LoginResponse login = MyGson.getInstance().fromJson(je, LoginResponse.class);
+				return login;
 			}else{
 				return "false";
 			}
