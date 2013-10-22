@@ -220,26 +220,76 @@ pet 服务端
       
       输出：
         
-        {
-			      "success":true,
-    			  "entity":{
-        				"longitude":0.0,
-        				"latitude":0.0,
-        				"id":747,
-        				"nickname":"cc",
-        				"username":"cc",
-        				"version":0,
-        				"email":"",
-        				"phoneNumber":"",
-        				"ifFraudulent":"0",
-        				"deviceToken":""
-    			  }
-		    }
-              
-    2、
-    3、
-    4、
-    5、
+	{
+	  "success":true,
+    	  "entity":{
+		"longitude":0.0,
+		"latitude":0.0,
+		"id":747,
+		"nickname":"cc",
+		"username":"cc",
+		"version":0,
+		"email":"",
+		"phoneNumber":"",
+		"ifFraudulent":"0",
+		"deviceToken":""
+    	  }
+	}
+	      
+    2、updateUser
+    	
+      功能：更新用户信息
+      
+      输入：
+        
+        跟旧的协议内容一致，即现有可修改的用户基本信息，不包括坐标
+	{
+		"nickname":"cc",
+		"username":"cc",
+		"email":"",
+		"phoneNumber":"",
+		"ifFraudulent":"0",
+		...
+	}
+		
+      输出：{"success":true,"entity":"OK" }
+    
+    3、updateUserLocation
+      
+      功能：更新用户坐标
+      
+      输入：
+      
+      	其中 userid 非必填，方法可以通过 token 获取
+      	{
+		"userid":"xxx",
+		"longitude":000.000,
+		"latitude":000.000
+	}
+      
+      输出：{"success":true,"entity":"OK" }
+      
+    4、getPetinfo
+    
+      功能：获取宠物信息
+      
+      输入：
+      
+      	其中 userid 非必填，方法可以通过 token 获取
+      	{"userid":731}
+      	
+      输出：
+    	
+	{
+		"success":true,
+		"entity":[
+			{"id":556,"gender":"male","img":"1133_1134,1137_1138,","nickname":"xxx","type":1004,"userid":731,"version":8,"trait":"xxx","birthdate":"2"},
+			{"id":627,"gender":"female","img":"1663_1664,","nickname":"xxx","type":1005,"userid":731,"version":8,"trait":"可爱","birthdate":"3"},
+			{"id":628,"gender":"male","img":"1665_1667,1666_1668,","nickname":"xxx","type":2001,"userid":731,"version":0,"trait":"xxx","birthdate":"3"},
+			{"id":629,"gender":"","img":"1669_1670,","nickname":"xxx","type":1001,"userid":731,"version":1,"trait":"xxx","birthdate":"1"},
+			{"id":630,"gender":"male","img":"1671_1673,1672_1674,","nickname":"xxx","type":1001,"userid":731,"version":0,"trait":"xxx","birthdate":"4"}
+		]
+	}
 
       
       
