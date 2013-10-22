@@ -2,9 +2,9 @@ package com.momoplan.pet.framework.user.service;
 
 import java.util.List;
 
-import com.momoplan.pet.commons.domain.ssoserver.po.PetInfo;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.PetInfo;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.user.CacheKeysConstance;
 import com.momoplan.pet.framework.user.vo.UserVo;
 
@@ -35,6 +35,8 @@ public interface UserService extends CacheKeysConstance{
 	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception ;
 	
 	public void updatePetInfo(PetInfo petInfo)throws Exception ;
+	
+	public void savePetInfo(PetInfo petInfo)throws Exception ;
 	
 	public List<PetInfo> getPetInfo(String userid)throws Exception ;
 	

@@ -2,8 +2,8 @@ package com.momoplan.pet.framework.user.vo;
 
 import java.io.Serializable;
 
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoChatServer;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.SsoChatServer;
 
 public class LoginResponse implements Serializable {
 

@@ -22,7 +22,7 @@ import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
