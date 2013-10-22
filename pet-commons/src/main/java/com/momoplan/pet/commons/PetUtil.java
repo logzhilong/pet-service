@@ -39,6 +39,19 @@ public class PetUtil {
 		}
 	}
 	
+	public static boolean getParameterBoolean(PetRequest request, String key) {
+		
+		try {
+			if(null==getParameter(request, key)||""==getParameter(request, key)){
+				return false;
+			}
+			return Boolean.parseBoolean(getParameter(request, key));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public static Double getParameterDouble(PetRequest request, String key) {
 		
 		try {
