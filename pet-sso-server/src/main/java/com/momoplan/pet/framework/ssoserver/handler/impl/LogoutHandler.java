@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
@@ -24,7 +23,7 @@ public class LogoutHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String token = PetUtil.getParameter(clientRequest, "token");
+			String token = clientRequest.getToken();
 			ssoService.logout(token);
 			logger.debug("logout成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
