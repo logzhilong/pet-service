@@ -192,8 +192,14 @@ pet-service
       
       输出：{"success":true,"entity":true}
 
+    7、isUsernameInuse
+      
+      功能：校验用户名是否存在，存在返回 entity=true ，不存在返回 entity=false
 
-
+      输入：{"username":"xxx"}
+      
+      输出：{"success":true,"entity":true}
+      
 
 <h2>用户中心服务：</h2>
 
