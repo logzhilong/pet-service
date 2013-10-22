@@ -7,9 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -44,8 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.momoplan.common.HttpRequestProxy;
 import com.momoplan.common.PetConstants;
 import com.momoplan.common.PetUtil;
@@ -547,6 +544,46 @@ public class ClientController {
 		}
 	}
 	
+	/**
+	 * 删除chatserver
+	 * @param body
+	 * @param ifToken
+	 * @return
+	 */
+	private Object ssoProxyRequest(String body,boolean ifToken){
+		logger.debug("\nbody:"+body);
+		String responseStr;
+		try {
+			responseStr = PostRequest.postText(commonConfig.get(PetConstants.SERVICE_URI_PET_SSO, null), "body",body);
+			if(responseStr.contains("false")){
+				return "false";
+			}
+			JSONObject json = new JSONObject(responseStr);
+			logger.debug("\nresponseStr:"+responseStr);
+			Success success;
+			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
+			if(success.isSuccess()){
+				String str = json.getJSONObject("entity").getString("authenticationToken").toString();
+				return str;
+//				return success.getEntity();
+			}else{
+				return "false";
+			}
+		} catch (JsonProcessingException e) {
+			logger.debug("json processing error...");
+			e.printStackTrace();
+			return "false";
+		} catch (IOException e) {
+			logger.debug("sso request errro...");
+			e.printStackTrace();
+			return "false";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "false";
+		}
+	}
+	
 	private Object ssoProxyRequest(ClientRequest clientRequest,String body,String getCode){
 		logger.debug("\nbody:"+body);
 		String responseStr;
@@ -599,31 +636,32 @@ public class ClientController {
 			bodyJson.accumulate("method", "token");
 			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
 			logger.debug("\nbodyJsonStr:"+bodyJson.toString());
-			String str = ssoProxyRequest(bodyJson.toString()).toString();
+			String str = ssoProxyRequest(bodyJson.toString(),true).toString();
 			if(str.contains("false")){
 				return null;
 			}
 			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
-			DateFormat df = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
-			authenticationToken.setCreateDate(df.format(new Date(Long.parseLong(authenticationToken.getCreateDate()))));
+//			DateFormat df = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
+//			authenticationToken.setCreateDate(df.format(new Date(Long.parseLong(authenticationToken.getCreateDate()))));
 			return authenticationToken;
+//			return null;
 		} catch (Exception e) {
 			logger.debug("token verify error...");
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
 	private Token verifyToken(String token){
 		JSONObject bodyJson = new JSONObject();
 		try {
 			bodyJson.accumulate("method", "token");
 			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
-			String str = ssoProxyRequest(bodyJson.toString()).toString();
+			String str = ssoProxyRequest(bodyJson.toString(),true).toString();
 			if(str.contains("false")){
 				return null;
 			}
-			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
+			Token authenticationToken = new Gson().fromJson(str, Token.class);
+//			Token authenticationToken = new ObjectMapper().reader(Token.class).readValue(str);
 			authenticationToken.setCreateDate(authenticationToken.getCreateDate());
 			return authenticationToken;
 		} catch (Exception e) {
@@ -2134,7 +2172,7 @@ public class ClientController {
 //				this.passwordEncoder.encodePassword(password, this.salt))) {
 //			return "密码错误";
 //		}
-//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		Token authenticationToken = new Token();
 //		authenticationToken.setExpire(-1);
 //		authenticationToken.setToken(UUID.randomUUID().toString());
 //		authenticationToken.setUserid(petUser.getId());
@@ -2171,7 +2209,7 @@ public class ClientController {
 //				this.passwordEncoder.encodePassword(password, this.salt))) {
 //			return "密码错误";
 //		}
-//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		Token authenticationToken = new Token();
 //		authenticationToken.setExpire(-1);
 //		authenticationToken.setToken(UUID.randomUUID().toString());
 //		authenticationToken.setUserid(petUser.getId());
@@ -2207,7 +2245,7 @@ public class ClientController {
 //		} catch (ParseException e) {
 //			throw new DuplicatedUsernameException(e.getMessage());
 //		}
-//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		Token authenticationToken = new Token();
 //		authenticationToken.setExpire(-1);
 //		authenticationToken.setToken(UUID.randomUUID().toString());
 //		authenticationToken.setUserid(petUser.getId());
@@ -2251,7 +2289,7 @@ public class ClientController {
 //		} catch (DataAccessException e) {
 //			throw new DuplicatedUsernameException(e.getMessage());
 //		}
-//		AuthenticationToken authenticationToken = new AuthenticationToken();
+//		Token authenticationToken = new Token();
 //		authenticationToken.setExpire(-1);
 //		authenticationToken.setToken(UUID.randomUUID().toString());
 //		authenticationToken.setUserid(petUser.getId());
