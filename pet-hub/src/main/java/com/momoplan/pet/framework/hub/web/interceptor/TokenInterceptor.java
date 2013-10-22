@@ -1,7 +1,5 @@
 package com.momoplan.pet.framework.hub.web.interceptor;
 
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

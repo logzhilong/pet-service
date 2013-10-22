@@ -46,7 +46,7 @@ public class HubController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("/request")
-	public @ResponseBody String putFile(String body,HttpServletRequest request,HttpServletResponse response,Model model) throws Exception{
+	public void putFile(String body,HttpServletRequest request,HttpServletResponse response,Model model) throws Exception{
 		logger.debug("[INPUT]:body="+body);
 		String rtn = null;
 		try{
@@ -62,8 +62,8 @@ public class HubController {
 			logger.debug("[OUTPUT]:rtn="+rtn);
 			publishEvent(body,rtn);
 			request.setAttribute("rtn", rtn);//向拦截器传递输出值
+			PetUtil.writeStringToResponse(rtn, response);
 		}
-		return rtn;
 	}
 	
 	/**
