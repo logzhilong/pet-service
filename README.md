@@ -179,7 +179,7 @@ pet-service
       
       功能：获取验证码
     
-      输入：{"phonenumber":"000"}
+      输入：{"phoneNum":"000"}
       
       输出：{"success":true,"entity":"ABCD"}      
       
@@ -188,7 +188,7 @@ pet-service
       
       功能：校验验证码
       
-      输入：{"phoneNumber":"15199999999","verificationCode":"JDL3"}
+      输入：{"phoneNum":"15199999999","verificationCode":"JDL3"}
       
       输出：{"success":true,"entity":true}
 
