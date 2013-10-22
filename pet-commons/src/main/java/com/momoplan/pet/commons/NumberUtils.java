@@ -105,6 +105,13 @@ public class NumberUtils {
 		return num39;
 	}
 	
+	public static String getIdentifyingCodeNum(){
+		int x = new Random().nextInt();
+		x = x<0?x*-1:x;
+		String res = (x+"").substring(0, 4);
+		return res;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		int x = new Random().nextInt();
 		x = x<0?x*-1:x;
