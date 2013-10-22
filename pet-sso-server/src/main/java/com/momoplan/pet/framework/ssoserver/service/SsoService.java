@@ -1,7 +1,7 @@
 package com.momoplan.pet.framework.ssoserver.service;
 
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.ssoserver.CacheKeysConstance;
 import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
 

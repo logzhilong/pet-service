@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 
 /**
