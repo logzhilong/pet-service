@@ -80,9 +80,9 @@ pet-service
       "entity": object / exception
     }
 
+<hr/>
 <h1>业务功能注册表
 
-<hr/>
 <h2>认证服务：</h2>
   
   注册名: service.uri.pet_sso
@@ -195,7 +195,6 @@ pet-service
 
 
 
-<hr/>
 <h2>用户中心服务：</h2>
 
   注册名：service.uri.pet_user
