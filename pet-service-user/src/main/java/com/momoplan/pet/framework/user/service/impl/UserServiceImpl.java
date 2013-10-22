@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void updateUser(SsoUser user) throws Exception {
-		mapperOnCache.updateByPrimaryKeySelective(user.getClass(), user.getId());
+		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
 	}
 
 	@Override
