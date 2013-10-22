@@ -30,3 +30,50 @@ pet 服务端
 11、pet-service-user    	【业务模块】用户个人中心功能接口；
 
 12、pet-service-manager		【维护模块】业务模块管理功能，供维护和运营人员使用；
+
+
+
+使用说明：
+----------
+
+1、【后台服务入口】 提供统一标准的 输入/输出 协议为客户端提供服务，协议说明如下
+
+服务URL
+  
+  测试系统:   http://123.178.27.74/pet-hub/request
+  
+  正式系统:   http://www.52pet.net/pet-hub/request
+
+输入参数
+  
+  参数名称：body
+  
+  参数格式：
+    
+    以用户登录的请求参数为例，必填项如下
+    
+    {
+        "service":"service.uri.pet_sso",
+        "method":"login",
+        "channel":"1",
+        "params":{
+            "username":"cc",
+            "password":"123"
+        }
+    }
+
+  参数说明（只包含了必填项）：
+      
+    service: 业务模块的注册名，下文会给出业务模块的注册表；
+    
+    method: 具体的业务方法；
+    
+    channel: 请求来源渠道
+  
+    params: 供业务方法使用的参数，具体参数内容，应参考业务模块注册表，其中有部分模块可以不需要此参数；
+    
+
+
+
+
+
