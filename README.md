@@ -88,7 +88,8 @@ pet 服务端
 业务功能注册表
 --------------
 
-认证服务：
+<hr/>
+<h2>认证服务：</h2>
   
   注册名: service.uri.pet_sso
   
@@ -201,9 +202,44 @@ pet 服务端
 
 
 <hr/>
-用户中心服务：
+<h2>用户中心服务：</h2>
 
-
+  注册名：service.uri.pet_user
+  
+  方法：
+  
+    1、getUserinfo
+      
+      功能：获取用户信息
+      
+      输入：
+        
+        app端 使用 token 完成获取，无需 params 指定额外参数。
+        
+        内部获取时，使用 {"userid":"000"}
+      
+      输出：
+        
+        {
+			      "success":true,
+    			  "entity":{
+        				"longitude":0.0,
+        				"latitude":0.0,
+        				"id":747,
+        				"nickname":"cc",
+        				"username":"cc",
+        				"version":0,
+        				"email":"",
+        				"phoneNumber":"",
+        				"ifFraudulent":"0",
+        				"deviceToken":""
+    			  }
+		    }
+              
+    2、
+    3、
+    4、
+    5、
 
       
       
