@@ -62,9 +62,10 @@ public class GetPetHandler extends AbstractHandler {
 			}
 			List<PetInfo> list = userService.getPetInfo(userid);
 			rtn = new Success(true,list).toString();
+			logger.debug("获取宠物信息 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
-			logger.debug("token无效 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
+			logger.debug("获取宠物信息 失败 body="+gson.toJson(clientRequest));
+			logger.error(e.getMessage(),e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
