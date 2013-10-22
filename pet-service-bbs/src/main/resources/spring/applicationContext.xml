@@ -45,6 +45,6 @@
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="classpath:spring/applicationContext-mybatis-bbs.xml"/>
 	<!-- 一个数据库一个配置文件~ -->
-	<import resource="classpath:spring/applicationContext-mybatis-ssoserver.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-user.xml"/>
 
 </beans>
