@@ -42,7 +42,10 @@ public class SavePetHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
+			String token = clientRequest.getToken();
+			String userid = getToken(token).getUserid();
 			PetInfo petInfo = revicePetInfo(clientRequest);
+			petInfo.setUserid(userid);
 			userService.savePetInfo(petInfo);
 			logger.debug("添加宠物 成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
