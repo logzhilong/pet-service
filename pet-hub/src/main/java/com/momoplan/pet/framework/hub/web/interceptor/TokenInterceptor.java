@@ -98,7 +98,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		if(sendXcode){
 			Success success = gson.fromJson(rtn, Success.class);
 			if(success.isSuccess()){
-				String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
+				String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNum");
 				Object xcode = success.getEntity();
 				String userId = commonConfig.get("sms.username");
 				String password = commonConfig.get("sms.password");
