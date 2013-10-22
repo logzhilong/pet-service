@@ -62,7 +62,6 @@ pet 服务端
         "params":{
             "username":"cc",
             "password":"123"
-            "deviceToken":"xxx"
         }
     }
 
@@ -105,7 +104,8 @@ pet 服务端
       
           {
             "username":"cc",
-            "password":"123"
+            "password":"123",
+            "deviceToken":"xxx"
           }
       
       输出：
