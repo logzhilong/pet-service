@@ -1,6 +1,8 @@
 package com.momoplan.pet.vo;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.momoplan.pet.domain.ChatServer;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Token {
 	

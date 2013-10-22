@@ -634,7 +634,7 @@ public class ClientController {
 		JSONObject bodyJson = new JSONObject();
 		try {
 			bodyJson.accumulate("method", "token");
-			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			bodyJson.accumulate("token", token);
 			logger.debug("\nbodyJsonStr:"+bodyJson.toString());
 			String str = ssoProxyRequest(bodyJson.toString(),true).toString();
 			if(str.contains("false")){
@@ -655,7 +655,7 @@ public class ClientController {
 		JSONObject bodyJson = new JSONObject();
 		try {
 			bodyJson.accumulate("method", "token");
-			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			bodyJson.accumulate("token", token);
 			String str = ssoProxyRequest(bodyJson.toString(),true).toString();
 			if(str.contains("false")){
 				return null;
