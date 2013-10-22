@@ -1,7 +1,6 @@
 package com.momoplan.pet.framework.user.handler;
 
 import java.util.Date;
-import java.util.HashMap;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -11,8 +10,9 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.PetInfo;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.Bootstrap;
@@ -76,4 +76,25 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 		return petUser;
 	}
 	
+	protected PetInfo revicePetInfo(ClientRequest clientRequest){
+		
+		String nickname = PetUtil.getParameter(clientRequest, "nickname");
+		String type = PetUtil.getParameter(clientRequest, "type");
+		String img = PetUtil.getParameter(clientRequest, "img");
+		String trait = PetUtil.getParameter(clientRequest, "trait");
+		String gender = PetUtil.getParameter(clientRequest, "gender");
+		String birthdate = PetUtil.getParameter(clientRequest, "birthdate");
+		String id = PetUtil.getParameter(clientRequest, "id");
+		
+		PetInfo petInfo = new PetInfo();
+		petInfo.setNickname(nickname);
+		petInfo.setType(Long.parseLong(type));
+		petInfo.setImg(img);
+		petInfo.setTrait(trait);
+		petInfo.setGender(gender);
+		petInfo.setBirthdate(birthdate);
+		petInfo.setId(id);
+		
+		return petInfo;
+	}
 }

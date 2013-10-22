@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 import com.momoplan.pet.framework.user.vo.UserVo;
 /*

@@ -12,15 +12,16 @@ import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.ShardedJedis;
 
+import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
-import com.momoplan.pet.commons.domain.ssoserver.dto.UserLocation;
-import com.momoplan.pet.commons.domain.ssoserver.mapper.PetInfoMapper;
-import com.momoplan.pet.commons.domain.ssoserver.po.PetInfo;
-import com.momoplan.pet.commons.domain.ssoserver.po.PetInfoCriteria;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.dto.UserLocation;
+import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
+import com.momoplan.pet.commons.domain.user.po.PetInfo;
+import com.momoplan.pet.commons.domain.user.po.PetInfoCriteria;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.user.service.UserService;
 import com.momoplan.pet.framework.user.vo.UserVo;
 /**
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
 	}
 	@Override
 	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception {
-		Long userid = tokenObj.getUserid();
+		String userid = tokenObj.getUserid();
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
 		UserLocation userLocation = getUserLocation(userid+"");
 		UserVo userVo = null;
@@ -94,18 +95,25 @@ public class UserServiceImpl implements UserService {
 		return userVo;
 	}
 
-	@Override
-	public void updatePetInfo(PetInfo petInfo) throws Exception {
-		
-	}
 
 	@Override
 	public List<PetInfo> getPetInfo(String userid) throws Exception {
 		PetInfoCriteria petInfoCriteria = new PetInfoCriteria();
 		PetInfoCriteria.Criteria criter =  petInfoCriteria.createCriteria();
-		criter.andUseridEqualTo(Long.parseLong(userid));
+		criter.andUseridEqualTo(userid);
 		List<PetInfo> list = petInfoMapper.selectByExample(petInfoCriteria);
 		return list;
+	}
+
+	@Override
+	public void updatePetInfo(PetInfo petInfo) throws Exception {
+		mapperOnCache.updateByPrimaryKeySelective(petInfo, petInfo.getId());
+	}
+	
+	@Override
+	public void savePetInfo(PetInfo petInfo) throws Exception {
+		petInfo.setId(IDCreater.uuid());
+		mapperOnCache.insertSelective(petInfo, petInfo.getId());
 	}
 	
 }
