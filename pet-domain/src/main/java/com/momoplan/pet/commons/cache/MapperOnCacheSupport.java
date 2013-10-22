@@ -26,6 +26,8 @@ public class MapperOnCacheSupport {
 		RedisPool redisPool = SpringContextHolder.getBean(RedisPool.class);
 		ShardedJedis jedis = redisPool.getConn();
 		Class<?> clazz = t.getClass();
+		logger.debug("clazz : "+clazz.getName());
+		logger.debug("clazz : "+clazz.getSimpleName());
 		String mapper = getMapperName(clazz);
 		String cacheKey = mapper + "." + pk;
 		String json = null;
