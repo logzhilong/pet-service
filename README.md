@@ -297,7 +297,34 @@ pet-service
             ]
         }
 
+    5、savePetinfo
+    
+      功能：添加宠物信息
       
+      输入：{
+                "nickname":"",
+                "type":"",
+                "img":"",
+                "trait":"",
+                "gender":"",
+                "birthdate":""
+            }
       
-
-
+      输出：{"success":true,"entity":"OK" }
+      
+    6、updatePetinfo
+    
+      功能：更新宠物信息
+      
+      输入：
+            {
+                "id":"",
+                "nickname":"",
+                "type":"",
+                "img":"",
+                "trait":"",
+                "gender":"",
+                "birthdate":""
+            }
+      
+      输出：{"success":true,"entity":"OK" }
