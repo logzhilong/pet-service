@@ -19,7 +19,7 @@ import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 /**
  * 校验验证码
  * @author liangc
- * body={"method":"checkXcode","params":{"phoneNumber":"15199999999","xcode":"JDL3"}}
+ * body={"method":"verifyCode","params":{"phoneNum":"15199999999","verificationCode":"JDL3"}}
  */
 @Component("verifyCode")
 public class CheckXcodeHandler extends AbstractHandler implements CacheKeysConstance {
