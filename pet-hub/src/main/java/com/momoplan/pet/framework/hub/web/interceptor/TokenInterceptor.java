@@ -1,10 +1,9 @@
 package com.momoplan.pet.framework.hub.web.interceptor;
 
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +43,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		logger.debug("preHandle.....");
 		String body = request.getParameter("body");
+		logger.debug("preHandle....."+body);
 		ClientRequest clientRequest = PetUtil.reviceClientRequest(body);
 		String service = clientRequest.getService();
 		String method = clientRequest.getMethod();
@@ -60,7 +59,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
 			return false;
 		}
-		logger.debug(token);
+		logger.debug(token+" TOKEN 校验通过");
 		return true;
 	}
 	/**
@@ -126,13 +125,12 @@ public class TokenInterceptor implements HandlerInterceptor {
 		try {
 			ClientRequest request = new ClientRequest();
 			request.setMethod("token");
-			HashMap<String,Object> params = new HashMap<String,Object>();
-			params.put("token", token);
-			request.setParams(params);
+			request.setToken(token);
 			String json = PostRequest.postText(sso_server, "body",MyGson.getInstance().toJson(request));
 			logger.debug("token : "+json);
-			Success success = MyGson.getInstance().fromJson(json, Success.class);
-			if(success.isSuccess())
+			JSONObject success = new JSONObject(json);
+			boolean isSuccess = success.getBoolean("success");
+			if(isSuccess)
 				return true;
 			return false;
 		} catch (Exception e) {
