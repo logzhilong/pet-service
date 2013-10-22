@@ -1,11 +1,7 @@
 pet-service
 ===========
 
-pet 服务端
-
-
-模块说明：
-----------
+<h1>模块说明：
 
 1、 pet-parent          	【pom】父模块，定义了工程依赖以及系统版本等；
 
@@ -33,8 +29,7 @@ pet 服务端
 
 
 
-使用说明：
-----------
+<h1>使用说明：
 
 【后台服务入口】 提供统一标准的 输入/输出 协议为客户端提供服务，协议说明如下
 
@@ -85,10 +80,10 @@ pet 服务端
       "entity": object / exception
     }
 
-业务功能注册表
---------------
+<hr/>
+<h1>业务功能注册表
 
-认证服务器：
+<h2>认证服务：</h2>
   
   注册名: service.uri.pet_sso
   
@@ -99,8 +94,6 @@ pet 服务端
       功能：用户登录
       
       输入：
-      
-          用户名、密码
       
           {
             "username":"cc",
@@ -130,15 +123,174 @@ pet 服务端
           
       
     2、logout
+      
+      功能：退出登录
+      
+      输入：使用 token 完成退出，无需 params 指定额外参数。
+      
+      输出：{"success":true,"entity":"OK"}
     
     3、register
-    
+      
+      功能：用户注册
+      
+      输入：
+        
+        {
+            "nickname":""
+            "phonenumber":""
+            "password":""
+            "birthdate":""
+            "gender":""
+            "city":""
+            "signature":""
+            "img":""
+            "hobby":""
+            "deviceToken":""
+        }
+        
+      输出：
+        
+        {
+              "success":true,
+              "entity":{
+                    "token":"xxx",
+                    "createDate":"2013-10-22 10:33:13",
+                    "expire":-1,
+                    "userid":000
+              }
+        }
+        
     4、resetPassword
+      
+      功能：修改密码
     
+      输入：
+        
+        {
+            "password":"xxx"
+            "phonenumber":"000"
+        }
+      
+      输出：{"success":true,"entity":"OK"}
+        
+      
     5、getVerificationCode
+      
+      功能：获取验证码
     
+      输入：{"phonenumber":"000"}
+      
+      输出：{"success":true,"entity":"ABCD"}      
+      
+      
     6、verifyCode
+      
+      功能：校验验证码
+      
+      输入：{"phoneNumber":"15199999999","verificationCode":"JDL3"}
+      
+      输出：{"success":true,"entity":true}
+
+
+
+
+<h2>用户中心服务：</h2>
+
+  注册名：service.uri.pet_user
+  
+  方法：
+  
+    1、getUserinfo
+      
+      功能：获取用户信息
+      
+      输入：
+        
+        app端 使用 token 完成获取，无需 params 指定额外参数。
+        
+        内部获取时，使用 {"userid":"000"}
+      
+      输出：
+        
+        {
+	  "success":true,
+    	  "entity":{
+              "longitude":0.0,
+              "latitude":0.0,
+              "id":747,
+              "nickname":"cc",
+              "username":"cc",
+              "version":0,
+              "email":"",
+              "phoneNumber":"",
+              "ifFraudulent":"0",
+              "deviceToken":"" 
+          }
+	}
+	      
+    2、updateUser
+    	
+      功能：更新用户信息
+      
+      输入：
+        
+        跟旧的协议内容一致，即现有可修改的用户基本信息，不包括坐标
+        {
+            "nickname":"cc",
+            "username":"cc",
+            "email":"",
+            "phoneNumber":"",
+            "ifFraudulent":"0",
+            ...
+	}
+		
+      输出：{"success":true,"entity":"OK" }
     
+    3、updateUserLocation
+      
+      功能：更新用户坐标
+      
+      输入：
+      
+      	其中 userid 非必填，方法可以通过 token 获取
+      	{
+      	    "userid":"xxx",
+      	    "longitude":000.000,
+      	    "latitude":000.000
+        }
+      
+      输出：{"success":true,"entity":"OK" }
+      
+    4、getPetinfo
+    
+      功能：获取宠物信息
+      
+      输入：
+      
+      	其中 userid 非必填，方法可以通过 token 获取
+        {"userid":731}
+      	
+      输出：
+    	
+        {
+            "success":true,
+            "entity":[
+                {
+                    "id":556,
+                    "gender":"male",
+                    "img":"1133_1134,1137_1138,",
+                    "nickname":"xxx",
+                    "type":1004,
+                    "userid":000,
+                    "version":8,
+                    "trait":"xxx",
+                    "birthdate":"2"
+                },
+                ......
+            ]
+        }
+
       
       
 
