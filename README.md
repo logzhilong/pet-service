@@ -93,13 +93,7 @@ pet-service
       
       功能：用户登录
       
-      输入：
-      
-          {
-            "username":"cc",
-            "password":"123",
-            "deviceToken":"xxx"
-          }
+      输入：{ "username":"cc", "password":"123", "deviceToken":"xxx" }
       
       输出：
           
@@ -165,14 +159,9 @@ pet-service
       
       功能：修改密码
     
-      输入：
-        
-        {
-            "password":"xxx"
-            "phonenumber":"000"
-        }
+      输入：{ "password":"xxx", "phonenumber":"000" }
       
-      输出：{"success":true,"entity":"OK"}
+      输出：{ "success":true,"entity":"OK" }
         
       
     5、getVerificationCode
@@ -260,11 +249,7 @@ pet-service
       输入：
       
       	其中 userid 非必填，方法可以通过 token 获取
-      	{
-      	    "userid":"xxx",
-      	    "longitude":000.000,
-      	    "latitude":000.000
-        }
+      	{ "userid":"xxx", "longitude":000.000, "latitude":000.000 }
       
       输出：{"success":true,"entity":"OK" }
       
@@ -274,7 +259,7 @@ pet-service
       
       输入：
       
-      	其中 userid 非必填，方法可以通过 token 获取
+      	获取当前登录人的宠物时，不需要传递 userid,用TOKEN即可获取，获取其他人宠物，需要userid
         {"userid":731}
       	
       输出：
@@ -299,32 +284,16 @@ pet-service
 
     5、savePetinfo
     
-      功能：添加宠物信息
+      功能：添加宠物信息，不需要传宠物ID
       
-      输入：{
-                "nickname":"",
-                "type":"",
-                "img":"",
-                "trait":"",
-                "gender":"",
-                "birthdate":""
-            }
+      输入：{ "nickname":"", "type":"", "img":"", "trait":"", "gender":"","birthdate":"" }
       
       输出：{"success":true,"entity":"OK" }
       
     6、updatePetinfo
     
-      功能：更新宠物信息
+      功能：更新宠物信息，一定要传宠物ID
       
-      输入：
-            {
-                "id":"",
-                "nickname":"",
-                "type":"",
-                "img":"",
-                "trait":"",
-                "gender":"",
-                "birthdate":""
-            }
+      输入：{ "id":"", "nickname":"", "type":"", "img":"", "trait":"", "gender":"","birthdate":"" }
       
-      输出：{"success":true,"entity":"OK" }
+      输出：{ "success":true,"entity":"OK" }
