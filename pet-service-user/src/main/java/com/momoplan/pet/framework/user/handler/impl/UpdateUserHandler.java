@@ -57,7 +57,7 @@ public class UpdateUserHandler extends AbstractHandler {
 			SsoAuthenticationToken tokenObj = getToken(token);
 			SsoUser user = reviceSsoUser(clientRequest);
 			user.setId(tokenObj.getUserid());
-			
+			userService.updateUser(user);
 			logger.debug("修改用户信息成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
 		}catch(Exception e){
