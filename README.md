@@ -100,8 +100,6 @@ pet 服务端
       
       输入：
       
-          用户名、密码
-      
           {
             "username":"cc",
             "password":"123",
@@ -130,15 +128,74 @@ pet 服务端
           
       
     2、logout
+      
+      功能：退出登录
+      
+      输入：使用 token 完成退出，无需 params 指定额外参数。
+      
+      输出：{"success":true,"entity":"OK"}
     
     3、register
-    
+      
+      功能：用户注册
+      
+      输入：
+        
+        {
+            "nickname":""
+            "phonenumber":""
+            "password":""
+            "birthdate":""
+            "gender":""
+            "city":""
+            "signature":""
+            "img":""
+            "hobby":""
+            "deviceToken":""
+        }
+        
+      输出：
+        
+        {
+              "success":true,
+              "entity":{
+                    "token":"xxx",
+                    "createDate":"2013-10-22 10:33:13",
+                    "expire":-1,
+                    "userid":000
+              }
+        }
+        
     4、resetPassword
+      
+      功能：修改密码
     
+      输入：
+      
+      输出：
+      
     5、getVerificationCode
+      
+      功能：获取验证码
     
+      输入：
+      
+      输出：      
+      
+      
     6、verifyCode
-    
+      
+      功能：校验验证码
+      
+      输入：
+      
+      输出：
+
+
+
+
+
+
       
       
 
