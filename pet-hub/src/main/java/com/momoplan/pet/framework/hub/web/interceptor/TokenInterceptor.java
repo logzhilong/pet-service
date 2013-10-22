@@ -126,9 +126,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		try {
 			ClientRequest request = new ClientRequest();
 			request.setMethod("token");
-			HashMap<String,Object> params = new HashMap<String,Object>();
-			params.put("token", token);
-			request.setParams(params);
+			request.setToken(token);
 			String json = PostRequest.postText(sso_server, "body",MyGson.getInstance().toJson(request));
 			logger.debug("token : "+json);
 			Success success = MyGson.getInstance().fromJson(json, Success.class);
