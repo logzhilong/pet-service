@@ -44,5 +44,10 @@ public interface SsoService extends CacheKeysConstance{
 	 * @throws Exception
 	 */
 	public void updatePassword(SsoUser user) throws Exception ;
-	
+	/**
+	 * 根据用户名获取用户
+	 * @param username
+	 * @return
+	 */
+	public SsoUser getSsoUserByName(String username);
 }

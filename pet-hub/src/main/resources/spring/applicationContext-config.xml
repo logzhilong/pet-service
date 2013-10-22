@@ -30,9 +30,11 @@
 		        <entry key="login" value="service.uri.pet_sso"/>  
 		        <entry key="login2" value="service.uri.pet_sso"/>  
 		        <entry key="register" value="service.uri.pet_sso"/>  
-		        <entry key="register2" value="service.uri.pet_sso"/>  
+		        <entry key="register2" value="service.uri.pet_sso"/>
+		        <entry key="getVerificationCode" value="service.uri.pet_sso"/>
+		        <entry key="verifyCode" value="service.uri.pet_sso"/>
 	    	</map>  
-		</property>  
+		</property>
 	</bean>
 
 	<!-- 配置管理服务器地址 -->
