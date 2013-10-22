@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 /*
@@ -52,9 +51,15 @@ public class GetPetHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String token = clientRequest.getToken();
-			SsoAuthenticationToken tokenObj = getToken(token);
-			String userid = tokenObj.getUserid()+"";
+			String userid = null;
+			if(clientRequest.getParams()!=null){
+				userid = getParameter(clientRequest, "userid");
+				logger.debug("根据userid 获取用户信息 userid="+userid);
+			}else{
+				String token = clientRequest.getToken();
+				userid = getToken(token).getUserid();
+				logger.debug("根据token 获取用户信息 token="+token);
+			}
 			List<PetInfo> list = userService.getPetInfo(userid);
 			rtn = new Success(true,list).toString();
 			logger.debug("获取宠物信息 成功 body="+gson.toJson(clientRequest));
