@@ -234,4 +234,21 @@ public class BBSManagerController {
 		return "/manager/bbs/forumManagerRight";
 	}
 	
+	/**
+	 * 上传图片
+	 * @return
+	 * model
+	 */
+	@RequestMapping("/manager/notemanage/upimg.html")
+	public String upImg(Model model){
+		try {
+			return "/manager/notemanage/UploadImg";
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.debug("upimg"+e);
+			return "/manager/notemanage/UploadImg";
+		}
+		
+	}
+	
 }

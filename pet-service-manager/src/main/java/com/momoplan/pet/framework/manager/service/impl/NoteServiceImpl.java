@@ -47,7 +47,7 @@ public class NoteServiceImpl implements NoteService {
 			if (note2 != null && !"".equals(note2.getId())) {
 				note2.setEt(new Date());
 				logger.debug("修该帖子"+note2.toString());
-				noteMapper.updateByPrimaryKeySelective(note2);
+				noteMapper.updateByPrimaryKeySelective(note);
 			} else {
 				note.setId(IDCreater.uuid());
 				note.setUserId("703");
