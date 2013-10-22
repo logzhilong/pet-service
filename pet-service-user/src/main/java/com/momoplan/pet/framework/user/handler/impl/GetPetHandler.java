@@ -54,12 +54,9 @@ public class GetPetHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String userid = PetUtil.getParameter(clientRequest, "userid");
-			if(StringUtils.isEmpty(userid)){
-				String token = clientRequest.getToken();
-				SsoAuthenticationToken tokenObj = getToken(token);
-				userid = tokenObj.getUserid()+"";
-			}
+			String token = clientRequest.getToken();
+			SsoAuthenticationToken tokenObj = getToken(token);
+			String userid = tokenObj.getUserid()+"";
 			List<PetInfo> list = userService.getPetInfo(userid);
 			rtn = new Success(true,list).toString();
 			logger.debug("获取宠物信息 成功 body="+gson.toJson(clientRequest));
