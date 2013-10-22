@@ -171,25 +171,31 @@ pet 服务端
       功能：修改密码
     
       输入：
+        
+        {
+            "password":"xxx"
+            "phonenumber":"000"
+        }
       
-      输出：
+      输出：{"success":true,"entity":"OK"}
+        
       
     5、getVerificationCode
       
       功能：获取验证码
     
-      输入：
+      输入：{"phonenumber":"000"}
       
-      输出：      
+      输出：{"success":true,"entity":"ABCD"}      
       
       
     6、verifyCode
       
       功能：校验验证码
       
-      输入：
+      输入：{"phoneNumber":"15199999999","verificationCode":"JDL3"}
       
-      输出：
+      输出：{"success":true,"entity":true}
 
 
 
