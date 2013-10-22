@@ -131,6 +131,10 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andTypeEqualTo("0");
 			criteria.andIdEqualTo(noteid);
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			Note note=noteMapper.selectByPrimaryKey(noteid);
+			for(Note note2:notelist){
+				note2.setContent(note.getContent());
+			}
 			return notelist;
 		} catch (Exception e) {
 			e.printStackTrace();

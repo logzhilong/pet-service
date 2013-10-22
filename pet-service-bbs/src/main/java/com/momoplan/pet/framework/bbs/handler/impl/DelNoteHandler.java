@@ -11,7 +11,7 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
- * 根据id查看帖子详情:
+ *删除帖子
  * @author  qiyongc
  */
 @Component("delNote")
@@ -24,10 +24,10 @@ public class DelNoteHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			Object object=noteService.delNote(clientRequest);
-			logger.debug("根据id查看帖子详情:成功 body="+gson.toJson(clientRequest));
+			logger.debug("删除帖子:成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
-			logger.debug("根据id查看帖子详情:失败 body="+gson.toJson(clientRequest));
+			logger.debug("删除帖子:失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{

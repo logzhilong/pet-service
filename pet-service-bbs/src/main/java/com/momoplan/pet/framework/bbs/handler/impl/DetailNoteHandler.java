@@ -11,7 +11,7 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
- * 删除帖子
+ * 根据帖子id查看帖子详情
  * @author  qiyongc
  */
 @Component("detailNote")
@@ -25,6 +25,7 @@ public class DetailNoteHandler extends AbstractHandler {
 		try{
 				noteService.updateClickCount(clientRequest);
 				Object object=noteService.detailNote(clientRequest);
+				
 			logger.debug("删除帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
