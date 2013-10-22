@@ -25,7 +25,7 @@ public class TokenHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String _token = clientRequest.getToken();
+			String _token = PetUtil.getParameter(clientRequest, "token");
 			LoginResponse loginResponse = ssoService.getToken(_token);
 			logger.debug("token有效 body="+_token);
 			rtn = new Success(true,loginResponse).toString();
