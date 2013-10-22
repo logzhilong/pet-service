@@ -46,6 +46,7 @@ public class SavePetHandler extends AbstractHandler {
 			String userid = getToken(token).getUserid();
 			PetInfo petInfo = revicePetInfo(clientRequest);
 			petInfo.setUserid(userid);
+			logger.debug(petInfo.toString());
 			userService.savePetInfo(petInfo);
 			logger.debug("添加宠物 成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
