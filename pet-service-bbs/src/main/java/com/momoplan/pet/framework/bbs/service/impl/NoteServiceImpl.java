@@ -67,7 +67,7 @@ public class NoteServiceImpl implements NoteService {
 			bbsNote.setContent(PetUtil.getParameter(ClientRequest, "content"));
 			logger.debug(""+bbsNote.toString());
 			noteRepository.insertSelective(bbsNote);
-			return "sendNoteSuccess";
+			return bbsNote;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "sendNoteFail";
