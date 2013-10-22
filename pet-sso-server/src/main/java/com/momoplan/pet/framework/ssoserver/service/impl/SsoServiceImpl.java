@@ -141,7 +141,7 @@ public class SsoServiceImpl implements SsoService {
 		}
 	}
 	
-	private SsoUser getSsoUserByName(String username) {
+	public SsoUser getSsoUserByName(String username) {
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
