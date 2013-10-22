@@ -93,7 +93,9 @@ public class TokenInterceptor implements HandlerInterceptor {
 		ClientRequest clientRequest = PetUtil.reviceClientRequest(body);
 		String service = clientRequest.getService();
 		String method = clientRequest.getMethod();
-		if("service.uri.pet_sso".equals(service)&&"getVerificationCode".equals(method)){
+		boolean sendXcode = "service.uri.pet_sso".equals(service)&&"getVerificationCode".equals(method);
+		logger.debug("service="+service+" ; method="+method+ " ; 验证码判断="+sendXcode+" ; rtn="+rtn);
+		if(sendXcode){
 			Success success = gson.fromJson(rtn, Success.class);
 			if(success.isSuccess()){
 				String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNumber");
