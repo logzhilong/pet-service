@@ -48,6 +48,9 @@ pet 服务端
   
   参数名称：body
   
+  例如：
+    http://123.178.27.74/pet-hub/request?body={"service":"service.uri.pet_sso","method":"login","channel":"1","params":{"username":"cc","password":"123"}}
+  
   参数格式：
     
     以用户登录的请求参数为例，必填项如下
