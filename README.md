@@ -23,7 +23,7 @@ pet 服务端
 
 8、 pet-file-server     	【基础服务】文件服务器，提供统一的文件上传、下载、删除接口；
 
-9、 pet-sso-server      	【基础服务】认证服务器，提供 注册、登录、token校验、改密码、验证码 服务；
+9、 pet-sso-server      	【基础服务】认证服务器，提供 注册、登录、退出、token校验、改密码、验证码 服务；
 
 10、pet-service-bbs     	【业务模块】圈子功能接口；
 
@@ -36,7 +36,7 @@ pet 服务端
 使用说明：
 ----------
 
-1、【后台服务入口】 提供统一标准的 输入/输出 协议为客户端提供服务，协议说明如下
+【后台服务入口】 提供统一标准的 输入/输出 协议为客户端提供服务，协议说明如下
 
 服务URL
   
@@ -75,8 +75,70 @@ pet 服务端
   
     params: 供业务方法使用的参数，具体参数内容，应参考业务模块注册表，其中有部分模块可以不需要此参数；
     
+  返回值说明：
+    
+    统一格式的返回，其中 success 标识请求是否成功，返回 true 则 entity 为 object，object 格式由业务模块定义
+    返回 false 则表示请求异常，其中 entity 为 exception 信息
+    
+    {
+      "success": true / false,
+      "entity": object / exception
+    }
 
+业务功能注册表
+--------------
 
-
+认证服务器：
+  
+  注册名: service.uri.pet_sso
+  
+  方法:
+      
+    1、login
+      
+      功能：用户登录
+      
+      输入：
+      
+          用户名、密码
+      
+          {
+            "username":"cc",
+            "password":"123"
+          }
+      
+      输出：
+          
+          {
+              "success":true,
+              "entity":{
+                  "authenticationToken":{
+                      "token":"xxx",
+                      "createDate":"2013-10-22 10:33:13",
+                      "expire":-1,
+                      "userid":000
+                  },
+                  "chatserver":{
+                      "id":1,
+                      "address":"61.51.110.55",
+                      "name":"test.com",
+                      "version":0
+                  }
+              }
+          }
+          
+      
+    2、logout
+    
+    3、register
+    
+    4、resetPassword
+    
+    5、getVerificationCode
+    
+    6、verifyCode
+    
+      
+      
 
 
