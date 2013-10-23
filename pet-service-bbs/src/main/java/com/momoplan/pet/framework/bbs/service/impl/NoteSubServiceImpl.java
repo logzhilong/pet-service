@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,7 +78,12 @@ public class NoteSubServiceImpl implements NoteSubService {
 			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
 			criteria.andNoteIdEqualTo(PetUtil.getParameter(ClientRequest, "noteId"));
 			List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
-			return noteSubs;
+			List<NoteSub> list=new ArrayList<NoteSub>();
+			for(NoteSub sub :noteSubs){
+				sub.setContent(noteSubMapper.selectByPrimaryKey(sub.getId()).getContent());
+				list.add(sub);
+			}
+			return list;
 	}
 	
 	/**

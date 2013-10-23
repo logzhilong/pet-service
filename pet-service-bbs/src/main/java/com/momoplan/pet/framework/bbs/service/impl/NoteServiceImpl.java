@@ -104,11 +104,12 @@ public class NoteServiceImpl implements NoteService {
 			
 			
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			for(Note noteeli:notelist){
-				long f=	noteeli.getCt().getTime();
-				System.out.println("aaaaa"+f);
+			List<Note> list=new ArrayList<Note>();
+			for(Note note:notelist){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				list.add(note);
 			}
-			return notelist;
+			return list;
 	}
 
 	
@@ -205,7 +206,12 @@ public class NoteServiceImpl implements NoteService {
 			noteCriteria.setOrderByClause("ct desc");
 			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userid"));
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-			return notelist;
+			List<Note> list=new ArrayList<Note>();
+			for(Note note:notelist){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				list.add(note);
+			}
+			return list;
 	}
 
 	/**
@@ -220,6 +226,7 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
 			if(fid.equals("0")){
+			}else {
 				criteria.andForumIdEqualTo(fid);
 			}
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
@@ -242,17 +249,13 @@ public class NoteServiceImpl implements NoteService {
 			criteria1.andIsTopEqualTo(true);
 			criteria1.andIsDelEqualTo(false);
 			criteria1.andTypeEqualTo("0");
-			String fid1=PetUtil.getParameter(ClientRequest, "forumPid");
-			if(fid1.equals("0")){
-				criteria1.andForumIdEqualTo(fid1);
+			if(fid.equals("0")){
+			}else {
+				criteria.andForumIdEqualTo(fid);
 			}
 			noteCriteria1.setMysqlLength(5);
 			noteCriteria1.setOrderByClause("ct desc");
-			Calendar currentDate1 = new GregorianCalendar();   
-			currentDate1.set(Calendar.HOUR_OF_DAY, 0);  
-			currentDate1.set(Calendar.MINUTE, 0);  
-			currentDate1.set(Calendar.SECOND, 0);  
-			criteria.andCtGreaterThanOrEqualTo(((Date)currentDate1.getTime().clone()));
+			criteria1.andCtGreaterThanOrEqualTo(((Date)currentDate.getTime().clone()));
 			List<Note> notelist1 = noteMapper.selectByExample(noteCriteria1);
 			
 			
@@ -263,7 +266,12 @@ public class NoteServiceImpl implements NoteService {
 			for(Note note:notelist){
 					notes.add(note);
 			}
-			return notes;
+			List<Note> list=new ArrayList<Note>();
+			for(Note note:notes){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				list.add(note);
+			}
+			return list;
 	}
 	
 	/**
@@ -315,9 +323,12 @@ public class NoteServiceImpl implements NoteService {
 			for(Note note:notelist){
 				notes.add(note);
 			}
-			
-			
-			return notes;
+			List<Note> list=new ArrayList<Note>();
+			for(Note note:notes){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				list.add(note);
+			}
+			return list;
 	}
 	
 	
@@ -343,7 +354,12 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsTopEqualTo(false);
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
-			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+			List<Note> notelist1 = noteMapper.selectByExample(noteCriteria);
+			List<Note> notelist=new ArrayList<Note>();
+			for(Note note:notelist1){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				notelist.add(note);
+			}
 			//add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 			List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
 			for(Note note : notelist){
@@ -351,7 +367,7 @@ public class NoteServiceImpl implements NoteService {
 				BeanUtils.copyProperties(note, vo);
 				String uid = note.getUserId();
 				String nid = note.getId();
-				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, Long.valueOf(uid));//在缓存中获取用户
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);//在缓存中获取用户
 				vo.setNickname(user.getNickname());
 				vo.setUserIcon(user.getImg());
 				Long totalReply = noteSubRepository.totalReply(nid);

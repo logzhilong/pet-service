@@ -23,9 +23,8 @@ public class DetailNoteHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-				noteService.updateClickCount(clientRequest);
-				Object object=noteService.detailNote(clientRequest);
-				
+			noteService.updateClickCount(clientRequest);
+			Object object=noteService.detailNote(clientRequest);
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){

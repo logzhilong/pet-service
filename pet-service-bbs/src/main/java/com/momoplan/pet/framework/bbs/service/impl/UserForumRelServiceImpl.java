@@ -1,5 +1,7 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,9 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
 			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
 			String forumid=PetUtil.getParameter(ClientRequest, "forumid");
-			criteria.andIdEqualTo(forumid);
+			String userid=PetUtil.getParameter(ClientRequest, "userid");
+			criteria.andForumIdEqualTo((forumid));
+			criteria.andUserIdEqualTo(userid);
 			userForumRelMapper.deleteByExample(userForumRelCriteria);
 			return "quitForumSuccss";
 	}
