@@ -30,7 +30,7 @@ public class NewNotesByFidHandler extends AbstractHandler {
 		}catch(Exception e){
 			logger.debug("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

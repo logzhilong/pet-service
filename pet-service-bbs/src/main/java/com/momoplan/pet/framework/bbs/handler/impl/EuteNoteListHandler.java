@@ -29,7 +29,7 @@ public class EuteNoteListHandler extends AbstractHandler {
 		}catch(Exception e){
 			logger.debug("获取精华失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

@@ -30,7 +30,7 @@ public class AllReplyNoteByNoteidHandler extends AbstractHandler {
 		}catch(Exception e){
 			logger.debug("根据帖子id获取所有回复失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

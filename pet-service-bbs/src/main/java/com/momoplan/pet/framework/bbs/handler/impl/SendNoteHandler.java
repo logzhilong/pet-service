@@ -29,7 +29,7 @@ public class SendNoteHandler extends AbstractHandler {
 		}catch(Exception e){
 			logger.debug("发帖失败 body="+gson.toJson(clientRequest));
 			logger.error("sendNote : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

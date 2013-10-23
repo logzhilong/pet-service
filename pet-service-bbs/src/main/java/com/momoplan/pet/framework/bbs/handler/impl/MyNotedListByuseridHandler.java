@@ -30,7 +30,7 @@ public class MyNotedListByuseridHandler extends AbstractHandler {
 		}catch(Exception e){
 			logger.debug("我发表过的帖子列表失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
