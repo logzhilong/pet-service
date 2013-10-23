@@ -297,3 +297,16 @@ pet-service
       输入：{ "id":"", "nickname":"", "type":"", "img":"", "trait":"", "gender":"","birthdate":"" }
       
       输出：{ "success":true,"entity":"OK" }
+      
+    7、addOrRemoveFriend
+      
+      功能：添加或删除好友关系
+      
+      输入：{ "SubscriptionType":"", "aId":"", "bId":""}
+      
+      输出：{"success":true,"entity":"OK" }
+    
+      
+      
+      
+      
