@@ -298,7 +298,13 @@ pet-service
       
       输出：{ "success":true,"entity":"OK" }
       
-    7、用户好友关系相关功能
+    7、addOrRemoveFriend
+      
+      功能：添加或删除好友关系
+      
+      输入：{ "SubscriptionType":"", "aId":"", "bId":""}
+      
+      输出：{"success":true,"entity":"OK" }
     
       
       
