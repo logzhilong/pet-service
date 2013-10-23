@@ -75,6 +75,4 @@
 		<property name="basePackage" value="com.momoplan.pet.commons.domain.pat.mapper" />
 	</bean>
 
-	<bean class="com.momoplan.pet.commons.repository.pat.SsoUserRepository" />
-
 </beans>
