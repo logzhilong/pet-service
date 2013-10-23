@@ -21,6 +21,8 @@ public class Success {
 		this.entity = entity;
 	}
 
+	
+
 	public boolean isSuccess() {
 		return success;
 	}
