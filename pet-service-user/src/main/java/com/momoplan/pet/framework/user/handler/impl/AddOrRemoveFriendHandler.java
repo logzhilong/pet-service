@@ -33,6 +33,10 @@ public class AddOrRemoveFriendHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
+			String st = getParameter(clientRequest, "SubscriptionType");
+			String aid = getParameter(clientRequest, "aId");//a username
+			String bid = getParameter(clientRequest, "bId");//b username
+			userService.addOrRemoveFriend(st, aid, bid);
 			rtn = new Success(true,"OK").toString();
 			logger.debug("添加/删除 好友 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){

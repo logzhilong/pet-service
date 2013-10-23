@@ -33,11 +33,31 @@ public interface UserService extends CacheKeysConstance{
 	 * @throws Exception
 	 */
 	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception ;
-	
+	/**
+	 * 更新宠物信息
+	 * @param petInfo
+	 * @throws Exception
+	 */
 	public void updatePetInfo(PetInfo petInfo)throws Exception ;
-	
+	/**
+	 * 新增宠物信息
+	 * @param petInfo
+	 * @throws Exception
+	 */
 	public void savePetInfo(PetInfo petInfo)throws Exception ;
-	
+	/**
+	 * 获取宠物列表
+	 * @param userid
+	 * @return
+	 * @throws Exception
+	 */
 	public List<PetInfo> getPetInfo(String userid)throws Exception ;
-	
+	/**
+	 * 添加或删除好友信息，根据 st 判断动作
+	 * @param st
+	 * @param aid
+	 * @param bid
+	 * @throws Exception
+	 */
+	public void addOrRemoveFriend(String st,String aid,String bid) throws Exception ;
 }
