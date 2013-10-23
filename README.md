@@ -334,12 +334,19 @@ pet-service
       
     7、addOrRemoveFriend
       
-      功能：添加或删除好友关系
+      功能：添加或删除好友关系，目前只有 XMPP 回调此接口
       
       输入：{ "SubscriptionType":"", "aId":"", "bId":""}
       
       输出：{"success":true,"entity":"OK" }
     
+    8、pushMsgApn
+    
+      功能：给IOS推送离线消息，目前只有 XMPP 回调此接口
+      
+      输入：{"fromname":"", "toname":"", "msg":""}
+      
+      输出：{"success":true,"entity":"OK" }
       
       
       
