@@ -399,6 +399,12 @@ public class NoteServiceImpl implements NoteService {
 			noteCriteria.setOrderByClause("et desc");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
-			return noteMapper.selectByExample(noteCriteria);
+			List<Note> list1= noteMapper.selectByExample(noteCriteria);
+			List<Note> list=new ArrayList<Note>();
+			for(Note note:list1){
+				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
+				list.add(note);
+			}
+			return list;
 	}
 }
