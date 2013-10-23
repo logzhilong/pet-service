@@ -189,6 +189,40 @@ pet-service
       
       输出：{"success":true,"entity":true}
       
+    8、token
+    
+      功能：校验 Token 是否正确
+      
+      输入：
+          
+          如果只校验 token 不需要传协议中的 params 参数，
+          如果需要返回版本以及开机图片，需要传 {"action":"open"}
+
+      输出：
+      
+          不需要开机图片和版本号的返回
+          {
+              "success":true,
+              "entity":{
+                  "authenticationToken":{"token":"xxx","createDate":"2013-10-22 10:04:26","userid":"xxx"},
+                  "chatserver":{"id":1,"address":"xxx","name":"xxx","version":0}
+              }
+          }
+          
+          需要开机图片和版本号的返回值
+          {
+              "success":true,
+              "entity":{
+                  "authenticationToken":{"token":"xxx","createDate":"2013-10-22 10:04:26","userid":"xxx"},
+                  "chatserver":{"id":1,"address":"xxx","name":"xxx","version":0},
+                  "firstImage":"http://xxx.xxx",
+                  "version":{
+                      "version":"",
+                      "iosurl":""
+                  }
+              }
+          }
+          
 
 <h2>用户中心服务：</h2>
 
