@@ -297,3 +297,10 @@ pet-service
       输入：{ "id":"", "nickname":"", "type":"", "img":"", "trait":"", "gender":"","birthdate":"" }
       
       输出：{ "success":true,"entity":"OK" }
+      
+    7、用户好友关系相关功能
+    
+      
+      
+      
+      
