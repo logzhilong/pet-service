@@ -91,8 +91,7 @@ CREATE TABLE `user_friendship` (
   `a_id` varchar(60) NOT NULL,
   `b_id` varchar(60) NOT NULL,
   `remark` varchar(255) DEFAULT NULL,
-  `verified` int(11) NOT NULL,
-  `version` int(11) DEFAULT NULL,
+  `verified` varchar(200) NOT NULL,
   `aliasa` varchar(255) DEFAULT NULL,
   `aliasb` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)

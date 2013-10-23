@@ -1,6 +1,5 @@
 package com.momoplan.pet.framework.ssoserver.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +17,13 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.mapper.SsoChatServerMapper;
-import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
+import com.momoplan.pet.commons.domain.user.mapper.SsoVersionMapper;
 import com.momoplan.pet.commons.domain.user.po.SsoChatServer;
 import com.momoplan.pet.commons.domain.user.po.SsoChatServerCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
-import com.momoplan.pet.commons.domain.user.po.SsoUserCriteria;
+import com.momoplan.pet.commons.domain.user.po.SsoVersion;
+import com.momoplan.pet.commons.domain.user.po.SsoVersionCriteria;
+import com.momoplan.pet.commons.repository.user.SsoUserRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.ssoserver.service.SsoService;
 import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
@@ -33,25 +34,27 @@ import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
 @Service
 public class SsoServiceImpl implements SsoService {
 
-	private Logger logger = LoggerFactory.getLogger(SsoServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(SsoServiceImpl.class);
 	
-	private SsoUserMapper ssoUserMapper = null;
 	private SsoChatServerMapper ssoChatServerMapper = null;
 	private MapperOnCache mapperOnCache = null;
 	private RedisPool redisPool = null;
-
+	private SsoUserRepository ssoUserRepository = null;
+	private SsoVersionMapper ssoVersionMapper = null;
+	
 	private CommonConfig commonConfig = null;
 	private Gson gson = MyGson.getInstance();
 	
 	@Autowired
-	public SsoServiceImpl(SsoUserMapper ssoUserMapper, SsoChatServerMapper ssoChatServerMapper, CommonConfig commonConfig,
-			MapperOnCache mapperOnCache, RedisPool redisPool) {
+	public SsoServiceImpl(SsoChatServerMapper ssoChatServerMapper, MapperOnCache mapperOnCache, RedisPool redisPool, SsoUserRepository ssoUserRepository, SsoVersionMapper ssoVersionMapper,
+			CommonConfig commonConfig) {
 		super();
-		this.ssoUserMapper = ssoUserMapper;
 		this.ssoChatServerMapper = ssoChatServerMapper;
-		this.commonConfig = commonConfig;
 		this.mapperOnCache = mapperOnCache;
 		this.redisPool = redisPool;
+		this.ssoUserRepository = ssoUserRepository;
+		this.ssoVersionMapper = ssoVersionMapper;
+		this.commonConfig = commonConfig;
 	}
 
 	@Override
@@ -63,34 +66,9 @@ public class SsoServiceImpl implements SsoService {
 		mapperOnCache.insertSelective(user, user.getId());
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
-		SsoAuthenticationToken token = createToken(user.getId());
+		SsoAuthenticationToken token = ssoUserRepository.createToken(user.getId());
 		logger.debug("token : "+gson.toJson(token));
 		return token;
-	}
-	/**
-	 * 产生一个 token
-	 * TODO 每个 TOKEN 都是临时的，要找到一个对策来清理过期不用的 TOKEN，等解耦以后再处理
-	 * @param userId
-	 * @return
-	 */
-	private SsoAuthenticationToken createToken(String userId) {
-		SsoAuthenticationToken authenticationToken = new SsoAuthenticationToken();
-		authenticationToken.setExpire(-1L);
-		authenticationToken.setToken(IDCreater.uuid());
-		authenticationToken.setUserid(userId);
-		authenticationToken.setCreateDate(new Date());
-		String json = gson.toJson(authenticationToken);
-		ShardedJedis jedis = null;
-		try{
-			jedis = redisPool.getConn();
-			jedis.hset(CF_TOKEN, authenticationToken.getToken(), json);
-			logger.debug("createToken 成功 : "+json);
-		}catch(Exception e){
-			logger.error("createToken 异常",e);
-		}finally{
-			redisPool.closeConn(jedis);
-		}
-		return authenticationToken;
 	}
 
 	private SsoChatServer getSsoChatServer(){
@@ -133,7 +111,7 @@ public class SsoServiceImpl implements SsoService {
 			}
 			u.setDeviceToken(user.getDeviceToken());
 			mapperOnCache.updateByPrimaryKeySelective(u, u.getId());
-			SsoAuthenticationToken token = createToken(u.getId());
+			SsoAuthenticationToken token = ssoUserRepository.createToken(u.getId());
 			LoginResponse response = new LoginResponse(token,getSsoChatServer());
 			return response;
 		}catch(Exception e){
@@ -142,62 +120,14 @@ public class SsoServiceImpl implements SsoService {
 	}
 	
 	public SsoUser getSsoUserByName(String username) {
-		ShardedJedis jedis = null;
-		try{
-			jedis = redisPool.getConn();
-			String useridStr = null;
-			try{
-				useridStr = jedis.hget(CF_INDEX_USER_USERNAME, username);
-			}catch(Exception e){
-				logger.debug(username+" login error [hget]: "+e.getMessage());
-			}
-			if(StringUtils.isEmpty(useridStr)){
-				SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
-				ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
-				List<SsoUser> ssoUserList = ssoUserMapper.selectByExample(ssoUserCriteria);
-				if(ssoUserList!=null&&ssoUserList.size()>0){
-					SsoUser user = ssoUserList.get(0);
-					useridStr = user.getId()+"";
-					try{
-						jedis.hset(CF_INDEX_USER_USERNAME, username, useridStr);
-					}catch(Exception e){
-						logger.debug(username+" login error [hset] : "+e.getMessage());
-					}
-				}
-			}
-			return mapperOnCache.selectByPrimaryKey(SsoUser.class, useridStr);
-		}catch(Exception e){
-			logger.error("getSsoUserByName 异常",e);
-		}finally{
-			redisPool.closeConn(jedis);
-		}
-		return null;
+		return ssoUserRepository.getSsoUserByName(username);
 	}
 
 	@Override
 	public LoginResponse getToken(String token) throws Exception {
-		ShardedJedis jedis = null;
-		try{
-			jedis = redisPool.getConn();
-			String json = null;
-			try{
-				json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
-			}catch(Exception e){
-				throw new Exception("TOKEN 无效或已过期");
-			}
-			if(StringUtils.isEmpty(json))
-				throw new Exception("TOKEN 无效或已过期");
-			logger.debug("getToken 成功 : "+token);
-			
-			SsoAuthenticationToken tk = gson.fromJson(json, SsoAuthenticationToken.class);
-			LoginResponse response = new LoginResponse(tk,getSsoChatServer());
-			return response;
-		}catch(Exception e){
-			logger.debug("error : "+e.getMessage());
-			throw e;
-		}finally{
-			redisPool.closeConn(jedis);
-		}
+		SsoAuthenticationToken tk = ssoUserRepository.getToken(token);
+		LoginResponse response = new LoginResponse(tk,getSsoChatServer());
+		return response;
 	}
 
 	@Override
@@ -213,17 +143,22 @@ public class SsoServiceImpl implements SsoService {
 	 */
 	@Override
 	public void logout(String token) throws Exception {
-		ShardedJedis jedis = null;
-		try{
-			jedis = redisPool.getConn();
-			jedis.hdel(CF_TOKEN, token);
-			logger.debug("logout 成功 : "+token);
-		}catch(Exception e){
-			logger.error("logout 失败",e);
-			throw e;
-		}finally{
-			redisPool.closeConn(jedis);
-		}
+		ssoUserRepository.delToken(token);
+	}
+
+	@Override
+	public SsoVersion getVersion(String phoneType) throws Exception {
+		SsoVersionCriteria ssoVersionCriteria = new SsoVersionCriteria();
+		ssoVersionCriteria.createCriteria().andPhoneTypeEqualTo(phoneType);
+		ssoVersionCriteria.setOrderByClause("create_date desc");
+		return ssoVersionMapper.selectByExample(ssoVersionCriteria).get(0);
+	}
+
+	@Override
+	public String getFirstImage() {
+		String firstImage = commonConfig.get("app.first.image", null);
+		logger.debug("开机图片[firstImage]"+firstImage);
+		return firstImage;
 	}
 	
 }

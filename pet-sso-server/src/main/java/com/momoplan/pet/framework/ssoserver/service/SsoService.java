@@ -2,6 +2,7 @@ package com.momoplan.pet.framework.ssoserver.service;
 
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.po.SsoVersion;
 import com.momoplan.pet.framework.ssoserver.CacheKeysConstance;
 import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
 
@@ -49,5 +50,16 @@ public interface SsoService extends CacheKeysConstance{
 	 * @param username
 	 * @return
 	 */
-	public SsoUser getSsoUserByName(String username);
+	public SsoUser getSsoUserByName(String username)throws Exception ;
+	/**
+	 * 获取当前版本信息
+	 * @return
+	 */
+	public SsoVersion getVersion(String phoneType)throws Exception ;
+	/**
+	 * 获取开机图片
+	 * @return
+	 */
+	public String getFirstImage()throws Exception ;
+
 }
