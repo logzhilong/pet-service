@@ -21,18 +21,13 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object quitForum(ClientRequest ClientRequest){
-		try {
+	public Object quitForum(ClientRequest ClientRequest) throws Exception{
 			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
 			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
 			String forumid=PetUtil.getParameter(ClientRequest, "forumid");
 			criteria.andIdEqualTo(forumid);
 			userForumRelMapper.deleteByExample(userForumRelCriteria);
 			return "quitForumSuccss";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "quitForumFail";
-		}
 	}
 	
 	/**
@@ -40,18 +35,14 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object attentionForum(ClientRequest ClientRequest){
-		try {
+	public Object attentionForum(ClientRequest ClientRequest) throws Exception{
+		
 			UserForumRel userForumRel=new UserForumRel();
 			userForumRel.setId(IDCreater.uuid());
 			userForumRel.setUserId(PetUtil.getParameter(ClientRequest, "userId"));
 			userForumRel.setForumId(PetUtil.getParameter(ClientRequest, "forumid"));
 			userForumRelMapper.insertSelective(userForumRel);
 			return "attentionForumSuccess";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "attentionForumFail";
-		}
 	}
 	
 }

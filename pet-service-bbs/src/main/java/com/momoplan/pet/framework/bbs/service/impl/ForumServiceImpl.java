@@ -51,7 +51,7 @@ public class ForumServiceImpl implements ForumService {
 	 * @param userForumRelMap
 	 * @return
 	 */
-	private ForumNode buildTree(List<Forum> rootList, Map<String, List<Forum>> pMap, Map<String, String> userForumRelMap) {
+	private ForumNode buildTree(List<Forum> rootList, Map<String, List<Forum>> pMap, Map<String, String> userForumRelMap) throws Exception{
 		ForumNode tree = new ForumNode();
 		List<ForumNode> child = new ArrayList<ForumNode>();
 		if (rootList != null && rootList.size() > 0)
@@ -100,7 +100,7 @@ public class ForumServiceImpl implements ForumService {
 	/**
 	 * add by liangc 获取所有栏目，以树的集合形式
 	 */
-	public List<ForumNode> getAllForumAsTree(String userId) {
+	public List<ForumNode> getAllForumAsTree(String userId) throws Exception{
 		ForumCriteria forumCriteria = new ForumCriteria();
 		// TODO 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
@@ -156,7 +156,7 @@ public class ForumServiceImpl implements ForumService {
 	 * @param userForumRelMap
 	 * @return
 	 */
-	private ForumNode getAtteForum(List<Forum> forumlist, Map<String, String> userForumRelMap) {
+	private ForumNode getAtteForum(List<Forum> forumlist, Map<String, String> userForumRelMap) throws Exception{
 		ForumNode node0 = new ForumNode();
 		node0.setAtte(true);
 		node0.setId("0");

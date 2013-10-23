@@ -9,12 +9,12 @@ public interface UserForumRelService {
 	 * 退出圈子
 	 * @return
 	 */
-	public Object quitForum(ClientRequest ClientRequest);
+	public Object quitForum(ClientRequest ClientRequest) throws Exception;
 	
 	/**
 	 * 关注圈子
 	 * @return
 	 */
-	public Object attentionForum(ClientRequest ClientRequest);
+	public Object attentionForum(ClientRequest ClientRequest) throws Exception;
 	
 }

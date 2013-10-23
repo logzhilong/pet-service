@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +17,6 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
-import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
@@ -29,17 +26,25 @@ import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 @Service
 public class NoteServiceImpl implements NoteService {
-	@Resource
 	private NoteMapper noteMapper=null;
-	@Resource
-	private NoteSubMapper noteSubMapper=null;
-	@Resource
 	private NoteRepository noteRepository = null;
-	@Resource
 	private NoteSubRepository noteSubRepository = null;
-	@Autowired
 	private MapperOnCache mapperOnCache = null;
 	
+	
+	@Autowired
+	public NoteServiceImpl(NoteMapper noteMapper,
+			NoteRepository noteRepository, NoteSubRepository noteSubRepository,
+			MapperOnCache mapperOnCache) {
+		super();
+		this.noteMapper = noteMapper;
+		this.noteRepository = noteRepository;
+		this.noteSubRepository = noteSubRepository;
+		this.mapperOnCache = mapperOnCache;
+	}
+
+
+
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 	
 	/**
@@ -48,8 +53,8 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object sendNote(ClientRequest ClientRequest) {
-		try {
+	public Object sendNote(ClientRequest ClientRequest) throws Exception {
+		
 			Note bbsNote = new Note();
 			bbsNote.setId(IDCreater.uuid());
 			bbsNote.setUserId(PetUtil.getParameter(ClientRequest,"userId"));
@@ -68,10 +73,6 @@ public class NoteServiceImpl implements NoteService {
 			logger.debug(""+bbsNote.toString());
 			noteRepository.insertSelective(bbsNote);
 			return bbsNote;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "sendNoteFail";
-		}
 	}
 
 	/**
@@ -81,8 +82,8 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object searchNote(ClientRequest ClientRequest) {
-		try {
+	public Object searchNote(ClientRequest ClientRequest) throws Exception {
+		
 			NoteCriteria noteCriteria = new NoteCriteria();
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
@@ -108,10 +109,6 @@ public class NoteServiceImpl implements NoteService {
 				System.out.println("aaaaa"+f);
 			}
 			return notelist;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "searchNoteFail";
-		}
 	}
 
 	
@@ -122,8 +119,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object detailNote(ClientRequest ClientRequest) {
-		try {
+	public Object detailNote(ClientRequest ClientRequest) throws Exception {
 			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			NoteCriteria noteCriteria = new NoteCriteria();
 			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
@@ -136,10 +132,6 @@ public class NoteServiceImpl implements NoteService {
 				note2.setContent(note.getContent());
 			}
 			return notelist;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "detailNoteFail";
-		}
 	}
 
 	
@@ -150,18 +142,13 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object delNote(ClientRequest ClientRequest) {
-		try {
+	public Object delNote(ClientRequest ClientRequest) throws Exception {
 			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 			note.setIsDel(true);
 			note.setEt(new Date());
 			noteMapper.updateByPrimaryKey(note);
 			return "delNoteSuccess";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "delNoteFail";
-		}
 	}
 
 	
@@ -175,18 +162,13 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object reportNote(ClientRequest ClientRequest) {
-		try {
+	public Object reportNote(ClientRequest ClientRequest) throws Exception {
 			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 			note.setState("1");
 			note.setEt(new Date());
 			noteMapper.updateByPrimaryKey(note);
 			return "reportNoteSuccess";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "reportNoteFail";
-		}
 	}
 	
 	
@@ -196,8 +178,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(ClientRequest ClientRequest){
-		try {
+	public Object updateClickCount(ClientRequest ClientRequest) throws Exception {
 			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 				if(note.equals(null)){
@@ -208,18 +189,13 @@ public class NoteServiceImpl implements NoteService {
 					noteMapper.updateByPrimaryKey(note);
 					return "updateClickCountSuccess";
 				}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "updateClickCountFail";
-		}
 	}
 	
 	/**
 	 * 我发表过的帖子列表
 	 * 
 	 */
-	public Object getMyNotedListByuserid(ClientRequest ClientRequest){
-		try {
+	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
@@ -230,18 +206,13 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userid"));
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			return notelist;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getMyNotedCountByuseridFail";
-		}
 	}
 
 	/**
 	 *今日新增帖子列表
 	 * 
 	 */
-	public Object getTodayNewNoteListByFid(ClientRequest ClientRequest){
-		try {
+	public Object getTodayNewNoteListByFid(ClientRequest ClientRequest) throws Exception {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
 			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
@@ -292,12 +263,7 @@ public class NoteServiceImpl implements NoteService {
 			for(Note note:notelist){
 					notes.add(note);
 			}
-			
 			return notes;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getTodayNewNoteListFail";
-		}
 	}
 	
 	/**
@@ -307,8 +273,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object newNoteByFid(ClientRequest ClientRequest) {
-		try {
+	public Object newNoteByFid(ClientRequest ClientRequest) throws Exception {
 			NoteCriteria noteCriteria = new NoteCriteria();
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
@@ -353,10 +318,6 @@ public class NoteServiceImpl implements NoteService {
 			
 			
 			return notes;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "newNotesByidFail";
-		}
 	}
 	
 	
@@ -365,8 +326,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getEuteNoteList(ClientRequest ClientRequest){
-		try {
+	public Object getEuteNoteList(ClientRequest ClientRequest) throws Exception {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
@@ -399,10 +359,6 @@ public class NoteServiceImpl implements NoteService {
 				noteVoList.add(vo);
 			}
 			return noteVoList;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getEuteNoteListFail";
-		}
 	}
 	
 	
@@ -410,8 +366,7 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid是否为0判断是否全站或者某圈子内)
 	 */
-	public Object getNewReplysByReplyct(ClientRequest ClientRequest){
-		try {
+	public Object getNewReplysByReplyct(ClientRequest ClientRequest) throws Exception {
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
@@ -429,9 +384,5 @@ public class NoteServiceImpl implements NoteService {
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			return noteMapper.selectByExample(noteCriteria);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "getNewReplysByReplyct";
-		}
 	}
 }
