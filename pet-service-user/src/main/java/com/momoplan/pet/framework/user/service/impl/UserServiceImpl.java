@@ -146,11 +146,11 @@ public class UserServiceImpl implements UserService {
 			String type = SubscriptionType.SUB.toString();//TODO 这种写法不好，以后要合并到 Po 中去，让 Po 认识自己的 枚举
 			logger.debug("添加好友 aid="+aid+" ; bid="+bid);
 			UserFriendship userFriendship = new UserFriendship();
-			userFriendship.setaId(IDCreater.uuid());
+			userFriendship.setId(IDCreater.uuid());
 			userFriendship.setaId(ua);
 			userFriendship.setbId(ub);
 			userFriendship.setVerified(type);
-			userFriendshipMapper.insertSelective(userFriendship);
+			mapperOnCache.insertSelective(userFriendship, userFriendship.getId());
 		}else if("unsubscribed".equalsIgnoreCase(st)){
 			logger.debug("删除好友 aid="+aid+" ; bid="+bid);
 			//这里应该是删除数据的操作吧？
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 			List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
 			if(list!=null)
 				for(UserFriendship uf:list){
-					userFriendshipMapper.deleteByPrimaryKey(uf.getId());
+					mapperOnCache.deleteByPrimaryKey(uf.getClass(), uf.getId());
 				}
 		}else{
 			throw new Exception("无法识别 SubscriptionType="+st);
