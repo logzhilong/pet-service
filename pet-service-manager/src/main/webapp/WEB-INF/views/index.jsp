@@ -213,17 +213,6 @@ $(function(){
 						<div class="accountInfo"></div>
 						<div class="pageFormContent" layoutH="80">
 							欢迎来到服务器监控平台 v0.1<br/><br/><br/><br/>
-							<h1>
-							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>
-							</h1>
-							<br/><br/><br/><br/>
-							<h1>
-							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>
-							</h1>
-							<br/><br/><br/><br/>
-							<h1>
-							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>
-							</h1>
 							<br/><br/><br/><br/>
 							<h1>
 							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>

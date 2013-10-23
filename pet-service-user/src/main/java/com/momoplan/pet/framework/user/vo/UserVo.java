@@ -2,7 +2,7 @@ package com.momoplan.pet.framework.user.vo;
 
 import org.springframework.beans.BeanUtils;
 
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 /**
  * 用户信息，包括坐标
  * @author liangc

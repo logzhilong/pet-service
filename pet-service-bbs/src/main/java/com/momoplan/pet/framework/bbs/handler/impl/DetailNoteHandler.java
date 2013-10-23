@@ -26,10 +26,10 @@ public class DetailNoteHandler extends AbstractHandler {
 				noteService.updateClickCount(clientRequest);
 				Object object=noteService.detailNote(clientRequest);
 				
-			logger.debug("删除帖子成功 body="+gson.toJson(clientRequest));
+			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
-			logger.debug("删除帖子失败 body="+gson.toJson(clientRequest));
+			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{

@@ -1,4 +1,8 @@
-<h2 class="contentTitle">uploadify多文件上传</h2>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/commons/taglibs.jsp"%>
+
+
+<h2 class="contentTitle">多文件上传</h2>
 
 <style type="text/css" media="screen">
 .my-uploadify-button {
@@ -65,18 +69,38 @@
 	
 <textarea cols="160" rows="10">
 uploaderOption: http://www.uploadify.com/documentation/
-	auto            : true,               // Automatically upload files when added to the queue
-	buttonClass     : '',                 // A class name to add to the browse button DOM object
-	buttonCursor    : 'hand',             // The cursor to use with the browse button
-	buttonImage     : null,               // (String or null) The path to an image to use for the Flash browse button if not using CSS to style the button
-	buttonText      : 'SELECT FILES',     // The text to use for the browse button
-	checkExisting   : false,              // The path to a server-side script that checks for existing files on the server
-	debug           : false,              // Turn on swfUpload debugging mode
-	fileObjName     : 'Filedata',         // The name of the file object to use in your server-side script
-	fileSizeLimit   : 0,                  // The maximum size of an uploadable file in KB (Accepts units B KB MB GB if string, 0 for no limit)
-	fileTypeDesc    : 'All Files',        // The description for file types in the browse dialog
-	fileTypeExts    : '*.*',              // Allowed extensions in the browse dialog (server-side validation should also be used)
-	height          : 30,                 // The height of the browse button
+	auto            : true,               // 上传文件时,自动添加到队列
+	buttonClass     : '',                 // 一个类名称添加到浏览按钮DOM对象
+
+
+	buttonCursor    : 'hand',             // 光标到使用browse按钮
+
+
+	buttonImage     : null,               // (String或null)到一个图像的路径使用Flash browse按钮如果不使用CSS样式按钮
+	buttonText      : 'SELECT FILES',     // 文本使用browse按钮
+
+
+	checkExisting   : false,              // 通往一个服务器端脚本,检查现有的文件在服务器上
+
+
+	debug           : false,              // 打开swfUpload调试模式
+
+
+	fileObjName     : 'Filedata',         // 文件对象的名称使用在你的服务器端脚本
+
+
+	fileSizeLimit   : 0,                  // 最大大小上载文件在KB(接受单位B KB MB GB如果字符串,0(无极限
+
+
+	fileTypeDesc    : 'All Files',        // 文件类型的描述在浏览对话框
+
+
+	fileTypeExts    : '*.*',              //允许扩展在浏览对话框(服务器端验证也应该被使用
+
+
+	height          : 30,                 // 浏览按钮的高度
+
+
 	itemTemplate    : false,              // The template for the file item in the queue
 	method          : 'post',             // The method to use when sending files to the server-side upload script
 	multi           : true,               // Allow multiple file selection in the browse dialog

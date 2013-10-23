@@ -33,6 +33,7 @@
 		        <entry key="register2" value="service.uri.pet_sso"/>
 		        <entry key="isUsernameInuse" value="service.uri.pet_sso"/>
 		        <entry key="getVerificationCode" value="service.uri.pet_sso"/>
+		        <entry key="resetPassword" value="service.uri.pet_sso"/>
 		        <entry key="verifyCode" value="service.uri.pet_sso"/>
 	    	</map>  
 		</property>

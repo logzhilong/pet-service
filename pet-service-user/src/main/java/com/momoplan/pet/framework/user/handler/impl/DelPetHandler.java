@@ -4,12 +4,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 /*
@@ -42,30 +45,26 @@ OUTPUT:
  * 获取宠物信息
  * @author liangc
  */
-@Component("getPetinfo")
-public class GetPetHandler extends AbstractHandler {
+@Component("delPetinfo")
+public class DelPetHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(GetPetHandler.class);
+	private Logger logger = LoggerFactory.getLogger(DelPetHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String userid = null;
-			if(clientRequest.getParams()!=null){
-				userid = getParameter(clientRequest, "userid");
-				logger.debug("根据userid 获取用户信息 userid="+userid);
-			}else{
+			String userid = PetUtil.getParameter(clientRequest, "userid");
+			if(StringUtils.isEmpty(userid)){
 				String token = clientRequest.getToken();
-				userid = getToken(token).getUserid();
-				logger.debug("根据token 获取用户信息 token="+token);
+				SsoAuthenticationToken tokenObj = getToken(token);
+				userid = tokenObj.getUserid()+"";
 			}
 			List<PetInfo> list = userService.getPetInfo(userid);
 			rtn = new Success(true,list).toString();
-			logger.debug("获取宠物信息 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
-			logger.debug("获取宠物信息 失败 body="+gson.toJson(clientRequest));
-			logger.error(e.getMessage(),e);
+			logger.debug("token无效 body="+gson.toJson(clientRequest));
+			logger.debug(e.getMessage());
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);

@@ -16,13 +16,13 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
-import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoChatServerMapper;
-import com.momoplan.pet.commons.domain.ssoserver.mapper.SsoUserMapper;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoChatServer;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoChatServerCriteria;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUser;
-import com.momoplan.pet.commons.domain.ssoserver.po.SsoUserCriteria;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.mapper.SsoChatServerMapper;
+import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
+import com.momoplan.pet.commons.domain.user.po.SsoChatServer;
+import com.momoplan.pet.commons.domain.user.po.SsoChatServerCriteria;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.po.SsoUserCriteria;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.ssoserver.service.SsoService;
 import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
@@ -59,8 +59,8 @@ public class SsoServiceImpl implements SsoService {
 		if(getSsoUserByName(user.getUsername())!=null){
 			throw new Exception("用户名 "+user.getUsername()+" 已存在");
 		}
-		user.setVersion(0);
-		ssoUserMapper.insertSelective(user);
+		user.setId(IDCreater.uuid());
+		mapperOnCache.insertSelective(user, user.getId());
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
 		SsoAuthenticationToken token = createToken(user.getId());
@@ -73,7 +73,7 @@ public class SsoServiceImpl implements SsoService {
 	 * @param userId
 	 * @return
 	 */
-	private SsoAuthenticationToken createToken(Long userId) {
+	private SsoAuthenticationToken createToken(String userId) {
 		SsoAuthenticationToken authenticationToken = new SsoAuthenticationToken();
 		authenticationToken.setExpire(-1L);
 		authenticationToken.setToken(IDCreater.uuid());
@@ -165,7 +165,7 @@ public class SsoServiceImpl implements SsoService {
 					}
 				}
 			}
-			return mapperOnCache.selectByPrimaryKey(SsoUser.class, Long.parseLong(useridStr));
+			return mapperOnCache.selectByPrimaryKey(SsoUser.class, useridStr);
 		}catch(Exception e){
 			logger.error("getSsoUserByName 异常",e);
 		}finally{

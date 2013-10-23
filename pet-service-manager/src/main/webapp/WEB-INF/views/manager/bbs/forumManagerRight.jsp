@@ -6,7 +6,7 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li>
-				<a class="add" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html" target="dialog" max="false" rel="rolemanage_add_dialog" mask="true" title="添加" width="550" height="360" >
+				<a class="add" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html" target="dialog" max="false" rel="rolemanage_add_dialog" mask="true" title="添加" width="850" height="760" >
 					<span>添加</span>
 				</a>				
 			</li>

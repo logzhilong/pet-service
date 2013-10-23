@@ -51,7 +51,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 			Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
 			note.setEt(new Date());
 			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
-			return "replySuccss";
+			return bbsNoteSub;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "replyNoteFail";
