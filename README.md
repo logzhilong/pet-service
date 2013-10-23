@@ -348,6 +348,15 @@ pet-service
       
       输出：{"success":true,"entity":"OK" }
       
+    9、getFriendList
+    
+      功能：获取好友列表，如果获取当前登录人的好友列表，则不需要传递 params 参数，用 token 即可获取
+      
+      输入：{"userid":"770"}
+      
+      输出：{"success":true,"entity":[{"id":"747","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
+
+      
       
       
       
