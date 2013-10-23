@@ -137,7 +137,7 @@ public class SsoServiceImpl implements SsoService {
 			LoginResponse response = new LoginResponse(token,getSsoChatServer());
 			return response;
 		}catch(Exception e){
-			throw new Exception("login error :",e);
+			throw e;
 		}
 	}
 	
