@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-22 16:16:55
+* @date 2013-10-23 15:26:24
 */
 public class UserFriendship implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,9 +24,7 @@ public class UserFriendship implements Serializable {
 
     private String remark;
 
-    private Integer verified;
-
-    private Integer version;
+    private String verified;
 
     private String aliasa;
 
@@ -64,20 +62,12 @@ public class UserFriendship implements Serializable {
         this.remark = remark;
     }
 
-    public Integer getVerified() {
+    public String getVerified() {
         return verified;
     }
 
-    public void setVerified(Integer verified) {
+    public void setVerified(String verified) {
         this.verified = verified;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
     }
 
     public String getAliasa() {
@@ -113,7 +103,6 @@ public class UserFriendship implements Serializable {
             && (this.getbId() == null ? other.getbId() == null : this.getbId().equals(other.getbId()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
             && (this.getVerified() == null ? other.getVerified() == null : this.getVerified().equals(other.getVerified()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
             && (this.getAliasa() == null ? other.getAliasa() == null : this.getAliasa().equals(other.getAliasa()))
             && (this.getAliasb() == null ? other.getAliasb() == null : this.getAliasb().equals(other.getAliasb()));
     }
@@ -127,7 +116,6 @@ public class UserFriendship implements Serializable {
         result = prime * result + ((getbId() == null) ? 0 : getbId().hashCode());
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
         result = prime * result + ((getVerified() == null) ? 0 : getVerified().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getAliasa() == null) ? 0 : getAliasa().hashCode());
         result = prime * result + ((getAliasb() == null) ? 0 : getAliasb().hashCode());
         return result;

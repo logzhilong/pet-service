@@ -6,8 +6,7 @@
     <result column="a_id" property="aId" jdbcType="VARCHAR" />
     <result column="b_id" property="bId" jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="verified" property="verified" jdbcType="INTEGER" />
-    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="verified" property="verified" jdbcType="VARCHAR" />
     <result column="aliasa" property="aliasa" jdbcType="VARCHAR" />
     <result column="aliasb" property="aliasb" jdbcType="VARCHAR" />
   </resultMap>
@@ -70,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, a_id, b_id, remark, verified, version, aliasa, aliasb
+    id, a_id, b_id, remark, verified, aliasa, aliasb
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.user.po.UserFriendshipCriteria" >
     select
@@ -106,10 +105,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.user.po.UserFriendship" >
-    insert into user_friendship (id, a_id, b_id, remark, verified, version, aliasa, aliasb
-      )
-    values (#{id}, #{aId}, #{bId}, #{remark}, #{verified}, #{version}, #{aliasa}, #{aliasb}
-      )
+    insert into user_friendship (id, a_id, b_id, remark, verified, aliasa, aliasb)
+    values (#{id}, #{aId}, #{bId}, #{remark}, #{verified}, #{aliasa}, #{aliasb})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.user.po.UserFriendship" >
     insert into user_friendship
@@ -128,9 +125,6 @@
       </if>
       <if test="verified != null" >
         verified,
-      </if>
-      <if test="version != null" >
-        version,
       </if>
       <if test="aliasa != null" >
         aliasa,
@@ -154,9 +148,6 @@
       </if>
       <if test="verified != null" >
         #{verified},
-      </if>
-      <if test="version != null" >
-        #{version},
       </if>
       <if test="aliasa != null" >
         #{aliasa},
@@ -190,9 +181,6 @@
       <if test="record.verified != null" >
         verified = #{record.verified},
       </if>
-      <if test="record.version != null" >
-        version = #{record.version},
-      </if>
       <if test="record.aliasa != null" >
         aliasa = #{record.aliasa},
       </if>
@@ -211,7 +199,6 @@
       b_id = #{record.bId},
       remark = #{record.remark},
       verified = #{record.verified},
-      version = #{record.version},
       aliasa = #{record.aliasa},
       aliasb = #{record.aliasb}
     <if test="_parameter != null" >
@@ -233,9 +220,6 @@
       <if test="verified != null" >
         verified = #{verified},
       </if>
-      <if test="version != null" >
-        version = #{version},
-      </if>
       <if test="aliasa != null" >
         aliasa = #{aliasa},
       </if>
@@ -251,7 +235,6 @@
       b_id = #{bId},
       remark = #{remark},
       verified = #{verified},
-      version = #{version},
       aliasa = #{aliasa},
       aliasb = #{aliasb}
     where id = #{id}

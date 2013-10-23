@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-22 16:16:55
+* @date 2013-10-23 15:26:24
 */
 public interface SsoVersionMapper {
     /**

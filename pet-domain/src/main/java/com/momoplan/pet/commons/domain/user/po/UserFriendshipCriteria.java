@@ -9,7 +9,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-22 16:16:55
+* @date 2013-10-23 15:26:24
 */
 public class UserFriendshipCriteria {
     protected String orderByClause;
@@ -442,113 +442,63 @@ public class UserFriendshipCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedEqualTo(Integer value) {
+        public Criteria andVerifiedEqualTo(String value) {
             addCriterion("verified =", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedNotEqualTo(Integer value) {
+        public Criteria andVerifiedNotEqualTo(String value) {
             addCriterion("verified <>", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedGreaterThan(Integer value) {
+        public Criteria andVerifiedGreaterThan(String value) {
             addCriterion("verified >", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedGreaterThanOrEqualTo(Integer value) {
+        public Criteria andVerifiedGreaterThanOrEqualTo(String value) {
             addCriterion("verified >=", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedLessThan(Integer value) {
+        public Criteria andVerifiedLessThan(String value) {
             addCriterion("verified <", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedLessThanOrEqualTo(Integer value) {
+        public Criteria andVerifiedLessThanOrEqualTo(String value) {
             addCriterion("verified <=", value, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedIn(List<Integer> values) {
+        public Criteria andVerifiedLike(String value) {
+            addCriterion("verified like", value, "verified");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifiedNotLike(String value) {
+            addCriterion("verified not like", value, "verified");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifiedIn(List<String> values) {
             addCriterion("verified in", values, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedNotIn(List<Integer> values) {
+        public Criteria andVerifiedNotIn(List<String> values) {
             addCriterion("verified not in", values, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedBetween(Integer value1, Integer value2) {
+        public Criteria andVerifiedBetween(String value1, String value2) {
             addCriterion("verified between", value1, value2, "verified");
             return (Criteria) this;
         }
 
-        public Criteria andVerifiedNotBetween(Integer value1, Integer value2) {
+        public Criteria andVerifiedNotBetween(String value1, String value2) {
             addCriterion("verified not between", value1, value2, "verified");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIsNull() {
-            addCriterion("version is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIsNotNull() {
-            addCriterion("version is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionEqualTo(Integer value) {
-            addCriterion("version =", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotEqualTo(Integer value) {
-            addCriterion("version <>", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionGreaterThan(Integer value) {
-            addCriterion("version >", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionGreaterThanOrEqualTo(Integer value) {
-            addCriterion("version >=", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionLessThan(Integer value) {
-            addCriterion("version <", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionLessThanOrEqualTo(Integer value) {
-            addCriterion("version <=", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIn(List<Integer> values) {
-            addCriterion("version in", values, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotIn(List<Integer> values) {
-            addCriterion("version not in", values, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionBetween(Integer value1, Integer value2) {
-            addCriterion("version between", value1, value2, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotBetween(Integer value1, Integer value2) {
-            addCriterion("version not between", value1, value2, "version");
             return (Criteria) this;
         }
 
