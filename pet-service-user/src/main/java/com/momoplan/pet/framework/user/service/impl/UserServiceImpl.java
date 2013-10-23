@@ -3,6 +3,7 @@ package com.momoplan.pet.framework.user.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import redis.clients.jedis.ShardedJedis;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
+import com.momoplan.pet.commons.PushApn;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
@@ -25,6 +27,7 @@ import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.domain.user.po.UserFriendship;
 import com.momoplan.pet.commons.domain.user.po.UserFriendshipCriteria;
 import com.momoplan.pet.commons.repository.user.SsoUserRepository;
+import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.user.enums.SubscriptionType;
 import com.momoplan.pet.framework.user.service.UserService;
 import com.momoplan.pet.framework.user.vo.UserVo;
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
 
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
+	private CommonConfig commonConfig = null;
 	private SsoUserMapper ssoUserMapper = null;
 	private MapperOnCache mapperOnCache = null;
 	private PetInfoMapper petInfoMapper = null; 
@@ -45,9 +49,10 @@ public class UserServiceImpl implements UserService {
 	private SsoUserRepository ssoUserRepository = null;
 	
 	@Autowired
-	public UserServiceImpl(SsoUserMapper ssoUserMapper, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool, UserFriendshipMapper userFriendshipMapper,
-			SsoUserRepository ssoUserRepository) {
+	public UserServiceImpl(CommonConfig commonConfig, SsoUserMapper ssoUserMapper, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool,
+			UserFriendshipMapper userFriendshipMapper, SsoUserRepository ssoUserRepository) {
 		super();
+		this.commonConfig = commonConfig;
 		this.ssoUserMapper = ssoUserMapper;
 		this.mapperOnCache = mapperOnCache;
 		this.petInfoMapper = petInfoMapper;
@@ -161,6 +166,22 @@ public class UserServiceImpl implements UserService {
 				}
 		}else{
 			throw new Exception("无法识别 SubscriptionType="+st);
+		}
+	}
+
+	@Override
+	public void pushMsgApn(String fromname, String toname, String msg) throws Exception {
+		String pwd = commonConfig.get("ios.push.pwd","110110");
+		SsoUser from = ssoUserRepository.getSsoUserByName(fromname);
+		SsoUser to = ssoUserRepository.getSsoUserByName(toname);
+		String deviceToken = to.getDeviceToken();
+		if(StringUtils.isNotEmpty(deviceToken)){
+			//TODO 暂时先用用户名或昵称吧
+			String name = from.getNickname();
+			if(StringUtils.isEmpty(name)){
+				name = fromname;
+			}
+			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
 		}
 	}
 	

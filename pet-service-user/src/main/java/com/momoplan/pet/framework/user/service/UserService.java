@@ -60,4 +60,13 @@ public interface UserService extends CacheKeysConstance{
 	 * @throws Exception
 	 */
 	public void addOrRemoveFriend(String st,String aid,String bid) throws Exception ;
+	/**
+	 * 向IOS推送消息
+	 * @param fromname
+	 * @param toname
+	 * @param msg
+	 * @throws Exception
+	 */
+	public void pushMsgApn(String fromname,String toname,String msg) throws Exception;
+	
 }
