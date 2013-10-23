@@ -53,6 +53,11 @@ public class TokenInterceptor implements HandlerInterceptor {
 			logger.debug("跳过TOKEN校验 : service="+service+" ; method="+method);
 			return true;
 		}
+		String c = clientRequest.getChannel();//如果 channel == 9 则表示为 XMPP 服务器回调的请求，不需要校验TOKEN
+		if("9".equals(c)){
+			logger.debug("跳过TOKEN校验 : XMPP 回调请求");
+			return true;
+		}
 		String token = clientRequest.getToken();
 		if(!checkToken(token)){
 			logger.debug("TOKEN 校验未通过");
