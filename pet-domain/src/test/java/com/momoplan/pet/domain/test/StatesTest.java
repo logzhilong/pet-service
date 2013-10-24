@@ -22,6 +22,7 @@ public class StatesTest extends AbstractTest {
 		StatesUserStates statesUserStates = new StatesUserStates();
 		statesUserStates.setId(IDCreater.uuid());
 		statesUserStates.setCt(new Date());
+		statesUserStates.setUserid("882");
 		statesUserStatesMapper.insertSelective(statesUserStates);
 		System.out.println("OK.........");
 		System.out.println("OK.........");

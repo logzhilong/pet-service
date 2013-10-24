@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,6 +121,25 @@ public class StorePool {
 		return null;
 	}
 
+	public List<String> get(String ... key){
+		Jedis j = null;
+		try{
+			j = getConn();
+			List<String> list = new ArrayList<String>();
+			for(String k : key){
+				String v = j.get(k);
+				if(StringUtils.isNotEmpty(v))
+					list.add(v);
+			}
+			return list;
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			closeConn(j);
+		}
+		return null;
+	}
+	
 	public void del(String ... keys){
 		Jedis j = null;
 		try{
