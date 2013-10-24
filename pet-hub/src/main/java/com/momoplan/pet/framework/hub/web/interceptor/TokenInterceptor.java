@@ -1,5 +1,8 @@
 package com.momoplan.pet.framework.hub.web.interceptor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +34,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 	private CommonConfig commonConfig = null;
 	private MapFactoryBean passMethodMap = null;
 	private Gson gson = MyGson.getInstance();
-
+	private Map<String,Boolean> memCache = new HashMap<String,Boolean>(512);
+	
 	@Autowired
 	public TokenInterceptor(CommonConfig commonConfig, MapFactoryBean passMethodMap) {
 		super();
@@ -126,6 +130,14 @@ public class TokenInterceptor implements HandlerInterceptor {
 	 * @return true 有效，false 无效
 	 */
 	private boolean checkToken(String token){
+		if(memCache.get(token)){
+			if(memCache.size()>2000000){
+				memCache.clear();
+				logger.info("Clear memCache , size > 2000000");
+			}
+			logger.debug("memCache find token="+token);
+			return true;
+		}
 		String sso_server = commonConfig.get("service.uri.pet_sso");
 		try {
 			ClientRequest request = new ClientRequest();
@@ -135,8 +147,10 @@ public class TokenInterceptor implements HandlerInterceptor {
 			logger.debug("token : "+json);
 			JSONObject success = new JSONObject(json);
 			boolean isSuccess = success.getBoolean("success");
-			if(isSuccess)
+			if(isSuccess){
+				memCache.put(token, isSuccess);
 				return true;
+			}
 			return false;
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
