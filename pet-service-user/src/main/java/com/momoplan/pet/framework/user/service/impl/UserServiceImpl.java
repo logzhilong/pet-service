@@ -1,7 +1,9 @@
 package com.momoplan.pet.framework.user.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -11,15 +13,16 @@ import org.springframework.stereotype.Service;
 
 import redis.clients.jedis.ShardedJedis;
 
+import com.momoplan.pet.commons.GeoHash;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PushApn;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.dto.UserLocation;
 import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
-import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.PetInfoCriteria;
@@ -32,7 +35,6 @@ import com.momoplan.pet.framework.user.enums.SubscriptionType;
 import com.momoplan.pet.framework.user.service.UserService;
 import com.momoplan.pet.framework.user.vo.UserVo;
 /**
- * TODO 关于 token 相关的操作，应该在 redis 中完成，此处留一个作业
  * @author liangc
  */
 @Service
@@ -41,34 +43,96 @@ public class UserServiceImpl implements UserService {
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	private CommonConfig commonConfig = null;
-	private SsoUserMapper ssoUserMapper = null;
 	private MapperOnCache mapperOnCache = null;
 	private PetInfoMapper petInfoMapper = null; 
 	private RedisPool redisPool = null;
 	private UserFriendshipMapper userFriendshipMapper = null;
 	private SsoUserRepository ssoUserRepository = null;
+	private GeoHash geoHash = new GeoHash();
+	private StorePool storePool = null;
+	
 	
 	@Autowired
-	public UserServiceImpl(CommonConfig commonConfig, SsoUserMapper ssoUserMapper, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool,
-			UserFriendshipMapper userFriendshipMapper, SsoUserRepository ssoUserRepository) {
+	public UserServiceImpl(CommonConfig commonConfig, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool, UserFriendshipMapper userFriendshipMapper,
+			SsoUserRepository ssoUserRepository, StorePool storePool) {
 		super();
 		this.commonConfig = commonConfig;
-		this.ssoUserMapper = ssoUserMapper;
 		this.mapperOnCache = mapperOnCache;
 		this.petInfoMapper = petInfoMapper;
 		this.redisPool = redisPool;
 		this.userFriendshipMapper = userFriendshipMapper;
 		this.ssoUserRepository = ssoUserRepository;
+		this.storePool = storePool;
 	}
 
 	@Override
 	public void updateUser(SsoUser user) throws Exception {
 		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
 	}
-
+	
+	/**
+	 * 获取附近的人，两个查询条件，分别是性别、宠物类型
+	 * @param userId
+	 * @param gender 性别
+	 * @param petType 宠物类型
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 * @throws Exception
+	 */
+	public List<UserVo> getNearPerson(String userId,String gender,String petType, double longitude, double latitude) throws Exception {
+		String hash = geoHash.encode(latitude, longitude);
+		String subHash = hash.substring(0,6);
+		logger.debug("区域编码 "+subHash);
+		String key = USER_LOCATION_GEOHASH+"*"+subHash+"*";
+		Set<String> uids = storePool.keys(key);
+		List<UserVo> uvs = new ArrayList<UserVo>();
+		for(String uid : uids){
+			if(!userId.equals(uid)){//附近的人里排除自己
+				UserLocation ul = getUserLocation(uid);
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
+				user.setPassword(null);
+				UserVo uv = new UserVo(user,ul.getLongitude()+"",ul.getLatitude()+"");
+				//TODO 通过查询条件过滤
+				logger.debug("//TODO 通过查询条件过滤");
+				uvs.add(uv);
+				logger.debug(userId+" 附近 "+uv.toString());
+			}
+		}
+		//TODO 排序结果集，按照距离排序
+		logger.debug("//TODO 排序结果集，按照距离排序");
+		return uvs;
+	}
+	
+	/**
+	 * TODO 这个地方，如果压力过大，可以调整成云存储方式，但思路是一样的
+	 * @param userId
+	 * @param longitude
+	 * @param latitude
+	 * @throws Exception
+	 */
+	private void updateUserGeohash(String userId, double longitude, double latitude)throws Exception {
+		try{
+			String hash = geoHash.encode(latitude, longitude);
+			String hashKey = USER_LOCATION_GEOHASH+userId+":"+hash;
+			logger.debug("hash="+hash+" ; lat="+latitude+" ; lng="+longitude); 
+			Set<String> oldKeys = storePool.keys(USER_LOCATION_GEOHASH+userId+"*");
+			if(oldKeys!=null){
+				String[] oks = oldKeys.toArray(new String[oldKeys.size()]);
+				logger.debug("删除旧的坐标 del_geohash_keys_size="+oks.length);
+				storePool.del(oks);
+			}
+			logger.debug("记录新的坐标 key="+hashKey+" ; value="+userId);
+			storePool.set(hashKey, userId);
+		}catch(Exception e){
+			logger.error("坐标hash存储异常",e);
+		}
+	}
+	
 	@Override
 	public void updateUserLocation(String userId, double longitude, double latitude) throws Exception {
 		ShardedJedis jedis = null;
+		updateUserGeohash(userId ,longitude ,latitude);
 		try{
 			jedis = redisPool.getConn();
 			UserLocation ul = new UserLocation();
@@ -77,7 +141,7 @@ public class UserServiceImpl implements UserService {
 			ul.setLongitude(longitude);
 			ul.setUserid(userId);
 			String json = MyGson.getInstance().toJson(ul);
-			logger.debug("更新坐标 : "+json);
+			logger.debug("更新坐标,每个人一个列表 key="+LIST_USER_LOCATION+userId+" ; value="+json);
 			jedis.lpush(LIST_USER_LOCATION+userId, json);
 		}catch(Exception e){
 			logger.error("更新坐标异常",e);
@@ -109,9 +173,9 @@ public class UserServiceImpl implements UserService {
 		UserVo userVo = null;
 		user.setPassword(null);
 		if(userLocation!=null){
-			userVo = new UserVo(user,userLocation.getLongitude(),userLocation.getLatitude());
+			userVo = new UserVo(user,userLocation.getLongitude()+"",userLocation.getLatitude()+"");
 		}else{
-			userVo = new UserVo(user,0,0);
+			userVo = new UserVo(user,"0","0");
 		}
 		return userVo;
 	}
@@ -184,5 +248,34 @@ public class UserServiceImpl implements UserService {
 			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
 		}
 	}
+
+	@Override
+	public List<UserVo> getFirendList(String userid) throws Exception {
+		UserFriendshipCriteria userFriendshipCriteria = new UserFriendshipCriteria();
+		UserFriendshipCriteria.Criteria criteriaA = userFriendshipCriteria.createCriteria();
+		criteriaA.andAIdEqualTo(userid);
+		UserFriendshipCriteria.Criteria criteriaB = userFriendshipCriteria.createCriteria();
+		criteriaB.andBIdEqualTo(userid);
+		userFriendshipCriteria.or(criteriaB);
+		List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
+		List<UserVo> userList = new ArrayList<UserVo>();
+		//缓存取值
+		for(UserFriendship u : list){
+			String aid = u.getaId();
+			String bid = u.getbId();
+			String uid = userid.equals(aid)?bid:aid;
+			String alias = userid.equals(aid)?u.getAliasb():u.getAliasa();//别名
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
+			user.setPassword(null);
+			user.setEmail(null);
+			UserVo uv = new UserVo();
+			org.springframework.beans.BeanUtils.copyProperties(user, uv);
+			uv.setAlias(alias);
+			userList.add(uv);
+		}
+		return userList;
+	}
+	
+	
 	
 }

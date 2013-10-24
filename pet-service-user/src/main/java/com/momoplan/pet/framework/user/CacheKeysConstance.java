@@ -10,7 +10,11 @@ public interface CacheKeysConstance {
 	/**
 	 * 用户坐标，这里会存储坐标轨迹 LIST_USER_LOCATION + userid
 	 */
-	public static final String LIST_USER_LOCATION = "service_user.user_location:";
+	public static final String LIST_USER_LOCATION = "service_user.list.user_location:";
 
+	/**
+	 * 用户的坐标 geoHash 前缀， USER_LOCATION_GEOHASH + userid + : + hashcode
+	 */
+	public static final String USER_LOCATION_GEOHASH = "user_location.geohash:";
 
 }

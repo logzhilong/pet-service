@@ -97,4 +97,17 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 		
 		return petInfo;
 	}
+	
+	protected String getUseridFParamSToken(ClientRequest clientRequest) throws Exception{
+		String userid = null;
+		if(clientRequest.getParams()!=null&&getParameter(clientRequest, "userid")!=null){
+			userid = getParameter(clientRequest, "userid");
+			logger.debug("根据userid 获取用户信息 userid="+userid);
+		}else{
+			String token = clientRequest.getToken();
+			userid = getToken(token).getUserid();
+			logger.debug("根据token 获取用户信息 token="+token);
+		}
+		return userid;
+	}
 }
