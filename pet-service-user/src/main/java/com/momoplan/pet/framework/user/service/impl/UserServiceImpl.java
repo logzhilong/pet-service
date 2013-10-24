@@ -87,7 +87,8 @@ public class UserServiceImpl implements UserService {
 		String key = USER_LOCATION_GEOHASH+"*"+subHash+"*";
 		Set<String> uids = storePool.keys(key);
 		List<UserVo> uvs = new ArrayList<UserVo>();
-		for(String uid : uids){
+		for(String uk : uids){
+			String uid = storePool.get(uk);
 			if(!userId.equals(uid)){//附近的人里排除自己
 				UserLocation ul = getUserLocation(uid);
 				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
