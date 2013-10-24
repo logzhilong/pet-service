@@ -24,14 +24,18 @@ public class DispatcherController extends PetUtil {
 
 	@RequestMapping("/request")
 	public void request(String body, HttpServletRequest request,HttpServletResponse response) throws Exception{
-		logger.debug("input : "+logger);
+		long start = System.currentTimeMillis();
+		String method = null;
 		try{
 			ClientRequest clientRequest = reviceClientRequest(body);
-			String method = clientRequest.getMethod();
+			method = clientRequest.getMethod();
 			RequestHandler handrel = (RequestHandler)Bootstrap.getBean(method);
 			handrel.process(clientRequest, response);
 		}catch(Exception e){
 			writeStringToResponse(new Success(false,e.getMessage()).toString(),response);
+		}finally{
+			long end = System.currentTimeMillis();
+			logger.info("["+method+"]--"+(end-start)+"ms.");
 		}
 	}
 	
