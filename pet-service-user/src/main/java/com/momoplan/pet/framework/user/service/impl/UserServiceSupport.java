@@ -54,7 +54,7 @@ public class UserServiceSupport {
 		int pageSize = 20;
 		int pageNo = index;//从1开始
 		String bufferKey = UserService.LIST_USER_NEAR_BUFFER+userId;
-		List<String> list = storePool.lrange(bufferKey, pageNo-1, (pageNo)*pageSize);
+		List<String> list = storePool.lrange(bufferKey, pageNo*pageSize, (pageNo+1)*pageSize);
 		JSONArray jsonArray = new JSONArray();
 		for(String json : list){
 			JSONObject jsonObj = new JSONObject(json);
@@ -97,7 +97,7 @@ public class UserServiceSupport {
 					String _gender = uv.getGender();
 					if(!condition.equalsIgnoreCase(_gender)){
 						logger.debug(condition+" 条件不符，跳过 "+uv);
-						break;
+						continue;
 					}
 				}
 				//TODO 第二个条件：宠物类型

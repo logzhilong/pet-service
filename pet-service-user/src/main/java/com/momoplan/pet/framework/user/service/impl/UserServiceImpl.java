@@ -71,7 +71,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	@Override
 	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception {
 		int index = Integer.parseInt(pageIndex);
-		if(index==1){
+		if(index==0){
 			logger.debug("构建缓冲区 index="+index+" ; userid="+userId);
 			buildNearPersonBuffer(userId,gender,petType,longitude,latitude);
 		}

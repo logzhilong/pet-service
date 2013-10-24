@@ -44,8 +44,9 @@ public class GetNearPersonHandler extends AbstractHandler {
 			String longitude = getParameter(clientRequest, "longitude");
 			String latitude = getParameter(clientRequest, "latitude");
 			String pageIndex = getParameter(clientRequest, "pageIndex");
+			if(pageIndex==null||"".equals(pageIndex))
+				pageIndex = "0";
 			JSONArray jsonArray = userService.getNearPerson(pageIndex,userid, gender, petType, Double.valueOf(longitude), Double.valueOf(latitude));
-			
 			JSONObject success = new JSONObject();
 			success.put("success", true);
 			success.put("entity", jsonArray);
