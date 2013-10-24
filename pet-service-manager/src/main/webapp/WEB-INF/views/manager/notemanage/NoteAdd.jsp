@@ -1,26 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp"%>
 
-<style type="text/css" media="screen">
-.my-uploadify-button {
-	background: none;
-	border: none;
-	text-shadow: none;
-	border-radius: 0;
-}
 
-.uploadify:hover .my-uploadify-button {
-	background: none;
-	border: none;
-}
-
-.fileQueue {
-	width: 400px;
-	height: 150px;
-	overflow: auto;
-	border: 1px solid #E5E5E5;
-	margin-bottom: 10px;
-}
 </style>
 <form method="post" id="areaCodeAddForm"
 	action="${ctx }/manager/notemanager/NoteAddOrUpdate.html"
@@ -45,16 +27,19 @@
 				</dl>
 				<dl>
 					<dt>图片上传文件:</dt>
-					<li>
-					
-					<a rel="w_uploadify" target="dialog"  width="650" height="650" href="${ctx }/manager/notemanage/upimg.html" class="button"><span>+点此上传</span></a>
-						
-					</li>
+					<li><a href="${ctx }/manager/notemanage/Toupimg.html"
+						width="550" height="750" target="dialog" rel="uploadimg">点此上传
+					</a></li>
+
 				</dl>
 				<dl style="margin-left: -380px; margin-top: 30px;">
 					<dt>帖子内容:</dt>
 					<textarea style="width: 200%; height: 200%;" class="editor"
-						name="content" cols="100">${note2.content }
+						tools="simple" name="content" cols="45" rows="5" value="" alt=""
+						uplinkext="zip,rar,txt" upimgext="jpg,jpeg,gif,png"
+						upflashext="swf" 
+						upimgurl="${ctx }/manager/notemanage/upimg.html">
+						${note2.content }
 					</textarea>
 				</dl>
 
