@@ -1,6 +1,8 @@
 package com.momoplan.pet.framework.user.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +18,7 @@ import redis.clients.jedis.ShardedJedis;
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.GeoHash;
 import com.momoplan.pet.commons.MyGson;
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.pool.StorePool;
@@ -103,18 +106,24 @@ public class UserServiceSupport {
 		logger.debug("区域编码 "+subHash);
 		String key = UserService.USER_LOCATION_GEOHASH+"*"+subHash+"*";
 		Set<String> uids = storePool.keys(key);
-		List<String> uvs = new ArrayList<String>();
+		List<NearPerson> uvs = new ArrayList<NearPerson>();
 		for(String uk : uids){
 			NearPerson nearPerson = new NearPerson();
 			String uid = storePool.get(uk);
 			if(!userId.equals(uid)){//附近的人里排除自己
 				//这里的 ul 对象必须必须必须不能是空的，如果是空也不可能绝对不可能会走到这个分支
 				JSONObject ul = getUserLocation(uid);
-				String lat = ul.getString("latitude");
-				String lng = ul.getString("longitude");
+				String lat = ul.getString("latitude");//wd
+				String lng = ul.getString("longitude");//jd
+				logger.debug("p0 lat="+latitude+" ; lng="+longitude);
+				logger.debug("p1 lat="+lat+" ; lng="+lng);
+				//距离
+				double distance = PetUtil.getDistance(latitude, longitude, Double.parseDouble(lat), Double.parseDouble(lng));
+				logger.debug("p0 -> p1 distance="+distance);
 				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
 				user.setPassword(null);
 				UserVo uv = new UserVo(user,lng,lat);
+				uv.setDistance(distance+"");
 				//TODO 通过查询条件过滤
 				logger.debug("//TODO 通过查询条件过滤");
 				//TODO 第一个条件：性别
@@ -128,7 +137,6 @@ public class UserServiceSupport {
 						continue;
 					}
 				}
-				
 				List<PetVo> petList = null;
 				//TODO 第二个条件：宠物类型
 				if(StringUtils.isNotEmpty(petType)){//按条件过滤类型
@@ -150,20 +158,35 @@ public class UserServiceSupport {
 				}
 				nearPerson.setUser(uv);
 				nearPerson.setPetList(petList);
-				uvs.add(gson.toJson(nearPerson));
+				uvs.add(nearPerson);
 			}
 		}
-		//TODO 排序结果集，按照距离排序
+		
+		logger.debug("//TODO 排序结果集，按照距离排序");
+		Collections.sort(uvs, new Comparator<NearPerson>(){
+			@Override
+			public int compare(NearPerson o1, NearPerson o2) {
+				String d1 = o1.getUser().getDistance();
+				String d2 = o2.getUser().getDistance();
+				return d1.compareTo(d2);
+			}
+		});
+		
 		String[] buff = new String[uvs.size()];
-		uvs.toArray(buff);
-		logger.debug("//TODO 排序 buff 结果集，按照距离排序");
+		int i=0;
+		logger.debug("//TODO 装载排序结果到 buff");
+		for(NearPerson nearPerson : uvs){
+			buff[i++] = gson.toJson(nearPerson);
+		}
 		
 		String bufferKey = UserService.LIST_USER_NEAR_BUFFER+userId;
-		logger.debug("插入缓冲区 buff.size="+buff.length+" bufferKey="+bufferKey);
 		storePool.del(bufferKey);
+		logger.debug("准备插入缓冲区");
 		if(buff!=null&&buff.length>0){
+			logger.debug("插入缓冲区 buff.size="+buff.length+" bufferKey="+bufferKey);
 			storePool.lpush(bufferKey, buff);
 		}
+		
 	}
 	
 	private List<PetVo> petJsonList2PetVoList(List<String> jsonList){

@@ -37,6 +37,7 @@ public class GetNearPersonHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
+			long start = System.currentTimeMillis();
 			//现在 params 里找 userid ，如果没有则根据 token 获取
 			String userid = getUseridFParamSToken(clientRequest);
 			String gender = getParameter(clientRequest, "gender");
@@ -51,7 +52,9 @@ public class GetNearPersonHandler extends AbstractHandler {
 			success.put("success", true);
 			success.put("entity", jsonArray);
 			rtn = success.toString();
+			long end = System.currentTimeMillis();
 			logger.debug(logTitle+" 成功 body="+gson.toJson(clientRequest));
+			logger.info("获取附近的人-耗时："+(end-start)+" 毫秒。("+latitude+","+longitude+")");	
 		}catch(Exception e){
 			logger.debug(logTitle+" 失败 body="+gson.toJson(clientRequest));
 			logger.debug(e.getMessage());
