@@ -1,6 +1,7 @@
 package com.momoplan.pet.framework.fileserver.web.interceptor;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -26,8 +25,17 @@ public class PwdInterceptor implements HandlerInterceptor {
 	
 	@Resource
 	private CommonConfig commonConfig = null;
+	private Map<String,Boolean> memCache = new HashMap<String,Boolean>(512);
 	
 	private boolean isWrongPwd(String token){
+		if(memCache.get(token)!=null){
+			if(memCache.size()>2000000){
+				memCache.clear();
+				logger.info("Clear memCache , size > 2000000");
+			}
+			logger.debug("memCache find token="+token);
+			return true;
+		}
 		String sso_server = commonConfig.get("service.uri.pet_sso");
 		try {
 			ClientRequest request = new ClientRequest();
@@ -39,8 +47,10 @@ public class PwdInterceptor implements HandlerInterceptor {
 			String json = PostRequest.postText(sso_server, "body",MyGson.getInstance().toJson(request));
 			logger.debug("token : "+json);
 			Success success = MyGson.getInstance().fromJson(json, Success.class);
-			if(success.isSuccess())
+			if(success.isSuccess()){
+				memCache.put(token, true);
 				return true;
+			}
 			return false;
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
