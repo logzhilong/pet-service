@@ -370,7 +370,7 @@ pet-service
                 ] 
             }
 
-    11、getPetInfo
+    11、delPetinfo
     
       功能：删除宠物
 
