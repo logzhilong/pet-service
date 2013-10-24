@@ -29,9 +29,17 @@
 
 	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 	<!-- 扫描service层 -->
-    <context:component-scan base-package="com.momoplan.pet" />
+    <context:component-scan base-package="com.momoplan.pet.commons.cache" />
+    <context:component-scan base-package="com.momoplan.pet.commons.domain" />
+    <context:component-scan base-package="com.momoplan.pet.commons.repository" />
+    
 	<import resource="applicationContext-mybatis-transaction.xml"/>
-
+	
+	<!-- 配置管理服务器地址 -->
+    <bean id="zooServer" class="java.lang.String" >
+    	<constructor-arg index="0" value="123.178.27.74:2181" />
+    </bean>
+    
     <bean id="cacheServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${cache.server}" />
     </bean>
@@ -41,6 +49,6 @@
 	<import resource="applicationContext-mybatis-states.xml"/>
 	<import resource="applicationContext-mybatis-statistic.xml"/>
 	<import resource="applicationContext-mybatis-manager.xml"/>
-	<import resource="applicationContext-mybatis-ssoserver.xml"/>
+	<import resource="applicationContext-mybatis-user.xml"/>
 	
 </beans>

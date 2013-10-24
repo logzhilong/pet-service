@@ -2,6 +2,8 @@ package com.momoplan.pet.framework.user.service;
 
 import java.util.List;
 
+import org.json.JSONArray;
+
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
@@ -68,5 +70,24 @@ public interface UserService extends CacheKeysConstance{
 	 * @throws Exception
 	 */
 	public void pushMsgApn(String fromname,String toname,String msg) throws Exception;
-	
+	/**
+	 * 获取好友列表
+	 * @param userid
+	 * @return
+	 * @throws Exception
+	 */
+	public List<UserVo> getFirendList(String userid) throws Exception;
+
+	/**
+	 * 获取附近的人，两个查询条件，分别是性别、宠物类型
+	 * @param userId
+	 * @param gender 性别
+	 * @param petType 宠物类型
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 * @throws Exception
+	 */
+	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception;
+
 }

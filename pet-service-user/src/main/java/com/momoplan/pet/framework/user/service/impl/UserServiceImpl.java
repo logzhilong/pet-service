@@ -1,9 +1,11 @@
 package com.momoplan.pet.framework.user.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,10 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PushApn;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.dto.UserLocation;
 import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
-import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.PetInfoCriteria;
@@ -28,47 +30,59 @@ import com.momoplan.pet.commons.domain.user.po.UserFriendship;
 import com.momoplan.pet.commons.domain.user.po.UserFriendshipCriteria;
 import com.momoplan.pet.commons.repository.user.SsoUserRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
-import com.momoplan.pet.framework.user.enums.SubscriptionType;
 import com.momoplan.pet.framework.user.service.UserService;
 import com.momoplan.pet.framework.user.vo.UserVo;
 /**
- * TODO 关于 token 相关的操作，应该在 redis 中完成，此处留一个作业
  * @author liangc
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends UserServiceSupport implements UserService {
 
 	private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	private CommonConfig commonConfig = null;
-	private SsoUserMapper ssoUserMapper = null;
-	private MapperOnCache mapperOnCache = null;
-	private PetInfoMapper petInfoMapper = null; 
-	private RedisPool redisPool = null;
-	private UserFriendshipMapper userFriendshipMapper = null;
-	private SsoUserRepository ssoUserRepository = null;
-	
 	@Autowired
-	public UserServiceImpl(CommonConfig commonConfig, SsoUserMapper ssoUserMapper, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool,
-			UserFriendshipMapper userFriendshipMapper, SsoUserRepository ssoUserRepository) {
+	public UserServiceImpl(CommonConfig commonConfig, MapperOnCache mapperOnCache, PetInfoMapper petInfoMapper, RedisPool redisPool, UserFriendshipMapper userFriendshipMapper,
+			SsoUserRepository ssoUserRepository, StorePool storePool) {
 		super();
 		this.commonConfig = commonConfig;
-		this.ssoUserMapper = ssoUserMapper;
 		this.mapperOnCache = mapperOnCache;
 		this.petInfoMapper = petInfoMapper;
 		this.redisPool = redisPool;
 		this.userFriendshipMapper = userFriendshipMapper;
 		this.ssoUserRepository = ssoUserRepository;
+		this.storePool = storePool;
 	}
 
 	@Override
 	public void updateUser(SsoUser user) throws Exception {
 		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
 	}
-
+	
+	/**
+	 * 获取附近的人，两个查询条件，分别是性别、宠物类型
+	 * @param userId
+	 * @param gender 性别
+	 * @param petType 宠物类型
+	 * @param longitude
+	 * @param latitude
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception {
+		int index = Integer.parseInt(pageIndex);
+		if(index==0){
+			logger.debug("构建缓冲区 index="+index+" ; userid="+userId);
+			buildNearPersonBuffer(userId,gender,petType,longitude,latitude);
+		}
+		logger.debug("在缓冲区读取 index="+index+" ; userid="+userId);
+		return readNearPersionBuffer(index,userId);
+	}
+	
 	@Override
 	public void updateUserLocation(String userId, double longitude, double latitude) throws Exception {
 		ShardedJedis jedis = null;
+		updateUserGeohash(userId ,longitude ,latitude);
 		try{
 			jedis = redisPool.getConn();
 			UserLocation ul = new UserLocation();
@@ -77,7 +91,7 @@ public class UserServiceImpl implements UserService {
 			ul.setLongitude(longitude);
 			ul.setUserid(userId);
 			String json = MyGson.getInstance().toJson(ul);
-			logger.debug("更新坐标 : "+json);
+			logger.debug("更新坐标,每个人一个列表 key="+LIST_USER_LOCATION+userId+" ; value="+json);
 			jedis.lpush(LIST_USER_LOCATION+userId, json);
 		}catch(Exception e){
 			logger.error("更新坐标异常",e);
@@ -85,22 +99,7 @@ public class UserServiceImpl implements UserService {
 			redisPool.closeConn(jedis);
 		}
 	}
-	private UserLocation getUserLocation(String userId){
-		ShardedJedis jedis = null;
-		try{
-			jedis = redisPool.getConn();
-			List<String> list = jedis.lrange(LIST_USER_LOCATION+userId, 0, 0);
-			String json = list.get(0);
-			logger.debug("获取坐标 : "+json);
-			UserLocation ul = MyGson.getInstance().fromJson(json, UserLocation.class);
-			return ul;
-		}catch(Exception e){
-			logger.error("获取坐标异常",e);
-		}finally{
-			redisPool.closeConn(jedis);
-		}
-		return null;
-	}
+	
 	@Override
 	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception {
 		String userid = tokenObj.getUserid();
@@ -109,9 +108,9 @@ public class UserServiceImpl implements UserService {
 		UserVo userVo = null;
 		user.setPassword(null);
 		if(userLocation!=null){
-			userVo = new UserVo(user,userLocation.getLongitude(),userLocation.getLatitude());
+			userVo = new UserVo(user,userLocation.getLongitude()+"",userLocation.getLatitude()+"");
 		}else{
-			userVo = new UserVo(user,0,0);
+			userVo = new UserVo(user,"0","0");
 		}
 		return userVo;
 	}
@@ -143,7 +142,7 @@ public class UserServiceImpl implements UserService {
 		String ub = ssoUserRepository.getSsoUserByName(bid).getId();
 		if("subscribed".equalsIgnoreCase(st)){
 			//目前，其实没有状态，冗余一个状态吧先
-			String type = SubscriptionType.SUB.toString();//TODO 这种写法不好，以后要合并到 Po 中去，让 Po 认识自己的 枚举
+			String type = "subscribed";
 			logger.debug("添加好友 aid="+aid+" ; bid="+bid);
 			UserFriendship userFriendship = new UserFriendship();
 			userFriendship.setId(IDCreater.uuid());
@@ -183,6 +182,33 @@ public class UserServiceImpl implements UserService {
 			}
 			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
 		}
+	}
+
+	@Override
+	public List<UserVo> getFirendList(String userid) throws Exception {
+		UserFriendshipCriteria userFriendshipCriteria = new UserFriendshipCriteria();
+		UserFriendshipCriteria.Criteria criteriaA = userFriendshipCriteria.createCriteria();
+		criteriaA.andAIdEqualTo(userid);
+		UserFriendshipCriteria.Criteria criteriaB = userFriendshipCriteria.createCriteria();
+		criteriaB.andBIdEqualTo(userid);
+		userFriendshipCriteria.or(criteriaB);
+		List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
+		List<UserVo> userList = new ArrayList<UserVo>();
+		//缓存取值
+		for(UserFriendship u : list){
+			String aid = u.getaId();
+			String bid = u.getbId();
+			String uid = userid.equals(aid)?bid:aid;
+			String alias = userid.equals(aid)?u.getAliasb():u.getAliasa();//别名
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
+			user.setPassword(null);
+			user.setEmail(null);
+			UserVo uv = new UserVo();
+			org.springframework.beans.BeanUtils.copyProperties(user, uv);
+			uv.setAlias(alias);
+			userList.add(uv);
+		}
+		return userList;
 	}
 	
 }

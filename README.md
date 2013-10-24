@@ -357,6 +357,13 @@ pet-service
       输出：{"success":true,"entity":[{"id":"747","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
 
       
-      
+    10、getNearPerson
+
+      功能：获取附近的人，返回的列表中会包含距离distance
+
+      输入：{"gender":"性别", "petType":"宠物类型", "longitude":"","latitude":""}
+
+      输出：{"success":true,"entity":[{"id":"747","distance":"距离","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
+
       
       

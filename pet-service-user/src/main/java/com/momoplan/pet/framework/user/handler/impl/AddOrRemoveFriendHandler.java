@@ -27,7 +27,7 @@ import com.momoplan.pet.framework.user.handler.AbstractHandler;
 @Component("addOrRemoveFriend")
 public class AddOrRemoveFriendHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(AddOrRemoveFriendHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(AddOrRemoveFriendHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {

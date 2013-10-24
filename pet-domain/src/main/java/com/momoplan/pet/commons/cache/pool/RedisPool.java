@@ -29,9 +29,9 @@ public class RedisPool {
 	private ShardedJedisPool shardedJedisPool = null;
 	
 	@Value("#{config['cache.enable']}")
-	private boolean cacheEnable = false;
+	private boolean cacheEnable = true;
 	@Value("#{config['cache.pwd']}")
-	private String cachePwd = null;
+	private String cachePwd = "abc123";
 
 	@Value("#{config['cache.pool.max.active']}")
 	private Integer cachePoolMaxActive = 200;
@@ -116,6 +116,14 @@ public class RedisPool {
 	public void setCacheEnable(boolean cacheEnable) {
 		System.err.println("缓存启动参数：cache.enable="+cacheEnable);
 		this.cacheEnable = cacheEnable;
+	}
+
+	public JedisPoolConfig getJedisPoolConfig() {
+		return jedisPoolConfig;
+	}
+
+	public void setJedisPoolConfig(JedisPoolConfig jedisPoolConfig) {
+		this.jedisPoolConfig = jedisPoolConfig;
 	}
 	
 }
