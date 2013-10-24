@@ -1,5 +1,7 @@
 package com.momoplan.pet.commons.cache.pool;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -142,6 +144,57 @@ public class StorePool {
 		}
 		return null;
 	}
+
+	public void lpush(String key,String ... values){
+		Jedis j = null;
+		try{
+			j = getConn();
+			j.lpush(key, values);
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			closeConn(j);
+		}
+	}
+
+	public List<String> lrange(String key,long start,long end){
+		Jedis j = null;
+		try{
+			j = getConn();
+			List<String> list = j.lrange(key, start, end);
+			return list;
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			closeConn(j);
+		}
+		return null;
+	}
+
+	public List<String> lpop(String key,int size){
+		Jedis j = null;
+		try{
+			j = getConn();
+			List<String> list = null;
+			for(int i=0;i<size;i++){
+				String str = j.lpop(key);
+				if(str==null)
+					return list;
+				if(list==null)
+					list = new ArrayList<String>(size);
+				list.add(str);
+			}
+			return list;
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			closeConn(j);
+		}
+		return null;
+	}
+
+	
+	
 	public String getStoreServer() {
 		return storeServer;
 	}
