@@ -20,5 +20,7 @@ public class Test {
 		for(String k:oks){
 			System.out.println(k);
 		}
+		String lf = jedis.lpop("lfuck");
+		System.out.println(lf);
 	}
 }
