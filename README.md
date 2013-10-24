@@ -359,11 +359,16 @@ pet-service
       
     10、getNearPerson
 
-      功能：获取附近的人，返回的列表中会包含距离distance
+      功能：获取附近的人，distance属性表示距离，包含在 user 对象中
 
       输入：{"gender":"性别", "petType":"宠物类型", "longitude":"","latitude":""}
 
-      输出：{"success":true,"entity":[{"id":"747","distance":"距离","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
+      输出：{
+                "success":true,
+                "entity":[ 
+                    { user:{} , petList:[ {} ] } 
+                ] 
+            }
 
     11、getPetInfo
     
