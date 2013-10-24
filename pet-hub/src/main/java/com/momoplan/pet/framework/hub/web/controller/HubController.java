@@ -13,7 +13,6 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -46,12 +45,16 @@ public class HubController {
 	 * @throws Exception 
 	 */
 	@RequestMapping("/request")
-	public void putFile(String body,HttpServletRequest request,HttpServletResponse response,Model model) throws Exception{
+	public void request(String body,HttpServletRequest request,HttpServletResponse response,Model model) throws Exception{
 		logger.debug("[INPUT]:body="+body);
 		String rtn = null;
+		long start = System.currentTimeMillis();
+		String service = null;
+		String method = null;
 		try{
 			ClientRequest clientRequest = PetUtil.reviceClientRequest(body);
-			String service = clientRequest.getService();
+			service = clientRequest.getService();
+			method = clientRequest.getMethod();
 			String serviceUri = commonConfig.get(service,null);
 			logger.debug("service="+service+" ; service_uri="+serviceUri);
 			rtn = PostRequest.postText(serviceUri, "body",body);
@@ -62,6 +65,8 @@ public class HubController {
 			logger.debug("[OUTPUT]:rtn="+rtn);
 			publishEvent(body,rtn);
 			request.setAttribute("rtn", rtn);//向拦截器传递输出值
+			long end = System.currentTimeMillis();
+			logger.info("["+service+"."+method+"]-"+(end-start)+"ms.");			
 			PetUtil.writeStringToResponse(rtn, response);
 		}
 	}

@@ -130,7 +130,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 	 * @return true 有效，false 无效
 	 */
 	private boolean checkToken(String token){
-		if(memCache.get(token)){
+		if(memCache.get(token)!=null){
 			if(memCache.size()>2000000){
 				memCache.clear();
 				logger.info("Clear memCache , size > 2000000");
