@@ -365,5 +365,20 @@ pet-service
 
       输出：{"success":true,"entity":[{"id":"747","distance":"距离","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
 
+    11、getPetInfo
+    
+      功能：删除宠物
+
+      输入：{"id":"宠物ID"}
+      
+      输出：{"success":true,"entity":"OK" }
+
+    12、adminFlushUserPetTypeIndex
+    
+      功能：重建用户与宠物类型的索引，此功能仅限管理人员使用，不对客户端开放
+      
+      输入：{"uid":"all","pwd":""}
+
+      输出：{"success":true,"entity":"OK" }
       
       
