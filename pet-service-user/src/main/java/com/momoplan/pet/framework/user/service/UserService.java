@@ -2,6 +2,8 @@ package com.momoplan.pet.framework.user.service;
 
 import java.util.List;
 
+import org.json.JSONArray;
+
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
@@ -86,6 +88,6 @@ public interface UserService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public List<UserVo> getNearPerson(String userId,String gender,String petType, double longitude, double latitude) throws Exception;
+	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception;
 
 }

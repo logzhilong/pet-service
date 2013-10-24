@@ -1,9 +1,9 @@
 package com.momoplan.pet.framework.user.handler.impl;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,17 +11,16 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
-import com.momoplan.pet.framework.user.vo.UserVo;
 /*
   getNearPerson
 
   功能：获取附近的人
 
-  输入：{"gender":"", "petType":"", "longitude":"","latitude":""}
+  输入：{"pageIndex":"","gender":"", "petType":"", "longitude":"","latitude":""}
 
   输出：{"success":true,"entity":[{"id":"747","alias":"别名","nickname":"cc","username":"cc","phoneNumber":"","deviceToken":""}]}
 
-{"method":"getNearPerson","params":{"gender":"", "petType":"", "longitude":"116.386294","latitude":"39.923879"}}
+{"method":"getNearPerson","params":{"pageIndex":"1","gender":"", "petType":"", "longitude":"116.386294","latitude":"39.923879"}}
 */
 /**
  * 获取附近的人
@@ -44,8 +43,13 @@ public class GetNearPersonHandler extends AbstractHandler {
 			String petType = getParameter(clientRequest, "petType");
 			String longitude = getParameter(clientRequest, "longitude");
 			String latitude = getParameter(clientRequest, "latitude");
-			List<UserVo> userList = userService.getNearPerson(userid, gender, petType, Double.valueOf(longitude), Double.valueOf(latitude));
-			rtn = new Success(true,userList).toString();
+			String pageIndex = getParameter(clientRequest, "pageIndex");
+			JSONArray jsonArray = userService.getNearPerson(pageIndex,userid, gender, petType, Double.valueOf(longitude), Double.valueOf(latitude));
+			
+			JSONObject success = new JSONObject();
+			success.put("success", true);
+			success.put("entity", jsonArray);
+			rtn = success.toString();
 			logger.debug(logTitle+" 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug(logTitle+" 失败 body="+gson.toJson(clientRequest));

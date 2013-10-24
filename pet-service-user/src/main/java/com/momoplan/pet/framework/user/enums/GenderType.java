@@ -1,16 +1,17 @@
 package com.momoplan.pet.framework.user.enums;
 /**
- * 好友关系表用到此枚举
+ * 性别枚举
  * @author liangc
  */
-public enum SubscriptionType {
+public enum GenderType {
 	
 	//=============================================
 	//== 枚举值 
 	//=============================================
-	SUB("好友","0");
+	MALE("男性","male"),
+	FEMALE("女性","female");
 
-    private SubscriptionType(String name, String code) {  
+    private GenderType(String name, String code) {  
         this.name = name;  
         this.code = code;  
     }
@@ -22,7 +23,7 @@ public enum SubscriptionType {
     private String code;
     
     public static String getName(String code) {  
-        for (SubscriptionType st : SubscriptionType.values()) {  
+        for (GenderType st : GenderType.values()) {  
             if (code.equals(st.getCode())) {
                 return st.getName();
             }  
