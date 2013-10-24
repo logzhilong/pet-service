@@ -40,7 +40,6 @@ public class UserVo extends SsoUser {
 	//距离
 	private String distance;
 	
-	
 	public String getDistance() {
 		return distance;
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,11 +105,13 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception {
 		String userid = tokenObj.getUserid();
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
-		UserLocation userLocation = getUserLocation(userid+"");
 		UserVo userVo = null;
 		user.setPassword(null);
-		if(userLocation!=null){
-			userVo = new UserVo(user,userLocation.getLongitude()+"",userLocation.getLatitude()+"");
+		JSONObject ul = getUserLocation(userid);
+		if(ul!=null){
+			String lat = ul.getString("latitude");
+			String lng = ul.getString("longitude");
+			userVo = new UserVo(user,lng,lat);
 		}else{
 			userVo = new UserVo(user,"0","0");
 		}
@@ -118,22 +121,26 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 
 	@Override
 	public List<PetInfo> getPetInfo(String userid) throws Exception {
+		//TODO 这里可以在单点存储里取值了
 		PetInfoCriteria petInfoCriteria = new PetInfoCriteria();
 		PetInfoCriteria.Criteria criter =  petInfoCriteria.createCriteria();
 		criter.andUseridEqualTo(userid);
 		List<PetInfo> list = petInfoMapper.selectByExample(petInfoCriteria);
 		return list;
 	}
-
+	
 	@Override
 	public void updatePetInfo(PetInfo petInfo) throws Exception {
 		mapperOnCache.updateByPrimaryKeySelective(petInfo, petInfo.getId());
+		updateUserPetTypeIndex(petInfo,false);
 	}
 	
 	@Override
 	public void savePetInfo(PetInfo petInfo) throws Exception {
 		petInfo.setId(IDCreater.uuid());
+		//放进数据库、缓存
 		mapperOnCache.insertSelective(petInfo, petInfo.getId());
+		updateUserPetTypeIndex(petInfo,false);
 	}
 
 	@Override
@@ -209,6 +216,13 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			userList.add(uv);
 		}
 		return userList;
+	}
+
+	@Override
+	public void delPetInfo(String id) throws Exception {
+		PetInfo petInfo = mapperOnCache.selectByPrimaryKey(PetInfo.class, id);
+		updateUserPetTypeIndex(petInfo, true);
+		mapperOnCache.deleteByPrimaryKey(PetInfo.class, id);
 	}
 	
 }

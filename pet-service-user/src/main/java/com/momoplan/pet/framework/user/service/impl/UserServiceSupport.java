@@ -19,14 +19,16 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.pool.StorePool;
-import com.momoplan.pet.commons.domain.user.dto.UserLocation;
 import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
 import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
+import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.user.SsoUserRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.user.enums.GenderType;
 import com.momoplan.pet.framework.user.service.UserService;
+import com.momoplan.pet.framework.user.vo.NearPerson;
+import com.momoplan.pet.framework.user.vo.PetVo;
 import com.momoplan.pet.framework.user.vo.UserVo;
 
 public class UserServiceSupport {
@@ -42,6 +44,28 @@ public class UserServiceSupport {
 	protected GeoHash geoHash = new GeoHash();
 	protected StorePool storePool = null;
 	protected Gson gson = MyGson.getInstance();
+	
+	/**
+	 * 在单点存储中对 用户和宠物类型，建立一个联合索引
+	 * @param petInfo
+	 * @throws Exception
+	 */
+	protected void updateUserPetTypeIndex(PetInfo petInfo,boolean del)throws Exception{
+		String uid = petInfo.getUserid();
+		long type = petInfo.getType();
+		String petId = petInfo.getId();
+
+		String indexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+type+":"+petId;
+		if(del){
+			storePool.del(indexKey);
+			logger.debug("人与宠物类型索引[删除]:key="+indexKey);
+		}else{
+			String indexValue = gson.toJson(petInfo);
+			storePool.set(indexKey, indexValue);
+			logger.debug("人与宠物类型索引[更新]:key="+indexKey+" ; value="+indexValue);
+		}
+		
+	}
 	
 	/**
 	 * 读取缓冲区
@@ -81,12 +105,16 @@ public class UserServiceSupport {
 		Set<String> uids = storePool.keys(key);
 		List<String> uvs = new ArrayList<String>();
 		for(String uk : uids){
+			NearPerson nearPerson = new NearPerson();
 			String uid = storePool.get(uk);
 			if(!userId.equals(uid)){//附近的人里排除自己
-				UserLocation ul = getUserLocation(uid);
+				//这里的 ul 对象必须必须必须不能是空的，如果是空也不可能绝对不可能会走到这个分支
+				JSONObject ul = getUserLocation(uid);
+				String lat = ul.getString("latitude");
+				String lng = ul.getString("longitude");
 				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
 				user.setPassword(null);
-				UserVo uv = new UserVo(user,ul.getLongitude()+"",ul.getLatitude()+"");
+				UserVo uv = new UserVo(user,lng,lat);
 				//TODO 通过查询条件过滤
 				logger.debug("//TODO 通过查询条件过滤");
 				//TODO 第一个条件：性别
@@ -96,12 +124,33 @@ public class UserServiceSupport {
 						condition = GenderType.MALE.getCode();
 					String _gender = uv.getGender();
 					if(!condition.equalsIgnoreCase(_gender)){
-						logger.debug(condition+" 条件不符，跳过 "+uv);
+						logger.debug(condition+" 条件不符[用户性别]，跳过 "+uv);
 						continue;
 					}
 				}
+				
+				List<PetVo> petList = null;
 				//TODO 第二个条件：宠物类型
-				uvs.add(gson.toJson(uv));
+				if(StringUtils.isNotEmpty(petType)){//按条件过滤类型
+					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+petType+"*";
+					Set<String> petSet = storePool.keys(userPetTypeIndexKey);
+					if(petSet==null||petSet.size()<1){
+						logger.debug(petType+" 条件不符[宠物类型]，跳过 ");
+						continue;
+					}
+					List<String> petJsonList = storePool.get(petSet.toArray(new String[petSet.size()]));
+					petList = petJsonList2PetVoList(petJsonList);
+				}else{//全部类型
+					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":*";
+					Set<String> petSet = storePool.keys(userPetTypeIndexKey);
+					if( petSet!=null && petSet.size()>0 ){
+						List<String> petJsonList = storePool.get(petSet.toArray(new String[petSet.size()]));
+						petList = petJsonList2PetVoList(petJsonList);
+					}	
+				}
+				nearPerson.setUser(uv);
+				nearPerson.setPetList(petList);
+				uvs.add(gson.toJson(nearPerson));
 			}
 		}
 		//TODO 排序结果集，按照距离排序
@@ -115,6 +164,17 @@ public class UserServiceSupport {
 		if(buff!=null&&buff.length>0){
 			storePool.lpush(bufferKey, buff);
 		}
+	}
+	
+	private List<PetVo> petJsonList2PetVoList(List<String> jsonList){
+		if(jsonList==null||jsonList.size()==0)
+			return null;
+		List<PetVo> objList = new ArrayList<PetVo>(jsonList.size());
+		for(String json : jsonList){
+			PetVo pv = gson.fromJson(json, PetVo.class);
+			objList.add(pv);
+		}
+		return objList;
 	}
 	
 	/**
@@ -142,15 +202,15 @@ public class UserServiceSupport {
 		}
 	}
 	
-	protected UserLocation getUserLocation(String userId){
+	protected JSONObject getUserLocation(String userId){
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
 			List<String> list = jedis.lrange(UserService.LIST_USER_LOCATION+userId, 0, 0);
 			String json = list.get(0);
 			logger.debug("获取坐标 : "+json);
-			UserLocation ul = MyGson.getInstance().fromJson(json, UserLocation.class);
-			return ul;
+			JSONObject jsonObj = new JSONObject(json);
+			return jsonObj;
 		}catch(Exception e){
 			logger.error("获取坐标异常",e);
 		}finally{

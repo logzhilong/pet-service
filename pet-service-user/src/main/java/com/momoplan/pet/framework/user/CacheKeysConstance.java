@@ -22,5 +22,12 @@ public interface CacheKeysConstance {
 	 * 缓冲区主要为了完成翻页操作，当前人如果查看附近时，传递了 pageIndex=1 那么就要重建这个人的缓冲区
 	 */
 	public static final String LIST_USER_NEAR_BUFFER = "service_user.list.near.buffer:";
+	/**
+	 * TODO : 这个数据，需要人工干预初始化
+	 * 用户ID和宠物类型的联合索引，这个索引建在这就需要有初始化的功能了
+	 * USERID_PETTYPE_INDEX + userId + ":" + petType + ":" petId
+	 */
+	public static final String USERID_PETTYPE_INDEX = "service_user.userid_pettype.index:";
+	
 	
 }

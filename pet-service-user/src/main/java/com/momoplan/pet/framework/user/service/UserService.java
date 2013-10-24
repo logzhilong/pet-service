@@ -55,6 +55,12 @@ public interface UserService extends CacheKeysConstance{
 	 */
 	public List<PetInfo> getPetInfo(String userid)throws Exception ;
 	/**
+	 * 删除宠物ID，同事也得修正索引
+	 * @param id
+	 * @throws Exception
+	 */
+	public void delPetInfo(String id)throws Exception;
+	/**
 	 * 添加或删除好友信息，根据 st 判断动作
 	 * @param st
 	 * @param aid
@@ -89,5 +95,6 @@ public interface UserService extends CacheKeysConstance{
 	 * @throws Exception
 	 */
 	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception;
-
+	
+	
 }
