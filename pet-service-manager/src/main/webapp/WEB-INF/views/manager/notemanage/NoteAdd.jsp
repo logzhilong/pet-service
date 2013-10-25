@@ -26,23 +26,19 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>图片上传文件:</dt>
-					<li><a href="${ctx }/manager/notemanage/Toupimg.html"
-						width="550" height="750" target="dialog" rel="uploadimg">点此上传
-					</a></li>
 
 				</dl>
 				<dl style="margin-left: -380px; margin-top: 30px;">
 					<dt>帖子内容:</dt>
 					<textarea style="width: 200%; height: 200%;" class="editor"
-						tools="simple" name="content" cols="45" rows="5" value="" alt=""
-						uplinkext="zip,rar,txt" upimgext="jpg,jpeg,gif,png"
-						upflashext="swf" 
-						upimgurl="${ctx }/manager/notemanage/upimg.html">
+						tools="simple" 
+						name="content" cols="45" rows="5" value=""
+						enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
+						upimgext="jpg,jpeg,gif,png" upflashext="swf"
+						upimgurl="${ctx }/manager/notemanage/upimg.html" skin="vista">
 						${note2.content }
 					</textarea>
 				</dl>
-
 			</fieldset>
 		</div>
 

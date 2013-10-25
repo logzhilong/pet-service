@@ -2,16 +2,13 @@ package com.momoplan.pet.framework.manager.controller;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
@@ -273,7 +273,8 @@ public class BBSManagerController {
 	public String ToupImg(Model model) {
 		try {
 			logger.debug("welcome   Toupimg");
-			return "/manager/notemanage/UploadImg";
+			// return "/manager/notemanage/UploadImg";
+			return "/manager/notemanage/UploadImging";
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.debug("Toupimg" + e);
@@ -282,69 +283,50 @@ public class BBSManagerController {
 	}
 
 	/**
-	 * 上传图片
+	 * 上传图片 uploadify文件上传
 	 * 
 	 * @return model
 	 */
 	@RequestMapping("/manager/notemanage/upimg.html")
 	public void upImg(Model model, HttpServletRequest req,HttpServletResponse response) throws Exception {
 		logger.debug("wlcome to upimg ......");
-		JSONObject json = new JSONObject();
-		json.put("statusCode", 200);
-		json.put("message", "操作成功!");
-		json.put("callbackType", "");
-		json.put("forwardUrl", "");
-		json.put("navTabId", "uploadimg");
 		try {
-			String savePath = req.getSession().getServletContext().getRealPath("");
-			savePath = savePath + "\\data\\";
-			// 把文件上传到服务器指定位置，并向前台返回文件名
-			if (req.getParameter("up") != null) {
-				DiskFileItemFactory fac = new DiskFileItemFactory();
-				ServletFileUpload upload = new ServletFileUpload(fac);
-				upload.setHeaderEncoding("utf-8");
-				List fileList = null;
-				try {
-					// 文件类型解析req
-					fileList = upload.parseRequest(req);
-				} catch (FileUploadException ex) {
-					// 终止文件上传，此处抛出异常
-					ex.printStackTrace();
-				}
-				Iterator it = fileList.iterator();
-				while (it.hasNext()) {
-					String extName = "";
-					FileItem item = (FileItem) it.next();
-					if (!item.isFormField()) {
-						String name = item.getName();
-						String type = item.getContentType();
-						if (item.getName() == null
-								|| item.getName().trim().equals("")) {
-							continue;
-						}
-						File file = new File(savePath + name);
-						try {
-							// 将文件存入本地服务器
-							item.write(file);
-							// 向前台返回文件名
-							PrintWriter pw = response.getWriter();
-							pw.print(name);
-							pw.close();
-							pw.flush();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
+			 //用于显示在在线编辑器里，图片的路径  
+	        String newFileName = "";
+	        
+			if (multipartResolver.isMultipart(req)) {
+				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) req;
+				Iterator<String> iter = multiRequest.getFileNames();
+				while (iter.hasNext()) {
+					MultipartFile file = multiRequest.getFile(iter.next());
+					if (file != null) {
+						String name = file.getOriginalFilename();
+						String path = "D:/"+ name;
+						URL fd=	new File(path).toURI().toURL();
+						newFileName=fd.toString();
+						File localFile = new File(path);
+						if (!localFile.exists())
+						{
+							localFile.mkdirs();
+						}  
+						file.transferTo(localFile);
+						 // 向前台返回文件名
+						 PrintWriter out = response.getWriter();  
+						 out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName + "\"}");    
+					     out.flush();  
+					     out.close();
 					}
 				}
 			}
-			logger.debug("上传成功!aaaaa");
+			logger.debug("上传成功!");
 		} catch (Exception e) {
-			json.put("message", e.getMessage());
 			e.printStackTrace();
+			 PrintWriter out = response.getWriter();  
+			 out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "" + "\"}");    
+		     out.flush();  
+		     out.close();
 		}
-		String jsonStr = json.toString();
-		logger.debug(jsonStr);
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonStr);
 	}
+
 }
