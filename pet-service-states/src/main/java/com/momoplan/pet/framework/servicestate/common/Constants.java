@@ -6,7 +6,7 @@ public class Constants {
 	public static String XMPP_DOMAIN = "xmpp.domain";
 	public static String XMPP_SERVER = "xmpp.server";
 	public static String SERVICE_URI_PET_USER = "service.uri.pet_user";
-	public static String GET_USERINFO = "getUserinfo";
-	public static String GET_FRIENDSINFO = "xxx";
+	public static String MEDHOD_GET_USERINFO = "getUserinfo";
+	public static String MEDHOD_GET_FRIENDLIST = "getFriendList";
 	
 }

@@ -32,19 +32,21 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 	@Resource
 	CommonConfig commonConfig = null;
-	
+	Gson gs = MyGson.getInstance();
 	public SsoAuthenticationToken verifyToken(ClientRequest clientRequest){
 		String token = clientRequest.getToken();
 		JSONObject bodyJson = new JSONObject();
 		try {
 			bodyJson.accumulate("method", "token");
-			bodyJson.accumulate("params", new JSONObject().accumulate("token", String.valueOf(token)));
+			bodyJson.accumulate("token", token);
 			logger.debug("\nbodyJsonStr:"+bodyJson.toString());
 			String str = ssoProxyRequest(bodyJson.toString()).toString();
 			if(str.contains("false")){
 				return null;
 			}
-			SsoAuthenticationToken authenticationToken = new ObjectMapper().reader(SsoAuthenticationToken.class).readValue(str);
+			logger.debug(str);
+			SsoAuthenticationToken authenticationToken = gs.fromJson(str, SsoAuthenticationToken.class);
+			//= new ObjectMapper().reader(SsoAuthenticationToken.class).readValue(str);
 			return authenticationToken;
 		} catch (Exception e) {
 			logger.debug("token verify error...");
@@ -58,11 +60,16 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 		String responseStr;
 		try {
 			responseStr = PostRequest.postText(commonConfig.get(Constants.SERVICE_URI_PET_SSO, null), "body",body);
+			if(responseStr.contains("false")){
+				return "false";
+			}
+			JSONObject json = new JSONObject(responseStr);
 			logger.debug("\nresponseStr:"+responseStr);
 			Success success;
 			success = new ObjectMapper().reader(Success.class).readValue(responseStr);
 			if(success.isSuccess()){
-				return success.getEntity();
+				String str = json.getJSONObject("entity").getString("authenticationToken").toString();
+				return str;
 			}else{
 				return "false";
 			}
@@ -80,5 +87,4 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 			return "false";
 		}
 	}
-	
 }

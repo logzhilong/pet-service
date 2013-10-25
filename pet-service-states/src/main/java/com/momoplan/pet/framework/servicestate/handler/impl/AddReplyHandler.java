@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 
@@ -19,7 +20,8 @@ public class AddReplyHandler extends AbstractHandler{
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			StateResponse stateResponse = stateService.addReply(clientRequest);
+			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
+			StateResponse stateResponse = stateService.addReply(clientRequest,authenticationToken);
 			
 			rtn = new Success(true,stateResponse.getReplyView()).toString();
 		}catch(Exception e){
