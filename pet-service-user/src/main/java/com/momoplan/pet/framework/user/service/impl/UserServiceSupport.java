@@ -102,7 +102,7 @@ public class UserServiceSupport {
 	protected void buildNearPersonBuffer(String userId,String gender,String petType, double longitude, double latitude) throws Exception {
 		String hash = geoHash.encode(latitude, longitude);
 		logger.debug("userid="+userId+" ; longitude="+longitude+" ; latitude="+latitude);
-		String scope = commonConfig.get("geohash.scope");//截取 geohash 范围
+		String scope = commonConfig.get("geohash.scope");//截取 geohash 范围，将来要调整成智能的
 		String subHash = hash.substring(0,Integer.parseInt(scope));
 		logger.debug("区域编码 "+subHash);
 		String key = UserService.USER_LOCATION_GEOHASH+"*"+subHash+"*";
