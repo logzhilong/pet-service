@@ -2,6 +2,7 @@ package com.momoplan.pet.framework.user.handler;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,7 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 	
 	protected String getUseridFParamSToken(ClientRequest clientRequest) throws Exception{
 		String userid = null;
-		if(clientRequest.getParams()!=null&&getParameter(clientRequest, "userid")!=null){
+		if(clientRequest.getParams()!=null&&StringUtils.isNotEmpty(getParameter(clientRequest, "userid"))){
 			userid = getParameter(clientRequest, "userid");
 			logger.debug("根据userid 获取用户信息 userid="+userid);
 		}else{
