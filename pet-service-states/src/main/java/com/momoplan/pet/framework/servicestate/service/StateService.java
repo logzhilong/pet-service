@@ -2,13 +2,14 @@ package com.momoplan.pet.framework.servicestate.service;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.framework.servicestate.CacheKeysConstance;
 import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 
-public interface StateService {
+public interface StateService extends CacheKeysConstance{
 
-	StateResponse addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
+	String addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	int delUserState(ClientRequest clientRequest) throws Exception;
-	StateResponse addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
+	String addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	int delReply(ClientRequest clientRequest) throws Exception;
 	StateResponse findMyStates(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;

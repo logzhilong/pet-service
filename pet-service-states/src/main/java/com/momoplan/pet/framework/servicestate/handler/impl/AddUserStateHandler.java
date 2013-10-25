@@ -21,9 +21,9 @@ public class AddUserStateHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			StateResponse stateResponse = stateService.addUserState(clientRequest,authenticationToken);
+			String stateid = stateService.addUserState(clientRequest,authenticationToken);
 			
-			rtn = new Success(true,stateResponse.getStateView()).toString();
+			rtn = new Success(true,stateid).toString();
 		}catch(Exception e){
 			logger.debug("发布状态失败 body="+gson.toJson(clientRequest));
 			logger.error("addUserState : ",e);

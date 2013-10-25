@@ -21,9 +21,8 @@ public class AddReplyHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			StateResponse stateResponse = stateService.addReply(clientRequest,authenticationToken);
-			
-			rtn = new Success(true,stateResponse.getReplyView()).toString();
+			String replyid = stateService.addReply(clientRequest,authenticationToken);
+			rtn = new Success(true,replyid).toString();
 		}catch(Exception e){
 			logger.debug("回复失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);

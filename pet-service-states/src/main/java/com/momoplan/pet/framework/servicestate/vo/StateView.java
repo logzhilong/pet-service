@@ -19,7 +19,7 @@ public class StateView {
 //	private int pageIndex;//页码
 //	private List<ReplyView> replyViews;//回复视图
 	private int countZan;//统计赞的次数
-	private List<PatUserPat> patUserPat;//赞的视图
+	private List<UserZan> patUserPat;//赞的视图
 	private Boolean ifIZaned;//是否已经赞过
 //	private int countReplys;//统计总回复数量,根据关系计算
 	public String getId() {
@@ -94,14 +94,14 @@ public class StateView {
 //	public void setReplyViews(List<ReplyView> replyViews) {
 //		this.replyViews = replyViews;
 //	}
-	public List<PatUserPat> getPatUserPat() {
-		return patUserPat;
-	}
-	public void setPatUserPat(List<PatUserPat> patUserPat) {
-		this.patUserPat = patUserPat;
-	}
 	public Boolean getIfIZaned() {
 		return ifIZaned;
+	}
+	public List<UserZan> getPatUserPat() {
+		return patUserPat;
+	}
+	public void setPatUserPat(List<UserZan> patUserPat) {
+		this.patUserPat = patUserPat;
 	}
 	public void setIfIZaned(Boolean ifIZaned) {
 		this.ifIZaned = ifIZaned;

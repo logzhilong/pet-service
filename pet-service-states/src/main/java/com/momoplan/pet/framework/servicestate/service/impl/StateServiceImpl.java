@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.pat.mapper.PatUserPatMapper;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPat;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPatCriteria;
@@ -47,6 +48,7 @@ import com.momoplan.pet.framework.servicestate.vo.PetUserView;
 import com.momoplan.pet.framework.servicestate.vo.ReplyView;
 import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 import com.momoplan.pet.framework.servicestate.vo.StateView;
+import com.momoplan.pet.framework.servicestate.vo.UserZan;
 
 @Service
 public class StateServiceImpl implements StateService {
@@ -64,9 +66,10 @@ public class StateServiceImpl implements StateService {
 	StatesUserStatesAuditMapper statesUserStatesAuditMapper = null;
 	@Autowired
 	PatUserPatMapper patUserPatMapper = null;
+	@Autowired
+	MapperOnCache mapperOnCache = null;
 	
-	public StateResponse addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
+	public String addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
 		StatesUserStatesReply reply = new StatesUserStatesReply();
 		String userid = authenticationToken.getUserid();
 		reply.setId(IDCreater.uuid());
@@ -76,8 +79,9 @@ public class StateServiceImpl implements StateService {
 		reply.setPuserid(PetUtil.getParameter(clientRequest, "puserid"));//可以为空
 		reply.setUserid(userid);
 		reply.setStateid(PetUtil.getParameter(clientRequest, "stateid"));
-		statesUserStatesReplyMapper.insertSelective(reply);
-		stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
+//		statesUserStatesReplyMapper.insertSelective(reply);
+		mapperOnCache.insertSelective(reply, reply.getId());
+//		stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
 		try {
 			XMPPRequest xr = new XMPPRequest();
 			SsoUser sendUser = getSsoUser(reply.getUserid());
@@ -98,13 +102,12 @@ public class StateServiceImpl implements StateService {
 		} catch (Exception e) {
 			logger.debug("xmpp send error...");
 		}finally{
-			return stateResponse;
+			return reply.getId();
 		}
 	}
 	
 	@Override
-	public StateResponse addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
+	public String addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
 		StatesUserStates userState = new StatesUserStates();
 		String userid = authenticationToken.getUserid();
 		userState.setId(IDCreater.uuid());
@@ -119,23 +122,26 @@ public class StateServiceImpl implements StateService {
 		userState.setLongitude(0.0);
 		userState.setState("3");
 		userState.setReportTimes(0);
-		statesUserStatesMapper.insertSelective(userState);
+//		statesUserStatesMapper.insertSelective(userState);
+		mapperOnCache.insertSelective(userState, userState.getId());
 		
-		stateResponse.setStateView(this.getStateView(userState,userState.getUserid(), "myself"));
+//		stateResponse.setStateView(this.getStateView(userState,userState.getUserid(), "myself"));
 		sendJMS(userState,"user_states");
-		return stateResponse;
+		return userState.getId();
 	}
 	
 	@Override
 	public int delUserState(ClientRequest clientRequest) throws Exception {
 		String stateid = PetUtil.getParameter(clientRequest, "stateid");
-		return statesUserStatesMapper.deleteByPrimaryKey(stateid);
+		return mapperOnCache.deleteByPrimaryKey(StatesUserStates.class, stateid);
+//		return statesUserStatesMapper.deleteByPrimaryKey(stateid);
 	}
 	
 	@Override
 	public int delReply(ClientRequest clientRequest) throws Exception {
 		String replyid = PetUtil.getParameter(clientRequest, "replyid");
-		return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
+		return mapperOnCache.deleteByPrimaryKey(StatesUserStatesReply.class,replyid);
+//		return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
 	}
 	
 	/**
@@ -309,11 +315,12 @@ public class StateServiceImpl implements StateService {
 	 * @param userState
 	 * @param userid
 	 * @return
+	 * @throws Exception 
 	 */
-	private Boolean ifIZaned(StatesUserStates userState, String userid) {
+	private Boolean ifIZaned(StatesUserStates userState, String userid) throws Exception {
 		boolean ifIZaned = false;
-		List<PatUserPat> patUserPats = getPatUserPat(userState,userid);
-		for (PatUserPat patUserPat : patUserPats) {
+		List<UserZan> patUserPats = getPatUserPat(userState,userid);
+		for (UserZan patUserPat : patUserPats) {
 			if(patUserPat.getType().contains("states")&&patUserPat.getSrcId().compareTo(userState.getId())==0){
 				ifIZaned = true;
 			}
@@ -326,8 +333,9 @@ public class StateServiceImpl implements StateService {
 	 * @param userState
 	 * @param userid
 	 * @return
+	 * @throws Exception 
 	 */
-	private List<PatUserPat> getPatUserPat(StatesUserStates userState, String userid) {
+	private List<UserZan> getPatUserPat(StatesUserStates userState, String userid) throws Exception {
 		PatUserPatCriteria patUserPatCriteria = new PatUserPatCriteria();
 		PatUserPatCriteria.Criteria criteria = patUserPatCriteria.createCriteria();
 		criteria.andTypeEqualTo("state");
@@ -335,11 +343,24 @@ public class StateServiceImpl implements StateService {
 		if(StringUtils.isNotEmpty(userid)){
 			criteria.andUseridEqualTo(userid);
 		}
-		return patUserPatMapper.selectByExample(patUserPatCriteria);
+		List<UserZan> userZans = new ArrayList<UserZan>();
+		List<PatUserPat> patUserPats = patUserPatMapper.selectByExample(patUserPatCriteria);
+		for (PatUserPat patUserPat : patUserPats) {
+			UserZan userZan = new UserZan();
+			userZan.setId(patUserPat.getId());
+			userZan.setCt(patUserPat.getCt());
+			userZan.setSrcId(patUserPat.getSrcId());
+			userZan.setType(patUserPat.getType());
+			userZan.setUserid(patUserPat.getUserid());
+			userZan.setAliasname(getAliasname(userid, patUserPat.getUserid()));
+			userZan.setNickename(getSsoUser(patUserPat.getUserid()).getNickname());
+			userZans.add(userZan);
+		}
+		return userZans;
 //		return null;
 	}
 
-	private int countZan(StatesUserStates userState) {
+	private int countZan(StatesUserStates userState) throws Exception {
 		return this.getPatUserPat(userState, null).size(); 
 	}
 	
@@ -600,7 +621,7 @@ public class StateServiceImpl implements StateService {
 		String stateid = PetUtil.getParameter(clientRequest,"stateid");
 		//举报类型（暂时不用）
 //		int reporttype = PetUtil.getParameterInteger(clientRequest,"reporttype");
-		StatesUserStates userState = statesUserStatesMapper.selectByPrimaryKey(stateid);
+		StatesUserStates userState = mapperOnCache.selectByPrimaryKey(StatesUserStates.class,stateid);
 		if(null == userState){
 			return false;
 		}
@@ -613,7 +634,7 @@ public class StateServiceImpl implements StateService {
 		}
 //		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
 //		StatesUserStatesCriteria.Criteria criteria = statesUserStatesCriteria.createCriteria();
-		statesUserStatesMapper.updateByPrimaryKeySelective(userState);
+		mapperOnCache.updateByPrimaryKeySelective(userState,stateid);
 //		userState.merge();
 		return true;
 	}
