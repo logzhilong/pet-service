@@ -8,10 +8,10 @@ import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 public interface StateService extends CacheKeysConstance{
 
 	String addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
-	int delUserState(ClientRequest clientRequest) throws Exception;
+	void delUserState(ClientRequest clientRequest) throws Exception;
 	String addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
-	int delReply(ClientRequest clientRequest) throws Exception;
+	void delReply(ClientRequest clientRequest) throws Exception;
 	StateResponse findMyStates(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	StateResponse findFriendStates(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	StateResponse getAllFriendStates(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;

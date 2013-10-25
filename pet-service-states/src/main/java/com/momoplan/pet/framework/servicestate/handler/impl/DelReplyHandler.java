@@ -17,12 +17,7 @@ public class DelReplyHandler extends AbstractHandler{
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			int result = stateService.delReply(clientRequest);
-			if(result>0){
-				rtn = new Success(true,true).toString();
-			}else{
-				rtn = new Success(false,"删除失败").toString();
-			}
+			stateService.delReply(clientRequest);
 		}catch(Exception e){
 			logger.debug("删除失败  body="+gson.toJson(clientRequest));
 			logger.error("delReply : ",e);

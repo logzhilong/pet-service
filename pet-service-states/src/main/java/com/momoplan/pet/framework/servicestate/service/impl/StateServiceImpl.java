@@ -40,6 +40,8 @@ import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository;
+import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.common.XMPPRequest;
@@ -67,6 +69,10 @@ public class StateServiceImpl implements StateService {
 	@Autowired
 	PatUserPatMapper patUserPatMapper = null;
 	@Autowired
+	StatesUserStatesRepository statesUserStatesRepository = null;
+	@Autowired
+	StatesUserStatesReplyRepository statesUserStatesReplyRepository = null;
+	@Autowired
 	MapperOnCache mapperOnCache = null;
 	
 	public String addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
@@ -80,7 +86,7 @@ public class StateServiceImpl implements StateService {
 		reply.setUserid(userid);
 		reply.setStateid(PetUtil.getParameter(clientRequest, "stateid"));
 //		statesUserStatesReplyMapper.insertSelective(reply);
-		mapperOnCache.insertSelective(reply, reply.getId());
+		statesUserStatesReplyRepository.insertSelective(reply);
 //		stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
 		try {
 			XMPPRequest xr = new XMPPRequest();
@@ -123,7 +129,7 @@ public class StateServiceImpl implements StateService {
 		userState.setState("3");
 		userState.setReportTimes(0);
 //		statesUserStatesMapper.insertSelective(userState);
-		mapperOnCache.insertSelective(userState, userState.getId());
+		statesUserStatesRepository.insertSelective(userState);
 		
 //		stateResponse.setStateView(this.getStateView(userState,userState.getUserid(), "myself"));
 		sendJMS(userState,"user_states");
@@ -131,16 +137,16 @@ public class StateServiceImpl implements StateService {
 	}
 	
 	@Override
-	public int delUserState(ClientRequest clientRequest) throws Exception {
+	public void delUserState(ClientRequest clientRequest) throws Exception {
 		String stateid = PetUtil.getParameter(clientRequest, "stateid");
-		return mapperOnCache.deleteByPrimaryKey(StatesUserStates.class, stateid);
+		statesUserStatesRepository.delete(stateid);
 //		return statesUserStatesMapper.deleteByPrimaryKey(stateid);
 	}
 	
 	@Override
-	public int delReply(ClientRequest clientRequest) throws Exception {
+	public void delReply(ClientRequest clientRequest) throws Exception {
 		String replyid = PetUtil.getParameter(clientRequest, "replyid");
-		return mapperOnCache.deleteByPrimaryKey(StatesUserStatesReply.class,replyid);
+		statesUserStatesReplyRepository.delete(replyid);
 //		return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
 	}
 	
@@ -476,21 +482,24 @@ public class StateServiceImpl implements StateService {
 	public StateResponse findMyStates(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception {
 		StateResponse stateResponse = new StateResponse();
 		String userid = authenticationToken.getUserid();
-		String lastStateid = PetUtil.getParameter(clientRequest,"lastStateid");
-		StatesUserStates lastStates = new StatesUserStates();
-		if(lastStateid!=""){
-			lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
-		}
-		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
-		StatesUserStatesCriteria.Criteria criteria = statesUserStatesCriteria.createCriteria();
-		criteria.andUseridEqualTo(userid);
-		if(lastStateid!=""){
-			criteria.andCtGreaterThan(lastStates.getCt());
-		}
-		statesUserStatesCriteria.setMysqlLength(20);
-		statesUserStatesCriteria.setMysqlOffset(0);
+		int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
+//		String lastStateid = PetUtil.getParameter(clientRequest,"lastStateid");
+//		StatesUserStates lastStates = new StatesUserStates();
+//		if(lastStateid!=""){
+//			lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
+//		}
+//		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
+//		StatesUserStatesCriteria.Criteria criteria = statesUserStatesCriteria.createCriteria();
+//		criteria.andUseridEqualTo(userid);
+//		if(lastStateid!=""){
+//			criteria.andCtGreaterThan(lastStates.getCt());
+//		}
+//		statesUserStatesCriteria.setMysqlLength(20);
+//		statesUserStatesCriteria.setMysqlOffset(0);
 		List<StateView> stateViewList = new ArrayList<StateView>();// 用户状态视图
-		List<StatesUserStates> userStates = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
+//		List<StatesUserStates> userStates = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
+		List<StatesUserStates> userStates = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, 20, pageNo);
+		
 		for (StatesUserStates statesUserStates : userStates) {
 			StateView stateView = getStateView(statesUserStates, userid, "myself");
 			stateViewList.add(stateView);
@@ -504,22 +513,24 @@ public class StateServiceImpl implements StateService {
 			SsoAuthenticationToken authenticationToken) throws Exception {
 		StateResponse stateResponse = new StateResponse();
 		String userid = PetUtil.getParameter(clientRequest,"userid");
-		String lastStateid = PetUtil.getParameter(clientRequest,"lastStateid");
-		StatesUserStates lastStates = new StatesUserStates();
-		if(lastStateid!=""){
-			lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
-		}
-		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
-		StatesUserStatesCriteria.Criteria criteria = statesUserStatesCriteria.createCriteria();
-		criteria.andUseridEqualTo(userid);
-		if(lastStateid!=""){
-			criteria.andCtGreaterThan(lastStates.getCt());
-		}
-		statesUserStatesCriteria.setMysqlLength(20);
-		statesUserStatesCriteria.setMysqlOffset(0);
-		statesUserStatesCriteria.setOrderByClause("ct desc");
+		int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
+//		String lastStateid = PetUtil.getParameter(clientRequest,"lastStateid");
+//		StatesUserStates lastStates = new StatesUserStates();
+//		if(lastStateid!=""){
+//			lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
+//		}
+//		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
+//		StatesUserStatesCriteria.Criteria criteria = statesUserStatesCriteria.createCriteria();
+//		criteria.andUseridEqualTo(userid);
+//		if(lastStateid!=""){
+//			criteria.andCtGreaterThan(lastStates.getCt());
+//		}
+//		statesUserStatesCriteria.setMysqlLength(20);
+//		statesUserStatesCriteria.setMysqlOffset(0);
+//		statesUserStatesCriteria.setOrderByClause("ct desc");
 		List<StateView> stateViewList = new ArrayList<StateView>();// 用户状态视图
-		List<StatesUserStates> userStates = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
+//		List<StatesUserStates> userStates = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
+		List<StatesUserStates> userStates = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, 20, pageNo);
 		for (StatesUserStates statesUserStates : userStates) {
 			StateView stateView = getStateView(statesUserStates, userid, "myself");
 			stateViewList.add(stateView);
@@ -545,6 +556,7 @@ public class StateServiceImpl implements StateService {
 		for (SsoUser user : users) {
 			userids.add(user.getId());
 		}
+		userids.add(userid);
 		criteria.andUseridIn(userids);
 		if(lastStateid!=""){
 			criteria.andCtGreaterThan(lastStates.getCt());
@@ -570,49 +582,89 @@ public class StateServiceImpl implements StateService {
 		String stateid = PetUtil.getParameter(clientRequest,"stateid");
 		StatesUserStates userStates = new StatesUserStates();
 		if(stateid!=""){
-			userStates = statesUserStatesMapper.selectByPrimaryKey(stateid);
+			userStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class,stateid);
 		}
 		stateResponse.setStateView(getStateView(userStates, userid, "others"));
 		return stateResponse;
 	}
 
+	
+//	public static void main(String[] args) {
+//		  List<String> list1 = new ArrayList<String>();
+//		   List<String> list2 = new ArrayList<String>();
+//		   list1.add("g");
+//		   list1.add("s");
+//		   list1.add("a");
+//		   list1.add("f");
+//		   
+//		   list2.add("g");
+//		   list2.add("c");
+//		   list2.add("b");
+//		   list2.add("a");
+//		   list1.retainAll(list2);
+//		   System.out.print(list1);
+//	}
+	
 	@Override
 	public StateResponse getRepliesByTimeIndex(ClientRequest clientRequest,
 			SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
-		String stateid = PetUtil.getParameter(clientRequest,"stateid");
-		String stateuserid = PetUtil.getParameter(clientRequest,"stateuserid");
-		String userid = authenticationToken.getUserid();
-		String lastReplyid = PetUtil.getParameter(clientRequest,"lastReplyid");
-		StatesUserStatesReply lastReply = new StatesUserStatesReply();
-		if(lastReplyid!=""){
-			lastReply = statesUserStatesReplyMapper.selectByPrimaryKey(lastReplyid);
-		}
-		StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();
-		StatesUserStatesReplyCriteria.Criteria criteria = statesUserStatesReplyCriteria.createCriteria();
-		criteria.andStateidEqualTo(stateid);
-		if(lastReplyid!=""){
-			criteria.andCtLessThan(lastReply.getCt());
-		}
-		if(stateuserid.compareTo(userid)!=0){
-			List<SsoUser> users = getFriendsList(userid);
-			List<String> userids = new ArrayList<String>();
-			for (SsoUser user : users) {
-				userids.add(user.getId());
-			}
-			criteria.andUseridIn(userids);
-		}
-		statesUserStatesReplyCriteria.setMysqlLength(20);
-		statesUserStatesReplyCriteria.setMysqlOffset(0);
-		statesUserStatesReplyCriteria.setOrderByClause("ct asc");
-		List<ReplyView> replyViewList = new ArrayList<ReplyView>();// 用户状态视图
-		List<StatesUserStatesReply> statesReplies = statesUserStatesReplyMapper.selectByExample(statesUserStatesReplyCriteria);
-		for (StatesUserStatesReply statesUserStatesReply : statesReplies) {
-			ReplyView replyView = getReplyView(statesUserStatesReply, userid);
-			replyViewList.add(replyView);
-		}
-		stateResponse.setReplyViews(replyViewList);
-		return stateResponse;
+//		StateResponse stateResponse = new StateResponse();
+//		String stateid = PetUtil.getParameter(clientRequest,"stateid");
+//		int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
+//		String userid = authenticationToken.getUserid();
+//		String stateuserid = PetUtil.getParameter(clientRequest,"stateuserid");
+//		List<StatesUserStatesReply> statesReplies = statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid, Integer.MAX_VALUE, 0);
+//		
+//		List<SsoUser> users = getFriendsList(userid);
+//		List<SsoUser> stateuser = getFriendsList(stateuserid);
+//		
+//		users.retainAll(stateuser);
+//		
+//		for (StatesUserStatesReply statesUserStatesReply : statesReplies) {
+//			
+//		}
+//		
+//		
+//		
+//		
+//		StateResponse stateResponse = new StateResponse();
+//		String stateid = PetUtil.getParameter(clientRequest,"stateid");
+//		int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
+//		String stateuserid = PetUtil.getParameter(clientRequest,"stateuserid");
+//		String userid = authenticationToken.getUserid();
+//		String lastReplyid = PetUtil.getParameter(clientRequest,"lastReplyid");
+//		StatesUserStatesReply lastReply = new StatesUserStatesReply();
+//		if(lastReplyid!=""){
+//			lastReply = statesUserStatesReplyMapper.selectByPrimaryKey(lastReplyid);
+//		}
+//		StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();
+//		StatesUserStatesReplyCriteria.Criteria criteria = statesUserStatesReplyCriteria.createCriteria();
+//		criteria.andStateidEqualTo(stateid);
+//		if(lastReplyid!=""){
+//			criteria.andCtLessThan(lastReply.getCt());
+//		}
+//		if(stateuserid.compareTo(userid)!=0){
+//			List<SsoUser> users = getFriendsList(userid);
+//			List<String> userids = new ArrayList<String>();
+//			for (SsoUser user : users) {
+//				userids.add(user.getId());
+//			}
+//			criteria.andUseridIn(userids);
+//		}
+//		statesUserStatesReplyCriteria.setMysqlLength(20);
+//		statesUserStatesReplyCriteria.setMysqlOffset(0);
+//		statesUserStatesReplyCriteria.setOrderByClause("ct asc");
+//		List<ReplyView> replyViewList = new ArrayList<ReplyView>();// 用户状态视图
+////		List<StatesUserStatesReply> statesReplies = statesUserStatesReplyMapper.selectByExample(statesUserStatesReplyCriteria);
+//		List<StatesUserStatesReply> statesReplies = statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid, Integer.MAX_VALUE, 0);
+//		
+//		for (StatesUserStatesReply statesUserStatesReply : statesReplies) {
+//			ReplyView replyView = getReplyView(statesUserStatesReply, userid);
+//			replyViewList.add(replyView);
+//		}
+//		stateResponse.setReplyViews(replyViewList);
+//		return stateResponse;
+		return null;
 	}
 
 	@Override
