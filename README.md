@@ -396,6 +396,7 @@ pet-service
       
   <h2>用户动态服务:</h2>
   注册名：service.uri.pet_states
+  
     方法：
     
     1、addReply
