@@ -396,8 +396,9 @@ pet-service
       
   <h2>用户动态服务:</h2>
   注册名：service.uri.pet_states
+    方法：
+    
     1、addReply
-      
     功能：添加动态回复
 
     输入：{"msg":"","pid":"","puserid":"","stateid":"","stateUserid":""}
