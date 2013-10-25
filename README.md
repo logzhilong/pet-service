@@ -393,3 +393,20 @@ pet-service
       输入：{"method":"adminFlushFriendShipIndex",params:{"pwd":""}}
        
       输出：{"success":true,"entity":"OK" }
+      
+  <h2>用户动态服务:</h2>
+  注册名：service.uri.pet_states
+    1、addReply
+      
+    功能：添加动态回复
+
+    输入：{"msg":"","pid":"","puserid":"","stateid":"","stateUserid":""}
+    
+    输出：{"success":true,"entity":"E1C15A49026A44838D2F547FEA282D2F"}
+
+    2、addUserState
+    功能：添加动态
+
+    输入：{"msg":"","imgid":"","ifTransmitMsg":"","transmitUrl":"","transmitMsg":""}
+    
+    输出：{"success":true,"entity":"DC5D7F8A8D36455794236AC74F56D393"}
