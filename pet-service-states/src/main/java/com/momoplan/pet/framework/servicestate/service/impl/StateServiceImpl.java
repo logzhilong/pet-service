@@ -88,28 +88,28 @@ public class StateServiceImpl implements StateService {
 //		statesUserStatesReplyMapper.insertSelective(reply);
 		statesUserStatesReplyRepository.insertSelective(reply);
 //		stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
-		try {
-			XMPPRequest xr = new XMPPRequest();
-			SsoUser sendUser = getSsoUser(reply.getUserid());
-			String stateUserid = PetUtil.getParameter(clientRequest, "stateUserid");//获取接受用户的id
-			SsoUser toUser = getSsoUser(stateUserid);
-			xr.setSendUser(sendUser.getUsername());
-			xr.setReceiveUser(toUser.getUsername());
-			xr.setType("reply");
-			xr.setPrams(reply.getStateid());
-			xr.setWords(reply.getMsg());
-			xr.setMsgTime(reply.getCt());
-			xr.setRegion("@"+commonConfig.get(Constants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
-			xr.setFromHeadImg(sendUser.getImg());
-			xr.setFromNickname(sendUser.getNickname());
-			xr.setXmpppath(commonConfig.get(Constants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
-			logger.debug(new Gson().toJson(xr));
-			xr.SendMessage();
-		} catch (Exception e) {
-			logger.debug("xmpp send error...");
-		}finally{
-			return reply.getId();
-		}
+		//TODO 
+//		try {
+//			XMPPRequest xr = new XMPPRequest();
+//			SsoUser sendUser = getSsoUser(reply.getUserid());
+//			String stateUserid = PetUtil.getParameter(clientRequest, "stateUserid");//获取接受用户的id
+//			SsoUser toUser = getSsoUser(stateUserid);
+//			xr.setSendUser(sendUser.getUsername());
+//			xr.setReceiveUser(toUser.getUsername());
+//			xr.setType("reply");
+//			xr.setPrams(reply.getStateid());
+//			xr.setWords(reply.getMsg());
+//			xr.setMsgTime(reply.getCt());
+//			xr.setRegion("@"+commonConfig.get(Constants.XMPP_DOMAIN, "hadoop7.ruyicai.com"));
+//			xr.setFromHeadImg(sendUser.getImg());
+//			xr.setFromNickname(sendUser.getNickname());
+//			xr.setXmpppath(commonConfig.get(Constants.XMPP_SERVER, "http://192.168.99.53:5280/rest"));
+//			logger.debug(new Gson().toJson(xr));
+//			xr.SendMessage();
+//		} catch (Exception e) {
+//			logger.error("xmpp send error...",e);
+//		}
+		return reply.getId();
 	}
 	
 	@Override
