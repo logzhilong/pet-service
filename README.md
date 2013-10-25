@@ -25,7 +25,9 @@ pet-service
 
 11、pet-service-user    	【业务模块】用户个人中心功能接口；
 
-12、pet-service-manager		【维护模块】业务模块管理功能，供维护和运营人员使用；
+12、pet-service-states    	【业务模块】用户动态功能接口；
+
+13、pet-service-manager		【维护模块】业务模块管理功能，供维护和运营人员使用；
 
 
 
