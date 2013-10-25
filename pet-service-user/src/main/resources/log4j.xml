@@ -29,7 +29,7 @@
 	</appender>
 
     <logger name="com.momoplan.pet">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
     </logger>

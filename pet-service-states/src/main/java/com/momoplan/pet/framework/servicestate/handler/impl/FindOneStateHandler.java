@@ -22,7 +22,7 @@ public class FindOneStateHandler extends AbstractHandler{
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			StateResponse stateResponse = stateService.findOneState(clientRequest,authenticationToken);
-			rtn = new Success(true,stateResponse.getStateViews()).toString();
+			rtn = new Success(true,stateResponse.getStateView()).toString();
 		}catch(Exception e){
 			logger.debug("获取一条动态失败 body="+gson.toJson(clientRequest));
 			logger.error("findOneState : ",e);

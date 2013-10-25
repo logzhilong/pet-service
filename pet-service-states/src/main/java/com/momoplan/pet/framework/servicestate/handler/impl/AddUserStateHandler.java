@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 
@@ -19,9 +20,10 @@ public class AddUserStateHandler extends AbstractHandler{
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			StateResponse stateResponse = stateService.addUserState(clientRequest);
+			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
+			String stateid = stateService.addUserState(clientRequest,authenticationToken);
 			
-			rtn = new Success(true,stateResponse.getStateView()).toString();
+			rtn = new Success(true,stateid).toString();
 		}catch(Exception e){
 			logger.debug("发布状态失败 body="+gson.toJson(clientRequest));
 			logger.error("addUserState : ",e);

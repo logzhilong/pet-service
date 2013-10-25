@@ -75,4 +75,6 @@
 		<property name="basePackage" value="com.momoplan.pet.commons.domain.states.mapper" />
 	</bean>
 
+	<bean class="com.momoplan.pet.commons.repository.states.StatesUserStatesRepository" />
+	<bean class="com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository" />
 </beans>

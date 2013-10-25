@@ -10,10 +10,8 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
-
-@Component("addReply")
-public class AddReplyHandler extends AbstractHandler{
+@Component("reportContent")
+public class ReportContentHandler extends AbstractHandler{
 	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
 	
 	@Override
@@ -21,10 +19,11 @@ public class AddReplyHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String replyid = stateService.addReply(clientRequest,authenticationToken);
-			rtn = new Success(true,replyid).toString();
+			boolean ifReport = stateService.reportContent(clientRequest,authenticationToken);
+			
+			rtn = new Success(true,ifReport).toString();
 		}catch(Exception e){
-			logger.debug("回复失败 body="+gson.toJson(clientRequest));
+			logger.debug("举报失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{

@@ -386,4 +386,10 @@ pet-service
 
       输出：{"success":true,"entity":"OK" }
       
+    13、adminFlushFriendShipIndex
       
+      功能：更新好友列表索引，此功能仅限管理人员使用，不对客户端开放
+      
+      输入：{"method":"adminFlushFriendShipIndex",params:{"pwd":""}}
+       
+      输出：{"success":true,"entity":"OK" }
