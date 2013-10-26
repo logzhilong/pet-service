@@ -10,7 +10,6 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 
 @Component("addUserState")
 public class AddUserStateHandler extends AbstractHandler{
@@ -22,8 +21,8 @@ public class AddUserStateHandler extends AbstractHandler{
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			String stateid = stateService.addUserState(clientRequest,authenticationToken);
-			
 			rtn = new Success(true,stateid).toString();
+			logger.debug("发布状态成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("发布状态失败 body="+gson.toJson(clientRequest));
 			logger.error("addUserState : ",e);
