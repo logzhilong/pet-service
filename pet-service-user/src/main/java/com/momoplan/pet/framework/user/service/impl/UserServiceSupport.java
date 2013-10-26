@@ -142,20 +142,20 @@ public class UserServiceSupport {
 				//TODO 第二个条件：宠物类型
 				//2013-10-26 : 输入增加 personOrPet 属性，当 personOrPet=pet 时，表示返回所有宠物
 				if(StringUtils.isNotEmpty(petType)){//按条件过滤类型
-					String petTypeKey = petType;
-					if("pet".equalsIgnoreCase(personOrPet)){
-						logger.debug("返回所有宠物 personOrPet="+personOrPet);
-						petTypeKey = "";
-					}
-					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+petTypeKey+"*";
+					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+petType+"*";
 					Set<String> petSet = storePool.keys(userPetTypeIndexKey);
 					if(petSet==null||petSet.size()<1){
 						logger.debug(petType+" 条件不符[宠物类型]，跳过 ");
 						continue;
 					}
+					if("pet".equalsIgnoreCase(personOrPet)){
+						logger.debug("返回所有宠物 personOrPet="+personOrPet);
+						userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":*";
+						petSet = storePool.keys(userPetTypeIndexKey);
+					}
 					List<String> petJsonList = storePool.get(petSet.toArray(new String[petSet.size()]));
 					petList = petJsonList2PetVoList(petJsonList);
-				}else{//全部类型
+				} else {//全部类型
 					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":*";
 					Set<String> petSet = storePool.keys(userPetTypeIndexKey);
 					if( petSet!=null && petSet.size()>0 ){
@@ -163,6 +163,7 @@ public class UserServiceSupport {
 						petList = petJsonList2PetVoList(petJsonList);
 					}
 				}
+				
 				nearPerson.setUser(uv);
 				nearPerson.setPetList(petList);
 				uvs.add(nearPerson);
