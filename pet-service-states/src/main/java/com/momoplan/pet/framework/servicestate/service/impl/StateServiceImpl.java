@@ -526,6 +526,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		
 		logger.debug("2、根据好友列表获取动态");
 		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
+		statesUserStatesCriteria.createCriteria().andStateEqualTo("0");//状态：正常的
 		statesUserStatesCriteria.createCriteria().andUseridEqualTo(userid);//我自己
 		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();//好友+我自己，都在这里
 		userMap.put(userid, getUserinfo(userid));//我自己，加入映射表
@@ -554,9 +555,10 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			vo.setNickname(get(userJson,"nickname"));
 			vo.setAlias(get(userJson,"alias"));
 			vo.setUserImage(get(userJson,"img"));
-			//TODO 待修正
+			//TODO 待修正 >>>>>>>>>>
 			vo.setTotalPat("100");
 			vo.setDidIpat(false);
+			//TODO 待修正 <<<<<<<<<<
 			resList.add(vo);
 		}
 		return resList;
