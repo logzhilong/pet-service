@@ -108,5 +108,31 @@ public class PatUserPatRepository implements CacheKeysConstance{
 		}
 	}
 	
+	/**
+	 * 赞的总数
+	 * @param srcId
+	 * @return
+	 * @throws Exception
+	 */
+	public int getTotalPatBySrcId(String srcId)throws Exception{
+		PatUserPat keyParam = new PatUserPat();
+		keyParam.setSrcId(srcId);
+		keyParam.setUserid("*");
+		keyParam.setId("*");
+		String key = getCacheKey(keyParam);
+		int count = 0;
+		try{
+			Set<String> keys = storePool.keys(key);
+			if(keys!=null&&keys.size()>0){
+				count = keys.size();
+			}
+		}catch(Exception e){
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("insertSelective",e);
+		}
+		logger.debug("赞总数:srcid="+srcId+" ; totalPat="+count); 
+		return count;
+	}
+
 	
 }
