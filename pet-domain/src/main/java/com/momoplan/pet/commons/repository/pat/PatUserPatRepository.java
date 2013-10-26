@@ -97,14 +97,14 @@ public class PatUserPatRepository implements CacheKeysConstance{
 		String key = getCacheKey(keyParam);
 		Set<String> keys = storePool.keys(key);
 		if(keys!=null&&keys.size()>0){
-			logger.debug("删除赞:key="+key);
 			String[] keyArr = keys.toArray(new String[keys.size()]);
-			storePool.del(keyArr);
 			for(String k : keyArr){
 				String json = storePool.get(k);
 				PatUserPat po = gson.fromJson(json, PatUserPat.class);			
 				mapperOnCache.deleteByPrimaryKey(PatUserPat.class, po.getId());
 			}
+			storePool.del(keyArr);
+			logger.debug("删除赞:key="+key);
 		}
 	}
 	
