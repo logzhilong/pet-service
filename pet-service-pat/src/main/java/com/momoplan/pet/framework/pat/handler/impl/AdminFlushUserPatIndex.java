@@ -72,7 +72,7 @@ public class AdminFlushUserPatIndex extends AbstractHandler {
 			logger.debug("刷新索引 成功 ");
 		}catch(Exception e){
 			logger.debug("刷新索引 失败 ");
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
