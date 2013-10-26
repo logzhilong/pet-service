@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.StorePool;
-import com.momoplan.pet.commons.domain.pat.mapper.PatUserPatMapper;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPat;
 /**
  * 用户的赞操作
@@ -25,16 +24,18 @@ public class PatUserPatRepository implements CacheKeysConstance{
 	
 	private MapperOnCache mapperOnCache = null;
 	private Gson gson = MyGson.getInstance();
-	private PatUserPatMapper patUserPatMapper = null;
 	
 	@Autowired
-	public PatUserPatRepository(StorePool storePool, MapperOnCache mapperOnCache, PatUserPatMapper patUserPatMapper) {
+	public PatUserPatRepository(StorePool storePool, MapperOnCache mapperOnCache) {
 		super();
 		this.storePool = storePool;
 		this.mapperOnCache = mapperOnCache;
-		this.patUserPatMapper = patUserPatMapper;
 	}
-	
+	/**
+	 * 用户ID+来源ID，可以确定一个 pat,缓存KEY可以做成 key=title:userid:srcid:patid
+	 * @param po
+	 * @return
+	 */
 	public String getCacheKey(PatUserPat po){
 		//用户ID+来源ID，可以确定一个 pat,缓存KEY可以做成 key=title:userid:srcid:patid
 		String userId = po.getUserid();//用户ID
@@ -53,14 +54,15 @@ public class PatUserPatRepository implements CacheKeysConstance{
 	public List<String> getPatUserListBySrcId(String srcId)throws Exception{
 		PatUserPat keyParam = new PatUserPat();
 		keyParam.setSrcId(srcId);
-		keyParam.setUserid("");
-		keyParam.setId("");
+		keyParam.setUserid("*");
+		keyParam.setId("*");
 		String key = getCacheKey(keyParam);
 		try{
 			Set<String> keys = storePool.keys(key);
 			if(keys!=null&&keys.size()>0){
 				String[] keyArr = keys.toArray(new String[keys.size()]);
 				List<String> list = storePool.get(keyArr);
+				return list;
 			}
 		}catch(Exception e){
 			//TODO 这种异常很严重啊，要发邮件通知啊
@@ -87,17 +89,22 @@ public class PatUserPatRepository implements CacheKeysConstance{
 		}
 	}
 	
-	public void delete(String id) throws Exception{
-		PatUserPat po = mapperOnCache.selectByPrimaryKey(PatUserPat.class, id);
-		mapperOnCache.deleteByPrimaryKey(PatUserPat.class, id);
-		//用户ID+来源ID，可以确定一个 pat,缓存KEY可以做成 key=title:userid:srcid:patid
-		String key = getCacheKey(po);
-		try{
+	public void delete(String userid,String srcid) throws Exception{
+		PatUserPat keyParam = new PatUserPat();
+		keyParam.setSrcId(srcid);
+		keyParam.setUserid(userid);
+		keyParam.setId("*");
+		String key = getCacheKey(keyParam);
+		Set<String> keys = storePool.keys(key);
+		if(keys!=null&&keys.size()>0){
 			logger.debug("删除赞:key="+key);
-			storePool.del(key);
-		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
-			logger.error("delete",e);
+			String[] keyArr = keys.toArray(new String[keys.size()]);
+			storePool.del(keyArr);
+			for(String k : keyArr){
+				String json = storePool.get(k);
+				PatUserPat po = gson.fromJson(json, PatUserPat.class);			
+				mapperOnCache.deleteByPrimaryKey(PatUserPat.class, po.getId());
+			}
 		}
 	}
 	
