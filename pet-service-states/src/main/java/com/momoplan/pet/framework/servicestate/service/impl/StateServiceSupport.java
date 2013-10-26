@@ -16,6 +16,7 @@ import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesReplyMapper;
 import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.repository.pat.PatUserPatRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
@@ -34,10 +35,11 @@ public class StateServiceSupport {
 	protected StatesUserStatesRepository statesUserStatesRepository = null;
 	protected StatesUserStatesReplyRepository statesUserStatesReplyRepository = null;
 	protected MapperOnCache mapperOnCache = null;
+	protected PatUserPatRepository patUserPatRepository = null;
 	
 	public StateServiceSupport(JmsTemplate apprequestTemplate, CommonConfig commonConfig, StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesReplyMapper statesUserStatesReplyMapper,
 			StatesUserStatesAuditMapper statesUserStatesAuditMapper, PatUserPatMapper patUserPatMapper, StatesUserStatesRepository statesUserStatesRepository,
-			StatesUserStatesReplyRepository statesUserStatesReplyRepository, MapperOnCache mapperOnCache) {
+			StatesUserStatesReplyRepository statesUserStatesReplyRepository, MapperOnCache mapperOnCache, PatUserPatRepository patUserPatRepository) {
 		super();
 		this.apprequestTemplate = apprequestTemplate;
 		this.commonConfig = commonConfig;
@@ -48,6 +50,7 @@ public class StateServiceSupport {
 		this.statesUserStatesRepository = statesUserStatesRepository;
 		this.statesUserStatesReplyRepository = statesUserStatesReplyRepository;
 		this.mapperOnCache = mapperOnCache;
+		this.patUserPatRepository = patUserPatRepository;
 	}
 
 	protected JSONArray getFriendList(String userid) throws Exception {

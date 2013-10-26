@@ -37,6 +37,7 @@ import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.commons.repository.pat.PatUserPatRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
@@ -52,12 +53,13 @@ import com.momoplan.pet.framework.servicestate.vo.UserZan;
 @Service
 public class StateServiceImpl extends StateServiceSupport implements StateService {
 	
+	
 	@Autowired
 	public StateServiceImpl(JmsTemplate apprequestTemplate, CommonConfig commonConfig, StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesReplyMapper statesUserStatesReplyMapper,
 			StatesUserStatesAuditMapper statesUserStatesAuditMapper, PatUserPatMapper patUserPatMapper, StatesUserStatesRepository statesUserStatesRepository,
-			StatesUserStatesReplyRepository statesUserStatesReplyRepository, MapperOnCache mapperOnCache) {
+			StatesUserStatesReplyRepository statesUserStatesReplyRepository, MapperOnCache mapperOnCache, PatUserPatRepository patUserPatRepository) {
 		super(apprequestTemplate, commonConfig, statesUserStatesMapper, statesUserStatesReplyMapper, statesUserStatesAuditMapper, patUserPatMapper, statesUserStatesRepository,
-				statesUserStatesReplyRepository, mapperOnCache);
+				statesUserStatesReplyRepository, mapperOnCache, patUserPatRepository);
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(StateServiceImpl.class);
@@ -523,10 +525,9 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug("获取全部好友的动态 userid="+userid);
 		logger.debug("1、获取好友列表");
 		JSONArray jsonArray = getFriendList(userid);
-		
 		logger.debug("2、根据好友列表获取动态");
 		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
-		statesUserStatesCriteria.createCriteria().andStateEqualTo("0");//状态：正常的
+		statesUserStatesCriteria.createCriteria().andStateEqualTo("0");//2013-10-26：经过讨论，这里只显示正常状态的
 		statesUserStatesCriteria.createCriteria().andUseridEqualTo(userid);//我自己
 		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();//好友+我自己，都在这里
 		userMap.put(userid, getUserinfo(userid));//我自己，加入映射表
@@ -555,10 +556,13 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			vo.setNickname(get(userJson,"nickname"));
 			vo.setAlias(get(userJson,"alias"));
 			vo.setUserImage(get(userJson,"img"));
-			//TODO 待修正 >>>>>>>>>>
-			vo.setTotalPat("100");
-			vo.setDidIpat(false);
-			//TODO 待修正 <<<<<<<<<<
+			//赞信息 >>>>>>>>>>
+			String srcid = states.getId();
+			int totalPat = patUserPatRepository.getTotalPatBySrcId(srcid);
+			boolean didIpat = patUserPatRepository.didIpat(userid, srcid);
+			vo.setTotalPat(totalPat+"");
+			vo.setDidIpat(didIpat);
+			//赞信息 <<<<<<<<<<
 			resList.add(vo);
 		}
 		return resList;
