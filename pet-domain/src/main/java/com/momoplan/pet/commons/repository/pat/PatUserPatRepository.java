@@ -107,7 +107,32 @@ public class PatUserPatRepository implements CacheKeysConstance{
 			logger.debug("删除赞:key="+key);
 		}
 	}
-	
+	/**
+	 * 我是不是赞过
+	 * @param userid
+	 * @param srcid
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean didIpat(String userid,String srcid)throws Exception{
+		PatUserPat keyParam = new PatUserPat();
+		keyParam.setSrcId(srcid);
+		keyParam.setUserid(userid);
+		keyParam.setId("*");
+		String key = getCacheKey(keyParam);
+		boolean f = false;
+		try{
+			Set<String> keys = storePool.keys(key);
+			if(keys!=null&&keys.size()>0){
+				f = true;
+			}
+		}catch(Exception e){
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("insertSelective",e);
+		}
+		logger.debug("是否赞过 userid="+userid+" ; srcid="+srcid); 
+		return f;
+	}
 	/**
 	 * 赞的总数
 	 * @param srcId
