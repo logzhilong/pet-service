@@ -361,9 +361,10 @@ pet-service
       
     10、getNearPerson
 
-      功能：获取附近的人，distance属性表示距离，包含在 user 对象中
+      功能：获取附近的人，distance属性表示距离，包含在 user 对象中.
+                2013-10-26: 输入增加 personOrPet 属性，当 personOrPet=pet 时，表示返回所有宠物
 
-      输入：{"gender":"性别", "petType":"宠物类型", "longitude":"","latitude":""}
+      输入：{"gender":"性别", "petType":"宠物类型","personOrPet":"pet" "longitude":"","latitude":""}
 
       输出：{
                 "success":true,
