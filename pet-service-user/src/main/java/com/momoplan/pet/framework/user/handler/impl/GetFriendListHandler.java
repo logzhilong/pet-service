@@ -42,7 +42,7 @@ public class GetFriendListHandler extends AbstractHandler {
 			logger.debug(logTitle+" 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug(logTitle+" 失败 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);

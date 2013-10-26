@@ -99,7 +99,7 @@ public class UserServiceSupport {
 	 * @return
 	 * @throws Exception
 	 */
-	protected void buildNearPersonBuffer(String userId,String gender,String petType, double longitude, double latitude) throws Exception {
+	protected void buildNearPersonBuffer(String userId,String gender,String petType, double longitude, double latitude,String personOrPet) throws Exception {
 		String hash = geoHash.encode(latitude, longitude);
 		logger.debug("userid="+userId+" ; longitude="+longitude+" ; latitude="+latitude);
 		String scope = commonConfig.get("geohash.scope");//截取 geohash 范围，将来要调整成智能的
@@ -140,8 +140,14 @@ public class UserServiceSupport {
 				}
 				List<PetVo> petList = null;
 				//TODO 第二个条件：宠物类型
+				//2013-10-26 : 输入增加 personOrPet 属性，当 personOrPet=pet 时，表示返回所有宠物
 				if(StringUtils.isNotEmpty(petType)){//按条件过滤类型
-					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+petType+"*";
+					String petTypeKey = petType;
+					if("pet".equalsIgnoreCase(personOrPet)){
+						logger.debug("返回所有宠物 personOrPet="+personOrPet);
+						petTypeKey = "";
+					}
+					String userPetTypeIndexKey = UserService.USERID_PETTYPE_INDEX+uid+":"+petTypeKey+"*";
 					Set<String> petSet = storePool.keys(userPetTypeIndexKey);
 					if(petSet==null||petSet.size()<1){
 						logger.debug(petType+" 条件不符[宠物类型]，跳过 ");
@@ -155,7 +161,7 @@ public class UserServiceSupport {
 					if( petSet!=null && petSet.size()>0 ){
 						List<String> petJsonList = storePool.get(petSet.toArray(new String[petSet.size()]));
 						petList = petJsonList2PetVoList(petJsonList);
-					}	
+					}
 				}
 				nearPerson.setUser(uv);
 				nearPerson.setPetList(petList);

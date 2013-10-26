@@ -29,5 +29,11 @@ public interface CacheKeysConstance {
 	 */
 	public static final String USERID_PETTYPE_INDEX = "service_user.userid_pettype.index:";
 	
+	/**
+	 * 用于存储用户的好友信息，格式为 FRIEND_KEY + friendShipId + ":" + (userA+userB)
+	 * 查找时，匹配 *userA* 或者 *userB* 来找到好友
+	 * 值 存储 {"aid":"","bid":""}
+ 	 */
+	public static final String FRIEND_KEY = "service_user.friend:";
 	
 }

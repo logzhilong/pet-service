@@ -3,9 +3,11 @@ package com.momoplan.pet.framework.user.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +72,11 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	 * @throws Exception
 	 */
 	@Override
-	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception {
+	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude,String personOrPet) throws Exception {
 		int index = Integer.parseInt(pageIndex);
 		if(index==0){
 			logger.debug("构建缓冲区 index="+index+" ; userid="+userId);
-			buildNearPersonBuffer(userId,gender,petType,longitude,latitude);
+			buildNearPersonBuffer(userId,gender,petType,longitude,latitude,personOrPet);
 		}
 		logger.debug("在缓冲区读取 index="+index+" ; userid="+userId);
 		return readNearPersionBuffer(index,userId);
@@ -157,6 +159,13 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			userFriendship.setbId(ub);
 			userFriendship.setVerified(type);
 			mapperOnCache.insertSelective(userFriendship, userFriendship.getId());
+			JSONObject json = new JSONObject();
+			json.put("aId", aid);
+			json.put("bId", bid);
+			//TODO 修改时，记得连缓存里的别名一起改了
+			json.put("aliasA", "");
+			json.put("aliasB", "");
+			storePool.set(FRIEND_KEY+userFriendship.getId()+":"+aid+bid,json.toString());
 		}else if("unsubscribed".equalsIgnoreCase(st)){
 			logger.debug("删除好友 aid="+aid+" ; bid="+bid);
 			//这里应该是删除数据的操作吧？
@@ -168,7 +177,12 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
 			if(list!=null)
 				for(UserFriendship uf:list){
-					mapperOnCache.deleteByPrimaryKey(uf.getClass(), uf.getId());
+					String id = uf.getaId();
+					mapperOnCache.deleteByPrimaryKey(uf.getClass(), id);
+					Set<String> set = storePool.keys(FRIEND_KEY+id+":*");
+					if(set!=null&&set.size()>0){
+						storePool.del(set.toArray(new String[set.size()]));
+					}
 				}
 		}else{
 			throw new Exception("无法识别 SubscriptionType="+st);
@@ -190,32 +204,40 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
 		}
 	}
-
+	private String get(JSONObject jsonObj ,String key){
+		try {
+			return (String) jsonObj.get(key);
+		} catch (JSONException e) {
+			logger.debug(e.getMessage());
+		}
+		return null;
+	}
 	@Override
 	public List<UserVo> getFirendList(String userid) throws Exception {
-		UserFriendshipCriteria userFriendshipCriteria = new UserFriendshipCriteria();
-		UserFriendshipCriteria.Criteria criteriaA = userFriendshipCriteria.createCriteria();
-		criteriaA.andAIdEqualTo(userid);
-		UserFriendshipCriteria.Criteria criteriaB = userFriendshipCriteria.createCriteria();
-		criteriaB.andBIdEqualTo(userid);
-		userFriendshipCriteria.or(criteriaB);
-		List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
-		List<UserVo> userList = new ArrayList<UserVo>();
-		//缓存取值
-		for(UserFriendship u : list){
-			String aid = u.getaId();
-			String bid = u.getbId();
-			String uid = userid.equals(aid)?bid:aid;
-			String alias = userid.equals(aid)?u.getAliasb():u.getAliasa();//别名
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
-			user.setPassword(null);
-			user.setEmail(null);
-			UserVo uv = new UserVo();
-			org.springframework.beans.BeanUtils.copyProperties(user, uv);
-			uv.setAlias(alias);
-			userList.add(uv);
+		Set<String> set = storePool.keys(FRIEND_KEY+"*:*"+userid+"*");
+		if(set!=null&&set.size()>0){
+			List<UserVo> userList = new ArrayList<UserVo>();
+			List<String> list = storePool.get(set.toArray(new String[set.size()]));
+			for(String jsonStr : list){
+				JSONObject jsonObj = new JSONObject(jsonStr);
+				String aid = jsonObj.getString("aId");
+				String bid = jsonObj.getString("bId");
+				String uid = userid.equals(aid)?bid:aid;
+				String alias = get(jsonObj,"aliasA");//别名
+				if(userid.equals(aid)){
+					alias = get(jsonObj,"aliasB");
+				}
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
+				user.setPassword(null);
+				user.setEmail(null);
+				UserVo uv = new UserVo();
+				org.springframework.beans.BeanUtils.copyProperties(user, uv);
+				uv.setAlias(alias);
+				userList.add(uv);
+			}
+			return userList;
 		}
-		return userList;
+		return null;
 	}
 
 	@Override

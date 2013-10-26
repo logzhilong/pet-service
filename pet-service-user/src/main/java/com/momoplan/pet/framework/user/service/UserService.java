@@ -94,7 +94,7 @@ public interface UserService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude) throws Exception;
+	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude,String personOrPet) throws Exception;
 	
 	
 }
