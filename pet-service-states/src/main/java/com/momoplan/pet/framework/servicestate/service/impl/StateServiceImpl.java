@@ -362,22 +362,26 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			retainMap.put(f, "0");
 		}
 		
-		logger.debug("//2 全部回复");
 		List<StatesUserStatesReply> all = statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid, Integer.MAX_VALUE, 0);
+		logger.debug("//2 全部回复");
 
 		logger.debug("//3 过滤出共同好友的回复");
 		List<StatesUserStatesReplyVo> voList = new ArrayList<StatesUserStatesReplyVo>();
-		for(StatesUserStatesReply reply : all){
-			String uid = reply.getUserid();
-			if(retainMap.get(uid)!=null){
-				StatesUserStatesReplyVo vo = new StatesUserStatesReplyVo();
-				BeanUtils.copyProperties(reply, vo);
-				JSONObject userJson = getUserinfo(uid);
-				vo.setUsername(get(userJson,"username"));
-				vo.setNickname(get(userJson,"nickname"));
-				vo.setAlias(get(userJson,"alias"));
-				vo.setUserImage(get(userJson,"img"));
-				voList.add(vo);
+		if(all!=null&&all.size()>0){
+			logger.debug("all size is : "+all.size());
+			for(StatesUserStatesReply reply : all){
+				String uid = reply.getUserid();
+				logger.debug(uid+" ; "+retainMap.get(uid)); 
+				if(retainMap.get(uid)!=null){
+					StatesUserStatesReplyVo vo = new StatesUserStatesReplyVo();
+					BeanUtils.copyProperties(reply, vo);
+					JSONObject userJson = getUserinfo(uid);
+					vo.setUsername(get(userJson,"username"));
+					vo.setNickname(get(userJson,"nickname"));
+					vo.setAlias(get(userJson,"alias"));
+					vo.setUserImage(get(userJson,"img"));
+					voList.add(vo);
+				}
 			}
 		}
 		
