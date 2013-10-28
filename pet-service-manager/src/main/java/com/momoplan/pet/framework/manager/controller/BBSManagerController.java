@@ -1,8 +1,13 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -230,13 +235,7 @@ public class BBSManagerController {
 	}
 
 	private String fmLeft(String id, Model model) {
-		try {
-
 			return "/manager/bbs/forumManagerLeft";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public String fmRight(String id, Model model) {
@@ -244,7 +243,8 @@ public class BBSManagerController {
 	}
 
 	/**
-	 * 获取子集贴子管理右侧的帖子集合
+	 * 获取某圈子子集贴子
+	 * 管理右侧的帖子集合
 	 * 
 	 * @param id
 	 * @param model
@@ -253,10 +253,11 @@ public class BBSManagerController {
 	@RequestMapping("/manager/bbs/forumrightmanagelist.html")
 	public String forumrightmanagelist(Forum forum, Model model) {
 		try {
-			forum.setId("92DE9E82807142A293107DFFC4368177");
 			List<Note> forums = bBSManagerService.getAllNotesByForumId(forum);
 			logger.debug("forumrightmanagelist" + forums.toString());
 			model.addAttribute("forums", forums);
+			model.addAttribute("forumid", forum.getId());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -273,7 +274,6 @@ public class BBSManagerController {
 	public String ToupImg(Model model) {
 		try {
 			logger.debug("welcome   Toupimg");
-			// return "/manager/notemanage/UploadImg";
 			return "/manager/notemanage/UploadImging";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,7 +283,7 @@ public class BBSManagerController {
 	}
 
 	/**
-	 * 上传图片 uploadify文件上传
+	 * 上传图片 uploadimg文件上传
 	 * 
 	 * @return model
 	 */
@@ -292,40 +292,67 @@ public class BBSManagerController {
 		logger.debug("wlcome to upimg ......");
 		try {
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
-			 //用于显示在在线编辑器里，图片的路径  
-	        String newFileName = "";
-	        
+			// 用于显示在在线编辑器里，图片的路径
+			String newFileName = "";
+
 			if (multipartResolver.isMultipart(req)) {
 				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) req;
 				Iterator<String> iter = multiRequest.getFileNames();
 				while (iter.hasNext()) {
+					// 上传文件信息
 					MultipartFile file = multiRequest.getFile(iter.next());
 					if (file != null) {
 						String name = file.getOriginalFilename();
-						String path = "D:/"+ name;
-						URL fd=	new File(path).toURI().toURL();
-						newFileName=fd.toString();
-						File localFile = new File(path);
-						if (!localFile.exists())
-						{
-							localFile.mkdirs();
+						String type = file.getContentType();
+						String path = "D:/" + name;
+
+						// 访问url
+						String urlStr ="http://123.178.27.74/pet-hub/request?body={\"service\":\"service.uri.pet_sso\",\"method\":\"login\",\"token\":\"\",\"channel\":\"\",\"mac\":\"\",\"imei\":\"\",\"params\":{\"username\":\"\",\"password\":\"\"}}";  
+						String urlStr1 ="http://123.178.27.74/pet-file-server/put?{\"Content-Type\":\"64B7D0E143294CE7B76651F2109462FE\",\"name\":\"file\",\"fileName\":\"44\",\"mimeType\":\"image/jpeg\"}";  
+						URL url = new URL(urlStr);  
+						URLConnection URLconnection = url.openConnection();  
+						HttpURLConnection httpConnection = (HttpURLConnection)URLconnection;  
+						int responseCode = httpConnection.getResponseCode();  
+						if (responseCode == HttpURLConnection.HTTP_OK) {  
+							System.out.println("连接成功!");
+						}else{ 
+							System.out.println("连接失败!");
 						}  
+						InputStream urlStream = httpConnection.getInputStream();  
+						BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlStream));  
+						String sCurrentLine = "";  
+						String sTotalString = "";  
+						while ((sCurrentLine = bufferedReader.readLine()) != null) {  
+						    sTotalString += sCurrentLine;  
+						}  
+						//该URL返回值  sTotalString
+						System.out.println(sTotalString);
+
+						
+						//返回页面数据赋值
+						newFileName ="http://img.ivsky.com/img/tupian/slides/201310/04/chishui_dapubu.jpg";
+						// 将上传文件存储至本地
+						File localFile = new File(path);
+						if (!localFile.exists()) {
+							localFile.mkdirs();
+						}
 						file.transferTo(localFile);
-						 // 向前台返回文件名
-						 PrintWriter out = response.getWriter();  
-						 out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName + "\"}");    
-					     out.flush();  
-					     out.close();
+						// 向前台返回文件名
+						PrintWriter out = response.getWriter();
+						out.println("{\"err\":\"" + "" + "\",\"msg\":\""
+								+newFileName + "\"}");
+						out.flush();
+						out.close();
 					}
 				}
 			}
 			logger.debug("上传成功!");
 		} catch (Exception e) {
 			e.printStackTrace();
-			 PrintWriter out = response.getWriter();  
-			 out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "" + "\"}");    
-		     out.flush();  
-		     out.close();
+			PrintWriter out = response.getWriter();
+			out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "上传错误!......" + "\"}");
+			out.flush();
+			out.close();
 		}
 	}
 

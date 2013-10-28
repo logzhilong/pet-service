@@ -65,6 +65,8 @@ public class NoteController {
 				model.addAttribute("note2", note2);
 				return "/manager/notemanage/NoteUpdate";
 			}else{
+				model.addAttribute("forumId", note.getForumId());
+
 				return "/manager/notemanage/NoteAdd";
 			}
 		} catch (Exception e) {
@@ -87,7 +89,8 @@ public class NoteController {
 			json.put("message", "操作成功!");
 			json.put("callbackType", "closeCurrent");
 			json.put("forwardUrl", "");
-			json.put("navTabId", "jbsxBoxmm");
+			json.put("rel", "jbsxBox1");
+//			json.put("navTabId", "jbsxBox1");
 			try {
 				noteService.NoteAddOrUpdate(note);
 			} catch (Exception e) {
@@ -117,7 +120,7 @@ public class NoteController {
 			json.put("message", "操作成功!");
 			json.put("callbackType", "closeCurrent");
 			json.put("forwardUrl", "");
-			json.put("navTabId", "jbsxBoxmm");
+			json.put("navTabId", "");
 			try {
 				noteService.NoteDel(note);
 			} catch (Exception e) {

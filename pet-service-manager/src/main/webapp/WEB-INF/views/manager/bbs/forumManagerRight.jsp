@@ -6,12 +6,12 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li>
-				<a class="add" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html" target="dialog" max="false" rel="rolemanage_add_dialog" mask="true" title="添加" width="570" height="560" >
+				<a class="add" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html?forumId=${forumid}"  target="dialog" max="false" mask="true" title="添加" width="650" height="500" >
 					<span>添加</span>
 				</a>				
 			</li>
 			<li>
-				<a class="edit" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html?id={id}" target="dialog" max="false" rel="rolemanage_update_dialog" mask="true" title="修改" width="550" height="360" >
+				<a class="edit" href="${ctx }/manager/notemanager/ToNoteAddOrUpdate.html?id={id}" rel="ffeer1"  target="dialog" max="false"  mask="true" title="修改" width="600" height="560" >
 					<span>修改</span>
 				</a>				
 			</li>
@@ -44,10 +44,10 @@
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td><a
-						href="${ctx }/manager/notemanager/notedetail.html?id={id}"
-						target="dialog" max="false" rel="note_detail_dialog" mask="true"
+						href="${ctx }/manager/notemanager/notedetail.html?id=${itm.id }"
+						target="dialog" max="false"  mask="true"
 						title="帖子详情(${itm.name })" width="600" height="500"
-						close="forum.refresh" param="'${itm.id }'"> ${itm.name } </a></td>
+						close="forum.refresh"> ${itm.name } </a></td>
 					<td>${itm.clientCount }</td>
 					<td>${itm.isEute }</td>
 					<td>${itm.isTop }</td>
