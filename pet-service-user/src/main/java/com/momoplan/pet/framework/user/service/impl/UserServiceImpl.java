@@ -138,11 +138,12 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	}
 	
 	@Override
-	public void savePetInfo(PetInfo petInfo) throws Exception {
+	public String savePetInfo(PetInfo petInfo) throws Exception {
 		petInfo.setId(IDCreater.uuid());
 		//放进数据库、缓存
 		mapperOnCache.insertSelective(petInfo, petInfo.getId());
 		updateUserPetTypeIndex(petInfo,false);
+		return petInfo.getId();
 	}
 
 	@Override

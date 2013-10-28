@@ -46,7 +46,7 @@ public interface UserService extends CacheKeysConstance{
 	 * @param petInfo
 	 * @throws Exception
 	 */
-	public void savePetInfo(PetInfo petInfo)throws Exception ;
+	public String savePetInfo(PetInfo petInfo)throws Exception ;
 	/**
 	 * 获取宠物列表
 	 * @param userid
