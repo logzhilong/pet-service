@@ -525,6 +525,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug("获取全部好友的动态 userid="+userid);
 		logger.debug("1、获取好友列表");
 		JSONArray jsonArray = getFriendList(userid);
+		logger.debug("friend_list="+jsonArray.toString());
 		logger.debug("2、根据好友列表获取动态");
 		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
 		statesUserStatesCriteria.createCriteria().andStateEqualTo("0");//2013-10-26：经过讨论，这里只显示正常状态的
@@ -547,6 +548,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		List<StatesUserStates> list = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
 		//最终结果
 		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
+		logger.debug(userMap.toString());
 		logger.debug("3、将动态中的用户信息补全,其中赞的相关信息为假值");
 		for(StatesUserStates states : list){
 			StatesUserStatesVo vo = new StatesUserStatesVo();
