@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
@@ -15,6 +15,7 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
@@ -28,13 +29,15 @@ public class SsoUserRepository implements CacheKeysConstance {
 	private MapperOnCache mapperOnCache = null;
 	private SsoUserMapper ssoUserMapper = null;
 	private Gson gson = MyGson.getInstance();
+	private StorePool storePool = null;
 	
-	@Autowired
-	public SsoUserRepository(RedisPool redisPool, MapperOnCache mapperOnCache, SsoUserMapper ssoUserMapper) {
+	
+	public SsoUserRepository(RedisPool redisPool, MapperOnCache mapperOnCache, SsoUserMapper ssoUserMapper, StorePool storePool) {
 		super();
 		this.redisPool = redisPool;
 		this.mapperOnCache = mapperOnCache;
 		this.ssoUserMapper = ssoUserMapper;
+		this.storePool = storePool;
 	}
 
 	public SsoUser getSsoUserByName(String username) {
@@ -83,23 +86,24 @@ public class SsoUserRepository implements CacheKeysConstance {
 		authenticationToken.setUserid(userId);
 		authenticationToken.setCreateDate(new Date());
 		String json = gson.toJson(authenticationToken);
-		ShardedJedis jedis = null;
+
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			jedis.hset(CF_TOKEN, authenticationToken.getToken(), json);
 			logger.debug("createToken 成功 : "+json);
 		}catch(Exception e){
 			logger.error("createToken 异常",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return authenticationToken;
 	}
 	
 	public SsoAuthenticationToken getToken(String token) throws Exception {
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String json = null;
 			try{
 				json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
@@ -116,21 +120,21 @@ public class SsoUserRepository implements CacheKeysConstance {
 			logger.debug("error : "+e.getMessage());
 			throw e;
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
 	public void delToken(String token) throws Exception {
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			jedis.hdel(CF_TOKEN, token);
 			logger.debug("logout 成功 : "+token);
 		}catch(Exception e){
 			logger.error("logout 失败",e);
 			throw e;
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 }
