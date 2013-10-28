@@ -168,12 +168,12 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			userFriendship.setVerified(type);
 			mapperOnCache.insertSelective(userFriendship, userFriendship.getId());
 			JSONObject json = new JSONObject();
-			json.put("aId", aid);
-			json.put("bId", bid);
+			json.put("aId", ua);
+			json.put("bId", ub);
 			//TODO 修改时，记得连缓存里的别名一起改了
 			json.put("aliasA", "");
 			json.put("aliasB", "");
-			storePool.set(FRIEND_KEY+userFriendship.getId()+":"+aid+bid,json.toString());
+			storePool.set(FRIEND_KEY+userFriendship.getId()+":"+ua+ub,json.toString());
 		}else if("unsubscribed".equalsIgnoreCase(st)){
 			logger.debug("删除好友 aid="+aid+" ; bid="+bid);
 			//这里应该是删除数据的操作吧？
