@@ -530,7 +530,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
 		StatesUserStatesCriteria.Criteria c1 = statesUserStatesCriteria.createCriteria();
 		c1.andStateEqualTo("0");//2013-10-26：经过讨论，这里只显示正常状态的
-		c1.andUseridEqualTo(userid);//我自己
 		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();//好友+我自己，都在这里
 		userMap.put(userid, getUserinfo(userid));//我自己，加入映射表
 		if(jsonArray!=null&&jsonArray.length()>0){
@@ -545,6 +544,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			if(useridList!=null&&useridList.size()>0)
 				c1.andUseridIn(useridList);
 		}
+		statesUserStatesCriteria.or(statesUserStatesCriteria.createCriteria().andUseridEqualTo(userid));//我自己
 		//排序
 		statesUserStatesCriteria.setOrderByClause("ct desc");
 		//分页
