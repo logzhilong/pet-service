@@ -68,6 +68,31 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 		}
 	}
 	
+	/**
+	 * 发动态
+	 * @param po
+	 * @throws Exception
+	 */
+	public void updateSelective(StatesUserStates po)throws Exception{
+		mapperOnCache.updateByPrimaryKey(po, po.getId());
+		ShardedJedis jedis = null;
+		String uid = po.getUserid();
+		try{
+			jedis = redisPool.getConn();
+			String key = HASH_USER_STATES+uid;
+			String field = po.getId();
+			String value = gson.toJson(po);
+			logger.debug("缓存用户动态 key="+key+" ; value="+value);
+			jedis.hset(key, field, value);
+		}catch(Exception e){
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("updateSelective",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+	}
+	
+	
 	public void delete(String id) throws Exception{
 		StatesUserStates po = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, id);
 		mapperOnCache.deleteByPrimaryKey(StatesUserStates.class, id);
@@ -99,7 +124,7 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			boolean hasCache = jedis.exists(key)&&jedis.llen(key)>0;
+			boolean hasCache = jedis.exists(key)&&jedis.hlen(key)>0;
 			if(!hasCache){
 				//初始化用户动态缓存列表
 				StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();

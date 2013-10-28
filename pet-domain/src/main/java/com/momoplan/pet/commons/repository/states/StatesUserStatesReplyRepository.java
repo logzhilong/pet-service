@@ -98,7 +98,7 @@ public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			boolean hasCache = jedis.exists(key)&&jedis.llen(key)>0;
+			boolean hasCache = jedis.exists(key)&&jedis.hlen(key)>0;
 			if(!hasCache){
 				//初始化用户动态缓存列表
 				StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();

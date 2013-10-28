@@ -22,7 +22,6 @@ import com.momoplan.pet.commons.PushApn;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.pool.StorePool;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.dto.UserLocation;
 import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
 import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
@@ -104,12 +103,16 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	}
 	
 	@Override
-	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception {
-		String userid = tokenObj.getUserid();
-		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
+	public UserVo getUser(String userid,String username) throws Exception {
+		SsoUser user = null;
+		if(username!=null&&!"".equals(username)){
+			user = ssoUserRepository.getSsoUserByName(username);
+		}else{
+			user = mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
+		}
 		UserVo userVo = null;
 		user.setPassword(null);
-		JSONObject ul = getUserLocation(userid);
+		JSONObject ul = getUserLocation(user.getId());
 		if(ul!=null){
 			String lat = ul.getString("latitude");
 			String lng = ul.getString("longitude");
@@ -134,15 +137,20 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	@Override
 	public void updatePetInfo(PetInfo petInfo) throws Exception {
 		mapperOnCache.updateByPrimaryKeySelective(petInfo, petInfo.getId());
+		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
+		logger.debug("修改宠物:"+petInfo.toString());
 		updateUserPetTypeIndex(petInfo,false);
 	}
 	
 	@Override
-	public void savePetInfo(PetInfo petInfo) throws Exception {
+	public String savePetInfo(PetInfo petInfo) throws Exception {
 		petInfo.setId(IDCreater.uuid());
 		//放进数据库、缓存
 		mapperOnCache.insertSelective(petInfo, petInfo.getId());
+		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
+		logger.debug("保存宠物:"+petInfo.toString());
 		updateUserPetTypeIndex(petInfo,false);
+		return petInfo.getId();
 	}
 
 	@Override

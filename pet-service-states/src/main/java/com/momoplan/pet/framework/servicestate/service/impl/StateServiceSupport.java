@@ -2,12 +2,19 @@ package com.momoplan.pet.framework.servicestate.service.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.jms.core.JmsTemplate;
 
 import com.momoplan.pet.commons.cache.MapperOnCache;
@@ -15,12 +22,14 @@ import com.momoplan.pet.commons.domain.pat.mapper.PatUserPatMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesReplyMapper;
+import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.pat.PatUserPatRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.servicestate.common.Constants;
+import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 public class StateServiceSupport {
 	
@@ -54,14 +63,19 @@ public class StateServiceSupport {
 	}
 
 	protected JSONArray getFriendList(String userid) throws Exception {
-		String method = Constants.MEDHOD_GET_FRIENDLIST;
-		String path = Constants.SERVICE_URI_PET_USER;
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userid", userid);
-		String responseStr = dopost(path, method, params).toString();
-		JSONObject json = new JSONObject(responseStr);
-		JSONArray entities = json.getJSONArray("entity");
-		return entities;
+		try{
+			String method = Constants.MEDHOD_GET_FRIENDLIST;
+			String path = Constants.SERVICE_URI_PET_USER;
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("userid", userid);
+			String responseStr = dopost(path, method, params).toString();
+			JSONObject json = new JSONObject(responseStr);
+			JSONArray entities = json.getJSONArray("entity");
+			return entities;
+		}catch(Exception e){
+			logger.error("getFriendList",e);
+		}
+		return null;
 	}
 	
 	protected String get(JSONObject json,String key){
@@ -109,5 +123,67 @@ public class StateServiceSupport {
 		logger.debug("requestBody : " + req.toString());
 		logger.debug("service="+path+" ; service_uri=" + service_uri);
 		return PostRequest.postText(service_uri, "body", req.toString());
+	}
+	
+	/**
+	 * 构建动态信息
+	 * @param userStates
+	 * @param vo
+	 * @param userJson
+	 * @param myUserid
+	 * @throws Exception
+	 */
+	protected void buildStatesUserStatesVoByStates(StatesUserStates userStates,StatesUserStatesVo vo,JSONObject userJson,String myUserid) throws Exception{
+		BeanUtils.copyProperties(userStates, vo);
+		vo.setUsername(get(userJson,"username"));
+		vo.setNickname(get(userJson,"nickname"));
+		vo.setAlias(get(userJson,"alias"));
+		vo.setUserImage(get(userJson,"img"));
+		//赞信息 >>>>>>>>>>
+		String srcid = userStates.getId();
+		int totalPat = patUserPatRepository.getTotalPatBySrcId(srcid);
+		boolean didIpat = patUserPatRepository.didIpat(myUserid, srcid);
+		vo.setTotalPat(totalPat+"");
+		vo.setDidIpat(didIpat);
+	}
+	/**
+	 * 构建用户动态列表
+	 * @param list po 集合
+	 * @param resList 最终结果，包含用户信息以及 赞 信息
+	 * @param userMap 用户信息映射
+	 * @param userid 用户ID
+	 * @throws Exception
+	 */
+	protected void buildStatesUserStatesVoList(List<StatesUserStates> list,List<StatesUserStatesVo> resList,Map<String,JSONObject> userMap,String userid) throws Exception{
+		for(StatesUserStates states : list){
+			StatesUserStatesVo vo = new StatesUserStatesVo();
+			JSONObject userJson = userMap.get(states.getUserid());
+			buildStatesUserStatesVoByStates(states,vo,userJson,userid);
+			logger.debug("动态:"+vo.toString());
+			resList.add(vo);
+		}
+	}
+	
+	/**
+	 * 向校验内容的应用send消息
+	 * 
+	 * @param userState
+	 * @param biz
+	 */
+	protected void sendJMS(StatesUserStates userState, String biz) {
+		TextMessage tm = new ActiveMQTextMessage();
+		logger.debug("\nbid:" + userState.getId().toString());
+		logger.debug("\nmsg:" + userState.getMsg());
+		try {
+			tm.setStringProperty("biz", biz);
+			tm.setStringProperty("bid", userState.getId().toString());
+			tm.setStringProperty("content", userState.getMsg());
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName("queue/pet_wordfilter");
+			apprequestTemplate.convertAndSend(queue, tm);
+		} catch (JMSException e) {
+			logger.debug("sendJMS error :" + e);
+			e.printStackTrace();
+		}
 	}
 }

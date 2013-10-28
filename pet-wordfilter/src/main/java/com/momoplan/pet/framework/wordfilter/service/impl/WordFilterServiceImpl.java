@@ -11,6 +11,7 @@ import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesAudit;
+import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.wordfilter.WordFilterUtil;
 import com.momoplan.pet.commons.wordfilter.result.FilteredResult;
 import com.momoplan.pet.framework.wordfilter.service.WordFilterService;
@@ -23,13 +24,16 @@ public class WordFilterServiceImpl implements WordFilterService {
 	private StatesUserStatesMapper statesUserStatesMapper = null;
 	private StatesUserStatesAuditMapper statesUserStatesAuditMapper = null;
 	private MapperOnCache mapperOnCache = null;
-
+	private StatesUserStatesRepository statesUserStatesRepository = null;
+	
 	@Autowired
-	public WordFilterServiceImpl(StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache) {
+	public WordFilterServiceImpl(StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache,
+			StatesUserStatesRepository statesUserStatesRepository) {
 		super();
 		this.statesUserStatesMapper = statesUserStatesMapper;
 		this.statesUserStatesAuditMapper = statesUserStatesAuditMapper;
 		this.mapperOnCache = mapperOnCache;
+		this.statesUserStatesRepository = statesUserStatesRepository;
 	}
 
 	@Override
@@ -43,6 +47,7 @@ public class WordFilterServiceImpl implements WordFilterService {
 	}
 
 	private void userStatesHandler(String biz, String bid, String content) {
+		logger.debug("biz="+biz+" ; bid="+bid+" ; content="+content); 
 		try {
 			// content_audit 审核任务
 			// user_states 动态
@@ -59,17 +64,19 @@ public class WordFilterServiceImpl implements WordFilterService {
 				commonContentAudit.setContent(badWords);
 				statesUserStatesAuditMapper.insertSelective(commonContentAudit);
 				logger.debug(commonContentAudit.toString());
-				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
+				StatesUserStates statesUserStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, bid);
 				statesUserStates.setState("4");// 未通过 TODO 放倒枚举类里
-				mapperOnCache.updateByPrimaryKeySelective(statesUserStates, statesUserStates.getId());
+				logger.debug(statesUserStates.toString());
+				statesUserStatesRepository.updateSelective(statesUserStates);
 			} else {
 				logger.debug("用户动态-内容审核-通过");
-				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
-				statesUserStates.setState("0");// 未通过 TODO 放倒枚举类里
-				mapperOnCache.updateByPrimaryKeySelective(statesUserStates, statesUserStates.getId());
+				StatesUserStates statesUserStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, bid);
+				statesUserStates.setState("0");// 通过 TODO 放倒枚举类里
+				logger.debug(statesUserStates.toString());
+				statesUserStatesRepository.updateSelective(statesUserStates);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("userStatesHandler",e);
 		}
 	}
 

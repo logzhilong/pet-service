@@ -34,9 +34,9 @@ OUTPUT:
  * @author liangc
  */
 @Component("savePetinfo")
-public class SavePetHandler extends AbstractHandler {
+public class AddPetHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(SavePetHandler.class);
+	private Logger logger = LoggerFactory.getLogger(AddPetHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
@@ -47,9 +47,9 @@ public class SavePetHandler extends AbstractHandler {
 			PetInfo petInfo = revicePetInfo(clientRequest);
 			petInfo.setUserid(userid);
 			logger.debug(petInfo.toString());
-			userService.savePetInfo(petInfo);
+			String id = userService.savePetInfo(petInfo);
 			logger.debug("添加宠物 成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(true,id).toString();
 		}catch(Exception e){
 			logger.debug("添加宠物 失败 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);

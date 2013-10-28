@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.json.JSONArray;
 
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.user.CacheKeysConstance;
@@ -34,7 +33,7 @@ public interface UserService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public UserVo getUser(SsoAuthenticationToken tokenObj) throws Exception ;
+	public UserVo getUser(String userid,String username) throws Exception ;
 	/**
 	 * 更新宠物信息
 	 * @param petInfo
@@ -46,7 +45,7 @@ public interface UserService extends CacheKeysConstance{
 	 * @param petInfo
 	 * @throws Exception
 	 */
-	public void savePetInfo(PetInfo petInfo)throws Exception ;
+	public String savePetInfo(PetInfo petInfo)throws Exception ;
 	/**
 	 * 获取宠物列表
 	 * @param userid

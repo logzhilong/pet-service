@@ -6,11 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
+import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 @Component("findOneState")
 public class FindOneStateHandler extends AbstractHandler{
@@ -21,10 +22,13 @@ public class FindOneStateHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			StateResponse stateResponse = stateService.findOneState(clientRequest,authenticationToken);
-			rtn = new Success(true,stateResponse.getStateView()).toString();
+			String userid = authenticationToken.getUserid();
+			String stateid = PetUtil.getParameter(clientRequest, "stateid");
+			StatesUserStatesVo vo = stateService.findOneState(userid,stateid);
+			rtn = new Success(true,vo).toString();
+			logger.debug("获取一条动态 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
-			logger.debug("获取一条动态失败 body="+gson.toJson(clientRequest));
+			logger.debug("获取一条动态 失败 body="+gson.toJson(clientRequest));
 			logger.error("findOneState : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{

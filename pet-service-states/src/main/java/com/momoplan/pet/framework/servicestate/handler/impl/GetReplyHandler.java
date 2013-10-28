@@ -1,19 +1,22 @@
 package com.momoplan.pet.framework.servicestate.handler.impl;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
+import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 
-@Component("getRepliesByTimeIndex")
-public class GetRepliesHandler extends AbstractHandler{
+@Component("getReply")
+public class GetReplyHandler extends AbstractHandler{
 	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
 	
 	@Override
@@ -21,11 +24,15 @@ public class GetRepliesHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			StateResponse stateResponse = stateService.getRepliesByTimeIndex(clientRequest,authenticationToken);
-			
-			rtn = new Success(true,stateResponse.getReplyView()).toString();
+			String userid = authenticationToken.getUserid();
+			String stateid = PetUtil.getParameter(clientRequest, "stateid");
+			String pageSize = PetUtil.getParameter(clientRequest, "pageSize");
+			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");
+			List<StatesUserStatesReplyVo> voList = stateService.getReplyByStateid(userid, stateid, Integer.parseInt(pageSize), Integer.parseInt(pageNo));
+			rtn = new Success(true,voList).toString();
+			logger.debug("获取回复 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
-			logger.debug("回复失败 body="+gson.toJson(clientRequest));
+			logger.debug("获取回复 失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
