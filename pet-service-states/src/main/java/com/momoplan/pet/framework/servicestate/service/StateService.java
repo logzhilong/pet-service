@@ -3,6 +3,7 @@ package com.momoplan.pet.framework.servicestate.service;
 import java.util.List;
 
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.CacheKeysConstance;
 import com.momoplan.pet.framework.servicestate.vo.StateResponse;
@@ -12,7 +13,7 @@ public interface StateService extends CacheKeysConstance{
 
 	String addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	void delUserState(ClientRequest clientRequest) throws Exception;
-	String addReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
+	String addReply(StatesUserStatesReply reply) throws Exception;
 	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	void delReply(ClientRequest clientRequest) throws Exception;
 	

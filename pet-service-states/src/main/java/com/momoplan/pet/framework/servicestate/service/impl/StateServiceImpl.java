@@ -65,18 +65,12 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	private static Logger logger = LoggerFactory.getLogger(StateServiceImpl.class);
 	
 	
-	public String addReply(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		StatesUserStatesReply reply = new StatesUserStatesReply();
-		String userid = authenticationToken.getUserid();
+	public String addReply(StatesUserStatesReply reply) throws Exception {
 		reply.setId(IDCreater.uuid());
 		reply.setCt(new Date());
-		reply.setMsg(PetUtil.getParameter(clientRequest, "msg"));
-		reply.setPid(PetUtil.getParameter(clientRequest, "pid"));// 可以为空
-		reply.setPuserid(PetUtil.getParameter(clientRequest, "puserid"));// 可以为空
-		reply.setUserid(userid);
-		reply.setStateid(PetUtil.getParameter(clientRequest, "stateid"));
-		// statesUserStatesReplyMapper.insertSelective(reply);
 		statesUserStatesReplyRepository.insertSelective(reply);
+		//TODO 发消息
+		
 		// stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
 		// TODO
 		// try {
@@ -732,6 +726,8 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	 */
 	private void buildStatesUserStatesVo(List<StatesUserStates> list,List<StatesUserStatesVo> resList,Map<String,JSONObject> userMap,String userid) throws Exception{
 		for(StatesUserStates states : list){
+			if(resList==null)
+				resList = new ArrayList<StatesUserStatesVo>(list.size());
 			StatesUserStatesVo vo = new StatesUserStatesVo();
 			BeanUtils.copyProperties(states, vo);
 			JSONObject userJson = userMap.get(states.getUserid());
