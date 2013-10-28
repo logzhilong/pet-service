@@ -10,7 +10,6 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
 
 @Component("getRepliesByTimeIndex")
 public class GetRepliesHandler extends AbstractHandler{
@@ -21,9 +20,8 @@ public class GetRepliesHandler extends AbstractHandler{
 		String rtn = null;
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			StateResponse stateResponse = stateService.getRepliesByTimeIndex(clientRequest,authenticationToken);
 			
-			rtn = new Success(true,stateResponse.getReplyView()).toString();
+			rtn = new Success(true,null).toString();
 		}catch(Exception e){
 			logger.debug("回复失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);

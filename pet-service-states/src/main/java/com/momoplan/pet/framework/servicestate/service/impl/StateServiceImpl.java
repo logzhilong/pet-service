@@ -6,17 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -26,8 +24,6 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.pat.mapper.PatUserPatMapper;
-import com.momoplan.pet.commons.domain.pat.po.PatUserPat;
-import com.momoplan.pet.commons.domain.pat.po.PatUserPatCriteria;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesReplyMapper;
@@ -45,10 +41,7 @@ import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.service.StateService;
 import com.momoplan.pet.framework.servicestate.vo.PetUserView;
 import com.momoplan.pet.framework.servicestate.vo.ReplyView;
-import com.momoplan.pet.framework.servicestate.vo.StateResponse;
-import com.momoplan.pet.framework.servicestate.vo.StateView;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
-import com.momoplan.pet.framework.servicestate.vo.UserZan;
 
 @Service
 public class StateServiceImpl extends StateServiceSupport implements StateService {
@@ -64,41 +57,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 
 	private static Logger logger = LoggerFactory.getLogger(StateServiceImpl.class);
 	
-	
-	public String addReply(StatesUserStatesReply reply) throws Exception {
-		reply.setId(IDCreater.uuid());
-		reply.setCt(new Date());
-		statesUserStatesReplyRepository.insertSelective(reply);
-		//TODO 发消息
-		
-		// stateResponse.setReplyView(getReplyView(reply,reply.getUserid()));
-		// TODO
-		// try {
-		// XMPPRequest xr = new XMPPRequest();
-		// SsoUser sendUser = getSsoUser(reply.getUserid());
-		// String stateUserid = PetUtil.getParameter(clientRequest,
-		// "stateUserid");//获取接受用户的id
-		// SsoUser toUser = getSsoUser(stateUserid);
-		// xr.setSendUser(sendUser.getUsername());
-		// xr.setReceiveUser(toUser.getUsername());
-		// xr.setType("reply");
-		// xr.setPrams(reply.getStateid());
-		// xr.setWords(reply.getMsg());
-		// xr.setMsgTime(reply.getCt());
-		// xr.setRegion("@"+commonConfig.get(Constants.XMPP_DOMAIN,
-		// "hadoop7.ruyicai.com"));
-		// xr.setFromHeadImg(sendUser.getImg());
-		// xr.setFromNickname(sendUser.getNickname());
-		// xr.setXmpppath(commonConfig.get(Constants.XMPP_SERVER,
-		// "http://192.168.99.53:5280/rest"));
-		// logger.debug(new Gson().toJson(xr));
-		// xr.SendMessage();
-		// } catch (Exception e) {
-		// logger.error("xmpp send error...",e);
-		// }
-		return reply.getId();
-	}
-
 	@Override
 	public String addUserState(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
 		StatesUserStates userState = new StatesUserStates();
@@ -136,60 +94,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		String replyid = PetUtil.getParameter(clientRequest, "replyid");
 		statesUserStatesReplyRepository.delete(replyid);
 		// return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
-	}
-
-	/**
-	 * 向校验内容的应用send消息
-	 * 
-	 * @param userState
-	 * @param biz
-	 */
-	private void sendJMS(StatesUserStates userState, String biz) {
-		TextMessage tm = new ActiveMQTextMessage();
-		System.out.println("\nbid:" + userState.getId().toString());
-		System.out.println("\nmsg:" + userState.getMsg());
-		try {
-			tm.setStringProperty("biz", biz);
-			tm.setStringProperty("bid", userState.getId().toString());
-			tm.setStringProperty("content", userState.getMsg());
-			ActiveMQQueue queue = new ActiveMQQueue();
-			queue.setPhysicalName("queue/pet_wordfilter");
-			apprequestTemplate.convertAndSend(queue, tm);
-		} catch (JMSException e) {
-			logger.debug("sendJMS error :" + e);
-			e.printStackTrace();
-		} finally {
-			return;
-		}
-	}
-
-	/**
-	 * 重载此方法，根据用户状态表获取用户状态视图（时间排序）
-	 * 
-	 * @param userStates
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	private StateView getStateView(StatesUserStates userState, String userid, String whos) throws Exception {
-		if (null == userState) {
-			return null;
-		}
-		// 封装到状态视图中
-		StateView stateView = new StateView();
-		stateView.setId(userState.getId());
-		stateView.setCt(userState.getCt());
-		stateView.setMsg(userState.getMsg());
-		stateView.setIfTransmitMsg(userState.getIfTransmitMsg());
-		stateView.setTransmitMsg(userState.getTransmitMsg());
-		stateView.setTransmitUrl(userState.getTransmitUrl());
-		stateView.setImgid(userState.getImgid());
-		stateView.setState(userState.getState());
-		stateView.setPatUserPat(getPatUserPat(userState, null));
-		stateView.setCountZan(countZan(userState));
-		stateView.setIfIZaned(ifIZaned(userState, userid));
-		stateView.setPetUserView(getPetUserView(userState, userid));
-		return stateView;
 	}
 
 	private ReplyView getReplyView(StatesUserStatesReply reply, String userid) throws Exception {
@@ -305,83 +209,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	// return null;
 	// }
 
-	/**
-	 * 判断是否赞过这条动态
-	 * 
-	 * @param userState
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	private Boolean ifIZaned(StatesUserStates userState, String userid) throws Exception {
-		boolean ifIZaned = false;
-		List<UserZan> patUserPats = getPatUserPat(userState, userid);
-		for (UserZan patUserPat : patUserPats) {
-			if (patUserPat.getType().contains("states") && patUserPat.getSrcId().compareTo(userState.getId()) == 0) {
-				ifIZaned = true;
-			}
-		}
-		return ifIZaned;
-	}
-
-	/**
-	 * 获取一个用户所有的动态赞
-	 * 
-	 * @param userState
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	private List<UserZan> getPatUserPat(StatesUserStates userState, String userid) throws Exception {
-		PatUserPatCriteria patUserPatCriteria = new PatUserPatCriteria();
-		PatUserPatCriteria.Criteria criteria = patUserPatCriteria.createCriteria();
-		criteria.andTypeEqualTo("state");
-		criteria.andSrcIdEqualTo(userState.getId());
-		if (StringUtils.isNotEmpty(userid)) {
-			criteria.andUseridEqualTo(userid);
-		}
-		List<UserZan> userZans = new ArrayList<UserZan>();
-		List<PatUserPat> patUserPats = patUserPatMapper.selectByExample(patUserPatCriteria);
-		for (PatUserPat patUserPat : patUserPats) {
-			UserZan userZan = new UserZan();
-			userZan.setId(patUserPat.getId());
-			userZan.setCt(patUserPat.getCt());
-			userZan.setSrcId(patUserPat.getSrcId());
-			userZan.setType(patUserPat.getType());
-			userZan.setUserid(patUserPat.getUserid());
-			userZan.setAliasname(getAliasname(userid, patUserPat.getUserid()));
-			userZan.setNickename(getSsoUser(patUserPat.getUserid()).getNickname());
-			userZans.add(userZan);
-		}
-		return userZans;
-		// return null;
-	}
-
-	private int countZan(StatesUserStates userState) throws Exception {
-		return this.getPatUserPat(userState, null).size();
-	}
-
-	// public static void main(String[] args) {
-	// StringBuffer req = new StringBuffer();
-	// String method = "getUserinfo";
-	// Map<String, Object> params = new HashMap<String, Object>();
-	// params.put("p1", "value");
-	// params.put("p2", 2);
-	// params.put("p3", true);
-	// Iterator<String> iter = params.keySet().iterator();
-	// req.append("{\"method\":\"");
-	// req.append(method+"\",\"params\":{");
-	// while(iter.hasNext()){
-	// String mKey = iter.next();
-	// req.append("\""+mKey+"\":");
-	// req.append("\""+params.get(mKey)+"\",");
-	// }
-	// req.deleteCharAt(req.length()-1);
-	// req.append("}");
-	// System.out.println(req.toString());
-	// }
-
-
 	@Override
 	public int countReply(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
 		StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();
@@ -400,8 +227,14 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		int count = statesUserStatesReplyMapper.countByExample(statesUserStatesReplyCriteria);
 		return count;
 	}
-
-	public List<SsoUser> getFriendsList(String myid) throws Exception {
+	
+	/**
+	 * 获取好友列表
+	 * @param myid
+	 * @return
+	 * @throws Exception
+	 */
+	private List<SsoUser> getFriendsList(String myid) throws Exception {
 		List<SsoUser> users = new ArrayList<SsoUser>();
 		String method = Constants.MEDHOD_GET_FRIENDLIST;
 		String path = Constants.SERVICE_URI_PET_USER;
@@ -446,74 +279,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	//
 	// }
 
-	@Override
-	public StateResponse findMyStates(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
-		String userid = authenticationToken.getUserid();
-		int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
-		// String lastStateid =
-		// PetUtil.getParameter(clientRequest,"lastStateid");
-		// StatesUserStates lastStates = new StatesUserStates();
-		// if(lastStateid!=""){
-		// lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
-		// }
-		// StatesUserStatesCriteria statesUserStatesCriteria = new
-		// StatesUserStatesCriteria();
-		// StatesUserStatesCriteria.Criteria criteria =
-		// statesUserStatesCriteria.createCriteria();
-		// criteria.andUseridEqualTo(userid);
-		// if(lastStateid!=""){
-		// criteria.andCtGreaterThan(lastStates.getCt());
-		// }
-		// statesUserStatesCriteria.setMysqlLength(20);
-		// statesUserStatesCriteria.setMysqlOffset(0);
-		List<StateView> stateViewList = new ArrayList<StateView>();// 用户状态视图
-		// List<StatesUserStates> userStates =
-		// statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
-		List<StatesUserStates> userStates = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, 20, pageNo);
-
-		for (StatesUserStates statesUserStates : userStates) {
-			StateView stateView = getStateView(statesUserStates, userid, "myself");
-			stateViewList.add(stateView);
-		}
-		stateResponse.setStateViews(stateViewList);
-		return stateResponse;
-	}
-
-	@Override
-	public StateResponse findFriendStates(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
-		String userid = PetUtil.getParameter(clientRequest, "userid");
-		int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
-		// String lastStateid =
-		// PetUtil.getParameter(clientRequest,"lastStateid");
-		// StatesUserStates lastStates = new StatesUserStates();
-		// if(lastStateid!=""){
-		// lastStates = statesUserStatesMapper.selectByPrimaryKey(lastStateid);
-		// }
-		// StatesUserStatesCriteria statesUserStatesCriteria = new
-		// StatesUserStatesCriteria();
-		// StatesUserStatesCriteria.Criteria criteria =
-		// statesUserStatesCriteria.createCriteria();
-		// criteria.andUseridEqualTo(userid);
-		// if(lastStateid!=""){
-		// criteria.andCtGreaterThan(lastStates.getCt());
-		// }
-		// statesUserStatesCriteria.setMysqlLength(20);
-		// statesUserStatesCriteria.setMysqlOffset(0);
-		// statesUserStatesCriteria.setOrderByClause("ct desc");
-		List<StateView> stateViewList = new ArrayList<StateView>();// 用户状态视图
-		// List<StatesUserStates> userStates =
-		// statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
-		List<StatesUserStates> userStates = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, 20, pageNo);
-		for (StatesUserStates statesUserStates : userStates) {
-			StateView stateView = getStateView(statesUserStates, userid, "myself");
-			stateViewList.add(stateView);
-		}
-		stateResponse.setStateViews(stateViewList);
-		return stateResponse;
-	}
-
+	
 	@Override
 	public List<StatesUserStatesVo> getAllFriendStates(String userid,int pageSize,int pageNo) throws Exception {
 		logger.debug("获取全部好友的动态 userid="+userid);
@@ -550,21 +316,21 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug(userMap.toString());
 		logger.debug("3、将动态中的用户信息补全,其中赞的相关信息为假值");
 		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
-		buildStatesUserStatesVo(list,resList,userMap,userid);
+		buildStatesUserStatesVoList(list,resList,userMap,userid);
 		return resList;
 	}
 
 	@Override
-	public StateResponse findOneState(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		StateResponse stateResponse = new StateResponse();
-		String userid = authenticationToken.getUserid();
-		String stateid = PetUtil.getParameter(clientRequest, "stateid");
+	public StatesUserStatesVo findOneState(String userid,String stateid) throws Exception {
 		StatesUserStates userStates = new StatesUserStates();
 		if (stateid != "") {
 			userStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, stateid);
 		}
-		stateResponse.setStateView(getStateView(userStates, userid, "others"));
-		return stateResponse;
+		JSONObject userJson = getUserinfo(userStates.getUserid());
+		StatesUserStatesVo vo = new StatesUserStatesVo();
+		buildStatesUserStatesVoByStates(userStates,vo,userJson,userid);
+		logger.debug("单条动态信息："+vo.toString());
+		return vo;
 	}
 
 	// public static void main(String[] args) {
@@ -583,77 +349,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	// System.out.print(list1);
 	// }
 
-	@Override
-	public StateResponse getRepliesByTimeIndex(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		// StateResponse stateResponse = new StateResponse();
-		// String stateid = PetUtil.getParameter(clientRequest,"stateid");
-		// int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
-		// String userid = authenticationToken.getUserid();
-		// String stateuserid =
-		// PetUtil.getParameter(clientRequest,"stateuserid");
-		// List<StatesUserStatesReply> statesReplies =
-		// statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid,
-		// Integer.MAX_VALUE, 0);
-		//
-		// List<SsoUser> users = getFriendsList(userid);
-		// List<SsoUser> stateuser = getFriendsList(stateuserid);
-		//
-		// users.retainAll(stateuser);
-		//
-		// for (StatesUserStatesReply statesUserStatesReply : statesReplies) {
-		//
-		// }
-		//
-		//
-		//
-		//
-		// StateResponse stateResponse = new StateResponse();
-		// String stateid = PetUtil.getParameter(clientRequest,"stateid");
-		// int pageNo = PetUtil.getParameterInteger(clientRequest,"pageNo");
-		// String stateuserid =
-		// PetUtil.getParameter(clientRequest,"stateuserid");
-		// String userid = authenticationToken.getUserid();
-		// String lastReplyid =
-		// PetUtil.getParameter(clientRequest,"lastReplyid");
-		// StatesUserStatesReply lastReply = new StatesUserStatesReply();
-		// if(lastReplyid!=""){
-		// lastReply =
-		// statesUserStatesReplyMapper.selectByPrimaryKey(lastReplyid);
-		// }
-		// StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new
-		// StatesUserStatesReplyCriteria();
-		// StatesUserStatesReplyCriteria.Criteria criteria =
-		// statesUserStatesReplyCriteria.createCriteria();
-		// criteria.andStateidEqualTo(stateid);
-		// if(lastReplyid!=""){
-		// criteria.andCtLessThan(lastReply.getCt());
-		// }
-		// if(stateuserid.compareTo(userid)!=0){
-		// List<SsoUser> users = getFriendsList(userid);
-		// List<String> userids = new ArrayList<String>();
-		// for (SsoUser user : users) {
-		// userids.add(user.getId());
-		// }
-		// criteria.andUseridIn(userids);
-		// }
-		// statesUserStatesReplyCriteria.setMysqlLength(20);
-		// statesUserStatesReplyCriteria.setMysqlOffset(0);
-		// statesUserStatesReplyCriteria.setOrderByClause("ct asc");
-		// List<ReplyView> replyViewList = new ArrayList<ReplyView>();// 用户状态视图
-		// // List<StatesUserStatesReply> statesReplies =
-		// statesUserStatesReplyMapper.selectByExample(statesUserStatesReplyCriteria);
-		// List<StatesUserStatesReply> statesReplies =
-		// statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid,
-		// Integer.MAX_VALUE, 0);
-		//
-		// for (StatesUserStatesReply statesUserStatesReply : statesReplies) {
-		// ReplyView replyView = getReplyView(statesUserStatesReply, userid);
-		// replyViewList.add(replyView);
-		// }
-		// stateResponse.setReplyViews(replyViewList);
-		// return stateResponse;
-		return null;
-	}
 
 	@Override
 	public boolean reportContent(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
@@ -712,36 +407,49 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		JSONObject userJson = getUserinfo(userid);
 		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
 		userMap.put(userid, userJson);
-		buildStatesUserStatesVo(list,resList,userMap,userid);
+		buildStatesUserStatesVoList(list,resList,userMap,userid);
 		return resList;
 	}
 	
 	/**
-	 * 构建用户动态模型
-	 * @param list po 集合
-	 * @param resList 最终结果，包含用户信息以及 赞 信息
-	 * @param userMap 用户信息映射
-	 * @param userid 用户ID
-	 * @throws Exception
+	 * 添加一个回复
 	 */
-	private void buildStatesUserStatesVo(List<StatesUserStates> list,List<StatesUserStatesVo> resList,Map<String,JSONObject> userMap,String userid) throws Exception{
-		for(StatesUserStates states : list){
-			StatesUserStatesVo vo = new StatesUserStatesVo();
-			BeanUtils.copyProperties(states, vo);
-			JSONObject userJson = userMap.get(states.getUserid());
-			vo.setUsername(get(userJson,"username"));
-			vo.setNickname(get(userJson,"nickname"));
-			vo.setAlias(get(userJson,"alias"));
-			vo.setUserImage(get(userJson,"img"));
-			//赞信息 >>>>>>>>>>
-			String srcid = states.getId();
-			int totalPat = patUserPatRepository.getTotalPatBySrcId(srcid);
-			boolean didIpat = patUserPatRepository.didIpat(userid, srcid);
-			vo.setTotalPat(totalPat+"");
-			vo.setDidIpat(didIpat);
-			//赞信息 <<<<<<<<<<
-			resList.add(vo);
+	public String addReply(StatesUserStatesReply reply) throws Exception {
+		reply.setId(IDCreater.uuid());
+		reply.setCt(new Date());
+		statesUserStatesReplyRepository.insertSelective(reply);
+		String puserid = reply.getPuserid();
+		if(StringUtils.isEmpty(puserid)){
+			StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, reply.getStateid());
+			puserid = states.getUserid();
+			logger.debug("回复动态：puserid="+puserid);
+		}else{
+			logger.debug("回复回复：puserid="+puserid);
 		}
+		try{
+			JSONObject fromUserJson = getUserinfo(reply.getUserid());
+			JSONObject toUserJson = getUserinfo(puserid);
+			logger.debug("from_user="+fromUserJson.toString());
+			logger.debug("to_user="+toUserJson.toString());
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("to", toUserJson.get("username"));
+			jsonObj.put("from", fromUserJson.get("username"));
+			jsonObj.put("domain", "@"+commonConfig.get(Constants.XMPP_DOMAIN));
+			jsonObj.put("msgtype", "reply");
+			jsonObj.put("msgtime", reply.getCt().getTime());
+			jsonObj.put("fromNickname",fromUserJson.get("nickname"));
+			jsonObj.put("fromHeadImg", fromUserJson.get("img"));
+			jsonObj.put("body", reply.getMsg());
+			TextMessage tm = new ActiveMQTextMessage();
+			tm.setText(jsonObj.toString());
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName(Constants.PET_PUSH_TO_XMPP);
+			apprequestTemplate.convertAndSend(queue, tm);
+			logger.debug("queue_name="+Constants.PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
+		}catch(Exception e){
+			logger.error("send message",e);
+		}
+		return reply.getId();
 	}
 
 }
