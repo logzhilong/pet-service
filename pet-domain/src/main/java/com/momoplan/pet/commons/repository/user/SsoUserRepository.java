@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
@@ -24,21 +25,16 @@ import com.momoplan.pet.commons.domain.user.po.SsoUserCriteria;
 public class SsoUserRepository implements CacheKeysConstance {
 
 	private static Logger logger = LoggerFactory.getLogger(SsoUserRepository.class);
-	
+
+	@Autowired
 	private RedisPool redisPool= null;
+	@Autowired
 	private MapperOnCache mapperOnCache = null;
+	@Autowired
 	private SsoUserMapper ssoUserMapper = null;
 	private Gson gson = MyGson.getInstance();
+	@Autowired
 	private StorePool storePool = null;
-	
-	
-	public SsoUserRepository(RedisPool redisPool, MapperOnCache mapperOnCache, SsoUserMapper ssoUserMapper, StorePool storePool) {
-		super();
-		this.redisPool = redisPool;
-		this.mapperOnCache = mapperOnCache;
-		this.ssoUserMapper = ssoUserMapper;
-		this.storePool = storePool;
-	}
 
 	public SsoUser getSsoUserByName(String username) {
 		ShardedJedis jedis = null;
