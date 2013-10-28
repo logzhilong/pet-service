@@ -556,23 +556,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
 		logger.debug(userMap.toString());
 		logger.debug("3、将动态中的用户信息补全,其中赞的相关信息为假值");
-		for(StatesUserStates states : list){
-			StatesUserStatesVo vo = new StatesUserStatesVo();
-			BeanUtils.copyProperties(states, vo);
-			JSONObject userJson = userMap.get(states.getUserid());
-			vo.setUsername(get(userJson,"username"));
-			vo.setNickname(get(userJson,"nickname"));
-			vo.setAlias(get(userJson,"alias"));
-			vo.setUserImage(get(userJson,"img"));
-			//赞信息 >>>>>>>>>>
-			String srcid = states.getId();
-			int totalPat = patUserPatRepository.getTotalPatBySrcId(srcid);
-			boolean didIpat = patUserPatRepository.didIpat(userid, srcid);
-			vo.setTotalPat(totalPat+"");
-			vo.setDidIpat(didIpat);
-			//赞信息 <<<<<<<<<<
-			resList.add(vo);
-		}
+		buildStatesUserStatesVo(list,resList,userMap,userid);
 		return resList;
 	}
 
@@ -701,6 +685,69 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		mapperOnCache.updateByPrimaryKeySelective(userState, stateid);
 		// userState.merge();
 		return true;
+	}
+
+	@Override
+	public List<StatesUserStatesVo> getUserStates(String userid, int pageSize, int pageNo, boolean isSelf) throws Exception {
+		List<StatesUserStatesVo> resList = null;
+		List<StatesUserStates> list = null;
+		if(isSelf){
+			logger.debug("取自己的动态，不区分状态");
+			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, pageSize, pageNo);
+			logger.debug("结果集大小 list.size="+list.size());
+		}else{
+			logger.debug("取好友的动态，要区分状态");
+			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, Integer.MAX_VALUE, 0);
+			logger.debug("结果集大小 list.size="+list.size());
+			List<StatesUserStates> list2 = new ArrayList<StatesUserStates>();
+			//TODO 目前都取出来，在本地分页吧，数据多时，需要创建缓冲区
+			for(StatesUserStates states : list){
+				String state = states.getState();
+				if("0".equals(state)){//非自己的动态，要区分状态
+					list2.add(states);
+				}
+			}
+			if(list2!=null&&list2.size()>0){
+				int start = pageNo*pageSize>list2.size()?list2.size():pageNo*pageSize;
+				int end = pageSize*(pageNo+1)>list2.size()?list2.size():pageSize*(pageNo+1);
+				list2.subList(start, end);
+			}
+			list.clear();
+			list.addAll(list2);
+		}
+		JSONObject userJson = getUserinfo(userid);
+		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
+		userMap.put(userid, userJson);
+		buildStatesUserStatesVo(list,resList,userMap,userid);
+		return resList;
+	}
+	
+	/**
+	 * 构建用户动态模型
+	 * @param list po 集合
+	 * @param resList 最终结果，包含用户信息以及 赞 信息
+	 * @param userMap 用户信息映射
+	 * @param userid 用户ID
+	 * @throws Exception
+	 */
+	private void buildStatesUserStatesVo(List<StatesUserStates> list,List<StatesUserStatesVo> resList,Map<String,JSONObject> userMap,String userid) throws Exception{
+		for(StatesUserStates states : list){
+			StatesUserStatesVo vo = new StatesUserStatesVo();
+			BeanUtils.copyProperties(states, vo);
+			JSONObject userJson = userMap.get(states.getUserid());
+			vo.setUsername(get(userJson,"username"));
+			vo.setNickname(get(userJson,"nickname"));
+			vo.setAlias(get(userJson,"alias"));
+			vo.setUserImage(get(userJson,"img"));
+			//赞信息 >>>>>>>>>>
+			String srcid = states.getId();
+			int totalPat = patUserPatRepository.getTotalPatBySrcId(srcid);
+			boolean didIpat = patUserPatRepository.didIpat(userid, srcid);
+			vo.setTotalPat(totalPat+"");
+			vo.setDidIpat(didIpat);
+			//赞信息 <<<<<<<<<<
+			resList.add(vo);
+		}
 	}
 
 }
