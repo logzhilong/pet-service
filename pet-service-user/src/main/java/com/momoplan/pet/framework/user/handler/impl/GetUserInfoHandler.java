@@ -59,18 +59,19 @@ public class GetUserInfoHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			String userid = null;
+			String username = null;
 			SsoAuthenticationToken tokenObj = null;
 			if(clientRequest.getParams()!=null){
 				userid = getParameter(clientRequest, "userid");
-				tokenObj = new SsoAuthenticationToken();
-				tokenObj.setUserid(userid);
-				logger.debug("根据userid 获取用户信息 userid="+userid);
+				username = getParameter(clientRequest, "username");
+				logger.debug("根据userid 获取用户信息 userid="+userid+" ; username="+username);
 			}else{
 				String token = clientRequest.getToken();
 				tokenObj = getToken(token);
 				logger.debug("根据token 获取用户信息 token="+token);
+				userid = tokenObj.getUserid();
 			}
-			UserVo vo = userService.getUser(tokenObj);
+			UserVo vo = userService.getUser(userid,username);
 			logger.debug("获取用户信息成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,vo).toString();
 		}catch(Exception e){
