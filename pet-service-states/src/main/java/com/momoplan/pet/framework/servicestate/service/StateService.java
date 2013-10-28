@@ -6,15 +6,28 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.CacheKeysConstance;
+import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 public interface StateService extends CacheKeysConstance{
 
-	void delUserState(ClientRequest clientRequest) throws Exception;
 	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	void delReply(ClientRequest clientRequest) throws Exception;
 	boolean reportContent(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	
+	
+	public void delUserState(String stateid) throws Exception;
+	
+	/**
+	 * 获取一个动态的全部回复
+	 * @param userid
+	 * @param stateid
+	 * @param pageSize
+	 * @param pageNo
+	 * @return
+	 * @throws Exception
+	 */
+	public List<StatesUserStatesReplyVo> getReplyByStateid(String userid,String stateid,int pageSize,int pageNo) throws Exception;
 	/**
 	 * 添加回复
 	 * @param reply

@@ -15,11 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
@@ -41,6 +43,7 @@ import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.service.StateService;
 import com.momoplan.pet.framework.servicestate.vo.PetUserView;
 import com.momoplan.pet.framework.servicestate.vo.ReplyView;
+import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 @Service
@@ -83,10 +86,8 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	}
 
 	@Override
-	public void delUserState(ClientRequest clientRequest) throws Exception {
-		String stateid = PetUtil.getParameter(clientRequest, "stateid");
+	public void delUserState(String stateid) throws Exception {
 		statesUserStatesRepository.delete(stateid);
-		// return statesUserStatesMapper.deleteByPrimaryKey(stateid);
 	}
 
 	@Override
@@ -450,6 +451,75 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			logger.error("send message",e);
 		}
 		return reply.getId();
+	}
+	
+	private List<String> getUseridListByFriendList(JSONArray farr){
+		try{
+			List<String> uidList = new ArrayList<String>();
+			for(int i=0;i<farr.length();i++){
+				JSONObject obj = farr.getJSONObject(i);
+				uidList.add(obj.getString("id"));
+			}
+			return uidList;
+		}catch(Exception e){
+			logger.error("getUseridListByFriendList",e);
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取回复列表
+	 */
+	@Override
+	public List<StatesUserStatesReplyVo> getReplyByStateid(String userid,String stateid, int pageSize, int pageNo) throws Exception {
+		logger.debug("//1 找到共同的好友");
+		StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, stateid);
+		String statesUserid = states.getUserid();//发动态的人
+		JSONArray f1 = getFriendList(userid);
+		JSONArray f2 = getFriendList(statesUserid);
+		if(f1==null||f2==null)//如果俩人都没有好友，那么根本就不存在共同好友了
+			return null;
+		List<String> fl1 = getUseridListByFriendList(f1);
+		List<String> fl2 = getUseridListByFriendList(f2);
+		logger.debug("集合1:"+MyGson.getInstance().toJson(fl1));
+		logger.debug("集合2:"+MyGson.getInstance().toJson(fl2));
+		fl1.retainAll(fl2);
+		logger.debug("交集:"+MyGson.getInstance().toJson(fl1));
+		if(fl1==null||fl1.size()<1)//没有交集，就是没有共同好友，则直接返回
+			return null;
+		Map<String,Boolean> retainMap = new HashMap<String,Boolean>(); 
+		for(String f : fl1){
+			retainMap.put(f, true);
+		}
+		
+		logger.debug("//2 全部回复");
+		List<StatesUserStatesReply> all = statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid, Integer.MAX_VALUE, 0);
+
+		logger.debug("//3 过滤出共同好友的回复");
+		List<StatesUserStatesReplyVo> voList = new ArrayList<StatesUserStatesReplyVo>();
+		for(StatesUserStatesReply reply : all){
+			String uid = reply.getUserid();
+			if(retainMap.get(uid)){
+				StatesUserStatesReplyVo vo = new StatesUserStatesReplyVo();
+				BeanUtils.copyProperties(reply, vo);
+				JSONObject userJson = getUserinfo(uid);
+				vo.setUsername(get(userJson,"username"));
+				vo.setNickname(get(userJson,"nickname"));
+				vo.setAlias(get(userJson,"alias"));
+				vo.setUserImage(get(userJson,"img"));
+				voList.add(vo);
+			}
+		}
+		
+		if(voList!=null&&voList.size()>0){
+			int start = pageNo*pageSize>voList.size()?voList.size():pageNo*pageSize;
+			int end = pageSize*(pageNo+1)>voList.size()?voList.size():pageSize*(pageNo+1);
+			logger.debug("//分页 start="+start+" ; end="+end);
+			voList.subList(start, end);
+			return voList;
+		}
+		
+		return null;
 	}
 
 }

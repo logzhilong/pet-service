@@ -63,14 +63,19 @@ public class StateServiceSupport {
 	}
 
 	protected JSONArray getFriendList(String userid) throws Exception {
-		String method = Constants.MEDHOD_GET_FRIENDLIST;
-		String path = Constants.SERVICE_URI_PET_USER;
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userid", userid);
-		String responseStr = dopost(path, method, params).toString();
-		JSONObject json = new JSONObject(responseStr);
-		JSONArray entities = json.getJSONArray("entity");
-		return entities;
+		try{
+			String method = Constants.MEDHOD_GET_FRIENDLIST;
+			String path = Constants.SERVICE_URI_PET_USER;
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("userid", userid);
+			String responseStr = dopost(path, method, params).toString();
+			JSONObject json = new JSONObject(responseStr);
+			JSONArray entities = json.getJSONArray("entity");
+			return entities;
+		}catch(Exception e){
+			logger.error("getFriendList",e);
+		}
+		return null;
 	}
 	
 	protected String get(JSONObject json,String key){
