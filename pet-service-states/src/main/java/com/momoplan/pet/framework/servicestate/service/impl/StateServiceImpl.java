@@ -547,9 +547,9 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		//中间结果
 		List<StatesUserStates> list = statesUserStatesMapper.selectByExample(statesUserStatesCriteria);
 		//最终结果
-		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
 		logger.debug(userMap.toString());
 		logger.debug("3、将动态中的用户信息补全,其中赞的相关信息为假值");
+		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
 		buildStatesUserStatesVo(list,resList,userMap,userid);
 		return resList;
 	}
@@ -683,7 +683,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 
 	@Override
 	public List<StatesUserStatesVo> getUserStates(String userid, int pageSize, int pageNo, boolean isSelf) throws Exception {
-		List<StatesUserStatesVo> resList = null;
+		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
 		List<StatesUserStates> list = null;
 		if(isSelf){
 			logger.debug("取自己的动态，不区分状态");
@@ -726,8 +726,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	 */
 	private void buildStatesUserStatesVo(List<StatesUserStates> list,List<StatesUserStatesVo> resList,Map<String,JSONObject> userMap,String userid) throws Exception{
 		for(StatesUserStates states : list){
-			if(resList==null)
-				resList = new ArrayList<StatesUserStatesVo>(list.size());
 			StatesUserStatesVo vo = new StatesUserStatesVo();
 			BeanUtils.copyProperties(states, vo);
 			JSONObject userJson = userMap.get(states.getUserid());
