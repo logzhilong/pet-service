@@ -134,6 +134,8 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	@Override
 	public void updatePetInfo(PetInfo petInfo) throws Exception {
 		mapperOnCache.updateByPrimaryKeySelective(petInfo, petInfo.getId());
+		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
+		logger.debug("修改宠物:"+petInfo.toString());
 		updateUserPetTypeIndex(petInfo,false);
 	}
 	
@@ -142,8 +144,8 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 		petInfo.setId(IDCreater.uuid());
 		//放进数据库、缓存
 		mapperOnCache.insertSelective(petInfo, petInfo.getId());
-		logger.debug("保存宠物:"+petInfo.toString());
 		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
+		logger.debug("保存宠物:"+petInfo.toString());
 		updateUserPetTypeIndex(petInfo,false);
 		return petInfo.getId();
 	}
