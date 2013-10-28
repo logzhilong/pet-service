@@ -47,6 +47,7 @@ public class WordFilterServiceImpl implements WordFilterService {
 	}
 
 	private void userStatesHandler(String biz, String bid, String content) {
+		logger.debug("biz="+biz+" ; bid="+bid+" ; content="+content); 
 		try {
 			// content_audit 审核任务
 			// user_states 动态
@@ -63,17 +64,19 @@ public class WordFilterServiceImpl implements WordFilterService {
 				commonContentAudit.setContent(badWords);
 				statesUserStatesAuditMapper.insertSelective(commonContentAudit);
 				logger.debug(commonContentAudit.toString());
-				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
+				StatesUserStates statesUserStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, bid);
 				statesUserStates.setState("4");// 未通过 TODO 放倒枚举类里
+				logger.debug(statesUserStates.toString());
 				statesUserStatesRepository.updateSelective(statesUserStates);
 			} else {
 				logger.debug("用户动态-内容审核-通过");
-				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
+				StatesUserStates statesUserStates = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, bid);
 				statesUserStates.setState("0");// 通过 TODO 放倒枚举类里
+				logger.debug(statesUserStates.toString());
 				statesUserStatesRepository.updateSelective(statesUserStates);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("userStatesHandler",e);
 		}
 	}
 
