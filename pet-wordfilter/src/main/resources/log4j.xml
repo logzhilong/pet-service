@@ -29,6 +29,8 @@
 
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
+        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 
 	<!-- ======================= -->
