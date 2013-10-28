@@ -342,24 +342,33 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	 */
 	@Override
 	public List<StatesUserStatesReplyVo> getReplyByStateid(String userid,String stateid, int pageSize, int pageNo) throws Exception {
+		Map<String,String> retainMap = new HashMap<String,String>(); 
+
 		logger.debug("//1 找到共同的好友");
 		StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, stateid);
-		String statesUserid = states.getUserid();//发动态的人
-		JSONArray f1 = getFriendList(userid);
-		JSONArray f2 = getFriendList(statesUserid);
-		if(f1==null||f2==null)//如果俩人都没有好友，那么根本就不存在共同好友了
-			return null;
-		List<String> fl1 = getUseridListByFriendList(f1);
-		List<String> fl2 = getUseridListByFriendList(f2);
-		logger.debug("集合1:"+MyGson.getInstance().toJson(fl1));
-		logger.debug("集合2:"+MyGson.getInstance().toJson(fl2));
-		fl1.retainAll(fl2);
-		logger.debug("交集:"+MyGson.getInstance().toJson(fl1));
-		if(fl1==null||fl1.size()<1)//没有交集，就是没有共同好友，则直接返回
-			return null;
-		Map<String,String> retainMap = new HashMap<String,String>(); 
-		for(String f : fl1){
-			retainMap.put(f, "0");
+		String statesUserid = states.getUserid();
+		logger.debug("//发动态的人 statesUserid="+statesUserid);
+		logger.debug("//取回复的人 userid="+userid);
+		if(!statesUserid.equals(userid)){
+			JSONArray f1 = getFriendList(userid);
+			JSONArray f2 = getFriendList(statesUserid);
+			if(f1==null||f2==null)//如果俩人都没有好友，那么根本就不存在共同好友了
+				return null;
+			List<String> fl1 = getUseridListByFriendList(f1);
+			List<String> fl2 = getUseridListByFriendList(f2);
+			logger.debug("集合1:"+MyGson.getInstance().toJson(fl1));
+			logger.debug("集合2:"+MyGson.getInstance().toJson(fl2));
+			fl1.retainAll(fl2);
+			logger.debug("交集:"+MyGson.getInstance().toJson(fl1));
+			if(fl1==null||fl1.size()<1)//没有交集，就是没有共同好友，则直接返回
+				return null;
+			retainMap.put(userid, "1");
+			retainMap.put(statesUserid, "1");
+			for(String f : fl1){
+				retainMap.put(f, "0");
+			}
+		}else{
+			logger.debug("我的动态，回复列表不用过滤");
 		}
 		
 		List<StatesUserStatesReply> all = statesUserStatesReplyRepository.getStatesUserStatesReplyListByStatesId(stateid, Integer.MAX_VALUE, 0);
@@ -372,7 +381,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			for(StatesUserStatesReply reply : all){
 				String uid = reply.getUserid();
 				logger.debug(uid+" ; "+retainMap.get(uid)); 
-				if(retainMap.get(uid)!=null){
+				if( statesUserid.equals(userid) || retainMap.get(uid)!=null ){
 					StatesUserStatesReplyVo vo = new StatesUserStatesReplyVo();
 					BeanUtils.copyProperties(reply, vo);
 					JSONObject userJson = getUserinfo(uid);
