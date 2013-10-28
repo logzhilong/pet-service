@@ -5,7 +5,7 @@
 
 </style>
 <form method="post" id="areaCodeAddForm"
-	action="${ctx }/manager/notemanager/NoteAddOrUpdate.html"
+	action="${ctx }/manager/notemanager/NoteAddOrUpdate.html?forumId=${forumId}"
 	onsubmit="return validateCallback(this,dialogAjaxDone);">
 
 	<div class="pageContent">

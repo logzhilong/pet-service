@@ -41,7 +41,7 @@
 			<c:forEach items="${roles }" var="ite" varStatus="idx">
 				<tr target="id" rel="${ite.id }">
 					<td align="left">${idx.index+1 }</td>
-					<td align="left"><a  href="${ctx }/manager/mgrrolemanage/Torolemanageuserlist.html?id={id}" target="dialog" max="false" rel="rolemanage_userlist_dialog" mask="true" title="修改" width="450" height="260">${ite.name}</a></td>
+					<td align="left"><a  href="${ctx }/manager/mgrrolemanage/Torolemanageuserlist.html?id=${ite.id}" target="dialog" max="false" rel="rolemanage_userlist_dialog" mask="true" title="修改" width="450" height="260">${ite.name}</a></td>
 					<td align="left">${ite.code}</td>
 					<td align="left">${ite.desct }</td>
 					<td align="left">${ite.enable }</td>

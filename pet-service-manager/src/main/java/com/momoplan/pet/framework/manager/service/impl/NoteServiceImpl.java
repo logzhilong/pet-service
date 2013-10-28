@@ -53,7 +53,6 @@ public class NoteServiceImpl implements NoteService {
 				note.setUserId("703");
 				note.setCt(new Date());
 				note.setEt(new Date());
-				note.setForumId("92DE9E82807142A293107DFFC4368177");
 				note.setIsDel(false);
 				note.setIsEute(false);
 				note.setIsTop(false);

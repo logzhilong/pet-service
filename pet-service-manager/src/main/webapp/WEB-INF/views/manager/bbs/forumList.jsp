@@ -42,13 +42,13 @@
 		<ul class="toolBar">
 			<li><a class="add"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
-				max="false" rel="areaCode_add_dialog" mask="true" title="添加"
+				max="false" mask="true" title="添加"
 				width="450" height="350" close="forum.refresh"> <span>添加</span>
 				</a>
 			</li>
 			<li>
 				<a class="edit" href="${ctx }/manager/bbs/ToaddOrUpdateForum.html?id={id}"
-					target="dialog" max="false" rel="areaCode_update_dialog" mask="true"
+					target="dialog" max="false" mask="true"
 					title="修改" width="450" height="350" close="forum.refresh"> <span>修改</span>
 			</a></li>
 			<li>
@@ -83,8 +83,7 @@
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
 					<td>
-					<input type="hidden" name="id" value="${itm.id }">
-						<a  href="${ctx }/manager/bbs/forumManager.html?id={id}" target="dialog" max="false" rel="forum_manager_dialog" mask="true" title="圈子管理(${itm.name })" width="1000" height="600" close="forum.refresh" param="id" >
+						<a  href="${ctx }/manager/bbs/forumManager.html?id=${itm.id }"  rel="jbsxBox3"   target="dialog" max="false" mask="true" title="帖子管理(${itm.name })" width="1000" height="600" close="forum.refresh">
 							${itm.name }
 						</a>
 					</td>
