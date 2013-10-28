@@ -357,9 +357,9 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug("交集:"+MyGson.getInstance().toJson(fl1));
 		if(fl1==null||fl1.size()<1)//没有交集，就是没有共同好友，则直接返回
 			return null;
-		Map<String,Boolean> retainMap = new HashMap<String,Boolean>(); 
+		Map<String,String> retainMap = new HashMap<String,String>(); 
 		for(String f : fl1){
-			retainMap.put(f, true);
+			retainMap.put(f, "0");
 		}
 		
 		logger.debug("//2 全部回复");
@@ -369,7 +369,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		List<StatesUserStatesReplyVo> voList = new ArrayList<StatesUserStatesReplyVo>();
 		for(StatesUserStatesReply reply : all){
 			String uid = reply.getUserid();
-			if(retainMap.get(uid)){
+			if(retainMap.get(uid)!=null){
 				StatesUserStatesReplyVo vo = new StatesUserStatesReplyVo();
 				BeanUtils.copyProperties(reply, vo);
 				JSONObject userJson = getUserinfo(uid);
