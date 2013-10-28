@@ -142,6 +142,8 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 		petInfo.setId(IDCreater.uuid());
 		//放进数据库、缓存
 		mapperOnCache.insertSelective(petInfo, petInfo.getId());
+		logger.debug("保存宠物:"+petInfo.toString());
+		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
 		updateUserPetTypeIndex(petInfo,false);
 		return petInfo.getId();
 	}
