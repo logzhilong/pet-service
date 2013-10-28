@@ -11,6 +11,7 @@ import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesAudit;
+import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.wordfilter.WordFilterUtil;
 import com.momoplan.pet.commons.wordfilter.result.FilteredResult;
 import com.momoplan.pet.framework.wordfilter.service.WordFilterService;
@@ -23,13 +24,16 @@ public class WordFilterServiceImpl implements WordFilterService {
 	private StatesUserStatesMapper statesUserStatesMapper = null;
 	private StatesUserStatesAuditMapper statesUserStatesAuditMapper = null;
 	private MapperOnCache mapperOnCache = null;
-
+	private StatesUserStatesRepository statesUserStatesRepository = null;
+	
 	@Autowired
-	public WordFilterServiceImpl(StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache) {
+	public WordFilterServiceImpl(StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache,
+			StatesUserStatesRepository statesUserStatesRepository) {
 		super();
 		this.statesUserStatesMapper = statesUserStatesMapper;
 		this.statesUserStatesAuditMapper = statesUserStatesAuditMapper;
 		this.mapperOnCache = mapperOnCache;
+		this.statesUserStatesRepository = statesUserStatesRepository;
 	}
 
 	@Override
@@ -61,12 +65,12 @@ public class WordFilterServiceImpl implements WordFilterService {
 				logger.debug(commonContentAudit.toString());
 				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
 				statesUserStates.setState("4");// 未通过 TODO 放倒枚举类里
-				mapperOnCache.updateByPrimaryKeySelective(statesUserStates, statesUserStates.getId());
+				statesUserStatesRepository.updateSelective(statesUserStates);
 			} else {
 				logger.debug("用户动态-内容审核-通过");
 				StatesUserStates statesUserStates = statesUserStatesMapper.selectByPrimaryKey(bid);
-				statesUserStates.setState("0");// 未通过 TODO 放倒枚举类里
-				mapperOnCache.updateByPrimaryKeySelective(statesUserStates, statesUserStates.getId());
+				statesUserStates.setState("0");// 通过 TODO 放倒枚举类里
+				statesUserStatesRepository.updateSelective(statesUserStates);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
