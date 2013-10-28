@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
@@ -17,7 +18,9 @@ public class DelReplyHandler extends AbstractHandler{
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			stateService.delReply(clientRequest);
+			String replyid = PetUtil.getParameter(clientRequest, "replyid");
+			stateService.delReply(replyid);
+			rtn = new Success(true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("删除失败  body="+gson.toJson(clientRequest));
 			logger.error("delReply : ",e);

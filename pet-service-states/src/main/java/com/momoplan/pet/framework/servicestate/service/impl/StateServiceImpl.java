@@ -86,40 +86,18 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	@Override
 	public void delUserState(String stateid) throws Exception {
 		statesUserStatesRepository.delete(stateid);
+		StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();
+		statesUserStatesReplyCriteria.createCriteria().andStateidEqualTo(stateid);
+		List<StatesUserStatesReply> list = statesUserStatesReplyMapper.selectByExample(statesUserStatesReplyCriteria);
+		for(StatesUserStatesReply reply:list){
+			logger.debug("删除回复:"+reply.getId());
+			statesUserStatesReplyRepository.delete(reply.getId());
+		}
 	}
 
 	@Override
-	public void delReply(ClientRequest clientRequest) throws Exception {
-		String replyid = PetUtil.getParameter(clientRequest, "replyid");
+	public void delReply(String replyid) throws Exception {
 		statesUserStatesReplyRepository.delete(replyid);
-		// return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
-	}
-
-
-
-
-	private SsoUser getSsoUser(String userid) throws Exception {
-		try {
-			String path = Constants.SERVICE_URI_PET_USER;
-			String method = Constants.MEDHOD_GET_USERINFO;
-			Map<String, String> param = new HashMap<String, String>();
-			param.put("userid", userid);
-			String response = dopost(path, method, param).toString();
-			JSONObject json = new JSONObject(response);
-			JSONObject entity = json.getJSONObject("entity");
-			SsoUser ssoUser = new SsoUser();
-			ssoUser.setId(entity.get("id").toString());
-			ssoUser.setNickname(entity.getString("nickname"));
-			ssoUser.setUsername(entity.getString("username"));
-
-			ssoUser.setImg(entity.getString("img"));
-
-			return ssoUser;
-		} catch (Exception e) {
-			logger.debug("getSsoUser error :" + e);
-			e.printStackTrace();
-			throw e;
-		}
 	}
 
 	@Override

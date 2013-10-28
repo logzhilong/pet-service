@@ -10,14 +10,23 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 public interface StateService extends CacheKeysConstance{
-
+	
 	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
-	void delReply(ClientRequest clientRequest) throws Exception;
+	
 	boolean reportContent(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	
-	
+	/**
+	 * 删除动态
+	 * @param stateid
+	 * @throws Exception
+	 */
 	public void delUserState(String stateid) throws Exception;
-	
+	/**
+	 * 删除回复
+	 * @param replyid
+	 * @throws Exception
+	 */
+	public void delReply(String replyid) throws Exception;
 	/**
 	 * 获取一个动态的全部回复
 	 * @param userid
