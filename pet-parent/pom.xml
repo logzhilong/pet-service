@@ -646,7 +646,7 @@
 			<properties>
 				<tomcat.manager.url>http://127.0.0.1:8089/manager</tomcat.manager.url>
 				<zoo.server>127.0.0.1:2181</zoo.server>
-				<jms.brokerURL>tcp://127.0.0.1:61617</jms.brokerURL>
+				<jms.brokerURL>tcp://192.0.170.109:61616</jms.brokerURL>
 				<cache.server>127.0.0.1:6379,127.0.0.1:6380</cache.server>
 				<store.server>127.0.0.1:6379</store.server>
 			</properties>
