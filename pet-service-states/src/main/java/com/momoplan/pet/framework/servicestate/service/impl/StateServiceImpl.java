@@ -319,6 +319,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			logger.debug("queue_name="+Constants.PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
 		}catch(Exception e){
 			logger.error("send message",e);
+			throw e;
 		}
 		return reply.getId();
 	}
@@ -360,10 +361,9 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			logger.debug("集合2:"+MyGson.getInstance().toJson(fl2));
 			fl1.retainAll(fl2);
 			logger.debug("交集:"+MyGson.getInstance().toJson(fl1));
-			if(fl1==null||fl1.size()<1)//没有交集，就是没有共同好友，则直接返回
-				return null;
 			retainMap.put(userid, "1");
 			retainMap.put(statesUserid, "1");
+			//没有交集，就是没有共同好友
 			for(String f : fl1){
 				retainMap.put(f, "0");
 			}
