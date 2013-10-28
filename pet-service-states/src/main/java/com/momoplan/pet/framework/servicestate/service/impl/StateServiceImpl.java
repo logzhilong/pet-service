@@ -41,8 +41,6 @@ import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.service.StateService;
-import com.momoplan.pet.framework.servicestate.vo.PetUserView;
-import com.momoplan.pet.framework.servicestate.vo.ReplyView;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
@@ -97,56 +95,8 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		// return statesUserStatesReplyMapper.deleteByPrimaryKey(replyid);
 	}
 
-	private ReplyView getReplyView(StatesUserStatesReply reply, String userid) throws Exception {
-		ReplyView replyView = new ReplyView();
-		replyView.setCt(reply.getCt());
-		replyView.setId(reply.getId());
-		replyView.setPetUserView(getPetUserView(reply, userid));
-		replyView.setMsg(reply.getMsg());
-		replyView.setPid(reply.getPid());
-		replyView.setPuserid(reply.getPuserid());
-		replyView.setUserid(reply.getUserid());
-		replyView.setStateid(reply.getStateid());
-		return replyView;
-	}
 
-	/**
-	 * 回复用
-	 * 
-	 * @param reply
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	private PetUserView getPetUserView(StatesUserStatesReply reply, String userid) throws Exception {
-		// SsoUser user = new SsoUser();
-		SsoUser user = getSsoUser(reply.getUserid());// 根据动态的userid获取发送这条动态的用户信息
-		PetUserView petUserView = new PetUserView();
-		petUserView.setImg(user.getImg());
-		petUserView.setNickname(user.getNickname());
-		petUserView.setAliasname(getAliasname(userid, reply.getUserid()));
-		petUserView.setUserid(user.getId());
-		return petUserView;
-	}
 
-	/**
-	 * 动态用
-	 * 
-	 * @param userState
-	 * @param userid
-	 * @return
-	 * @throws Exception
-	 */
-	private PetUserView getPetUserView(StatesUserStates userState, String userid) throws Exception {
-		// SsoUser user = new SsoUser();
-		SsoUser user = getSsoUser(userState.getUserid());// 根据动态的userid获取发送这条动态的用户信息
-		PetUserView petUserView = new PetUserView();
-		petUserView.setImg(user.getImg());
-		petUserView.setNickname(user.getNickname());
-		petUserView.setAliasname(getAliasname(userid, userState.getUserid()));
-		petUserView.setUserid(user.getId());
-		return petUserView;
-	}
 
 	private SsoUser getSsoUser(String userid) throws Exception {
 		try {
@@ -171,44 +121,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			throw e;
 		}
 	}
-
-	private String getAliasname(String myid, String friendid) throws Exception {
-		if (myid.compareTo(friendid) == 0) {
-			return "";
-		}
-		List<PetUserView> userViews = new ArrayList<PetUserView>();
-		String method = Constants.MEDHOD_GET_FRIENDLIST;
-		String path = Constants.SERVICE_URI_PET_USER;
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userid", myid);
-		String responseStr = dopost(path, method, params).toString();
-		JSONObject json = new JSONObject(responseStr);
-		JSONArray entities = json.getJSONArray("entity");
-		for (int i = 0; i < entities.length(); i++) {
-			JSONObject entity = new JSONObject(entities.get(i).toString());
-			if (entity.getString("id").compareTo(friendid) == 0) {
-				PetUserView userView = new PetUserView();
-				try {
-					userView.setUserid(entity.getString("username"));
-					userView.setNickname(entity.getString("nickname"));
-					userView.setImg(entity.getString("img"));
-					userView.setAliasname(entity.getString("alias"));
-				} catch (Exception e) {
-					logger.debug("one of the element doesnot found ...");
-					logger.debug(entity.toString());
-				}
-				userViews.add(userView);
-			}
-		}
-		if (userViews.size() > 0) {
-			return userViews.get(0).getAliasname();
-		}
-		return "";
-	}
-
-	// private String getDistance(StatesUserStates userState, String userid) {
-	// return null;
-	// }
 
 	@Override
 	public int countReply(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
@@ -256,31 +168,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		return users;
 	}
 
-	// public static void main(String[] args) {
-	// String str =
-	// "{\"success\":true,\"entity\":[{\"id\":\"747\",\"alias\":\"别名\",\"nickname\":\"cc\",\"username\":\"cc\",\"phoneNumber\":\"\",\"deviceToken\":\"\"},{\"id\":\"747\",\"alias\":\"别名\",\"nickname\":\"cc\",\"username\":\"cc\",\"phoneNumber\":\"\",\"deviceToken\":\"\"}]}";
-	// try {
-	// Gson gson = MyGson.getInstance();
-	// Success success = gson.fromJson(str, Success.class);
-	// String entity = success.toString();
-	// System.out.println(entity);
-	// JSONObject json = new JSONObject(str);
-	//
-	// JSONArray entity = json.getJSONArray("entity");
-	// System.out.println(entity.get(0));
-	//
-	//
-	// for (String string : arr) {
-	// System.out.println(string);
-	// }
-	// } catch (Exception e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// }
-
-	
 	@Override
 	public List<StatesUserStatesVo> getAllFriendStates(String userid,int pageSize,int pageNo) throws Exception {
 		logger.debug("获取全部好友的动态 userid="+userid);
@@ -333,23 +220,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug("单条动态信息："+vo.toString());
 		return vo;
 	}
-
-	// public static void main(String[] args) {
-	// List<String> list1 = new ArrayList<String>();
-	// List<String> list2 = new ArrayList<String>();
-	// list1.add("g");
-	// list1.add("s");
-	// list1.add("a");
-	// list1.add("f");
-	//
-	// list2.add("g");
-	// list2.add("c");
-	// list2.add("b");
-	// list2.add("a");
-	// list1.retainAll(list2);
-	// System.out.print(list1);
-	// }
-
 
 	@Override
 	public boolean reportContent(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {

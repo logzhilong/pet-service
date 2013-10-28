@@ -16,7 +16,7 @@ import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesReplyVo;
 
 @Component("getReply")
-public class GetRepliesHandler extends AbstractHandler{
+public class GetReplyHandler extends AbstractHandler{
 	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
 	
 	@Override
