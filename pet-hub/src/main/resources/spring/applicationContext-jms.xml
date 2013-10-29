@@ -11,9 +11,7 @@
 	<amq:connectionFactory id="jmsFactory" brokerURL="${jms.brokerURL}" />
 	<!--  ActiveMQ destinations  -->
 	<!--  使用topic方式-->
-	<amq:topic name="TOPIC" physicalName="apprequest-TOPIC" />  
-	<!--  使用Queue方式-->  
-	<amq:queue name="QUEUE" physicalName="apprequest-QUEUE" />
+	<amq:topic name="TOPIC" physicalName="pet-events" />  
 	
 	<bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
 		<property name="connectionFactory" ref="jmsFactory" />
@@ -21,7 +19,7 @@
 
 	<bean id="apprequestTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="connectionFactory" />
-		<property name="defaultDestinationName" value="apprequest-TOPIC" />
+		<property name="defaultDestinationName" value="pet-events" />
 		<property name="pubSubDomain" value="true" />
 	</bean>
 
