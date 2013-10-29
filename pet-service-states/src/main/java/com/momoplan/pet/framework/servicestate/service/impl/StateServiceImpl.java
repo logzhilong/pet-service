@@ -315,11 +315,11 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			int start = pageNo*pageSize>voList.size()?voList.size():pageNo*pageSize;
 			int end = pageSize*(pageNo+1)>voList.size()?voList.size():pageSize*(pageNo+1);
 			logger.debug("//分页 start="+start+" ; end="+end);
-			voList.subList(start, end);
+			voList = voList.subList(start, end);
 			return voList;
 		}
 		
 		return null;
 	}
-
+	
 }
