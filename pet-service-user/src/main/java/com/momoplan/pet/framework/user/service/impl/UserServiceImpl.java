@@ -2,12 +2,13 @@ package com.momoplan.pet.framework.user.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,20 +213,15 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
 		}
 	}
-	private String get(JSONObject jsonObj ,String key){
-		try {
-			return (String) jsonObj.get(key);
-		} catch (JSONException e) {
-			logger.debug(e.getMessage());
-		}
-		return null;
-	}
+	
 	@Override
 	public List<UserVo> getFirendList(String userid) throws Exception {
 		Set<String> set = storePool.keys(FRIEND_KEY+"*:*"+userid+"*");
 		if(set!=null&&set.size()>0){
 			List<UserVo> userList = new ArrayList<UserVo>();
 			List<String> list = storePool.get(set.toArray(new String[set.size()]));
+			Map<String,String> uidAliasMap = new HashMap<String,String>();
+			//存储中是 AB BA 的关系，所以单提出 uid 会有重复，放入 map 去除重复
 			for(String jsonStr : list){
 				JSONObject jsonObj = new JSONObject(jsonStr);
 				String aid = jsonObj.getString("aId");
@@ -235,6 +231,11 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 				if(userid.equals(aid)){
 					alias = get(jsonObj,"aliasB");
 				}
+				uidAliasMap.put(uid, alias);
+			}
+			for(String key:uidAliasMap.keySet()){
+				String uid = key;
+				String alias = uidAliasMap.get(key);
 				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
 				user.setPassword(null);
 				user.setEmail(null);

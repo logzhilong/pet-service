@@ -48,6 +48,14 @@ public class UserServiceSupport {
 	protected StorePool storePool = null;
 	protected Gson gson = MyGson.getInstance();
 	
+	protected String get(JSONObject jsonObj ,String key){
+		try {
+			return (String) jsonObj.get(key);
+		} catch (JSONException e) {
+			logger.debug(e.getMessage());
+		}
+		return null;
+	}
 	/**
 	 * 在单点存储中对 用户和宠物类型，建立一个联合索引
 	 * @param petInfo
