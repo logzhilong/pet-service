@@ -31,11 +31,11 @@
 					</p>
 					<p>
 						<label>用户名：</label>
-						<input type="text" name="j_username" size="15" class="login_input" value="root"/>
+						<input type="text" name="j_username" size="15" class="login_input" value=""/>
 					</p>
 					<p>
 						<label>密码：</label>
-						<input type="password" name="j_password" size="16" class="login_input"  value="abc123"/>
+						<input type="password" name="j_password" size="16" class="login_input"  value=""/>
 					</p>
 					<div class="login_bar">
 						<input class="sub" type="submit" value=" " />
