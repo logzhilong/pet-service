@@ -1,19 +1,22 @@
 package com.momoplan.pet.framework.manager.controller;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,16 +56,14 @@ public class BBSManagerController {
 	public String ToaddOrEditAreaCode(Forum forum, Model model) {
 		try {
 			if ("".equals(forum.getId()) || null == forum.getId()) {
-				List<CommonAreaCode> codes = commonDataManagerService
-						.getConmonArealist();
+				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				List<Forum> forums = bBSManagerService.getForumlist();
 				model.addAttribute("forums", forums);
 				logger.debug("wlcome to pet manager Forumadd......");
 				return "/manager/bbs/forumAdd";
 			} else {
-				List<CommonAreaCode> codes = commonDataManagerService
-						.getConmonArealist();
+				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				Forum fos = bBSManagerService.getForumbyid(forum);
 				model.addAttribute("fos", fos);
@@ -303,44 +304,47 @@ public class BBSManagerController {
 					MultipartFile file = multiRequest.getFile(iter.next());
 					if (file != null) {
 						String name = file.getOriginalFilename();
-						String type = file.getContentType();
-						String path = "D:/" + name;
-
-						// 访问url
-						String urlStr ="http://123.178.27.74/pet-hub/request?body={\"service\":\"service.uri.pet_sso\",\"method\":\"login\",\"token\":\"\",\"channel\":\"\",\"mac\":\"\",\"imei\":\"\",\"params\":{\"username\":\"\",\"password\":\"\"}}";  
-						String urlStr1 ="http://123.178.27.74/pet-file-server/put?{\"Content-Type\":\"64B7D0E143294CE7B76651F2109462FE\",\"name\":\"file\",\"fileName\":\"44\",\"mimeType\":\"image/jpeg\"}";  
-						URL url = new URL(urlStr);  
-						URLConnection URLconnection = url.openConnection();  
-						HttpURLConnection httpConnection = (HttpURLConnection)URLconnection;  
-						int responseCode = httpConnection.getResponseCode();  
-						if (responseCode == HttpURLConnection.HTTP_OK) {  
-							System.out.println("连接成功!");
-						}else{ 
-							System.out.println("连接失败!");
-						}  
-						InputStream urlStream = httpConnection.getInputStream();  
-						BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlStream));  
-						String sCurrentLine = "";  
-						String sTotalString = "";  
-						while ((sCurrentLine = bufferedReader.readLine()) != null) {  
-						    sTotalString += sCurrentLine;  
-						}  
-						//该URL返回值  sTotalString
-						System.out.println(sTotalString);
-
-						
-						//返回页面数据赋值
-						newFileName ="http://img.ivsky.com/img/tupian/slides/201310/04/chishui_dapubu.jpg";
+						String path = "D:\\" + name;
 						// 将上传文件存储至本地
 						File localFile = new File(path);
 						if (!localFile.exists()) {
 							localFile.mkdirs();
 						}
 						file.transferTo(localFile);
-						// 向前台返回文件名
+						
+						DefaultHttpClient httpclient = new DefaultHttpClient();
+						// 请求处理页面
+						HttpPost httppost = new HttpPost("http://123.178.27.74/pet-file-server/put");
+						// 创建待处理的文件
+						FileBody file1 = new FileBody(new File(path));
+
+						// 对请求的表单域进行填充
+						MultipartEntity reqEntity = new MultipartEntity();
+						reqEntity.addPart("file", file1);
+						reqEntity.addPart("fileName", new StringBody(name));
+						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
+						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
+						// 设置请求
+						httppost.setEntity(reqEntity);
+						// 执行
+						HttpResponse response1 = httpclient.execute(httppost);
+						// HttpEntity resEntity = response.getEntity();
+						// System.out.println(response.getStatusLine());
+						if (HttpStatus.SC_OK == response1.getStatusLine().getStatusCode()) {
+							HttpEntity entity = response1.getEntity();
+							// 显示内容
+							if (entity != null) {
+								System.out.println(EntityUtils.toString(entity));
+							}
+							if (entity != null) {
+								entity.consumeContent();
+							}
+						}
+						//返回页面数据赋值
+						newFileName =new String("http://123.178.27.74/pet-file-server/get/4F20CD8AAEB34C87A733657543863159");
+						
 						PrintWriter out = response.getWriter();
-						out.println("{\"err\":\"" + "" + "\",\"msg\":\""
-								+newFileName + "\"}");
+						out.println("{\"err\":\"" + "" + "\",\"msg\":\""+newFileName + "\"}");
 						out.flush();
 						out.close();
 					}

@@ -29,19 +29,25 @@ public class FeedbackServiceImpl implements FeedbackService {
 			SsoAuthenticationToken authenticationToken) throws Exception {
 		String userid = authenticationToken.getUserid();
 		String feedback = PetUtil.getParameter(clientRequest, "feedback");
-		String Email = PetUtil.getParameter(clientRequest, "email");
+		String email = PetUtil.getParameter(clientRequest, "email");
 		Date createTime = new Date();
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("userid",userid);
 		jsonObj.put("feedback",feedback);
-		jsonObj.put("Email",Email);
+		jsonObj.put("email",email);
 		jsonObj.put("createTime",createTime);
-		TextMessage tm = new ActiveMQTextMessage();
-		tm.setText(jsonObj.toString());
-		ActiveMQQueue queue = new ActiveMQQueue();
-		queue.setPhysicalName(Constants.PET_PUSH_TO_XMPP);
-		apprequestTemplate.convertAndSend(queue, tm);
-		logger.info("user's feedbacks :"+jsonObj);
+		try {
+			TextMessage tm = new ActiveMQTextMessage();
+			tm.setText(jsonObj.toString());
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName(Constants.PET_FEEDBACK);
+			apprequestTemplate.convertAndSend(queue, tm);
+			logger.info("user's feedbacks :"+jsonObj);
+		} catch (Exception e) {
+			logger.info("jms send error"+e);
+			e.printStackTrace();
+			throw e;
+		}
 		return null;
 	}
 
