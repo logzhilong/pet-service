@@ -31,7 +31,7 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 	
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 	@Resource
-	CommonConfig commonConfig = null;
+	protected CommonConfig commonConfig = null;
 	Gson gs = MyGson.getInstance();
 	public SsoAuthenticationToken verifyToken(ClientRequest clientRequest){
 		String token = clientRequest.getToken();

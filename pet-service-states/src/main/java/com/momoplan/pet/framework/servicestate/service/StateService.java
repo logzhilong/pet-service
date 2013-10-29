@@ -11,8 +11,6 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
 public interface StateService extends CacheKeysConstance{
 	
-	int countReply(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
-	
 	boolean reportContent(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
 	
 	/**

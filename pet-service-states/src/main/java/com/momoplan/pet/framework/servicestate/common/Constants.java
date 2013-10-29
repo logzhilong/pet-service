@@ -9,4 +9,9 @@ public class Constants {
 	public static String MEDHOD_GET_USERINFO = "getUserinfo";
 	public static String MEDHOD_GET_FRIENDLIST = "getFriendList";
 	public static String PET_PUSH_TO_XMPP = "pet_push_to_xmpp";
+	/**
+	 * 举报的阀值
+	 */
+	public static String REPORT_THRESHOLD = "report.threshold";
+
 }
