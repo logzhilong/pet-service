@@ -29,6 +29,6 @@ CREATE TABLE `mgr_user_role_rel` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --password=abc123
-insert mgr_user (id,name,password,cb,eb,ct,et,enable) values('root','root','5NKa8wXQN8BeBdUQOjQqquZPjvAy0A5BJyvQIQkd6/I=','root','root','2013-10-10','2013-10-10',true);
-insert into mgr_role (id,code,name,desct,ct,et,enable) value ('root','root','管理员','超级用户','2013-10-10','2013-10-10',true)
+insert into mgr_user (id,name,password,cb,eb,ct,et,enable) values('root','root','5NKa8wXQN8BeBdUQOjQqquZPjvAy0A5BJyvQIQkd6/I=','root','root','2013-10-10','2013-10-10',true);
+insert into mgr_role (id,code,name,desct,ct,et,enable) value ('root','root','管理员','超级用户','2013-10-10','2013-10-10',true);
 insert into mgr_user_role_rel (id,user_id,role_id)values('root','root','root');
