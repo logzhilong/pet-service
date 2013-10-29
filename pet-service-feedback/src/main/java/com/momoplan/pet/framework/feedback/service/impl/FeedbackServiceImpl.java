@@ -36,12 +36,18 @@ public class FeedbackServiceImpl implements FeedbackService {
 		jsonObj.put("feedback",feedback);
 		jsonObj.put("email",email);
 		jsonObj.put("createTime",createTime);
-		TextMessage tm = new ActiveMQTextMessage();
-		tm.setText(jsonObj.toString());
-		ActiveMQQueue queue = new ActiveMQQueue();
-		queue.setPhysicalName(Constants.PET_PUSH_TO_XMPP);
-		apprequestTemplate.convertAndSend(queue, tm);
-		logger.info("user's feedbacks :"+jsonObj);
+		try {
+			TextMessage tm = new ActiveMQTextMessage();
+			tm.setText(jsonObj.toString());
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName(Constants.PET_FEEDBACK);
+			apprequestTemplate.convertAndSend(queue, tm);
+			logger.info("user's feedbacks :"+jsonObj);
+		} catch (Exception e) {
+			logger.info("jms send error"+e);
+			e.printStackTrace();
+			throw e;
+		}
 		return null;
 	}
 
