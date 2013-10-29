@@ -29,12 +29,12 @@ public class FeedbackServiceImpl implements FeedbackService {
 			SsoAuthenticationToken authenticationToken) throws Exception {
 		String userid = authenticationToken.getUserid();
 		String feedback = PetUtil.getParameter(clientRequest, "feedback");
-		String Email = PetUtil.getParameter(clientRequest, "email");
+		String email = PetUtil.getParameter(clientRequest, "email");
 		Date createTime = new Date();
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("userid",userid);
 		jsonObj.put("feedback",feedback);
-		jsonObj.put("Email",Email);
+		jsonObj.put("email",email);
 		jsonObj.put("createTime",createTime);
 		TextMessage tm = new ActiveMQTextMessage();
 		tm.setText(jsonObj.toString());
