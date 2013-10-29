@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.servicestate.handler;
+package com.momoplan.pet.framework.feedback.handler;
 
 import java.io.IOException;
 
@@ -20,19 +20,17 @@ import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.Bootstrap;
 import com.momoplan.pet.commons.spring.CommonConfig;
-import com.momoplan.pet.framework.servicestate.common.Constants;
-import com.momoplan.pet.framework.servicestate.service.StateService;
-import com.momoplan.pet.framework.servicestate.service.impl.StateServiceImpl;
+import com.momoplan.pet.framework.feedback.common.Constants;
+import com.momoplan.pet.framework.feedback.service.FeedbackService;
+import com.momoplan.pet.framework.feedback.service.impl.FeedbackServiceImpl;
 
 public abstract class AbstractHandler extends PetUtil implements RequestHandler {
 	
-	protected StateService stateService = Bootstrap.getBean(StateServiceImpl.class);
-	protected Gson gson = MyGson.getInstance();
-	
+	protected FeedbackService feedbackService = Bootstrap.getBean(FeedbackServiceImpl.class);
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 	@Resource
 	protected CommonConfig commonConfig = null;
-	Gson gs = MyGson.getInstance();
+	protected Gson gson = MyGson.getInstance();
 	public SsoAuthenticationToken verifyToken(ClientRequest clientRequest){
 		String token = clientRequest.getToken();
 		JSONObject bodyJson = new JSONObject();
@@ -45,7 +43,7 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 				return null;
 			}
 			logger.debug(str);
-			SsoAuthenticationToken authenticationToken = gs.fromJson(str, SsoAuthenticationToken.class);
+			SsoAuthenticationToken authenticationToken = gson.fromJson(str, SsoAuthenticationToken.class);
 			//= new ObjectMapper().reader(SsoAuthenticationToken.class).readValue(str);
 			return authenticationToken;
 		} catch (Exception e) {

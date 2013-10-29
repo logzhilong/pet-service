@@ -34,7 +34,6 @@ import com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
-import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.pat.PatUserPatRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesReplyRepository;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
@@ -98,52 +97,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	@Override
 	public void delReply(String replyid) throws Exception {
 		statesUserStatesReplyRepository.delete(replyid);
-	}
-
-	@Override
-	public int countReply(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
-		StatesUserStatesReplyCriteria statesUserStatesReplyCriteria = new StatesUserStatesReplyCriteria();
-		StatesUserStatesReplyCriteria.Criteria criteria = statesUserStatesReplyCriteria.createCriteria();
-		String stateid = PetUtil.getParameter(clientRequest, "stateid");
-		String userid = authenticationToken.getUserid();
-		List<SsoUser> users = getFriendsList(userid);
-		List<String> userids = new ArrayList<String>();
-		for (SsoUser user : users) {
-			userids.add(user.getId());
-		}
-		userids.add(userid);
-		criteria.andUseridIn(userids);
-
-		criteria.andStateidEqualTo(stateid);
-		int count = statesUserStatesReplyMapper.countByExample(statesUserStatesReplyCriteria);
-		return count;
-	}
-	
-	/**
-	 * 获取好友列表
-	 * @param myid
-	 * @return
-	 * @throws Exception
-	 */
-	private List<SsoUser> getFriendsList(String myid) throws Exception {
-		List<SsoUser> users = new ArrayList<SsoUser>();
-		String method = Constants.MEDHOD_GET_FRIENDLIST;
-		String path = Constants.SERVICE_URI_PET_USER;
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userid", myid);
-		String responseStr = dopost(path, method, params).toString();
-		JSONObject json = new JSONObject(responseStr);
-		JSONArray entities = json.getJSONArray("entity");
-		for (int i = 0; i < entities.length(); i++) {
-			SsoUser user = new SsoUser();
-			JSONObject entity = new JSONObject(entities.get(i).toString());
-			user.setId(entity.getString("id"));
-			user.setUsername(entity.getString("username"));
-			user.setNickname(entity.getString("nickname"));
-			user.setPhoneNumber(entity.getString("phoneNumber"));
-			users.add(user);
-		}
-		return users;
 	}
 
 	@Override
@@ -302,20 +255,6 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		return reply.getId();
 	}
 	
-	private List<String> getUseridListByFriendList(JSONArray farr){
-		try{
-			List<String> uidList = new ArrayList<String>();
-			for(int i=0;i<farr.length();i++){
-				JSONObject obj = farr.getJSONObject(i);
-				uidList.add(obj.getString("id"));
-			}
-			return uidList;
-		}catch(Exception e){
-			logger.error("getUseridListByFriendList",e);
-		}
-		return null;
-	}
-	
 	/**
 	 * 获取回复列表
 	 */
@@ -376,11 +315,11 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			int start = pageNo*pageSize>voList.size()?voList.size():pageNo*pageSize;
 			int end = pageSize*(pageNo+1)>voList.size()?voList.size():pageSize*(pageNo+1);
 			logger.debug("//分页 start="+start+" ; end="+end);
-			voList.subList(start, end);
+			voList = voList.subList(start, end);
 			return voList;
 		}
 		
 		return null;
 	}
-
+	
 }

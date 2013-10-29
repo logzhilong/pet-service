@@ -64,8 +64,10 @@ public abstract class AbstractHandler extends PetUtil implements RequestHandler 
 		String signature = PetUtil.getParameter(clientRequest, "signature");
 		String img = PetUtil.getParameter(clientRequest, "img");
 		String hobby = PetUtil.getParameter(clientRequest, "hobby");
+		String backgroundImg = PetUtil.getParameter(clientRequest, "backgroundImg");
 		SsoUser petUser = new SsoUser();
 		petUser.setSignature(signature);
+		petUser.setBackgroundImg(backgroundImg);
 		petUser.setBirthdate(birthdate);
 		petUser.setGender(gender);
 		petUser.setCity(city);

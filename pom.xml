@@ -21,8 +21,9 @@
 		<module>pet-service-bbs</module>
 		<module>pet-service-user</module>
 		<module>pet-service-states</module>	
-		<module>pet-service-pat</module>	
-		<module>pet-service-manager</module>	
+		<module>pet-service-pat</module>
+		<module>pet-service-feedback</module>
+		<module>pet-service-manager</module>
 	</modules>
 
 </project>

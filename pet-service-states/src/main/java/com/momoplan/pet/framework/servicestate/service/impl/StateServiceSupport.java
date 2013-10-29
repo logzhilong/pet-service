@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.servicestate.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,25 @@ public class StateServiceSupport {
 		this.patUserPatRepository = patUserPatRepository;
 	}
 
+	/**
+	 * 抽取出好友集合中的用户ID集合
+	 * @param farr
+	 * @return
+	 */
+	protected List<String> getUseridListByFriendList(JSONArray farr){
+		try{
+			List<String> uidList = new ArrayList<String>();
+			for(int i=0;i<farr.length();i++){
+				JSONObject obj = farr.getJSONObject(i);
+				uidList.add(obj.getString("id"));
+			}
+			return uidList;
+		}catch(Exception e){
+			logger.error("getUseridListByFriendList",e);
+		}
+		return null;
+	}
+	
 	protected JSONArray getFriendList(String userid) throws Exception {
 		try{
 			String method = Constants.MEDHOD_GET_FRIENDLIST;

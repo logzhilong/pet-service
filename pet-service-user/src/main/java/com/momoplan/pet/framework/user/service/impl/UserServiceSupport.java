@@ -48,6 +48,14 @@ public class UserServiceSupport {
 	protected StorePool storePool = null;
 	protected Gson gson = MyGson.getInstance();
 	
+	protected String get(JSONObject jsonObj ,String key){
+		try {
+			return (String) jsonObj.get(key);
+		} catch (JSONException e) {
+			logger.debug(e.getMessage());
+		}
+		return null;
+	}
 	/**
 	 * 在单点存储中对 用户和宠物类型，建立一个联合索引
 	 * @param petInfo
@@ -174,9 +182,9 @@ public class UserServiceSupport {
 		Collections.sort(uvs, new Comparator<NearPerson>(){
 			@Override
 			public int compare(NearPerson o1, NearPerson o2) {
-				String d1 = o1.getUser().getDistance();
-				String d2 = o2.getUser().getDistance();
-				return d1.compareTo(d2);
+				Double d1 = Double.parseDouble(o1.getUser().getDistance());
+				Double d2 = Double.parseDouble(o2.getUser().getDistance());
+				return d2.compareTo(d1);
 			}
 		});
 		

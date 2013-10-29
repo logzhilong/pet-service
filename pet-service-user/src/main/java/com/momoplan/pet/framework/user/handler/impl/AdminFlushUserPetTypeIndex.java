@@ -20,7 +20,7 @@ import com.momoplan.pet.framework.user.handler.AbstractHandler;
 import com.momoplan.pet.framework.user.service.UserService;
 
 /**
- * {"method":"adminFlushUserPetTypeIndex",params:{"uid":"all","pwd":"abc123"}}
+ * {"method":"adminFlushUserPetTypeIndex","params":{"uid":"all","pwd":"abc123"}}
  * 更新用户与宠物的索引
  * @author liangc
  */

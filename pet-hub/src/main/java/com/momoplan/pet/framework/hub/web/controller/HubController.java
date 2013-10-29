@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,12 +81,22 @@ public class HubController {
 	private void publishEvent(String input,String output){
 		try {
 			logger.debug("publishEvent...");
+			JSONObject inputJson = new JSONObject(input);
+			JSONObject outputJson = new JSONObject(output);
+			if(outputJson.getBoolean("success")){//请求成功，则不用记录结果集
+				outputJson.remove("entity");
+			}
+			output = outputJson.toString();
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("input", inputJson);
+			jsonObj.put("output", outputJson);
 			TextMessage tm = new ActiveMQTextMessage();
-			tm.setStringProperty("body", input);
-			tm.setStringProperty("ret", output);
+			tm.setText(jsonObj.toString());
 			apprequestTemplate.convertAndSend(tm);
 		} catch (JMSException e) {
-			logger.error("publishEvent error",e);		
+			logger.error("JMSException error",e);		
+		} catch (JSONException e) {
+			logger.error("JSONException error",e);		
 		}
 	}
 	
