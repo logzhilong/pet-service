@@ -262,7 +262,6 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 
 	@Override
 	public List<UserVo> searchUser(String userid,String condition) throws Exception {
-		JSONArray arr = new JSONArray();
 		String index = SEARCH_USER_INDEX+"*:*"+condition+"*";
 		logger.debug("搜索用户 key="+index);
 		Set<String> set = storePool.keys(index);
