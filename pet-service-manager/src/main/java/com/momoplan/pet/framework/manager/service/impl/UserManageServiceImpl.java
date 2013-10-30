@@ -140,9 +140,8 @@ public class UserManageServiceImpl implements UserManageService {
 		logger.debug("welcome to delRoleByid.....................");
 		if ("" != mgrUser.getId() && null != mgrUser.getId()) {
 			MgrUserRoleRelCriteria userRoleRelCriteria = new MgrUserRoleRelCriteria();
-			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria
-					.createCriteria();
-			criteria.andRoleIdEqualTo(mgrUser.getId());
+			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria.createCriteria();
+			criteria.andUserIdEqualTo(mgrUser.getId());
 			userRoleRelMapper.deleteByExample(userRoleRelCriteria);
 			mgrUserMapper.deleteByPrimaryKey(mgrUser.getId());
 		}

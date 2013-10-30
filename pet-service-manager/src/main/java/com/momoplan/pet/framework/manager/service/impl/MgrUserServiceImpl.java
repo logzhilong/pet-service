@@ -47,7 +47,6 @@ public class MgrUserServiceImpl implements MgrUserService{
 		for(MgrUserRoleRel rel: mgrUserRoleRel){
 			roleIds.add(rel.getRoleId());
 		}
-		
 		MgrRoleCriteria mgrRoleCriteria = new MgrRoleCriteria();
 		mgrRoleCriteria.createCriteria().andIdIn(roleIds);
 		List<MgrRole> roles = mgrRoleMapper.selectByExample(mgrRoleCriteria);
