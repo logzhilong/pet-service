@@ -297,9 +297,13 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			Collections.sort(uvl, new Comparator<UserVo>(){
 				@Override
 				public int compare(UserVo o1, UserVo o2) {
-					Double d1 = Double.parseDouble(o1.getDistance());
-					Double d2 = Double.parseDouble(o2.getDistance());
-					return d2.compareTo(d1);
+					try{
+						Double d1 = Double.parseDouble(o1.getDistance());
+						Double d2 = Double.parseDouble(o2.getDistance());
+						return d2.compareTo(d1);
+					}catch(Exception e){
+						return 0;
+					}
 				}
 			});
 			return uvl;
