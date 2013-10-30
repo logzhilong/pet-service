@@ -294,7 +294,7 @@ public class BBSManagerController {
 		try {
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
 			// 用于显示在在线编辑器里，图片的路径
-			String newFileName = "";
+			String newFileName = null;
 
 			if (multipartResolver.isMultipart(req)) {
 				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) req;
@@ -304,14 +304,13 @@ public class BBSManagerController {
 					MultipartFile file = multiRequest.getFile(iter.next());
 					if (file != null) {
 						String name = file.getOriginalFilename();
-						String path = "D:\\" + name;
+						String path = "D:\\uploadimg\\" + name;
 						// 将上传文件存储至本地
 						File localFile = new File(path);
 						if (!localFile.exists()) {
 							localFile.mkdirs();
 						}
 						file.transferTo(localFile);
-						
 						DefaultHttpClient httpclient = new DefaultHttpClient();
 						// 请求处理页面
 						HttpPost httppost = new HttpPost("http://123.178.27.74/pet-file-server/put");
@@ -322,27 +321,34 @@ public class BBSManagerController {
 						MultipartEntity reqEntity = new MultipartEntity();
 						reqEntity.addPart("file", file1);
 						reqEntity.addPart("fileName", new StringBody(name));
+						//暂时先放一个能通过token
 						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
 						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
 						// 设置请求
 						httppost.setEntity(reqEntity);
 						// 执行
 						HttpResponse response1 = httpclient.execute(httppost);
-						// HttpEntity resEntity = response.getEntity();
-						// System.out.println(response.getStatusLine());
+						String output=null;
 						if (HttpStatus.SC_OK == response1.getStatusLine().getStatusCode()) {
+							logger.debug("连接通过!");
 							HttpEntity entity = response1.getEntity();
 							// 显示内容
 							if (entity != null) {
-								System.out.println(EntityUtils.toString(entity));
+								output=EntityUtils.toString(entity);
+								JSONObject jsonObj = new JSONObject(output);  
+								String success = jsonObj.getString("success");  
+								if(success == "true"){
+									String enty = jsonObj.getString("entity"); 
+									newFileName ="http://123.178.27.74/pet-file-server/get/"+enty;
+								}else{
+									newFileName="http://123.178.27.74/pet-file-server/get/4F20CD8AAEB34C87A733657543863159";
+								}
 							}
 							if (entity != null) {
 								entity.consumeContent();
 							}
 						}
-						//返回页面数据赋值
-						newFileName =new String("http://123.178.27.74/pet-file-server/get/4F20CD8AAEB34C87A733657543863159");
-						
+						logger.debug("返回值为:"+output);
 						PrintWriter out = response.getWriter();
 						out.println("{\"err\":\"" + "" + "\",\"msg\":\""+newFileName + "\"}");
 						out.flush();
@@ -352,11 +358,13 @@ public class BBSManagerController {
 			}
 			logger.debug("上传成功!");
 		} catch (Exception e) {
+			logger.debug("上传异常:"+e);
 			e.printStackTrace();
 			PrintWriter out = response.getWriter();
 			out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "上传错误!......" + "\"}");
 			out.flush();
 			out.close();
+			
 		}
 	}
 
