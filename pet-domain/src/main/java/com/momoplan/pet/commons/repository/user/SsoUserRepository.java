@@ -1,7 +1,9 @@
 package com.momoplan.pet.commons.repository.user;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -133,4 +135,49 @@ public class SsoUserRepository implements CacheKeysConstance {
 			storePool.closeConn(jedis);
 		}
 	}
+	
+	/**
+	 * 更新用户
+	 * @param user
+	 * @throws Exception
+	 */
+	public void updateUser(SsoUser user) throws Exception {
+		//更新数据
+		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
+		updateUserIndex(user);
+	}
+
+	/**
+	 * 创建用户
+	 * @param user
+	 * @throws Exception
+	 */
+	public void insertUser(SsoUser user) throws Exception {
+		mapperOnCache.insertSelective(user, user.getId());
+		updateUserIndex(user);
+	}
+
+	/**
+	 * 更新用户索引
+	 * @param user
+	 */
+	public void updateUserIndex(SsoUser user){
+		//更新索引
+		String key = SEARCH_USER_INDEX+user.getId();//这个用户的索引key
+		logger.debug("更新用户索引 k="+key);
+		Set<String> keys = storePool.keys(key+":*");
+		if(keys!=null&&keys.size()>0){
+			//如果存在这个索引，就把它删除掉
+			for(Iterator<String> it = keys.iterator();it.hasNext();){
+				String k = it.next();
+				logger.debug("删除用户索引 k="+k);
+				storePool.del(k);
+			}
+		}
+		//重新创建
+		String indexKey = key+":"+user.getNickname()+user.getUsername();
+		logger.debug("创建用户索引 k="+indexKey);
+		storePool.set(indexKey, user.getId());
+	}
+	
 }
