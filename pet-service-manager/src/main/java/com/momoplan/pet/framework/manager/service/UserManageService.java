@@ -2,6 +2,8 @@ package com.momoplan.pet.framework.manager.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 
@@ -32,5 +34,9 @@ public interface UserManageService {
 	 * @throws Exception
 	 */
 	public void delUserByid(MgrUser mgrUser)throws Exception;
-	
+	/**
+	 * 修改密码
+	 */
+	public void upUserPwd(String opassword, String npassword,String rnpassword, HttpServletRequest request) throws Exception;
 }
+

@@ -54,7 +54,7 @@
 			
 		</div>
 		<div id="login_footer">
-			Copyright &copy; 2013 XXXXXX Inc. All Rights Reserved.
+			Copyright &copy; 2013  北京爱宠联盟科技信息有限公司  Inc. All Rights Reserved.
 		</div>
 	</div>
 	

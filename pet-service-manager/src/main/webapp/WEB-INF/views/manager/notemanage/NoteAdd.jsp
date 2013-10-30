@@ -3,7 +3,7 @@
 <%@ include file="/commons/taglibs.jsp"%>
 
 
-</style>
+
 <form method="post" id="areaCodeAddForm"
 	action="${ctx }/manager/notemanager/NoteAddOrUpdate.html?forumId=${forumId}"
 	onsubmit="return validateCallback(this,dialogAjaxDone);">

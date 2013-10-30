@@ -109,12 +109,14 @@ $(function(){
 					把LOGO放在这个目录就可以了：static/dwz1.4.5/themes/default/images/logo.png
 				</a>
 				<ul class="nav">
+				    <li>
+				       <a target="dialog" max="false" mask="true" title="密码修改" width="400" height="300"  href="${ctx}/manager/pwdmanager/Topwdmanageedit.html">修改密码<a/>
+				    </li>
 					<li><a href="###">
-						<%--
-						<sec:authentication property="principal.username"/>
-						--%>
+ 						<sec:authentication property="principal.username"/> 
 						,&nbsp;您好</a></li>
 					<li><a href="${ctx }/login.html">退出</a></li>
+					
 				</ul>
 				<ul class="themeList" id="themeList">
 					<li theme="green"><div>绿色</div></li>
@@ -213,7 +215,7 @@ $(function(){
 						<div class="accountInfo"></div>
 						<div class="pageFormContent" layoutH="80">
 							欢迎来到服务器监控平台 v0.1<br/><br/><br/><br/>
-							<br/><br/><br/><br/>
+						
 							<h1>
 							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>
 							</h1>

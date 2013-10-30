@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrRoleMapper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserMapper;
