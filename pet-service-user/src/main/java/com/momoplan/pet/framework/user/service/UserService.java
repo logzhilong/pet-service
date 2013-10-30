@@ -95,5 +95,12 @@ public interface UserService extends CacheKeysConstance{
 	 */
 	public JSONArray getNearPerson(String pageIndex,String userId,String gender,String petType, double longitude, double latitude,String personOrPet) throws Exception;
 	
-	
+	/**
+	 * 按条件搜索用户
+	 * @param condition
+	 * @return
+	 * @throws Exception
+	 */
+	public List<UserVo> searchUser(String userid,String condition) throws Exception;
+
 }

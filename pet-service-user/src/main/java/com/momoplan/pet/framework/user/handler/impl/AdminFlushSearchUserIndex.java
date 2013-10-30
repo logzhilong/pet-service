@@ -13,25 +13,24 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.cache.pool.StorePool;
-import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
-import com.momoplan.pet.commons.domain.user.po.UserFriendship;
-import com.momoplan.pet.commons.domain.user.po.UserFriendshipCriteria;
+import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.commons.domain.user.po.SsoUserCriteria;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 import com.momoplan.pet.framework.user.service.UserService;
 
 /**
- * adminFlushFriendShipIndex
- * {"method":"adminFlushFriendShipIndex",params:{"pwd":"abc123"}}
- * 更新好友列表索引
+ * {"method":"adminFlushSearchUserIndex","params":{"uid":"all","pwd":"abc123"}}
+ * 更新用户索引，单条件搜索时的索引
  * @author liangc
  */
-@Component("adminFlushFriendShipIndex")
-public class AdminFlushFriendShipIndex extends AbstractHandler {
+@Component("adminFlushSearchUserIndex")
+public class AdminFlushSearchUserIndex extends AbstractHandler {
 	
-	private static Logger logger = LoggerFactory.getLogger(AdminFlushFriendShipIndex.class);
+	private static Logger logger = LoggerFactory.getLogger(AdminFlushSearchUserIndex.class);
 	
 	@Autowired
-	private UserFriendshipMapper userFriendshipMapper = null;
+	private SsoUserMapper ssoUserMapper = null;
 	@Autowired
 	private StorePool storePool = null;
 	private static String PWD = "abc123";
@@ -40,33 +39,32 @@ public class AdminFlushFriendShipIndex extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
+			String _uid = getParameter(clientRequest, "uid");
 			String _pwd = getParameter(clientRequest, "pwd");
-			String keys = UserService.FRIEND_KEY;
+			String keys = UserService.SEARCH_USER_INDEX;
 			if(!PWD.equals(_pwd)){
 				logger.debug("口令错误，暂时不校验口令");
 			}
-			
-			UserFriendshipCriteria userFriendshipCriteria = new UserFriendshipCriteria();
-			List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
-			
+			SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
+			if(_uid!=null&&!"all".equalsIgnoreCase(_uid)){
+				ssoUserCriteria.createCriteria().andIdEqualTo(_uid);
+				keys = keys+_uid;
+			}
+			List<SsoUser> list = ssoUserMapper.selectByExample(ssoUserCriteria);
 			Set<String> keyset = storePool.keys(keys+"*");
 			if(keyset!=null&&keyset.size()>0){
 				String[] ka = keyset.toArray(new String[keyset.size()]);
 				storePool.del(ka);
+				logger.debug("清除用户索引: ka="+ka);
 			}
-			
-			for(UserFriendship po:list){
-				String id = po.getId();
-				String aid = po.getaId();
-				String bid = po.getbId();
-				String indexKey = UserService.FRIEND_KEY+id+":"+aid+bid;
-				po.setRemark(null);
-				po.setVerified(null);
-				String indexValue = gson.toJson(po);
-				storePool.set(indexKey, indexValue);
-				logger.debug("好友列表索引[更新]:key="+indexKey+" ; value="+indexValue);
+			for(SsoUser u:list){
+				String uid = u.getId();
+				String name = u.getUsername();
+				String nick = u.getNickname();
+				String indexKey = keys+uid+":"+name+nick;
+				storePool.set(indexKey, uid);
+				logger.debug("创建用户索引: key="+indexKey+" ; value="+uid);
 			}
-			
 			rtn = new Success(true,list.size()).toString();
 			logger.debug("刷新索引 成功 ");
 		}catch(Exception e){

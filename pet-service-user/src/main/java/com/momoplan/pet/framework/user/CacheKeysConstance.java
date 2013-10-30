@@ -1,6 +1,6 @@
 package com.momoplan.pet.framework.user;
 
-public interface CacheKeysConstance {
+public interface CacheKeysConstance extends com.momoplan.pet.commons.repository.user.CacheKeysConstance{
 	
 	/**
 	 * 列族名，存储 用户表 username 列的索引

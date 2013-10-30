@@ -1,8 +1,11 @@
 package com.momoplan.pet.framework.user.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +22,7 @@ import redis.clients.jedis.ShardedJedis;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.PushApn;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
@@ -58,7 +62,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 
 	@Override
 	public void updateUser(SsoUser user) throws Exception {
-		mapperOnCache.updateByPrimaryKeySelective(user, user.getId());
+		ssoUserRepository.updateUser(user);
 	}
 	
 	/**
@@ -254,6 +258,54 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 		PetInfo petInfo = mapperOnCache.selectByPrimaryKey(PetInfo.class, id);
 		updateUserPetTypeIndex(petInfo, true);
 		mapperOnCache.deleteByPrimaryKey(PetInfo.class, id);
+	}
+
+	@Override
+	public List<UserVo> searchUser(String userid,String condition) throws Exception {
+		JSONArray arr = new JSONArray();
+		String index = SEARCH_USER_INDEX+"*:*"+condition+"*";
+		logger.debug("搜索用户 key="+index);
+		Set<String> set = storePool.keys(index);
+		if(set!=null&&set.size()>0){
+			JSONObject ul0 = getUserLocation(userid);
+			double latitude = 0;
+			double longitude = 0;
+			if(ul0!=null){
+				String lat = ul0.getString("latitude");
+				String lng = ul0.getString("longitude");
+				latitude = StringUtils.isNotEmpty(lat)?Double.parseDouble(lat):0;
+				longitude = StringUtils.isNotEmpty(lng)?Double.parseDouble(lng):0;
+			}
+			List<UserVo> uvl = new ArrayList<UserVo>();
+			for(Iterator<String> iterator = set.iterator();iterator.hasNext();){
+				String key = iterator.next();
+				String uid = key.split(":")[1];
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);
+				UserVo userVo = null;
+				JSONObject ul = getUserLocation(uid);
+				if(ul!=null){
+					String lat = ul.getString("latitude");
+					String lng = ul.getString("longitude");
+					userVo = new UserVo(user,lng,lat);
+					double distance = PetUtil.getDistance(latitude, longitude, Double.parseDouble(lat), Double.parseDouble(lng));
+					userVo.setDistance(distance+"");
+				}else{
+					userVo = new UserVo(user,"0","0");
+				}
+				uvl.add(userVo);
+			}
+			logger.debug("//TODO 排序结果集，按照距离排序");
+			Collections.sort(uvl, new Comparator<UserVo>(){
+				@Override
+				public int compare(UserVo o1, UserVo o2) {
+					Double d1 = Double.parseDouble(o1.getDistance());
+					Double d2 = Double.parseDouble(o2.getDistance());
+					return d2.compareTo(d1);
+				}
+			});
+			return uvl;
+		}
+		return null;
 	}
 	
 }
