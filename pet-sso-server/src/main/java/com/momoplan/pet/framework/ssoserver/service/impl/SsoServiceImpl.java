@@ -64,6 +64,7 @@ public class SsoServiceImpl implements SsoService {
 		}
 		user.setId(IDCreater.uuid());
 		mapperOnCache.insertSelective(user, user.getId());
+		ssoUserRepository.insertUser(user);
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());
 		SsoAuthenticationToken token = ssoUserRepository.createToken(user.getId());
