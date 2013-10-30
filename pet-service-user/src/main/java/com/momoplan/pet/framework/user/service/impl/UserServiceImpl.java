@@ -261,11 +261,16 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	}
 
 	@Override
-	public List<UserVo> searchUser(String userid,String condition) throws Exception {
-		String index = SEARCH_USER_INDEX+"*:*"+condition+"*";
-		logger.debug("搜索用户 key="+index);
+	public List<UserVo> searchUser(String userid,String condition,String conditionType) throws Exception {
+		String index = SEARCH_USER_INDEX+"*:";
+		if("username".equalsIgnoreCase(conditionType)){
+			index = SEARCH_USER_INDEX+"*:"+condition+"*";
+		}else{
+			index = SEARCH_USER_INDEX+"*:*:"+condition+"*";
+		}
 		Set<String> set = storePool.keys(index);
 		if(set!=null&&set.size()>0){
+			logger.debug("搜索用户 key="+index+" ; size="+set.size());
 			JSONObject ul0 = getUserLocation(userid);
 			double latitude = 0;
 			double longitude = 0;
@@ -276,6 +281,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 				longitude = StringUtils.isNotEmpty(lng)?Double.parseDouble(lng):0;
 			}
 			List<UserVo> uvl = new ArrayList<UserVo>();
+			int i=0;
 			for(Iterator<String> iterator = set.iterator();iterator.hasNext();){
 				String key = iterator.next();
 				String uid = key.split(":")[1];
@@ -292,6 +298,10 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 					userVo = new UserVo(user,"0","0");
 				}
 				uvl.add(userVo);
+				if(i++>100){
+					logger.debug("//截断结果集 i="+i);
+					break;
+				}
 			}
 			logger.debug("//TODO 排序结果集，按照距离排序");
 			Collections.sort(uvl, new Comparator<UserVo>(){

@@ -61,7 +61,7 @@ public class AdminFlushSearchUserIndex extends AbstractHandler {
 				String uid = u.getId();
 				String name = u.getUsername();
 				String nick = u.getNickname();
-				String indexKey = keys+uid+":"+name+nick;
+				String indexKey = keys+uid+":"+name+":"+nick;
 				storePool.set(indexKey, uid);
 				logger.debug("创建用户索引: key="+indexKey+" ; value="+uid);
 			}

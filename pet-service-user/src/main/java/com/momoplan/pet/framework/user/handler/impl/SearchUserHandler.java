@@ -31,7 +31,8 @@ public class SearchUserHandler extends AbstractHandler {
 		try{
 			String userid = getUseridFParamSToken(clientRequest);
 			String condition = getParameter(clientRequest, "condition");
-			List<UserVo> list = userService.searchUser(userid,condition);
+			String conditionType = getParameter(clientRequest, "conditionType");
+			List<UserVo> list = userService.searchUser(userid,condition,conditionType);
 			rtn = new Success(true,list).toString();
 			logger.debug("搜索用户 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){

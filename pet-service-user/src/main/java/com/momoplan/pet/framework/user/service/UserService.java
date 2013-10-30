@@ -101,6 +101,6 @@ public interface UserService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public List<UserVo> searchUser(String userid,String condition) throws Exception;
+	public List<UserVo> searchUser(String userid,String condition,String conditionType) throws Exception;
 
 }
