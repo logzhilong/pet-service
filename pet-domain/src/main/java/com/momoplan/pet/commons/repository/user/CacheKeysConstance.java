@@ -6,7 +6,7 @@ public interface CacheKeysConstance {
 	 */
 	public static final String CF_INDEX_USER_USERNAME = "sso_server.cf.sso_user_index.username";
 	/**
-	 * 搜索用户的索引,单条件模糊搜索，SEARCH_USER_INDEX + userid + ":" + nickname + phonenumber = userid
+	 * 搜索用户的索引,单条件模糊搜索，SEARCH_USER_INDEX + userid + ":" + username + ":" + nickname = userid
 	 * 每个用户在这里，就只能有一条记录，通过 key 来模糊查找 userid
 	 */
 	public static final String SEARCH_USER_INDEX = "sso_server.kv.sso_user_index.search:";

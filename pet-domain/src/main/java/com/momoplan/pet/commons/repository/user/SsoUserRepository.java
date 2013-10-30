@@ -175,7 +175,7 @@ public class SsoUserRepository implements CacheKeysConstance {
 			}
 		}
 		//重新创建
-		String indexKey = key+":"+user.getNickname()+user.getUsername();
+		String indexKey = key+":"+user.getUsername()+":"+user.getNickname();
 		logger.debug("创建用户索引 k="+indexKey);
 		storePool.set(indexKey, user.getId());
 	}
