@@ -252,8 +252,10 @@ public class BBSManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/bbs/forumrightmanagelist.html")
-	public String forumrightmanagelist(Forum forum, Model model) {
+	public String forumrightmanagelist(String tname,Forum forum, Model model) {
 		try {
+			forum.setDescript(tname);
+		
 			List<Note> forums = bBSManagerService.getAllNotesByForumId(forum);
 			logger.debug("forumrightmanagelist" + forums.toString());
 			model.addAttribute("forums", forums);
@@ -261,6 +263,7 @@ public class BBSManagerController {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("forumrightmanagelistError"+e);
 			return null;
 		}
 		return "/manager/bbs/forumManagerRight";
@@ -278,7 +281,7 @@ public class BBSManagerController {
 			return "/manager/notemanage/UploadImging";
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug("Toupimg" + e);
+			logger.error("Toupimg" + e);
 			return "/manager/notemanage/UploadImg";
 		}
 	}
@@ -358,7 +361,7 @@ public class BBSManagerController {
 			}
 			logger.debug("上传成功!");
 		} catch (Exception e) {
-			logger.debug("上传异常:"+e);
+			logger.error("上传异常:"+e);
 			e.printStackTrace();
 			PrintWriter out = response.getWriter();
 			out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "上传错误!......" + "\"}");

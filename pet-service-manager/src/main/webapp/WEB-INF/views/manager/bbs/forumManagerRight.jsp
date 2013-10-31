@@ -20,6 +20,14 @@
 					<span>删除</span>
 				</a>
 			</li>
+			<li>
+<!-- 			onsubmit="return navTabSearch(this);" -->
+			
+				<form  method="post" onsubmit="return divSearch(this, 'jbsxBox1');"  action="${ctx }/manager/bbs/forumrightmanagelist.html?id=${forumid}">
+						<input type="text" name="tname"/>
+						<button type="submit">搜索</button>
+				</form>
+			</li>
 			<li class="line">line</li>
 		</ul>
 	</div>
