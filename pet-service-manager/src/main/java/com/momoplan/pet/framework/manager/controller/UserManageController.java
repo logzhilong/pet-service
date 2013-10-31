@@ -193,7 +193,7 @@ public class UserManageController {
 		try {
 			userManageService.upUserPwd(opassword, npassword, rnpassword, request);
 		} catch (Exception e) {
-			logger.debug("uppwdExctption" + e);
+			logger.error("uppwdExctption" + e);
 		}
 		String jsonStr = json.toString();
 		logger.debug(jsonStr);
