@@ -4,7 +4,7 @@ package com.momoplan.pet.framework.feedback.service.impl;
 import java.util.Date;
 
 import javax.jms.TextMessage;
-
+import javax.annotation.Resource;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONObject;
