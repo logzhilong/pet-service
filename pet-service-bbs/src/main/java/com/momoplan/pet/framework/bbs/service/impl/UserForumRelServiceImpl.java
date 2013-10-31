@@ -1,13 +1,9 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
@@ -23,11 +19,11 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object quitForum(ClientRequest ClientRequest) throws Exception{
+	public Object quitForum(UserForumRel userForumRel) throws Exception{
 			UserForumRelCriteria userForumRelCriteria=new UserForumRelCriteria();
 			UserForumRelCriteria.Criteria criteria=userForumRelCriteria.createCriteria();
-			String forumid=PetUtil.getParameter(ClientRequest, "forumid");
-			String userid=PetUtil.getParameter(ClientRequest, "userid");
+			String forumid=userForumRel.getForumId();
+			String userid=userForumRel.getUserId();
 			criteria.andForumIdEqualTo((forumid));
 			criteria.andUserIdEqualTo(userid);
 			userForumRelMapper.deleteByExample(userForumRelCriteria);
@@ -39,12 +35,12 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object attentionForum(ClientRequest ClientRequest) throws Exception{
+	public Object attentionForum(UserForumRel userForumRel1) throws Exception{
 		
 			UserForumRel userForumRel=new UserForumRel();
 			userForumRel.setId(IDCreater.uuid());
-			userForumRel.setUserId(PetUtil.getParameter(ClientRequest, "userId"));
-			userForumRel.setForumId(PetUtil.getParameter(ClientRequest, "forumid"));
+			userForumRel.setUserId(userForumRel1.getUserId());
+			userForumRel.setForumId(userForumRel1.getForumId());
 			userForumRelMapper.insertSelective(userForumRel);
 			return "attentionForumSuccess";
 	}

@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
@@ -23,11 +25,15 @@ public class AttentionForumHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-		Object object=userForumRelService.attentionForum(clientRequest);
+			UserForumRel userForumRel=new UserForumRel();
+			userForumRel.setUserId(PetUtil.getParameter(clientRequest, "userId"));
+			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumid"));
+			
+		Object object=userForumRelService.attentionForum(userForumRel);
 			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
-			logger.debug("关注圈子失败 body="+gson.toJson(clientRequest));
+			logger.error("关注圈子失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{

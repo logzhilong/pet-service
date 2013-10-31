@@ -53,23 +53,23 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object sendNote(ClientRequest ClientRequest) throws Exception {
+	public Object sendNote(Note note) throws Exception {
 		
 			Note bbsNote = new Note();
 			bbsNote.setId(IDCreater.uuid());
-			bbsNote.setUserId(PetUtil.getParameter(ClientRequest,"userId"));
+			bbsNote.setUserId(note.getUserId());
 			bbsNote.setClientCount(null);
 			bbsNote.setCt(new Date());
 			bbsNote.setEt(new Date());
-			bbsNote.setForumId(PetUtil.getParameter(ClientRequest,"forumId"));
+			bbsNote.setForumId(note.getForumId());
 			bbsNote.setIsDel(false);
 			bbsNote.setIsEute(false);
 			bbsNote.setIsTop(false);
 			bbsNote.setState("0");
 			bbsNote.setType("0");
 			bbsNote.setClientCount((long) 0);
-			bbsNote.setName(PetUtil.getParameter(ClientRequest, "name"));
-			bbsNote.setContent(PetUtil.getParameter(ClientRequest, "content"));
+			bbsNote.setName(note.getName());
+			bbsNote.setContent(note.getContent());
 			logger.debug(""+bbsNote.toString());
 			noteRepository.insertSelective(bbsNote);
 			return bbsNote;
@@ -82,12 +82,10 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object searchNote(ClientRequest ClientRequest) throws Exception {
+	public Object searchNote(Note note,int pageNo,int pageSize) throws Exception {
 		
 			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			String  forumid=PetUtil.getParameter(ClientRequest, "forumid");
+			String  forumid=note.getForumId();
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
@@ -96,7 +94,7 @@ public class NoteServiceImpl implements NoteService {
 				}else{
 					criteria.andForumIdEqualTo(forumid);
 				}
-			String name=PetUtil.getParameter(ClientRequest, "notename");
+			String name=note.getName();
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
 			criteria.andNameLike("%"+name+"%");
@@ -105,23 +103,23 @@ public class NoteServiceImpl implements NoteService {
 			
 			List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 			List<Note> list=new ArrayList<Note>();
-			for(Note note:notelist){
-				note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
-				list.add(note);
+			for(Note note1:notelist){
+				note1.setContent(noteMapper.selectByPrimaryKey(note1.getId()).getContent());
+				list.add(note1);
 			}
 			return list;
 	}
 
 	
 	/**
-	 * 根据noteid查看帖子详情
+	 * 根据id查看帖子详情
 	 * 
 	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object detailNote(ClientRequest ClientRequest) throws Exception {
-			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
+	public Object detailNote(String id) throws Exception {
+			String noteid=id;
 			NoteCriteria noteCriteria = new NoteCriteria();
 			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
 			criteria.andIsDelEqualTo(false);
@@ -163,8 +161,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object reportNote(ClientRequest ClientRequest) throws Exception {
-			String noteid=PetUtil.getParameter(ClientRequest, "noteid");
+	public Object reportNote(String noteid) throws Exception {
 			Note note=noteMapper.selectByPrimaryKey(noteid);
 			note.setState("1");
 			note.setEt(new Date());
@@ -218,10 +215,9 @@ public class NoteServiceImpl implements NoteService {
 	 *今日新增帖子列表
 	 * 
 	 */
-	public Object getTodayNewNoteListByFid(ClientRequest ClientRequest) throws Exception {
+	public Object getTodayNewNoteListByFid(String fid,int pageNo,int pageSize) throws Exception {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
 			criteria.andIsTopEqualTo(false);
 			criteria.andIsDelEqualTo(false);
 			criteria.andTypeEqualTo("0");
@@ -229,8 +225,6 @@ public class NoteServiceImpl implements NoteService {
 			}else {
 				criteria.andForumIdEqualTo(fid);
 			}
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
@@ -275,21 +269,20 @@ public class NoteServiceImpl implements NoteService {
 	}
 	
 	/**
-	 * 某圈子获取最新帖子
+	 * 某圈子最新帖子
 	 * 
 	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object newNoteByFid(ClientRequest ClientRequest) throws Exception {
+	public Object newNoteByFid(String fid,int pageNo,int pageSize) throws Exception {
 			NoteCriteria noteCriteria = new NoteCriteria();
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
+			
 			noteCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteCriteria.setMysqlLength(pageSize);
 			noteCriteria.setOrderByClause("ct desc");
 			NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+			
 			if(fid.equals("0")){
 			}else {
 				criteria.andForumIdEqualTo(fid);
@@ -305,10 +298,9 @@ public class NoteServiceImpl implements NoteService {
 			noteCriteria1.setMysqlLength(5);
 			noteCriteria1.setOrderByClause("ct desc");
 			NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
-			String fid1=PetUtil.getParameter(ClientRequest, "forumPid");
-			if(fid1.equals("0")){
+			if(fid.equals("0")){
 			}else {
-				criteria1.andForumIdEqualTo(fid);
+				criteria.andForumIdEqualTo(fid);
 			}
 			criteria1.andIsTopEqualTo(true);
 			criteria1.andIsDelEqualTo(false);
@@ -337,12 +329,9 @@ public class NoteServiceImpl implements NoteService {
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object getEuteNoteList(ClientRequest ClientRequest) throws Exception {
+	public Object getEuteNoteList(String fid,int pageNo,int pageSize) throws Exception {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
 			if(fid.equals("0")){
 			}else {
 				criteria.andForumIdEqualTo(fid);
@@ -382,10 +371,8 @@ public class NoteServiceImpl implements NoteService {
 	/**
 	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid是否为0判断是否全站或者某圈子内)
 	 */
-	public Object getNewReplysByReplyct(ClientRequest ClientRequest) throws Exception {
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			String fid=PetUtil.getParameter(ClientRequest, "forumPid");
+	public Object getNewReplysByReplyct(String fid,int pageNo,int pageSize) throws Exception {
+			
 
 		    NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();

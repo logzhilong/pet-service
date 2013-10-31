@@ -38,17 +38,17 @@ public class NoteSubServiceImpl implements NoteSubService {
 	 * 
 	 */
 	@Override
-	public Object replyNote(ClientRequest ClientRequest) throws Exception{
+	public Object replyNote(NoteSub noteSub) throws Exception{
 			NoteSub bbsNoteSub = new NoteSub();
 			bbsNoteSub.setId(IDCreater.uuid());
-			bbsNoteSub.setUserId(PetUtil.getParameter(ClientRequest,"userId"));
-			bbsNoteSub.setNoteId(PetUtil.getParameter(ClientRequest,"noteId"));
-			bbsNoteSub.setContent(PetUtil.getParameter(ClientRequest,"content"));
+			bbsNoteSub.setUserId(noteSub.getUserId());
+			bbsNoteSub.setNoteId(noteSub.getNoteId());
+			bbsNoteSub.setContent(noteSub.getContent());
 			bbsNoteSub.setCt(new Date());
-			bbsNoteSub.setArea(PetUtil.getParameter(ClientRequest, "area"));
-			bbsNoteSub.setPid(PetUtil.getParameter(ClientRequest,"pid"));
+			bbsNoteSub.setArea(noteSub.getArea());
+			bbsNoteSub.setPid(noteSub.getPid());
 			noteSubRepository.insertSelective(bbsNoteSub);
-			String noteId = PetUtil.getParameter(ClientRequest,"noteId");
+			String noteId =noteSub.getNoteId();
 			Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
 			note.setEt(new Date());
 			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
@@ -65,18 +65,16 @@ public class NoteSubServiceImpl implements NoteSubService {
 			return noteSubMapper.selectByPrimaryKey(noteSubid);
 	}
 	/**
-	 * 获取当前帖子所有回复
+	 * 根据帖子id获取所有回复
 	 */
 	@Override
-	public Object getAllReplyNoteByNoteid(ClientRequest ClientRequest) throws Exception{
+	public Object getAllReplyNoteByNoteid(String noteid,int pageNo,int pageSize) throws Exception{
 			NoteSubCriteria noteSubCriteria=new NoteSubCriteria();
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
 			noteSubCriteria.setMysqlOffset((pageNo-1)*pageSize);
 			noteSubCriteria.setMysqlLength(pageSize);
 			noteSubCriteria.setOrderByClause("ct desc");
 			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
-			criteria.andNoteIdEqualTo(PetUtil.getParameter(ClientRequest, "noteId"));
+			criteria.andNoteIdEqualTo(noteid);
 			List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
 			List<NoteSub> list=new ArrayList<NoteSub>();
 			for(NoteSub sub :noteSubs){
