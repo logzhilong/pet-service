@@ -63,7 +63,6 @@ public class SsoServiceImpl implements SsoService {
 			throw new Exception("用户名 "+user.getUsername()+" 已存在");
 		}
 		user.setId(IDCreater.uuid());
-		mapperOnCache.insertSelective(user, user.getId());
 		ssoUserRepository.insertUser(user);
 		user = getSsoUserByName(user.getUsername());
 		logger.debug("register : "+user.toString());

@@ -10,6 +10,7 @@ import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import com.momoplan.pet.framework.feedback.service.FeedbackService;
 public class FeedbackServiceImpl implements FeedbackService {
 
 	private static Logger logger = LoggerFactory.getLogger(FeedbackServiceImpl.class);
+	@Autowired
 	protected JmsTemplate apprequestTemplate;
 	@Override
 	public String feedback(ClientRequest clientRequest,
@@ -44,8 +46,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 			apprequestTemplate.convertAndSend(queue, tm);
 			logger.info("user's feedbacks :"+jsonObj);
 		} catch (Exception e) {
-			logger.info("jms send error"+e);
-			e.printStackTrace();
+			logger.debug("jms send error"+e);
 			throw e;
 		}
 		return null;

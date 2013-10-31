@@ -27,7 +27,7 @@ public class FeedbackHandler extends AbstractHandler {
 			logger.debug("反馈成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("反馈失败 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
