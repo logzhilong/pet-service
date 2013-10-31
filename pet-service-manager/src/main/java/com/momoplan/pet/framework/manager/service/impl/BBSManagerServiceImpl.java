@@ -199,7 +199,13 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		try {
 			NoteCriteria noteCriteria=new NoteCriteria();
 			NoteCriteria.Criteria criteria=noteCriteria.createCriteria();
-			criteria.andForumIdEqualTo(forum.getId());
+			
+			if(forum.getId() != null){
+				criteria.andForumIdEqualTo(forum.getId());
+			}
+			if(forum.getDescript() != null){
+				criteria.andNameLike("%"+forum.getDescript()+"%");
+			}
 			List<Note> notes=noteMapper.selectByExample(noteCriteria);
 			return notes;
 		} catch (Exception e) {

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
@@ -18,6 +19,7 @@ import com.momoplan.pet.commons.domain.manager.po.MgrUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserCriteria;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRelCriteria;
+import com.momoplan.pet.framework.manager.security.CustomUserDetailsService;
 import com.momoplan.pet.framework.manager.security.Md5PlusShaPasswordEncoder;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;
@@ -140,7 +142,8 @@ public class UserManageServiceImpl implements UserManageService {
 		logger.debug("welcome to delRoleByid.....................");
 		if ("" != mgrUser.getId() && null != mgrUser.getId()) {
 			MgrUserRoleRelCriteria userRoleRelCriteria = new MgrUserRoleRelCriteria();
-			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria.createCriteria();
+			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria
+					.createCriteria();
 			criteria.andUserIdEqualTo(mgrUser.getId());
 			userRoleRelMapper.deleteByExample(userRoleRelCriteria);
 			mgrUserMapper.deleteByPrimaryKey(mgrUser.getId());
@@ -150,30 +153,26 @@ public class UserManageServiceImpl implements UserManageService {
 	/**
 	 * 修改密码
 	 */
-	public void upUserPwd(String opassword, String npassword,
-			String rnpassword, HttpServletRequest request) throws Exception {
+	@SuppressWarnings("static-access")
+	public void upUserPwd(String opassword, String npassword,String rnpassword, HttpServletRequest request) throws Exception {
 		logger.debug("welcome to upUserPwd.....................");
 		SessionManager manager = null;
 		// 获取当前用户
-		@SuppressWarnings("static-access")
 		WebUser user = manager.getCurrentUser(request);
 		if (user != null && opassword != null && rnpassword != null) {
 			String inopwd = md5.encodePassword(opassword, null);
-			String opwd = user.getPassword();
-			// if (inopwd .equals(opwd)) {
-			if (rnpassword.equals(npassword)) {
-				MgrUser user2 = mgrUserMapper.selectByPrimaryKey(user.getId());
-				user2.setPassword(md5.encodePassword(npassword, null));
-				user2.setEb(user.getName());
-				mgrUserMapper.updateByPrimaryKey(user2);
-				logger.debug("message" + "密码修改操作成功!");
-			} else {
-				logger.debug("message" + "新密码不一致!");
-			}
-			// } else {
-			// logger.debug("message" + "旧密码输入错误!");
-			// }
+				if (rnpassword.equals(npassword)) {
+					MgrUser user2 = mgrUserMapper.selectByPrimaryKey(user.getId());
+					if(user2.getPassword().equals(inopwd)){
+						user2.setPassword(md5.encodePassword(npassword, null));
+						user2.setEb(user.getName());
+						mgrUserMapper.updateByPrimaryKey(user2);
+					}
+					logger.debug("message" + "密码修改操作成功!");
+				} else {
+					logger.error("message" + "新密码不一致!");
+				}
 		}
 	}
-	
+
 }

@@ -24,5 +24,4 @@
 		<property name="defaultDestinationName" value="apprequest-TOPIC" />
 		<property name="pubSubDomain" value="true" />
 	</bean>
-
 </beans>

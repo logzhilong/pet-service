@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
-import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 
 public interface UserManageService {
 	/**
