@@ -44,8 +44,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 			apprequestTemplate.convertAndSend(queue, tm);
 			logger.info("user's feedbacks :"+jsonObj);
 		} catch (Exception e) {
-			logger.info("jms send error"+e);
-			e.printStackTrace();
+			logger.error("jms send error",e);
 			throw e;
 		}
 		return null;
