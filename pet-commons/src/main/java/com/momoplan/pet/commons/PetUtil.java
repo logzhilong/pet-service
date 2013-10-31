@@ -23,7 +23,7 @@ public class PetUtil {
 	
 	public static String getParameter(PetRequest request, String key) {
 		Object value = request.getParams().get(key);
-		return value==null?"": value.toString();
+		return value==null?null:value.toString();
 	}
 	
 	public static long getParameterLong(PetRequest request, String key) {
