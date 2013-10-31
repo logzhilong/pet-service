@@ -11,7 +11,7 @@
 
 	<artifactId>pet-service-feedback</artifactId>
 	<packaging>war</packaging>
-	<name>pet-service-user</name>
+	<name>pet-service-feedback</name>
 
 	<dependencies>
 		<dependency>
