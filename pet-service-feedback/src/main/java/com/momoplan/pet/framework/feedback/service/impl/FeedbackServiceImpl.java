@@ -23,6 +23,7 @@ import com.momoplan.pet.framework.feedback.service.FeedbackService;
 public class FeedbackServiceImpl implements FeedbackService {
 
 	private static Logger logger = LoggerFactory.getLogger(FeedbackServiceImpl.class);
+	@Resource
 	protected JmsTemplate apprequestTemplate;
 	@Override
 	public String feedback(ClientRequest clientRequest,
@@ -44,7 +45,7 @@ public class FeedbackServiceImpl implements FeedbackService {
 			apprequestTemplate.convertAndSend(queue, tm);
 			logger.info("user's feedbacks :"+jsonObj);
 		} catch (Exception e) {
-			logger.error("jms send error",e);
+			logger.debug("jms send error"+e);
 			throw e;
 		}
 		return null;
