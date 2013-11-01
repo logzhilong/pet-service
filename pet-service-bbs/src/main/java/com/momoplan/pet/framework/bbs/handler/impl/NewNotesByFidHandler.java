@@ -27,9 +27,8 @@ public class NewNotesByFidHandler extends AbstractHandler {
 			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
 			String fid=PetUtil.getParameter(clientRequest, "forumPid");
-		Object object=noteService.newNoteByFid(fid,pageNo,pageSize);
+			Object object=noteService.newNoteByFid(fid,pageNo,pageSize);
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
-			logger.debug(object.toString());
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
 			logger.error("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
