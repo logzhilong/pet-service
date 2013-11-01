@@ -32,5 +32,8 @@ public interface CacheKeysConstance {
 	 * 每个主题的回帖缓存, key后面要加上 noteId，缓存的回帖是【队列】结构
 	 */
 	public static final String LIST_NOTE_SUB = "service_bbs.list.note_sub:";
-	
+	/**
+	 * 置顶帖子的缓存，LIST_NOTE_TOP + fid
+	 */
+	public static final String LIST_NOTE_TOP = "service_bbs.list.note_top:";
 }

@@ -1,5 +1,6 @@
 package com.momoplan.pet.commons.repository.bbs;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -219,4 +220,50 @@ public class NoteRepository implements CacheKeysConstance{
 		return -1L;
 	}
 	
+	/**
+	 * 获取某个圈子置顶帖子的列表，缓存这个列表到 key-value ，当编辑这个圈子的置顶时，删除这个列表缓存即可
+	 * @param fid
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Note> getTopNoteByFid(String fid)throws Exception{
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			String key = LIST_NOTE_TOP+fid;
+			if(!jedis.exists(key)){
+				// 获取置顶帖子
+				NoteCriteria noteCriteria1 = new NoteCriteria();
+				noteCriteria1.setMysqlOffset(0);
+				noteCriteria1.setMysqlLength(5);
+				noteCriteria1.setOrderByClause("ct desc");
+				NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
+				if (!fid.equals("0")) {
+					criteria1.andForumIdEqualTo(fid);
+				}
+				criteria1.andIsTopEqualTo(true);
+				criteria1.andIsDelEqualTo(false);
+				criteria1.andTypeEqualTo("0");//0 帖子
+				List<Note> notelist = noteMapper.selectByExample(noteCriteria1);
+				for(int i=(notelist.size()-1);i>-1;i--){
+					Note n = notelist.get(i);
+					String json = gson.toJson(n);
+					jedis.lpush(key, json);
+					logger.debug("缓存精华=="+json);
+				}
+			}
+			List<String> list = jedis.lrange(key, 0, -1);
+			List<Note> listNote = new ArrayList<Note>();
+			for(String json : list){
+				Note n = gson.fromJson(json, Note.class);
+				listNote.add(n);
+			}
+			return listNote;
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return null;
+	}
 }
