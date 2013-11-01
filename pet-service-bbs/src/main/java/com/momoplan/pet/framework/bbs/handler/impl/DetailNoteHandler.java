@@ -10,7 +10,6 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
-import com.sun.xml.internal.bind.v2.TODO;
 
 /**
  * 根据帖子id查看帖子详情
