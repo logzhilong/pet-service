@@ -1,0 +1,17 @@
+[common]
+host=123.178.27.74
+user=pet
+password=123456
+
+[source]
+database=pet
+sql= select %s from chat_server 
+fields=id,name,version,address
+
+[target]
+database=pet_user
+table=chat_server_test 
+sql= insert into chat_server_test 
+                (id,name,version,address) 
+        values 
+                ('${id}','${name}','${version}','${address}')
