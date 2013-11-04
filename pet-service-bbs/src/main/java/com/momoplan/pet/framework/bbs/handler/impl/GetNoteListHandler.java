@@ -27,7 +27,7 @@ import com.momoplan.pet.framework.bbs.vo.NoteVo;
 //			"action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
 //			"condition":"查询条件，当 action=SEARCH 时，此值必填"
  */
-@Component("getNodeList")
+@Component("getNoteList")
 public class GetNoteListHandler extends AbstractHandler {
 	
 	private Logger logger = LoggerFactory.getLogger(GetNoteListHandler.class);
