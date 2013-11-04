@@ -12,13 +12,13 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
- * 最新回复
+ * 某圈子最新帖子
  * @author  qiyongc
  */
-@Component("getNewReplys")
-public class GetNewReplysHandler extends AbstractHandler {
+@Component("getNewNoteByFid")
+public class GetNewNoteByFidHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(GetNewReplysHandler.class);
+	private Logger logger = LoggerFactory.getLogger(GetNewNoteByFidHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
@@ -27,11 +27,11 @@ public class GetNewReplysHandler extends AbstractHandler {
 			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
 			String fid=PetUtil.getParameter(clientRequest, "forumPid");
-			Object object=noteService.getNewReplysByReplyct(fid,pageNo,pageSize);
-			logger.debug("最新回复成功 body="+gson.toJson(clientRequest));
+			Object object=noteService.newNoteByFid(fid,pageNo,pageSize);
+			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,object).toString();
 		}catch(Exception e){
-			logger.error("最新回复失败 body="+gson.toJson(clientRequest));
+			logger.error("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
