@@ -137,6 +137,34 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}
 		return -1L;
 	}
+
+	/**
+	 * 获取noteId的回帖数
+	 * @param noteId
+	 * @return
+	 */
+	public List<NoteSub> getReplyListByNoteId(String noteId,int pageSize,int pageNo){
+		String key = LIST_NOTE_SUB+noteId;
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize);
+			if(list!=null){
+				List<NoteSub> nsl = new ArrayList<NoteSub>(list.size());
+				for(String j : list){
+					NoteSub ns = gson.fromJson(j, NoteSub.class);
+					nsl.add(ns);
+				}
+				return nsl;
+			}
+		}catch(Exception e){
+			logger.error("totalReply",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 需求是：最新的回帖排在最下面,【队列】结构
@@ -167,8 +195,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param jedis
 	 * @param po
 	 * @param key
+	 * @throws Exception 
 	 */
-	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key){
+	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key) throws Exception{
 		NoteSubCriteria noteCriteria = new NoteSubCriteria();
 		NoteSubCriteria.Criteria criteria = noteCriteria.createCriteria();
 		criteria.andNoteIdEqualTo(po.getNoteId());
@@ -179,13 +208,14 @@ public class NoteSubRepository implements CacheKeysConstance{
 		String[] arr = new String[noteList.size()];
 		int i=0;
 		for(NoteSub note : noteList){
+			note = mapperOnCache.selectByPrimaryKey(NoteSub.class, note.getId());//这样会带上内容
 			String json = gson.toJson(note);
 			arr[i++] = json;
 			logger.debug(key+" rpush "+json);
 		}
 		jedis.rpush(key, arr);
 		logger.info("初始化 回帖 缓存队列 完成.");
-	}	
+	}
 	
 	/**
 	 * 初始化 forumId 圈子的回帖总数
