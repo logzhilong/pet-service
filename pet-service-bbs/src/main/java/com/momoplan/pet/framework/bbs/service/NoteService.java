@@ -1,7 +1,11 @@
 package com.momoplan.pet.framework.bbs.service;
 
+import java.util.List;
+
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 public interface NoteService {
 
@@ -66,41 +70,16 @@ public interface NoteService {
 	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception;
 	
 	/**
-	 * 某圈子今日新增帖子列表
-	 * @param fid圈子id(fid为0则是全站搜索,否则某圈子内部搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getTodayNewNoteListByFid(String fid,int pageNo,int pageSize)throws Exception;
-	/**
-	 * 某圈子最新帖子
-	 * @param forumid圈子id(如果为0 则全站搜索否则圈子内部搜索)
-	 * @param pageno
+	 * 获取帖子列表
+	 * @param forumid 圈子ID
+	 * @param action 动作 "action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
+	 * @param condition 查询条件
+	 * @param withTop 是否带置顶
+	 * @param pageno 
 	 * @param pagesize
 	 * @return
 	 * @throws Exception
 	 */
-	public Object newNoteByFid(String forumid,int pageno,int pagesize) throws Exception;
-	/**
-	 * 获取精华
-	 * @param fid圈子id(为0则全站搜索否则某圈子内搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getEuteNoteList(String fid,int pageNo,int pageSize) throws Exception;
-	
-	/**
-	 * 获取最新回复
-	 * @param fid圈子id(为0则全站否走某圈子内搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getNewReplysByReplyct(String fid,int pageNo,int pageSize) throws Exception;
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageno,int pagesize) throws Exception;
 	
 }

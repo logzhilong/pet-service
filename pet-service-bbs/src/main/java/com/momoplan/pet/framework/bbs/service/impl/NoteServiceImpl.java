@@ -22,6 +22,7 @@ import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
+import com.momoplan.pet.framework.bbs.vo.Action;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
@@ -164,6 +165,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @param ClientRequest
 	 * @return
 	 */
+	@Override
 	public Object updateClickCount(ClientRequest ClientRequest) throws Exception {
 		String noteid = PetUtil.getParameter(ClientRequest, "noteid");
 		Note note = noteMapper.selectByPrimaryKey(noteid);
@@ -179,8 +181,8 @@ public class NoteServiceImpl implements NoteService {
 
 	/**
 	 * 我发表过的帖子列表
-	 * 
 	 */
+	@Override
 	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
@@ -200,55 +202,31 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 今日新增帖子列表
-	 */
-	public Object getTodayNewNoteListByFid(String fid, int pageNo, int pageSize) throws Exception {
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		if (fid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		Date yestoday = DateUtils.minusDays(new Date(), 1);
-		yestoday.setHours(23);
-		yestoday.setMinutes(59);
-		yestoday.setSeconds(59);
-		criteria.andCtGreaterThan(yestoday);
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		
-		List<Note> tops = noteRepository.getTopNoteByFid(fid);//置顶的
-		List<Note> notes = new ArrayList<Note>();
-		notes.addAll(tops);
-		notes.addAll(notelist);
-		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		if(notes==null||notes.size()==0)
-			return null;
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notes.size());
-		buildNoteVoList(notes,noteVoList);		
-		return noteVoList;
-	}
-
-	/**
-	 * 某圈子最新帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
+	 * 获取帖子列表
 	 */
 	@Override
-	public Object newNoteByFid(String fid, int pageNo, int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset( pageNo * pageSize );
 		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (!"0".equals(fid)) {
-			criteria.andForumIdEqualTo(fid);
+		if (!"0".equals(forumid)) {
+			criteria.andForumIdEqualTo(forumid);
+		}
+		if(Action.ALL.equals(action.getCode())){//全部
+			noteCriteria.setOrderByClause("et desc");
+		}else if(Action.EUTE.equals(action.getCode())){//精华
+			noteCriteria.setOrderByClause("et desc");
+			criteria.andIsEuteEqualTo(true);
+		}else if(Action.NEW_ET.equals(action.getCode())){//最新回复
+			noteCriteria.setOrderByClause("rt desc");
+			Note n = mapperOnCache.selectByPrimaryKey(Note.class, forumid);
+			criteria.andRtGreaterThan(n.getCt());//回复时间一定大于创建时间
+		}else if(Action.NEW_CT.equals(action.getCode())){//最新发布
+			noteCriteria.setOrderByClause("ct desc");
+		}else if(Action.SEARCH.equals(action.getCode())){//查询
+			noteCriteria.setOrderByClause("et desc");
+			criteria.andNameLike("%"+condition+"%");//目前只支持按名称模糊查询
 		}
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
@@ -256,69 +234,18 @@ public class NoteServiceImpl implements NoteService {
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 		
 		// 获取置顶帖子
-		List<Note> list = noteRepository.getTopNoteByFid(fid);
-		if(list==null)
-			list = new ArrayList<Note>();
+		List<Note> list = new ArrayList<Note>();
+		if(withTop){//是否带着置顶的帖子，如果带，则放在最前面
+			list = noteRepository.getTopNoteByFid(forumid);
+			if(list==null)
+				list = new ArrayList<Note>();
+		}
 		list.addAll(notelist);
 		if(list==null||list.size()==0)
 			return null;
 		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
 		buildNoteVoList(list,noteVoList);
-		return noteVoList;
-	}
-
-	/**
-	 * 获取全站精华
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object getEuteNoteList(String fid, int pageNo, int pageSize) throws Exception {
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (!("0").equals(fid)) {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		criteria.andIsEuteEqualTo(true);
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		if(notelist==null||notelist.size()==0)
-			return null;
-		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
-		buildNoteVoList(notelist,noteVoList);
-		return noteVoList;
-	}
-	
-	/**
-	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid是否为0判断是否全站或者某圈子内)
-	 */
-	public Object getNewReplysByReplyct(String fid, int pageNo, int pageSize) throws Exception {
-
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		if (fid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setOrderByClause("et desc");
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		List<Note> list1 = noteMapper.selectByExample(noteCriteria);
-		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		if(list1==null||list1.size()==0)
-			return null;
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(list1.size());
-		buildNoteVoList(list1,noteVoList);
 		return noteVoList;
 	}
 	
