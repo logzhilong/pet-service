@@ -11,7 +11,7 @@ public interface UserForumRelService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object quitForum(UserForumRel userForumRel) throws Exception;
+	public void quitForum(UserForumRel po) throws Exception;
 	
 	/**
 	 * 关注圈子
@@ -20,6 +20,6 @@ public interface UserForumRelService {
 	 * @return
 	 * @throws Exception
 	 */
-	public void attentionForum(UserForumRel userForumRel) throws Exception;
+	public void attentionForum(UserForumRel po) throws Exception;
 	
 }
