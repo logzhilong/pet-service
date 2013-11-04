@@ -18,17 +18,6 @@ public interface NoteService {
 	 */
 	public Object sendNote(Note note) throws Exception;
  
-	 /**
-	  * 根据帖子name搜索
-	  * @param note
-	  * forumid圈子id(如果为0标识全站搜索否则为某圈子内搜索),notename帖子名称
-	  * @param pageNo
-	  * @param pageSize
-	  * @return
-	  * @throws Exception
-	  */
-	public Object searchNote(Note note,int pageNo,int pageSize) throws Exception;
-
 	/**
 	 * 查看帖子详情
 	 * @param 帖子id
