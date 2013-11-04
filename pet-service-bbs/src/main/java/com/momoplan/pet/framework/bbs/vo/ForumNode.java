@@ -17,6 +17,8 @@ public class ForumNode {
 	private Long totalCount = null;
 	//叶子节点 总回复数
 	private Long totalReply = null;
+	//叶子节点 总关注数
+	private Long totalAtte = null;
 	//叶子节点 是否关注
 	private boolean atte = false;
 	//logoImg
@@ -24,6 +26,14 @@ public class ForumNode {
 	
 	private List<ForumNode> child = new ArrayList<ForumNode>();
 	
+	public Long getTotalAtte() {
+		return totalAtte;
+	}
+
+	public void setTotalAtte(Long totalAtte) {
+		this.totalAtte = totalAtte;
+	}
+
 	public Long getTotalToday() {
 		return totalToday;
 	}
