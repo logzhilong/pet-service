@@ -22,11 +22,9 @@
 				-->
 						<dt>
 							名称:<input type="text" name="name" value="${myForm.name }"/>
-							<div class="buttonActive">
-								<div class="buttonContent">
+							
 									<button type="submit">搜索</button>
-								</div>
-							</div>
+								
 						</dt>
 					</form>
 				</td>

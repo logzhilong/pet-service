@@ -27,8 +27,7 @@ import com.momoplan.pet.framework.manager.vo.WebUser;
 @Service
 public class UserManageServiceImpl implements UserManageService {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(RoleUserManageServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(RoleUserManageServiceImpl.class);
 	@Autowired
 	private MgrRoleMapper mgrroleMaper = null;
 	@Autowired

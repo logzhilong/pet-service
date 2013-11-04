@@ -23,9 +23,8 @@ public class PostRequest {
 	}
 	
 	public static void main(String[] args) throws Exception {
-//		http://123.178.27.74/pet-service-bbs/request?body={%22method%22:%22getAllForumAsTree%22,%22token%22:%22%22,%22params%22:{%22userId%22:%226%22}}
-		String url = "http://123.178.27.74/pet-service-bbs/request";
-		String body = "{\"method\":\"getAllForumAsTree\",\"token\":\"\",\"params\":{\"userId\":\"6\"}}";
+		String url = "http://123.178.27.74/pet-service-user/request";
+		String body = "{\"method\":\"getAllForumAsTree\",\"token\":\"\",\"params\":{\"userid\":\"770\"}}";
 		String res = PostRequest.postText(url, "body",body);
 		System.out.println(res);
 	}
