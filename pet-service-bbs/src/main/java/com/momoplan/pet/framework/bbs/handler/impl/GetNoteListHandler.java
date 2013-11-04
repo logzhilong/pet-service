@@ -36,7 +36,7 @@ public class GetNoteListHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String fid=PetUtil.getParameter(clientRequest, "forumPid");
+			String fid=PetUtil.getParameter(clientRequest, "forumId");
 			boolean withTop=Boolean.valueOf(PetUtil.getParameter(clientRequest, "withTop"));
 			String action=PetUtil.getParameter(clientRequest, "action");
 			String condition=PetUtil.getParameter(clientRequest, "condition");

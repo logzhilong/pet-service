@@ -72,40 +72,6 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 根据帖子name搜索
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object searchNote(Note note, int pageNo, int pageSize) throws Exception {
-
-		NoteCriteria noteCriteria = new NoteCriteria();
-		String forumid = note.getForumId();
-		noteCriteria.setMysqlOffset(pageNo*pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (forumid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(forumid);
-		}
-		String name = note.getName();
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		criteria.andNameLike("%" + name + "%");
-		criteria.andStateEqualTo("0");
-
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		List<Note> list = new ArrayList<Note>();
-		for (Note note1 : notelist) {
-			note1.setContent(noteMapper.selectByPrimaryKey(note1.getId()).getContent());
-			list.add(note1);
-		}
-		return list;
-	}
-
-	/**
 	 * 根据id查看帖子详情
 	 * 
 	 * @param ClientRequest
@@ -245,7 +211,8 @@ public class NoteServiceImpl implements NoteService {
 			if(list==null)
 				list = new ArrayList<Note>();
 		}
-		list.addAll(notelist);
+		if(notelist!=null)
+			list.addAll(notelist);
 		if(list==null||list.size()==0)
 			return null;
 		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
