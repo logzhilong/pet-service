@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-26 12:09:32
+* @date 2013-11-04 12:25:53
 */
 public class NoteCriteria {
     protected String orderByClause;
@@ -930,6 +930,66 @@ public class NoteCriteria {
 
         public Criteria andEtNotBetween(Date value1, Date value2) {
             addCriterion("ET not between", value1, value2, "et");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtIsNull() {
+            addCriterion("RT is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtIsNotNull() {
+            addCriterion("RT is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtEqualTo(Date value) {
+            addCriterion("RT =", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtNotEqualTo(Date value) {
+            addCriterion("RT <>", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtGreaterThan(Date value) {
+            addCriterion("RT >", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtGreaterThanOrEqualTo(Date value) {
+            addCriterion("RT >=", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtLessThan(Date value) {
+            addCriterion("RT <", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtLessThanOrEqualTo(Date value) {
+            addCriterion("RT <=", value, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtIn(List<Date> values) {
+            addCriterion("RT in", values, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtNotIn(List<Date> values) {
+            addCriterion("RT not in", values, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtBetween(Date value1, Date value2) {
+            addCriterion("RT between", value1, value2, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andRtNotBetween(Date value1, Date value2) {
+            addCriterion("RT not between", value1, value2, "rt");
             return (Criteria) this;
         }
     }
