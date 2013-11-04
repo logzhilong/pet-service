@@ -207,8 +207,9 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
-		noteCriteria.setMysqlOffset( pageNo * pageSize );
-		noteCriteria.setMysqlLength(pageSize);
+		noteCriteria.setMysqlOffset(pageNo * pageSize);
+		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
+		
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
 		if (!"0".equals(forumid)) {
 			criteria.andForumIdEqualTo(forumid);
