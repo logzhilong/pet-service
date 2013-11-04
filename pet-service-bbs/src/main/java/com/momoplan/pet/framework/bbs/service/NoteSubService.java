@@ -12,7 +12,7 @@ public interface NoteSubService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object replyNote(NoteSub noteSub) throws Exception;
+	public String replyNote(NoteSub noteSub) throws Exception;
 	/**
 	 * 
 	 * 根据回帖id获取回帖

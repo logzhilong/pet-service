@@ -10,28 +10,29 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
+import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 /**
- *获取精华
+ * 根据帖子id查看帖子详情
  * @author  qiyongc
  */
-@Component("getEuteNoteList")
-public class EuteNoteListHandler extends AbstractHandler {
+@Component("getNoteById")
+public class GetNoteByIdHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(EuteNoteListHandler.class);
+	private Logger logger = LoggerFactory.getLogger(GetNoteByIdHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
-			String fid=PetUtil.getParameter(clientRequest, "forumPid");
-			Object object=noteService.getEuteNoteList(fid,pageNo,pageSize);
-			logger.debug("获取精华成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,object).toString();
+			String noteId=PetUtil.getParameter(clientRequest, "noteId");
+			//TODO更新帖子点击数   暂时这样写,
+			noteService.updateClickCount(noteId);
+			NoteVo vo = noteService.getNoteById(noteId);
+			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
+			rtn = new Success(true,vo).toString();
 		}catch(Exception e){
-			logger.error("获取精华失败 body="+gson.toJson(clientRequest));
+			logger.error("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{

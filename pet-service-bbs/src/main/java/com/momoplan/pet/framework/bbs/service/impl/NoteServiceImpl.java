@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -22,6 +21,8 @@ import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
+import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.NoteState;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
@@ -43,88 +44,27 @@ public class NoteServiceImpl implements NoteService {
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 
 	/**
-	 * 发送帖子
-	 * 
+	 * 发帖子
 	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object sendNote(Note note) throws Exception {
-
-		Note bbsNote = new Note();
-		bbsNote.setId(IDCreater.uuid());
-		bbsNote.setUserId(note.getUserId());
-		bbsNote.setClientCount(null);
-		bbsNote.setCt(new Date());
-		bbsNote.setEt(new Date());
-		bbsNote.setForumId(note.getForumId());
-		bbsNote.setIsDel(false);
-		bbsNote.setIsEute(false);
-		bbsNote.setIsTop(false);
-		bbsNote.setState("0");
-		bbsNote.setType("0");
-		bbsNote.setClientCount((long) 0);
-		bbsNote.setName(note.getName());
-		bbsNote.setContent(note.getContent());
-		logger.debug("" + bbsNote.toString());
-		noteRepository.insertSelective(bbsNote);
-		return bbsNote;
-	}
-
-	/**
-	 * 根据帖子name搜索
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object searchNote(Note note, int pageNo, int pageSize) throws Exception {
-
-		NoteCriteria noteCriteria = new NoteCriteria();
-		String forumid = note.getForumId();
-		noteCriteria.setMysqlOffset(pageNo*pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (forumid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(forumid);
-		}
-		String name = note.getName();
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		criteria.andNameLike("%" + name + "%");
-		criteria.andStateEqualTo("0");
-
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		List<Note> list = new ArrayList<Note>();
-		for (Note note1 : notelist) {
-			note1.setContent(noteMapper.selectByPrimaryKey(note1.getId()).getContent());
-			list.add(note1);
-		}
-		return list;
-	}
-
-	/**
-	 * 根据id查看帖子详情
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object detailNote(String id) throws Exception {
-		String noteid = id;
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		criteria.andIdEqualTo(noteid);
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		for (Note note2 : notelist) {
-			note2.setContent(note.getContent());
-		}
-		return notelist;
+	public String sendNote(Note po) throws Exception {
+		Date now = new Date();
+		po.setId(IDCreater.uuid());
+		po.setClientCount(1L);
+		po.setCt(now);
+		po.setEt(now);
+		po.setRt(now);
+		po.setIsDel(false);
+		po.setIsEute(false);
+		po.setIsTop(false);
+		//TODO 发帖要走审核啊
+		po.setState(NoteState.ACTIVE.getCode());
+		po.setType("0");
+		logger.debug("发帖子 ：" + po.toString());
+		noteRepository.insertSelective(po);
+		return po.getId();
 	}
 
 	/**
@@ -144,43 +84,24 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 根据id举报帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object reportNote(String noteid) throws Exception {
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		note.setState("1");
-		note.setEt(new Date());
-		noteMapper.updateByPrimaryKey(note);
-		return "reportNoteSuccess";
-	}
-
-	/**
 	 * 更新帖子点击数
 	 * 
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(ClientRequest ClientRequest) throws Exception {
-		String noteid = PetUtil.getParameter(ClientRequest, "noteid");
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		if (note.equals(null)) {
-			return "updateClickCountFail";
-		} else {
-			note.setClientCount(note.getClientCount() + 1);
-			note.setEt(new Date());
-			noteMapper.updateByPrimaryKey(note);
-      			return "updateClickCountSuccess";
+	@Override
+	public void updateClickCount(String noteId) throws Exception {
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
+		if(note!=null){
+			note.setClientCount(note.getClientCount()+1);
+			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
 		}
 	}
 
 	/**
 	 * 我发表过的帖子列表
-	 * 
 	 */
+	@Override
 	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
@@ -200,66 +121,60 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 今日新增帖子列表
-	 */
-	public Object getTodayNewNoteListByFid(String fid, int pageNo, int pageSize) throws Exception {
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		if (fid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		Date yestoday = DateUtils.minusDays(new Date(), 1);
-		yestoday.setHours(23);
-		yestoday.setMinutes(59);
-		yestoday.setSeconds(59);
-		criteria.andCtGreaterThan(yestoday);
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		
-		List<Note> tops = noteRepository.getTopNoteByFid(fid);//置顶的
-		List<Note> notes = new ArrayList<Note>();
-		notes.addAll(tops);
-		notes.addAll(notelist);
-		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		if(notes==null||notes.size()==0)
-			return null;
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notes.size());
-		buildNoteVoList(notes,noteVoList);		
-		return noteVoList;
-	}
-
-	/**
-	 * 某圈子最新帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
+	 * 获取帖子列表
 	 */
 	@Override
-	public Object newNoteByFid(String fid, int pageNo, int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
-		noteCriteria.setMysqlOffset( pageNo * pageSize );
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
+		noteCriteria.setMysqlOffset(pageNo * pageSize);
+		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
+		
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (!"0".equals(fid)) {
-			criteria.andForumIdEqualTo(fid);
+		if (!"0".equals(forumid)) {
+			criteria.andForumIdEqualTo(forumid);
+		}
+		if(Action.ALL.equals(action)){//全部
+			noteCriteria.setOrderByClause("et desc");
+			logger.debug("全部...");
+		}else if(Action.EUTE.equals(action)){//精华
+			noteCriteria.setOrderByClause("et desc");
+			criteria.andIsEuteEqualTo(true);
+			logger.debug("精华...");
+		}else if(Action.NEW_ET.equals(action)){//最新回复
+			noteCriteria.setOrderByClause("rt desc");
+			Note n = mapperOnCache.selectByPrimaryKey(Note.class, forumid);
+			criteria.andRtGreaterThan(n.getCt());//回复时间一定大于创建时间
+			logger.debug("最新回复...");
+		}else if(Action.NEW_CT.equals(action)){//最新发布
+			noteCriteria.setOrderByClause("ct desc");
+			logger.debug("最新发布...");
+		}else if(Action.SEARCH.equals(action)){//查询
+			noteCriteria.setOrderByClause("et desc");
+			criteria.andNameLike("%"+condition+"%");//目前只支持按名称模糊查询
+			logger.debug("查询...");
 		}
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
 		criteria.andTypeEqualTo("0");
+		
+		List<String> stateList = new ArrayList<String>();
+		stateList.add(NoteState.REJECT.getCode());//审核拒绝
+		stateList.add(NoteState.AUDIT.getCode());//审核中
+		stateList.add(NoteState.REPORT.getCode());//被举报
+		//以上状态不显示
+		criteria.andStateNotIn(stateList);
+		
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 		
 		// 获取置顶帖子
-		List<Note> list = noteRepository.getTopNoteByFid(fid);
-		if(list==null)
-			list = new ArrayList<Note>();
-		list.addAll(notelist);
+		List<Note> list = new ArrayList<Note>();
+		if(withTop&&pageNo==0){//是否带着置顶的帖子，如果带，则放在最前面,只在第一页显示
+			list = noteRepository.getTopNoteByFid(forumid);
+			if(list==null)
+				list = new ArrayList<Note>();
+		}
+		if(notelist!=null)
+			list.addAll(notelist);
 		if(list==null||list.size()==0)
 			return null;
 		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
@@ -267,75 +182,34 @@ public class NoteServiceImpl implements NoteService {
 		buildNoteVoList(list,noteVoList);
 		return noteVoList;
 	}
-
-	/**
-	 * 获取全站精华
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object getEuteNoteList(String fid, int pageNo, int pageSize) throws Exception {
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (!("0").equals(fid)) {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		criteria.andIsEuteEqualTo(true);
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		if(notelist==null||notelist.size()==0)
-			return null;
-		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
-		buildNoteVoList(notelist,noteVoList);
-		return noteVoList;
-	}
-	
-	/**
-	 * 全局最新回复(根据回复时间将帖子显示{不显示置顶帖子})(forumPid是否为0判断是否全站或者某圈子内)
-	 */
-	public Object getNewReplysByReplyct(String fid, int pageNo, int pageSize) throws Exception {
-
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsTopEqualTo(false);
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		if (fid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria.setOrderByClause("et desc");
-		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		List<Note> list1 = noteMapper.selectByExample(noteCriteria);
-		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
-		if(list1==null||list1.size()==0)
-			return null;
-		List<NoteVo> noteVoList = new ArrayList<NoteVo>(list1.size());
-		buildNoteVoList(list1,noteVoList);
-		return noteVoList;
-	}
 	
 	// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
 		for (Note note : notelist) {
-			NoteVo vo = new NoteVo();
-			BeanUtils.copyProperties(note, vo);
-			String uid = note.getUserId();
-			String nid = note.getId();
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-			vo.setNickname(user.getNickname());
-			vo.setUserIcon(user.getImg());
-			Long totalReply = noteSubRepository.totalReply(nid);
-			vo.setTotalReply(totalReply);
+			NoteVo vo = createNoteVo(note);
 			noteVoList.add(vo);
 		}
+	}
+	
+	private NoteVo createNoteVo(Note note) throws Exception{
+		NoteVo vo = new NoteVo();
+		BeanUtils.copyProperties(note, vo);
+		String uid = note.getUserId();
+		String nid = note.getId();
+		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+		vo.setNickname(user.getNickname());
+		vo.setUserIcon(user.getImg());
+		Long totalReply = noteSubRepository.totalReply(nid);
+		vo.setTotalReply(totalReply);
+		return vo;
+	}
+
+	@Override
+	public NoteVo getNoteById(String id) throws Exception {
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, id);
+		NoteVo vo = createNoteVo(note);
+		logger.debug(vo.toString());
+		return vo;
 	}
 
 }

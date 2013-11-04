@@ -84,6 +84,9 @@ public class ForumServiceImpl implements ForumService {
 						Long totalCount = noteRepository.totalCount(forumId);
 						// 总回复数
 						Long totalReply = noteSubRepository.totalCount(forumId);
+						//被关注数
+						Long totalAtte = getTotalAtte(forumId);
+						f.setTotalAtte(totalAtte);
 						f.setTotalToday(totalToday);
 						f.setTotalCount(totalCount);
 						f.setTotalReply(totalReply);
@@ -177,6 +180,9 @@ public class ForumServiceImpl implements ForumService {
 				Long totalCount = noteRepository.totalCount(forumId);
 				// TODO : 叶子节点 总回复数
 				Long totalReply = noteSubRepository.totalCount(forumId);
+				//被关注数
+				Long totalAtte = getTotalAtte(forumId);
+				f.setTotalAtte(totalAtte);
 				f.setTotalToday(totalToday);
 				f.setTotalCount(totalCount);
 				f.setTotalReply(totalReply);
@@ -186,6 +192,19 @@ public class ForumServiceImpl implements ForumService {
 		node0.setChild(no);
 		return node0;
 	}
-
-
+	
+	/**
+	 * 获取被关注总数
+	 * @param forumId
+	 * @return
+	 */
+	private Long getTotalAtte(String forumId){
+		//TODO 稍后挪到缓存中实现
+		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
+		userForumRelCriteria.createCriteria().andForumIdEqualTo(forumId);
+		int count = userForumRelMapper.countByExample(userForumRelCriteria);
+		logger.debug(forumId+" 被关注数 : "+count);
+		return Long.valueOf(count);
+	}
+	
 }

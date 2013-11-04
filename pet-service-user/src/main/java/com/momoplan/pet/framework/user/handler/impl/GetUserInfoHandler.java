@@ -60,16 +60,12 @@ public class GetUserInfoHandler extends AbstractHandler {
 		try{
 			String userid = null;
 			String username = null;
-			SsoAuthenticationToken tokenObj = null;
 			if(clientRequest.getParams()!=null){
 				userid = getParameter(clientRequest, "userid");
 				username = getParameter(clientRequest, "username");
 				logger.debug("根据userid 获取用户信息 userid="+userid+" ; username="+username);
 			}else{
-				String token = clientRequest.getToken();
-				tokenObj = getToken(token);
-				logger.debug("根据token 获取用户信息 token="+token);
-				userid = tokenObj.getUserid();
+				userid = getUseridFParamSToken(clientRequest);
 			}
 			UserVo vo = userService.getUser(userid,username);
 			logger.debug("获取用户信息成功 body="+gson.toJson(clientRequest));
