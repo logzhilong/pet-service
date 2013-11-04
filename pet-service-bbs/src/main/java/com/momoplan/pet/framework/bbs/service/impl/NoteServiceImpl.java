@@ -10,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -214,20 +213,25 @@ public class NoteServiceImpl implements NoteService {
 		if (!"0".equals(forumid)) {
 			criteria.andForumIdEqualTo(forumid);
 		}
-		if(Action.ALL.equals(action.getCode())){//全部
+		if(Action.ALL.equals(action)){//全部
 			noteCriteria.setOrderByClause("et desc");
-		}else if(Action.EUTE.equals(action.getCode())){//精华
+			logger.debug("全部...");
+		}else if(Action.EUTE.equals(action)){//精华
 			noteCriteria.setOrderByClause("et desc");
 			criteria.andIsEuteEqualTo(true);
-		}else if(Action.NEW_ET.equals(action.getCode())){//最新回复
+			logger.debug("精华...");
+		}else if(Action.NEW_ET.equals(action)){//最新回复
 			noteCriteria.setOrderByClause("rt desc");
 			Note n = mapperOnCache.selectByPrimaryKey(Note.class, forumid);
 			criteria.andRtGreaterThan(n.getCt());//回复时间一定大于创建时间
-		}else if(Action.NEW_CT.equals(action.getCode())){//最新发布
+			logger.debug("最新回复...");
+		}else if(Action.NEW_CT.equals(action)){//最新发布
 			noteCriteria.setOrderByClause("ct desc");
-		}else if(Action.SEARCH.equals(action.getCode())){//查询
+			logger.debug("最新发布...");
+		}else if(Action.SEARCH.equals(action)){//查询
 			noteCriteria.setOrderByClause("et desc");
 			criteria.andNameLike("%"+condition+"%");//目前只支持按名称模糊查询
+			logger.debug("查询...");
 		}
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);

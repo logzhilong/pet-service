@@ -50,7 +50,6 @@ public class GetNoteListHandler extends AbstractHandler {
 			logger.error("login : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}
