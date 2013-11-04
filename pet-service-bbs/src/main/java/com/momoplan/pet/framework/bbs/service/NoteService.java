@@ -10,15 +10,6 @@ import com.momoplan.pet.framework.bbs.vo.NoteVo;
 public interface NoteService {
 
 	/**
-	 * 发送帖子
-	 * @param note
-	 * userId用户id,forumId圈子id,name帖子名称,content帖子内容
-	 * @return
-	 * @throws Exception
-	 */
-	public Object sendNote(Note note) throws Exception;
- 
-	/**
 	 * 查看帖子详情
 	 * @param 帖子id
 	 * @return
@@ -70,5 +61,14 @@ public interface NoteService {
 	 * @throws Exception
 	 */
 	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageno,int pagesize) throws Exception;
-	
+
+	/**
+	 * 发送帖子
+	 * @param note
+	 * userId用户id,forumId圈子id,name帖子名称,content帖子内容
+	 * @return
+	 * @throws Exception
+	 */
+	public String sendNote(Note note) throws Exception;
+
 }

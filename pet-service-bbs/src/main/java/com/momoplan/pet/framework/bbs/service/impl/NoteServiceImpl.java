@@ -43,32 +43,26 @@ public class NoteServiceImpl implements NoteService {
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 
 	/**
-	 * 发送帖子
-	 * 
+	 * 发帖子
 	 * @param ClientRequest
 	 * @return
 	 */
 	@Override
-	public Object sendNote(Note note) throws Exception {
-
-		Note bbsNote = new Note();
-		bbsNote.setId(IDCreater.uuid());
-		bbsNote.setUserId(note.getUserId());
-		bbsNote.setClientCount(null);
-		bbsNote.setCt(new Date());
-		bbsNote.setEt(new Date());
-		bbsNote.setForumId(note.getForumId());
-		bbsNote.setIsDel(false);
-		bbsNote.setIsEute(false);
-		bbsNote.setIsTop(false);
-		bbsNote.setState("0");
-		bbsNote.setType("0");
-		bbsNote.setClientCount((long) 0);
-		bbsNote.setName(note.getName());
-		bbsNote.setContent(note.getContent());
-		logger.debug("" + bbsNote.toString());
-		noteRepository.insertSelective(bbsNote);
-		return bbsNote;
+	public String sendNote(Note po) throws Exception {
+		Date now = new Date();
+		po.setId(IDCreater.uuid());
+		po.setClientCount(1L);
+		po.setCt(now);
+		po.setEt(now);
+		po.setRt(now);
+		po.setIsDel(false);
+		po.setIsEute(false);
+		po.setIsTop(false);
+		po.setState("0");
+		po.setType("0");
+		logger.debug("发帖子 ：" + po.toString());
+		noteRepository.insertSelective(po);
+		return po.getId();
 	}
 
 	/**
