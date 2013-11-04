@@ -27,10 +27,12 @@ public class SearchNoteHandler extends AbstractHandler {
 		String rtn = null;
 		try {
 			Note note = new Note();
-			note.setForumId(PetUtil.getParameter(clientRequest, "forumid"));
+			note.setForumId(PetUtil.getParameter(clientRequest, "forumid"));//圈子ID
 			note.setName(PetUtil.getParameter(clientRequest, "notename"));
+
 			int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize = PetUtil.getParameterInteger(clientRequest, "pageSize");
+			
 			Object object = noteService.searchNote(note, pageNo, pageSize);
 			logger.debug("搜索帖子成功 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, object).toString();
