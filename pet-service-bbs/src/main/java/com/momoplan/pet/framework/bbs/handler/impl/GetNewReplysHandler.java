@@ -15,10 +15,10 @@ import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
  * 最新回复
  * @author  qiyongc
  */
-@Component("getNewReplysByReplyct")
-public class NewReplysByReplyctHandler extends AbstractHandler {
+@Component("getNewReplys")
+public class GetNewReplysHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(NewReplysByReplyctHandler.class);
+	private Logger logger = LoggerFactory.getLogger(GetNewReplysHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
