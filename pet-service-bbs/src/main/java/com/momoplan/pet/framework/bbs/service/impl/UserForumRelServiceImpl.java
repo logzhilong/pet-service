@@ -35,14 +35,9 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 * @return
 	 */
 	@Override
-	public Object attentionForum(UserForumRel userForumRel1) throws Exception{
-		
-			UserForumRel userForumRel=new UserForumRel();
-			userForumRel.setId(IDCreater.uuid());
-			userForumRel.setUserId(userForumRel1.getUserId());
-			userForumRel.setForumId(userForumRel1.getForumId());
-			userForumRelMapper.insertSelective(userForumRel);
-			return "attentionForumSuccess";
+	public void attentionForum(UserForumRel po) throws Exception{
+			po.setId(IDCreater.uuid());
+			userForumRelMapper.insertSelective(po);	
 	}
 	
 }

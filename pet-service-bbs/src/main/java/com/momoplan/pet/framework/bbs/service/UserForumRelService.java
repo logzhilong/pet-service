@@ -20,6 +20,6 @@ public interface UserForumRelService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object attentionForum(UserForumRel userForumRel) throws Exception;
+	public void attentionForum(UserForumRel userForumRel) throws Exception;
 	
 }

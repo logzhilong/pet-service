@@ -14,7 +14,7 @@ public enum Action {
 	NEW_CT("最新发布","NEW_CT"),
 	SEARCH("查询","SEARCH");
 
-    private Action(String name, String code) {  
+    private Action(String name, String code) {
         this.name = name;  
         this.code = code;  
     }
