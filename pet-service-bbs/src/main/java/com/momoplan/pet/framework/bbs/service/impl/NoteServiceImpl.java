@@ -22,6 +22,7 @@ import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.NoteState;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
@@ -58,33 +59,12 @@ public class NoteServiceImpl implements NoteService {
 		po.setIsDel(false);
 		po.setIsEute(false);
 		po.setIsTop(false);
-		po.setState("0");
+		//TODO 发帖要走审核啊
+		po.setState(NoteState.ACTIVE.getCode());
 		po.setType("0");
 		logger.debug("发帖子 ：" + po.toString());
 		noteRepository.insertSelective(po);
 		return po.getId();
-	}
-
-	/**
-	 * 根据id查看帖子详情
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object detailNote(String id) throws Exception {
-		String noteid = id;
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
-		criteria.andIdEqualTo(noteid);
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		for (Note note2 : notelist) {
-			note2.setContent(note.getContent());
-		}
-		return notelist;
 	}
 
 	/**
@@ -101,21 +81,6 @@ public class NoteServiceImpl implements NoteService {
 		note.setEt(new Date());
 		noteMapper.updateByPrimaryKey(note);
 		return "delNoteSuccess";
-	}
-
-	/**
-	 * 根据id举报帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object reportNote(String noteid) throws Exception {
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		note.setState("1");
-		note.setEt(new Date());
-		noteMapper.updateByPrimaryKey(note);
-		return "reportNoteSuccess";
 	}
 
 	/**
@@ -196,6 +161,14 @@ public class NoteServiceImpl implements NoteService {
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
 		criteria.andTypeEqualTo("0");
+		
+		List<String> stateList = new ArrayList<String>();
+		stateList.add(NoteState.REJECT.getCode());//审核拒绝
+		stateList.add(NoteState.AUDIT.getCode());//审核中
+		stateList.add(NoteState.REPORT.getCode());//被举报
+		//以上状态不显示
+		criteria.andStateNotIn(stateList);
+		
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 		
 		// 获取置顶帖子
@@ -218,17 +191,30 @@ public class NoteServiceImpl implements NoteService {
 	// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
 		for (Note note : notelist) {
-			NoteVo vo = new NoteVo();
-			BeanUtils.copyProperties(note, vo);
-			String uid = note.getUserId();
-			String nid = note.getId();
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-			vo.setNickname(user.getNickname());
-			vo.setUserIcon(user.getImg());
-			Long totalReply = noteSubRepository.totalReply(nid);
-			vo.setTotalReply(totalReply);
+			NoteVo vo = createNoteVo(note);
 			noteVoList.add(vo);
 		}
+	}
+	
+	private NoteVo createNoteVo(Note note) throws Exception{
+		NoteVo vo = new NoteVo();
+		BeanUtils.copyProperties(note, vo);
+		String uid = note.getUserId();
+		String nid = note.getId();
+		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+		vo.setNickname(user.getNickname());
+		vo.setUserIcon(user.getImg());
+		Long totalReply = noteSubRepository.totalReply(nid);
+		vo.setTotalReply(totalReply);
+		return vo;
+	}
+
+	@Override
+	public NoteVo getNoteById(String id) throws Exception {
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, id);
+		NoteVo vo = createNoteVo(note);
+		logger.debug(vo.toString());
+		return vo;
 	}
 
 }

@@ -52,11 +52,8 @@ public class UpdateUserHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			
-			String token = clientRequest.getToken();
-			SsoAuthenticationToken tokenObj = getToken(token);
 			SsoUser user = reviceSsoUser(clientRequest);
-			user.setId(tokenObj.getUserid());
+			user.setId(getUseridFParamSToken(clientRequest));
 			userService.updateUser(user);
 			logger.debug("修改用户信息成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();

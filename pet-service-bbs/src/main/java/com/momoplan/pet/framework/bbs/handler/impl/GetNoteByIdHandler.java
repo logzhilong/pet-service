@@ -10,26 +10,27 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
+import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 /**
  * 根据帖子id查看帖子详情
  * @author  qiyongc
  */
-@Component("detailNote")
-public class DetailNoteHandler extends AbstractHandler {
+@Component("getNoteById")
+public class GetNoteByIdHandler extends AbstractHandler {
 	
-	private Logger logger = LoggerFactory.getLogger(DetailNoteHandler.class);
+	private Logger logger = LoggerFactory.getLogger(GetNoteByIdHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String id=PetUtil.getParameter(clientRequest, "noteid");
+			String noteId=PetUtil.getParameter(clientRequest, "noteId");
 			//TODO更新帖子点击数   暂时这样写,
 			noteService.updateClickCount(clientRequest);
-			Object object=noteService.detailNote(id);
+			NoteVo vo = noteService.getNoteById(noteId);
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,object).toString();
+			rtn = new Success(true,vo).toString();
 		}catch(Exception e){
 			logger.error("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);

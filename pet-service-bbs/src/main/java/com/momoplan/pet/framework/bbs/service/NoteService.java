@@ -15,7 +15,7 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object detailNote(String id) throws Exception;
+	public NoteVo getNoteById(String id) throws Exception;
 
 	/**
 	 * 删除帖子
@@ -25,17 +25,6 @@ public interface NoteService {
 	 */
 	public Object delNote(ClientRequest ClientRequest) throws Exception ;
 
-
-	/**
-	 * 根据id举报帖子
-	 * @param noteid帖子id
-	 * @return
-	 * @throws Exception
-	 */
-	public Object reportNote(String noteid) throws Exception;
-	
-	
-	
 	/**
 	 * 更新帖子点击数
 	 * @param ClientRequest
