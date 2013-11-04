@@ -236,7 +236,7 @@ public class NoteServiceImpl implements NoteService {
 		
 		// 获取置顶帖子
 		List<Note> list = new ArrayList<Note>();
-		if(withTop){//是否带着置顶的帖子，如果带，则放在最前面
+		if(withTop&&pageNo==0){//是否带着置顶的帖子，如果带，则放在最前面,只在第一页显示
 			list = noteRepository.getTopNoteByFid(forumid);
 			if(list==null)
 				list = new ArrayList<Note>();
