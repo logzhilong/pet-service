@@ -27,7 +27,7 @@ public class GetNoteByIdHandler extends AbstractHandler {
 		try{
 			String noteId=PetUtil.getParameter(clientRequest, "noteId");
 			//TODO更新帖子点击数   暂时这样写,
-			noteService.updateClickCount(clientRequest);
+			noteService.updateClickCount(noteId);
 			NoteVo vo = noteService.getNoteById(noteId);
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,vo).toString();

@@ -90,16 +90,11 @@ public class NoteServiceImpl implements NoteService {
 	 * @return
 	 */
 	@Override
-	public Object updateClickCount(ClientRequest ClientRequest) throws Exception {
-		String noteid = PetUtil.getParameter(ClientRequest, "noteid");
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		if (note.equals(null)) {
-			return "updateClickCountFail";
-		} else {
-			note.setClientCount(note.getClientCount() + 1);
-			note.setEt(new Date());
-			noteMapper.updateByPrimaryKey(note);
-      			return "updateClickCountSuccess";
+	public void updateClickCount(String noteId) throws Exception {
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
+		if(note!=null){
+			note.setClientCount(note.getClientCount()+1);
+			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
 		}
 	}
 

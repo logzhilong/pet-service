@@ -30,7 +30,7 @@ public interface NoteService {
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(ClientRequest ClientRequest) throws Exception;
+	public void updateClickCount(String noteId) throws Exception;
 	
 	/**
 	 * 我发表过的帖子列表
