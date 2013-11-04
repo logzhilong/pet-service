@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
@@ -19,7 +18,6 @@ import com.momoplan.pet.commons.domain.manager.po.MgrUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserCriteria;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRelCriteria;
-import com.momoplan.pet.framework.manager.security.CustomUserDetailsService;
 import com.momoplan.pet.framework.manager.security.Md5PlusShaPasswordEncoder;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;

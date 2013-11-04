@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.momoplan.pet.commons.domain.manager.po.MgrRole;
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
-import com.momoplan.pet.framework.manager.service.MgrUserService;
 import com.momoplan.pet.framework.manager.service.RoleManageService;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;
 import com.momoplan.pet.framework.manager.service.UserManageService;

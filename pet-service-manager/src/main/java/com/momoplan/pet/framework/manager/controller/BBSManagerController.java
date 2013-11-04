@@ -291,6 +291,7 @@ public class BBSManagerController {
 	 * 
 	 * @return model
 	 */
+	@SuppressWarnings("deprecation")
 	@RequestMapping("/manager/notemanage/upimg.html")
 	public void upImg(Model model, HttpServletRequest req,HttpServletResponse response) throws Exception {
 		logger.debug("wlcome to upimg ......");
@@ -324,7 +325,7 @@ public class BBSManagerController {
 						MultipartEntity reqEntity = new MultipartEntity();
 						reqEntity.addPart("file", file1);
 						reqEntity.addPart("fileName", new StringBody(name));
-						//暂时先放一个能通过token
+						//TODO暂时先放一个能通过token
 						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
 						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
 						// 设置请求

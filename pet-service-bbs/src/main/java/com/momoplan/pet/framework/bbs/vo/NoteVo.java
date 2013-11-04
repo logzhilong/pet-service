@@ -2,6 +2,7 @@ package com.momoplan.pet.framework.bbs.vo;
 
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 
+@SuppressWarnings("serial")
 public class NoteVo extends Note{
 	/**
 	 * 昵称

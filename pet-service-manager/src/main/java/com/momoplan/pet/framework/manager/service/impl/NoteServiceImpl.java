@@ -50,6 +50,7 @@ public class NoteServiceImpl implements NoteService {
 				noteMapper.updateByPrimaryKeySelective(note);
 			} else {
 				note.setId(IDCreater.uuid());
+				//TODO暂时给定一个userId
 				note.setUserId("703");
 				note.setCt(new Date());
 				note.setEt(new Date());
@@ -78,9 +79,8 @@ public class NoteServiceImpl implements NoteService {
 			noteMapper.updateByPrimaryKeySelective(note);
 			logger.debug("删除帖子"+note.toString());
 		} catch (Exception e) {
-		
+			logger.error("NoteDelError"+e);
 			e.printStackTrace();
-			
 		}
 	}
 
@@ -92,7 +92,6 @@ public class NoteServiceImpl implements NoteService {
 	public void updateClickCount(String noteid){
 		try {
 			Note note=noteMapper.selectByPrimaryKey(noteid);
-			
 				if(note.equals(null)){
 				}else{
 					note.setClientCount(note.getClientCount()+1);
