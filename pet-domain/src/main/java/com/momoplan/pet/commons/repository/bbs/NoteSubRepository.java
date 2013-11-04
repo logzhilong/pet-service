@@ -50,6 +50,17 @@ public class NoteSubRepository implements CacheKeysConstance{
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
+			if(!jedis.exists(key)){
+				NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+				noteSubCriteria.createCriteria().andUserIdEqualTo(userId);
+				List<NoteSub> l = noteSubMapper.selectByExample(noteSubCriteria);
+				if(l!=null){
+					for(NoteSub s : l){
+						jedis.hset(key, s.getNoteId(), "1");
+						logger.debug("初始化我参与过的帖子缓存 userid="+s.getUserId()+" ; noteid="+s.getNoteId());
+					}
+				}
+			}
 			Set<String> set = jedis.hkeys(key);
 			if(set!=null&&set.size()>0){
 				List<String> list = new ArrayList<String>();
