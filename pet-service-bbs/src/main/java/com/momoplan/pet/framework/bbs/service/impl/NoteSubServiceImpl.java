@@ -70,7 +70,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 	@Override
 	public Object getAllReplyNoteByNoteid(String noteid,int pageNo,int pageSize) throws Exception{
 			NoteSubCriteria noteSubCriteria=new NoteSubCriteria();
-			noteSubCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
 			noteSubCriteria.setMysqlLength(pageSize);
 			noteSubCriteria.setOrderByClause("ct desc");
 			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
@@ -94,7 +94,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 			noteSubCriteria.setOrderByClause("ct desc");
 			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			noteSubCriteria.setMysqlOffset((pageNo-1)*pageSize);
+			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
 			noteSubCriteria.setMysqlLength(pageSize);
 			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userId"));
 			List<NoteSub> noteSubs=noteSubMapper.selectByExample(noteSubCriteria);

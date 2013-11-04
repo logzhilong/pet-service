@@ -1,9 +1,7 @@
 package com.momoplan.pet.framework.bbs.service.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
@@ -83,7 +82,7 @@ public class NoteServiceImpl implements NoteService {
 
 		NoteCriteria noteCriteria = new NoteCriteria();
 		String forumid = note.getForumId();
-		noteCriteria.setMysqlOffset((pageNo - 1) * pageSize);
+		noteCriteria.setMysqlOffset(pageNo*pageSize);
 		noteCriteria.setMysqlLength(pageSize);
 		noteCriteria.setOrderByClause("ct desc");
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
@@ -174,7 +173,7 @@ public class NoteServiceImpl implements NoteService {
 			note.setClientCount(note.getClientCount() + 1);
 			note.setEt(new Date());
 			noteMapper.updateByPrimaryKey(note);
-			return "updateClickCountSuccess";
+      			return "updateClickCountSuccess";
 		}
 	}
 
@@ -187,7 +186,7 @@ public class NoteServiceImpl implements NoteService {
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
 		int pageNo = PetUtil.getParameterInteger(ClientRequest, "pageNo");
 		int pageSize = PetUtil.getParameterInteger(ClientRequest, "pageSize");
-		noteCriteria.setMysqlOffset((pageNo - 1) * pageSize);
+		noteCriteria.setMysqlOffset(pageNo* pageSize);
 		noteCriteria.setMysqlLength(pageSize);
 		noteCriteria.setOrderByClause("ct desc");
 		criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userid"));
@@ -213,43 +212,26 @@ public class NoteServiceImpl implements NoteService {
 		} else {
 			criteria.andForumIdEqualTo(fid);
 		}
-		noteCriteria.setMysqlOffset((pageNo - 1) * pageSize);
+		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength(pageSize);
 		noteCriteria.setOrderByClause("ct desc");
-		Calendar currentDate = new GregorianCalendar();
-		currentDate.set(Calendar.HOUR_OF_DAY, 0);
-		currentDate.set(Calendar.MINUTE, 0);
-		currentDate.set(Calendar.SECOND, 0);
-		criteria.andCtGreaterThanOrEqualTo(((Date) currentDate.getTime().clone()));
+		Date yestoday = DateUtils.minusDays(new Date(), 1);
+		yestoday.setHours(23);
+		yestoday.setMinutes(59);
+		yestoday.setSeconds(59);
+		criteria.andCtGreaterThan(yestoday);
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-
-		NoteCriteria noteCriteria1 = new NoteCriteria();
-		NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
-		criteria1.andIsTopEqualTo(true);
-		criteria1.andIsDelEqualTo(false);
-		criteria1.andTypeEqualTo("0");
-		if (fid.equals("0")) {
-		} else {
-			criteria.andForumIdEqualTo(fid);
-		}
-		noteCriteria1.setMysqlLength(5);
-		noteCriteria1.setOrderByClause("ct desc");
-		criteria1.andCtGreaterThanOrEqualTo(((Date) currentDate.getTime().clone()));
-		List<Note> notelist1 = noteMapper.selectByExample(noteCriteria1);
-
+		
+		List<Note> tops = noteRepository.getTopNoteByFid(fid);//置顶的
 		List<Note> notes = new ArrayList<Note>();
-		for (Note note2 : notelist1) {
-			notes.add(note2);
-		}
-		for (Note note : notelist) {
-			notes.add(note);
-		}
-		List<Note> list = new ArrayList<Note>();
-		for (Note note : notes) {
-			note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
-			list.add(note);
-		}
-		return list;
+		notes.addAll(tops);
+		notes.addAll(notelist);
+		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
+		if(notes==null||notes.size()==0)
+			return null;
+		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notes.size());
+		buildNoteVoList(notes,noteVoList);		
+		return noteVoList;
 	}
 
 	/**
@@ -278,6 +260,8 @@ public class NoteServiceImpl implements NoteService {
 		if(list==null)
 			list = new ArrayList<Note>();
 		list.addAll(notelist);
+		if(list==null||list.size()==0)
+			return null;
 		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
 		buildNoteVoList(list,noteVoList);
@@ -293,43 +277,23 @@ public class NoteServiceImpl implements NoteService {
 	public Object getEuteNoteList(String fid, int pageNo, int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (fid.equals("0")) {
-		} else {
+		if (!("0").equals(fid)) {
 			criteria.andForumIdEqualTo(fid);
 		}
-		noteCriteria.setMysqlOffset((pageNo - 1) * pageSize);
+		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength(pageSize);
 		noteCriteria.setOrderByClause("ct desc");
 		criteria.andIsEuteEqualTo(true);
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
 		criteria.andTypeEqualTo("0");
-		List<Note> notelist1 = noteMapper.selectByExample(noteCriteria);
-		List<Note> notelist = new ArrayList<Note>();
-		for (Note note : notelist1) {
-			note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
-			notelist.add(note);
-		}
+		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
+		if(notelist==null||notelist.size()==0)
+			return null;
 		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
 		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
 		buildNoteVoList(notelist,noteVoList);
 		return noteVoList;
-	}
-
-	// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
-	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
-		for (Note note : notelist) {
-			NoteVo vo = new NoteVo();
-			BeanUtils.copyProperties(note, vo);
-			String uid = note.getUserId();
-			String nid = note.getId();
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-			vo.setNickname(user.getNickname());
-			vo.setUserIcon(user.getImg());
-			Long totalReply = noteSubRepository.totalReply(nid);
-			vo.setTotalReply(totalReply);
-			noteVoList.add(vo);
-		}
 	}
 	
 	/**
@@ -347,14 +311,31 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andForumIdEqualTo(fid);
 		}
 		noteCriteria.setOrderByClause("et desc");
-		noteCriteria.setMysqlOffset((pageNo - 1) * pageSize);
+		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength(pageSize);
 		List<Note> list1 = noteMapper.selectByExample(noteCriteria);
-		List<Note> list = new ArrayList<Note>();
-		for (Note note : list1) {
-			note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
-			list.add(note);
-		}
-		return list;
+		// add by liangc 131101 : 增加 发帖人昵称、发帖人头像、帖子回复树
+		if(list1==null||list1.size()==0)
+			return null;
+		List<NoteVo> noteVoList = new ArrayList<NoteVo>(list1.size());
+		buildNoteVoList(list1,noteVoList);
+		return noteVoList;
 	}
+	
+	// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
+	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
+		for (Note note : notelist) {
+			NoteVo vo = new NoteVo();
+			BeanUtils.copyProperties(note, vo);
+			String uid = note.getUserId();
+			String nid = note.getId();
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+			vo.setNickname(user.getNickname());
+			vo.setUserIcon(user.getImg());
+			Long totalReply = noteSubRepository.totalReply(nid);
+			vo.setTotalReply(totalReply);
+			noteVoList.add(vo);
+		}
+	}
+
 }
