@@ -33,6 +33,9 @@ public class TokenHandler extends AbstractHandler {
 			if(params!=null&&"open".equalsIgnoreCase(params.get("action").toString())){
 				logger.debug("action=open 需要获取开机图片和版本信息");
 				String phoneType = clientRequest.getImei();
+				if(!"iphone".equalsIgnoreCase(phoneType)){
+					phoneType = "android";
+				}
 				SsoVersion version = ssoService.getVersion(phoneType);
 				String firstImage = ssoService.getFirstImage();
 				loginResponse.setVersion(version);
@@ -42,7 +45,7 @@ public class TokenHandler extends AbstractHandler {
 			rtn = new Success(true,loginResponse).toString();
 		}catch(Exception e){
 			logger.debug("token无效 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);

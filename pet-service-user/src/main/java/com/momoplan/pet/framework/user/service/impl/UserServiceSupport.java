@@ -251,7 +251,7 @@ public class UserServiceSupport {
 			JSONObject jsonObj = new JSONObject(json);
 			return jsonObj;
 		}catch(Exception e){
-			logger.debug("获取坐标异常 userid="+userId,e);
+			logger.debug("获取坐标异常 userid="+userId);
 		}finally{
 			redisPool.closeConn(jedis);
 		}

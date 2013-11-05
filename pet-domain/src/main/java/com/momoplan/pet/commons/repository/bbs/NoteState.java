@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.bbs.vo;
+package com.momoplan.pet.commons.repository.bbs;
 /**
  * 帖子状态
  * @author liangc

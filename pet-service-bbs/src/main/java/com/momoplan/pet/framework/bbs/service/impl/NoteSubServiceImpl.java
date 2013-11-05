@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -15,26 +16,29 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteSubService;
 import com.momoplan.pet.framework.bbs.vo.NoteSubVo;
+import com.momoplan.pet.framework.bbs.vo.PageBean;
 
 @Service
 public class NoteSubServiceImpl implements NoteSubService {
 	
 	private static Logger logger = LoggerFactory.getLogger(NoteSubServiceImpl.class);
 
-	private NoteSubMapper noteSubMapper = null;
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
-
+	private NoteSubMapper noteSubMapper = null;
+	
 	@Autowired
-	public NoteSubServiceImpl(NoteSubMapper noteSubMapper, NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
+	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,
+			MapperOnCache mapperOnCache, NoteSubMapper noteSubMapper) {
 		super();
-		this.noteSubMapper = noteSubMapper;
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
+		this.noteSubMapper = noteSubMapper;
 	}
 
 	/**
@@ -49,7 +53,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 		String noteId = po.getNoteId();
 		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
 		note.setEt(now);
-		note.setRt(now);
+		note.setRt(new Date(0));//default new Date(0)
 		//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正
 		mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
 		logger.debug("//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正");
@@ -57,11 +61,35 @@ public class NoteSubServiceImpl implements NoteSubService {
 		return po.getId();
 	}
 
+	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize){
+		List<NoteSub> list = null;
+		long totalCount = 0;
+		if(StringUtils.isEmpty(userId)){
+			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+			totalCount = noteSubRepository.totalReply(noteId);
+		}else{
+			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
+			criteria.andNoteIdEqualTo(noteId);
+			criteria.andUserIdEqualTo(userId);
+			totalCount = noteSubMapper.countByExample(noteSubCriteria);
+			noteSubCriteria.setMysqlOffset(pageNo * pageSize);
+			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
+			list = noteSubMapper.selectByExample(noteSubCriteria);
+		}
+		PageBean<NoteSub> p = new PageBean<NoteSub>();
+		p.setData(list);
+		p.setTotalCount(totalCount);
+		return p;
+	}
+	
 	@Override
-	public List<NoteSubVo> getReplyByNoteId(String noteId, int pageNo, int pageSize) throws Exception {
-		List<NoteSub> list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+	public PageBean<NoteSubVo> getReplyByNoteId(String noteId,String userId, int pageNo, int pageSize) throws Exception {
+		PageBean<NoteSub> list = getNoteSubList(noteId, userId, pageNo, pageSize);
 		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
-		for(NoteSub n : list){
+		for(NoteSub n : list.getData()){
+			String nid = n.getId();
+			n = mapperOnCache.selectByPrimaryKey(NoteSub.class, nid);//这么做是为了取最新的状态,都是缓存取值
 			NoteSubVo vo = new NoteSubVo();
 			BeanUtils.copyProperties(n, vo);
 			String uid = n.getUserId();
@@ -70,7 +98,13 @@ public class NoteSubServiceImpl implements NoteSubService {
 			vo.setUserIcon(user.getImg());
 			vos.add(vo);
 		}
-		return vos;
+		PageBean<NoteSubVo> p = new PageBean<NoteSubVo>();
+		
+		p.setData(vos);
+		p.setPageNo(pageNo);
+		p.setPageSize(pageSize);
+		p.setTotalCount(list.getTotalCount());
+		return p;
 	}
 
 }
