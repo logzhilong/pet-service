@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
@@ -22,6 +20,7 @@ import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteState;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
@@ -68,22 +67,6 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 删除帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	@Override
-	public Object delNote(ClientRequest ClientRequest) throws Exception {
-		String noteid = PetUtil.getParameter(ClientRequest, "noteid");
-		Note note = noteMapper.selectByPrimaryKey(noteid);
-		note.setIsDel(true);
-		note.setEt(new Date());
-		noteMapper.updateByPrimaryKey(note);
-		return "delNoteSuccess";
-	}
-
-	/**
 	 * 更新帖子点击数
 	 * 
 	 * @param ClientRequest
@@ -99,32 +82,10 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	/**
-	 * 我发表过的帖子列表
-	 */
-	@Override
-	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception {
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		int pageNo = PetUtil.getParameterInteger(ClientRequest, "pageNo");
-		int pageSize = PetUtil.getParameterInteger(ClientRequest, "pageSize");
-		noteCriteria.setMysqlOffset(pageNo* pageSize);
-		noteCriteria.setMysqlLength(pageSize);
-		noteCriteria.setOrderByClause("ct desc");
-		criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userid"));
-		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		List<Note> list = new ArrayList<Note>();
-		for (Note note : notelist) {
-			note.setContent(noteMapper.selectByPrimaryKey(note.getId()).getContent());
-			list.add(note);
-		}
-		return list;
-	}
-
-	/**
 	 * 获取帖子列表
 	 */
 	@Override
-	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageNo,int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
@@ -150,8 +111,15 @@ public class NoteServiceImpl implements NoteService {
 			logger.debug("最新发布...");
 		}else if(Action.SEARCH.equals(action)){//查询
 			noteCriteria.setOrderByClause("et desc");
-			criteria.andNameLike("%"+condition+"%");//目前只支持按名称模糊查询
-			logger.debug("查询...");
+			if(ConditionType.NOTE_NAME.equals(conditionType)){
+				criteria.andNameLike("%"+condition+"%");
+			}else if(ConditionType.I_CREATE.equals(conditionType)){
+				criteria.andUserIdEqualTo(condition);
+			}else if(ConditionType.I_REPLY.equals(conditionType)){
+				List<String> noteIds = noteSubRepository.getNoteIdListOfMyReply(condition);
+				criteria.andIdIn(noteIds);
+			}
+			logger.debug("查询..."+conditionType.getName());
 		}
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);

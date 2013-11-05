@@ -2,9 +2,9 @@ package com.momoplan.pet.framework.bbs.service;
 
 import java.util.List;
 
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 public interface NoteService {
@@ -18,25 +18,11 @@ public interface NoteService {
 	public NoteVo getNoteById(String id) throws Exception;
 
 	/**
-	 * 删除帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object delNote(ClientRequest ClientRequest) throws Exception ;
-
-	/**
 	 * 更新帖子点击数
 	 * @param ClientRequest
 	 * @return
 	 */
 	public void updateClickCount(String noteId) throws Exception;
-	
-	/**
-	 * 我发表过的帖子列表
-	 * 
-	 */
-	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception;
 	
 	/**
 	 * 获取帖子列表
@@ -49,7 +35,7 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageno,int pagesize) throws Exception;
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageno,int pagesize) throws Exception;
 
 	/**
 	 * 发送帖子

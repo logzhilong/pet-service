@@ -1,7 +1,9 @@
 package com.momoplan.pet.framework.bbs.service;
 
-import com.momoplan.pet.commons.bean.ClientRequest;
+import java.util.List;
+
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
+import com.momoplan.pet.framework.bbs.vo.NoteSubVo;
 
 public interface NoteSubService {
 	
@@ -13,11 +15,7 @@ public interface NoteSubService {
 	 * @throws Exception
 	 */
 	public String replyNote(NoteSub noteSub) throws Exception;
-	/**
-	 * 
-	 * 根据回帖id获取回帖
-	 */
-	public Object getReplyNoteSubByReplyNoteid(ClientRequest ClientRequest) throws Exception;
+
 	/**
 	 * 根据帖子id获取所有回复
 	 * @param noteid帖子
@@ -26,11 +24,6 @@ public interface NoteSubService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object getAllReplyNoteByNoteid(String noteid,int pageNo,int pageSize) throws Exception;
+	public List<NoteSubVo> getReplyByNoteId(String noteid,int pageNo,int pageSize) throws Exception;
 	
-	/**
-	 *我回复过的帖子列表
-	 * 
-	 */
-	public Object getMyReplyNoteListByUserid(ClientRequest ClientRequest) throws Exception;
 }

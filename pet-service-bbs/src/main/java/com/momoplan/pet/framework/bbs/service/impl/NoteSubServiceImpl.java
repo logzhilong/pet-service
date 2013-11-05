@@ -6,19 +6,19 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
-import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteSubService;
+import com.momoplan.pet.framework.bbs.vo.NoteSubVo;
 
 @Service
 public class NoteSubServiceImpl implements NoteSubService {
@@ -39,7 +39,6 @@ public class NoteSubServiceImpl implements NoteSubService {
 
 	/**
 	 * 回复帖子
-	 * 
 	 */
 	@Override
 	public String replyNote(NoteSub po) throws Exception {
@@ -58,50 +57,20 @@ public class NoteSubServiceImpl implements NoteSubService {
 		return po.getId();
 	}
 
-	/**
-	 * 
-	 * 根据回帖id获取回帖
-	 */
 	@Override
-	public Object getReplyNoteSubByReplyNoteid(ClientRequest ClientRequest) throws Exception {
-		String noteSubid = PetUtil.getParameter(ClientRequest, "noteSubid");
-		return noteSubMapper.selectByPrimaryKey(noteSubid);
-	}
-
-	/**
-	 * 根据帖子id获取所有回复
-	 */
-	@Override
-	public Object getAllReplyNoteByNoteid(String noteid, int pageNo, int pageSize) throws Exception {
-		NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-		noteSubCriteria.setMysqlOffset(pageNo * pageSize);
-		noteSubCriteria.setMysqlLength(pageSize);
-		noteSubCriteria.setOrderByClause("ct desc");
-		NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
-		criteria.andNoteIdEqualTo(noteid);
-		List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
-		List<NoteSub> list = new ArrayList<NoteSub>();
-		for (NoteSub sub : noteSubs) {
-			sub.setContent(noteSubMapper.selectByPrimaryKey(sub.getId()).getContent());
-			list.add(sub);
+	public List<NoteSubVo> getReplyByNoteId(String noteId, int pageNo, int pageSize) throws Exception {
+		List<NoteSub> list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
+		for(NoteSub n : list){
+			NoteSubVo vo = new NoteSubVo();
+			BeanUtils.copyProperties(n, vo);
+			String uid = n.getUserId();
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+			vo.setNickname(user.getNickname());
+			vo.setUserIcon(user.getImg());
+			vos.add(vo);
 		}
-		return list;
+		return vos;
 	}
 
-	/**
-	 * 我回复过的帖子列表
-	 * 
-	 */
-	public Object getMyReplyNoteListByUserid(ClientRequest ClientRequest) throws Exception {
-		NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-		NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
-		noteSubCriteria.setOrderByClause("ct desc");
-		int pageNo = PetUtil.getParameterInteger(ClientRequest, "pageNo");
-		int pageSize = PetUtil.getParameterInteger(ClientRequest, "pageSize");
-		noteSubCriteria.setMysqlOffset(pageNo * pageSize);
-		noteSubCriteria.setMysqlLength(pageSize);
-		criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userId"));
-		List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
-		return noteSubs;
-	}
 }
