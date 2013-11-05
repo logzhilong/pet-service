@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteState;
@@ -27,14 +29,18 @@ import com.momoplan.pet.framework.bbs.vo.NoteVo;
 @Service
 public class NoteServiceImpl implements NoteService {
 	private NoteMapper noteMapper = null;
+	private NoteSubMapper noteSubMapper = null;
 	private NoteRepository noteRepository = null;
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
 
 	@Autowired
-	public NoteServiceImpl(NoteMapper noteMapper, NoteRepository noteRepository, NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
+	public NoteServiceImpl(NoteMapper noteMapper, NoteSubMapper noteSubMapper,
+			NoteRepository noteRepository, NoteSubRepository noteSubRepository,
+			MapperOnCache mapperOnCache) {
 		super();
 		this.noteMapper = noteMapper;
+		this.noteSubMapper = noteSubMapper;
 		this.noteRepository = noteRepository;
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
@@ -167,6 +173,7 @@ public class NoteServiceImpl implements NoteService {
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
 		vo.setNickname(user.getNickname());
 		vo.setUserIcon(user.getImg());
+		vo.setClientCount(0L);//TODO 这个地方，还没做呢
 		Long totalReply = noteSubRepository.totalReply(nid);
 		vo.setTotalReply(totalReply);
 		return vo;
@@ -176,6 +183,13 @@ public class NoteServiceImpl implements NoteService {
 	public NoteVo getNoteById(String id) throws Exception {
 		Note note = mapperOnCache.selectByPrimaryKey(Note.class, id);
 		NoteVo vo = createNoteVo(note);
+		//楼主回复数
+		NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+		NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
+		criteria.andNoteIdEqualTo(id);
+		criteria.andUserIdEqualTo(vo.getUserId());
+		int c = noteSubMapper.countByExample(noteSubCriteria);
+		vo.setcTotalReply(Long.valueOf(c));
 		logger.debug(vo.toString());
 		return vo;
 	}
