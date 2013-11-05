@@ -53,7 +53,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 		String noteId = po.getNoteId();
 		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
 		note.setEt(now);
-		note.setRt(new Date(0));//default new Date(0)
+		note.setRt(now);//default new Date(0)
 		//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正
 		mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
 		logger.debug("//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正");

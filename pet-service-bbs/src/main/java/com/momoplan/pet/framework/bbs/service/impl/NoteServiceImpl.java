@@ -60,7 +60,7 @@ public class NoteServiceImpl implements NoteService {
 		po.setClientCount(1L);
 		po.setCt(now);
 		po.setEt(now);
-		po.setRt(now);
+		po.setRt(new Date(0));
 		po.setIsDel(false);
 		po.setIsEute(false);
 		po.setIsTop(false);
