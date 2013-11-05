@@ -18,7 +18,6 @@ class MyListener(object):
 		p.post()
 
 class PushXmpp :
-	url = common_cfg['common']['xmpp_url']
 	head={'Content-Type':'text/xml','charset':'utf-8'}
 	msg_tmp= '''
 		<message to="${to}${domain}" from="${from}${domain}" 
@@ -29,6 +28,7 @@ class PushXmpp :
 		</message>
 		'''
 	def __init__(self,param):
+		self.url = common_cfg['common']['xmpp_url']
 		self.param = param
 
 	def build(self):
