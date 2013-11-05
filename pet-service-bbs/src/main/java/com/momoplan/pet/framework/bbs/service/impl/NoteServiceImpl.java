@@ -71,12 +71,9 @@ public class NoteServiceImpl implements NoteService {
 		noteRepository.insertSelective(po);
 		return po.getId();
 	}
-
+	
 	/**
 	 * 更新帖子点击数
-	 * 
-	 * @param ClientRequest
-	 * @return
 	 */
 	@Override
 	public void updateClickCount(String noteId) throws Exception {
@@ -109,8 +106,7 @@ public class NoteServiceImpl implements NoteService {
 			logger.debug("精华...");
 		}else if(Action.NEW_ET.equals(action)){//最新回复
 			noteCriteria.setOrderByClause("rt desc");
-			Note n = mapperOnCache.selectByPrimaryKey(Note.class, forumid);
-			criteria.andRtGreaterThan(n.getCt());//回复时间一定大于创建时间
+			criteria.andRtGreaterThan(new Date(0));//default new Date(0)
 			logger.debug("最新回复...");
 		}else if(Action.NEW_CT.equals(action)){//最新发布
 			noteCriteria.setOrderByClause("ct desc");
