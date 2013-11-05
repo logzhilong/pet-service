@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-cfg = {}
-
 def load(fileName):
+	cfg = {}
 	import ConfigParser
 	print 'config file : %s' % fileName
 	with open(fileName,'rw') as c :
@@ -15,9 +14,20 @@ def load(fileName):
 			for key,val in parser.items(group):
 				itm[key]=val
 			cfg[group] = itm
-		print cfg
+	return cfg
 
 if __name__ == '__main__' :
 	import sys
-	print sys.argv[1]
-	load(sys.argv[1])
+	size = len(sys.argv)
+	if size > 1 :
+		for i in range(1,size):
+			print sys.argv[i]
+			cfg = load(sys.argv[i])
+			print cfg
+
+
+
+
+
+
+
