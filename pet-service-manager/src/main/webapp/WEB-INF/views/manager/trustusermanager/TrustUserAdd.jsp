@@ -28,7 +28,46 @@
 						<input type="text" name="phonenumber"/>
 					</dd>
 				</dl>
-				
+
+				<dl>
+					<dt>性别:</dt>
+					<dd>
+						<select name="gender">
+						<option value="male">男</option>
+						<option value="female">女</option>
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt>头像:</dt>
+					<dd>
+						<input type="file" name="img"/>
+					</dd>
+				</dl>
+				<dl>
+					<dt>爱好:</dt>
+					<dd>
+						<input type="text" name="hobby"/>
+					</dd>
+				</dl>
+				<dl>
+					<dt>个性签名:</dt>
+					<dd>
+						<input type="text" name="signature"/>
+					</dd>
+				</dl>
+				<dl>
+					<dt>住址:</dt>
+					<dd>
+						<input type="text" name="city"/>
+					</dd>
+				</dl>
+				<dl>
+					<dt>生日:</dt>
+					<dd>
+						<input type="text" name="birthdate"/>'1992-02-02'
+					</dd>
+				</dl>
 			</fieldset>
 		</div>
 

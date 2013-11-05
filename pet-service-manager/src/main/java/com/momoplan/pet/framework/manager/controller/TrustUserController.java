@@ -33,10 +33,10 @@ public class TrustUserController {
 	 * @return
 	 */
 	@RequestMapping("/manager/trustuser/userList.html")
-	public String userList(PageBean<MgrTrustUser> pageBean,Model model){
+	public String userList(PageBean<MgrTrustUser> pageBean,Model model,HttpServletRequest request){
 		logger.debug("wlcome to manager trustuser userList......");
 		try {
-			PageBean<MgrTrustUser> bean= trustUserService.AllTrustUser(pageBean);
+			PageBean<MgrTrustUser> bean= trustUserService.AllTrustUser(pageBean,request);
 			model.addAttribute("pageBean", bean);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -79,7 +79,7 @@ public class TrustUserController {
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0003");
 		try {
-			trustUserService.addOrUpdatetrust(petuser);
+			trustUserService.addOrUpdatetrust(petuser,request);
 		} catch (Exception e) {
 			logger.error(e.toString());
 			json.put("message", e.getMessage());
@@ -89,6 +89,52 @@ public class TrustUserController {
 		logger.debug(jsonStr);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(jsonStr);
+	}
+	@RequestMapping("/manager/trustuser/userDel.html")
+	public void userDel(Petuser petuser,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+		logger.debug("wlcome to manager trustuser userAddOrUpdate......");
+		JSONObject json = new JSONObject();
+		json.put("statusCode", 200);
+		json.put("message", "操作成功!");
+		json.put("callbackType", "");
+		json.put("forwardUrl", "");
+		json.put("navTabId", "panel0003");
+		try {
+			trustUserService.delPetUser(petuser);
+		} catch (Exception e) {
+			logger.error(e.toString());
+			json.put("message", e.getMessage());
+			e.printStackTrace();
+		}
+		String jsonStr = json.toString();
+		logger.debug(jsonStr);
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(jsonStr);
+	}
+
+	
+	
+	@RequestMapping("/manager/trustuser/trustUserDetail.html")
+	public String trustUserDetail(Petuser petuser,Model model){
+		try {
+			petuser=trustUserService.getPetUserByid(petuser);
+			model.addAttribute("petuser", petuser);
+		} catch (Exception e) {
+			logger.debug("trustUserDetailFail"+e);
+			e.printStackTrace();
+		}
+		return "/manager/trustusermanager/TrustUseDetail";
+	}
+	@RequestMapping("/manager/trustuser/trustUserUpdate.html")
+	public String trustUserUpdate(Petuser petuser,Model model,HttpServletRequest request){
+		try {
+			trustUserService.addOrUpdatetrust(petuser,request);
+			model.addAttribute("petuser", petuser);
+		} catch (Exception e) {
+			logger.debug("trustUserDetailFail"+e);
+			e.printStackTrace();
+		}
+		return "/manager/trustusermanager/TrustUseDetail";
 	}
 	
 }

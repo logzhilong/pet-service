@@ -1,9 +1,12 @@
 package com.momoplan.pet.framework.manager.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,13 +14,23 @@ import org.springframework.stereotype.Service;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.manager.mapper.MgrTrustUserMapper;
+import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
+import com.momoplan.pet.commons.domain.manager.po.MgrTrustUserCriteria;
+import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.service.NoteService;
+import com.momoplan.pet.framework.manager.vo.WebUser;
 
 @Service
 public class NoteServiceImpl implements NoteService {
 	Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
 	@Resource
 	private NoteMapper noteMapper = null;
+	@Resource
+	private MgrTrustUserMapper trustUserMapper = null;
+	private CommonConfig commonConfig=new CommonConfig();
 	/**
 	 * 根据id获取帖子
 	 */
@@ -50,8 +63,6 @@ public class NoteServiceImpl implements NoteService {
 				noteMapper.updateByPrimaryKeySelective(note);
 			} else {
 				note.setId(IDCreater.uuid());
-				//TODO暂时给定一个userId
-				note.setUserId("703");
 				note.setCt(new Date());
 				note.setEt(new Date());
 				note.setIsDel(false);
@@ -102,5 +113,28 @@ public class NoteServiceImpl implements NoteService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * 获取托管用户列表
+	 */
+	@SuppressWarnings("static-access")
+	@Override
+	public List<MgrTrustUser> trustUserslist(HttpServletRequest request) throws Exception {
+		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
+		MgrTrustUserCriteria.Criteria criteria=trustUserCriteria.createCriteria();
+		SessionManager manager = null;
+		WebUser user1 = manager.getCurrentUser(request);
+		criteria.andNrootIdEqualTo(user1.getId());
+		List<MgrTrustUser> trustUserlist = trustUserMapper.selectByExample(trustUserCriteria);
+		String url = commonConfig.get("service.uri.pet_user", null);
+		for (MgrTrustUser user : trustUserlist) {
+			String uid = user.getUserId();
+			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ uid + "\"}}";
+			String res = PostRequest.postText(url, "body", body.toString());
+			JSONObject object = new JSONObject(res);
+			JSONObject object1 = new JSONObject(object.getString("entity"));
+			user.setNrootId(object1.getString("nickname"));
+		}
+		return trustUserlist;
 	}
 }

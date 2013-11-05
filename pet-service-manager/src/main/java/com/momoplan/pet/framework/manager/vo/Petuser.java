@@ -1,9 +1,8 @@
 package com.momoplan.pet.framework.manager.vo;
 
-import java.util.Date;
 
 public class Petuser {
-	private String id;
+	private String  id;
 	private String  nickname;
 	private String  phonenumber;
 	private String  password;
@@ -13,7 +12,15 @@ public class Petuser {
 	private String  img;
 	private String  hobby;
 	private String  deviceToken;
-	private Date  birthdate;
+	private String  birthdate;
+	private String createtime;
+	
+	public String getCreatetime() {
+		return createtime;
+	}
+	public void setCreatetime(String createtime) {
+		this.createtime = createtime;
+	}
 	public String getNickname() {
 		return nickname;
 	}
@@ -74,10 +81,10 @@ public class Petuser {
 	public void setDeviceToken(String deviceToken) {
 		this.deviceToken = deviceToken;
 	}
-	public Date getBirthdate() {
+	public String getBirthdate() {
 		return birthdate;
 	}
-	public void setBirthdate(Date birthdate) {
+	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
 	}
 	
