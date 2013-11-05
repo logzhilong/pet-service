@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
@@ -25,6 +26,8 @@ import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.Action;
 import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
+
+import freemarker.template.utility.DateUtil;
 
 @Service
 public class NoteServiceImpl implements NoteService {
@@ -47,7 +50,6 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
-
 	/**
 	 * 发帖子
 	 * @param ClientRequest
@@ -60,7 +62,7 @@ public class NoteServiceImpl implements NoteService {
 		po.setClientCount(1L);
 		po.setCt(now);
 		po.setEt(now);
-		po.setRt(new Date(0));
+		po.setRt(DateUtils.getDate("2013-01-01"));//default
 		po.setIsDel(false);
 		po.setIsEute(false);
 		po.setIsTop(false);
@@ -106,7 +108,7 @@ public class NoteServiceImpl implements NoteService {
 			logger.debug("精华...");
 		}else if(Action.NEW_ET.equals(action)){//最新回复
 			noteCriteria.setOrderByClause("rt desc");
-			criteria.andRtGreaterThan(new Date(0));//default new Date(0)
+			criteria.andRtGreaterThan(DateUtils.getDate("2013-01-01"));//default DateUtils.getDate("2013-01-01")
 			logger.debug("最新回复...");
 		}else if(Action.NEW_CT.equals(action)){//最新发布
 			noteCriteria.setOrderByClause("ct desc");
