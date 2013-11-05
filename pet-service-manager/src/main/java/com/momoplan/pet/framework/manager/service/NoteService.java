@@ -1,6 +1,11 @@
 package com.momoplan.pet.framework.manager.service;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 
 
 public interface NoteService {
@@ -27,4 +32,12 @@ public interface NoteService {
 	 * 更新帖子点击数
 	 */
 	public void updateClickCount(String noteid)throws Exception;
+	
+	
+	/**
+	 * 获取所有托管用户
+	 * @return
+	 * @throws Exception
+	 */
+	public  List<MgrTrustUser> trustUserslist(HttpServletRequest request)throws Exception;
 }
