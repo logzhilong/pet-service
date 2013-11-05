@@ -1,7 +1,5 @@
 package com.momoplan.pet.framework.bbs.handler.impl;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -13,6 +11,7 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 import com.momoplan.pet.framework.bbs.vo.NoteSubVo;
+import com.momoplan.pet.framework.bbs.vo.PageBean;
 
 /**
  * 根据帖子id获取所有回复
@@ -29,7 +28,8 @@ public class GetReplyListHandler extends AbstractHandler {
 			int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize = PetUtil.getParameterInteger(clientRequest, "pageSize");
 			String noteid = PetUtil.getParameter(clientRequest, "noteId");
-			List<NoteSubVo> vo = noteSubService.getReplyByNoteId(noteid, pageNo, pageSize);
+			String userId = PetUtil.getParameter(clientRequest, "userId");
+			PageBean<NoteSubVo> vo = noteSubService.getReplyByNoteId(noteid,userId, pageNo, pageSize);
 			logger.debug("根据帖子id获取所有回复成功 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, vo).toString();
 		} catch (Exception e) {
