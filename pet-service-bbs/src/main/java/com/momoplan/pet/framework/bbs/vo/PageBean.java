@@ -1,13 +1,16 @@
 package com.momoplan.pet.framework.bbs.vo;
 
-import java.util.Collection;
+import java.io.Serializable;
+import java.util.List;
 
-public class PageBean <T> {
+public class PageBean <T> implements Serializable{
 	
-	long totalCount = 0;
-	int pageSize = 0;
-	int pageNo = 0;
-	Collection<T> data = null;
+	private static final long serialVersionUID = 1L;
+
+	private long totalCount = 0;
+	private int pageSize = 0;
+	private int pageNo = 0;
+	private List<T> data = null;
 	public long getTotalCount() {
 		return totalCount;
 	}
@@ -26,10 +29,10 @@ public class PageBean <T> {
 	public void setPageNo(int pageNo) {
 		this.pageNo = pageNo;
 	}
-	public Collection<T> getData() {
+	public List<T> getData() {
 		return data;
 	}
-	public void setData(Collection<T> data) {
+	public void setData(List<T> data) {
 		this.data = data;
 	}
 }
