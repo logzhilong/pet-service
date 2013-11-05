@@ -16,7 +16,7 @@ class MyListener(object):
 
 class Main :
 	def start_link(self):
-		conn = stomp.Connection([(common_cfg['common']['mq_host'],common_cfg['common']['mq_port'])])
+		conn = stomp.Connection([(common_cfg['common']['mq_host'],int(common_cfg['common']['mq_port']))])
 		conn.set_listener('',MyListener())
 		conn.start()
 		conn.connect(wait=True)
@@ -31,7 +31,10 @@ if(__name__=='__main__'):
 	LOG_LEVEL = lm.level[self_cfg['self']['log_level']]
 	log = lm.LoggerFactory(self_cfg['self']['log_file'],'access_log',LOG_LEVEL).getLog()
 
+	print common_cfg
+	print self_cfg
+
 	from SimpleXMLRPCServer import SimpleXMLRPCServer
-	server = SimpleXMLRPCServer( ( '127.0.0.1',daemon_port ) , logRequests=True )
+	server = SimpleXMLRPCServer(('127.0.0.1',int(self_cfg['self']['daemon_port'])) , logRequests=True )
 	Main().start_link()
 
