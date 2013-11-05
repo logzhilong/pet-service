@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
@@ -25,14 +24,12 @@ public class NoteSubServiceImpl implements NoteSubService {
 	
 	private static Logger logger = LoggerFactory.getLogger(NoteSubServiceImpl.class);
 
-	private NoteSubMapper noteSubMapper = null;
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
 
-	@Autowired
-	public NoteSubServiceImpl(NoteSubMapper noteSubMapper, NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
+	@Autowired 
+	public NoteSubServiceImpl(NoteSubRepository noteSubRepository, MapperOnCache mapperOnCache) {
 		super();
-		this.noteSubMapper = noteSubMapper;
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
 	}
@@ -62,6 +59,8 @@ public class NoteSubServiceImpl implements NoteSubService {
 		List<NoteSub> list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
 		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
 		for(NoteSub n : list){
+			String nid = n.getId();
+			n = mapperOnCache.selectByPrimaryKey(NoteSub.class, nid);//这么做是为了取最新的状态,都是缓存取值
 			NoteSubVo vo = new NoteSubVo();
 			BeanUtils.copyProperties(n, vo);
 			String uid = n.getUserId();

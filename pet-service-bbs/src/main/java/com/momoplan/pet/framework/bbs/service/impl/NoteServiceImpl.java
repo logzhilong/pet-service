@@ -17,11 +17,11 @@ import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
+import com.momoplan.pet.commons.repository.bbs.NoteState;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.Action;
 import com.momoplan.pet.framework.bbs.vo.ConditionType;
-import com.momoplan.pet.framework.bbs.vo.NoteState;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
