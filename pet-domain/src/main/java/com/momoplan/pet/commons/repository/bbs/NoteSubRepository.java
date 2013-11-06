@@ -75,7 +75,6 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}
 		return null;
 	}
-	
 	/**
 	 * 回帖
 	 * @param po
@@ -83,6 +82,12 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 */
 	public void insertSelective(NoteSub po)throws Exception{
 		logger.debug("入库并加入缓存");
+		Long seq = totalReply(po.getNoteId());
+		if(seq>0)
+			seq+=1;
+		else
+			seq = 1L;
+		po.setSeq((int)(seq+0));
 		mapperOnCache.insertSelective(po, po.getId());
 		ShardedJedis jedis = null;
 		try{
@@ -131,7 +136,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			logger.debug("noteId="+noteId+" ; totalReply="+totalReply);
 			return totalReply;
 		}catch(Exception e){
-			logger.error("totalReply",e);
+			logger.debug("获取回复总数 ERROR="+e.getMessage());
 		}finally{
 			redisPool.closeConn(jedis);
 		}
