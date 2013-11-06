@@ -18,7 +18,7 @@ import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 
 @Component("addReply")
 public class AddReplyHandler extends AbstractHandler{
-	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(AddReplyHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {

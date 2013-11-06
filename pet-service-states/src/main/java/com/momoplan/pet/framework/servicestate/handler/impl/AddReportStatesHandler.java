@@ -23,7 +23,7 @@ import com.momoplan.pet.framework.servicestate.service.StateService;
 @Component("addReport")
 public class AddReportStatesHandler extends AbstractHandler{
 	
-	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(AddReportStatesHandler.class);
 	
 	@Autowired
 	private RedisPool redisPool = null;

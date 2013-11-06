@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
-import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
@@ -20,11 +19,12 @@ import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.Bootstrap;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.commons.web.BaseController;
 import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.service.StateService;
 import com.momoplan.pet.framework.servicestate.service.impl.StateServiceImpl;
 
-public abstract class AbstractHandler extends PetUtil implements RequestHandler {
+public abstract class AbstractHandler extends BaseController implements RequestHandler {
 	
 	protected StateService stateService = Bootstrap.getBean(StateServiceImpl.class);
 	protected Gson gson = MyGson.getInstance();
