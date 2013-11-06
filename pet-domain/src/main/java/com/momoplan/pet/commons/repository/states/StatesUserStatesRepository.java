@@ -179,18 +179,4 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		List l = new ArrayList();
-		l.add(0);
-		l.add(1);
-		l.add(2);
-		l.add(3);
-		l.add(4);
-		l.add(5);
-		List r = l.subList(2, l.size());
-		for(Object i : r){
-			System.out.println(i.toString());
-		}
-	}
-	
 }
