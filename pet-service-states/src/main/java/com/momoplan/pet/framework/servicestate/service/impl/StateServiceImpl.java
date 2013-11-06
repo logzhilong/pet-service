@@ -189,7 +189,10 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		}else{
 			logger.debug("取好友的动态，要区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, Integer.MAX_VALUE, 0);
-			logger.debug("结果集大小 list.size="+list.size());
+			if(list!=null)
+				logger.debug("结果集大小 list.size="+list.size());
+			else
+				logger.debug("结果集大小 list="+list);
 			List<StatesUserStates> list2 = new ArrayList<StatesUserStates>();
 			//TODO 目前都取出来，在本地分页吧，数据多时，需要创建缓冲区
 			for(StatesUserStates states : list){
