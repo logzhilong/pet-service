@@ -23,7 +23,12 @@ class PushXmpp :
 		<message to="${to}${domain}" from="${from}${domain}" 
 			 type="chat" msgtype="${msgtype}" 
 			 msgTime="${msgtime}" fromNickname="${fromNickname}" 
-			 fromHeadImg="${fromHeadImg}">
+			 fromHeadImg="${fromHeadImg}"
+			 contentType="${contentType}"
+			 content="${content}"
+			 contenteID="${contentID}" 
+			 picID="${picID}"
+		>
 			<body>${body}</body>
 		</message>
 		'''
