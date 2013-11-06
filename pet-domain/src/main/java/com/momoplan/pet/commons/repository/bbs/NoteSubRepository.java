@@ -132,6 +132,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
+			if(!jedis.exists(key)||jedis.llen(key)==0){
+				initListNoteSub(jedis,noteId,key);
+			}
 			Long totalReply = jedis.llen(key);
 			logger.debug("noteId="+noteId+" ; totalReply="+totalReply);
 			return totalReply;
@@ -140,7 +143,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}finally{
 			redisPool.closeConn(jedis);
 		}
-		return -1L;
+		return 0L;
 	}
 
 	/**
@@ -217,7 +220,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		logger.info("初始化 回帖 缓存队列 noteSubList="+noteList);
 		String[] arr = new String[noteList.size()];
 		int size = 0;
-		if(noteList!=null){
+		if(noteList!=null&&noteList.size()>0){
 			int i=0;
 			for(NoteSub note : noteList){
 				note = mapperOnCache.selectByPrimaryKey(NoteSub.class, note.getId());//这样会带上内容
