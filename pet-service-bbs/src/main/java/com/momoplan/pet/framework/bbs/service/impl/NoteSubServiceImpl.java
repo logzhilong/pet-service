@@ -95,6 +95,12 @@ public class NoteSubServiceImpl implements NoteSubService {
 			BeanUtils.copyProperties(noteSub, vo);
 			String uid = noteSub.getUserId();
 			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+			logger.debug("---------------");
+			logger.debug("userId="+uid);
+			logger.debug("user="+user);
+			logger.debug("noteSub="+noteSub);
+			logger.debug("vo="+vo);
+			logger.debug("---------------");
 			vo.setNickname(user.getNickname());
 			vo.setUserIcon(user.getImg());
 			vos.add(vo);
