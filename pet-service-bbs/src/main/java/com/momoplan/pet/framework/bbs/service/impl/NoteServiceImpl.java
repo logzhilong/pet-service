@@ -72,18 +72,22 @@ public class NoteServiceImpl implements NoteService {
 		return po.getId();
 	}
 	
+	static long min = 100;
 	/**
 	 * 更新帖子点击数
 	 */
 	@Override
 	public void updateClickCount(String noteId) throws Exception {
-		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
-		if(note!=null){
-			note.setClientCount(note.getClientCount()+1);
-			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
-		}
+		noteRepository.updateClickCount(noteId, min);
 	}
-
+	/**
+	 * 获取点击次数
+	 */
+	@Override
+	public Long getClientCount(String noteId) throws Exception {
+		noteRepository.getClickCount(noteId, min);
+		return null;
+	}
 	/**
 	 * 获取帖子列表
 	 */
@@ -169,7 +173,7 @@ public class NoteServiceImpl implements NoteService {
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
 		vo.setNickname(user.getNickname());
 		vo.setUserIcon(user.getImg());
-		vo.setClientCount(0L);//TODO 这个地方，还没做呢
+		vo.setClientCount(getClientCount(note.getId()));//from redis list len
 		Long totalReply = noteSubRepository.totalReply(nid);
 		vo.setTotalReply(totalReply);
 		return vo;
@@ -189,5 +193,6 @@ public class NoteServiceImpl implements NoteService {
 		logger.debug(vo.toString());
 		return vo;
 	}
+
 
 }

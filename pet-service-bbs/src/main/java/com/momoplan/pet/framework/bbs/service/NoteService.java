@@ -23,6 +23,14 @@ public interface NoteService {
 	 * @return
 	 */
 	public void updateClickCount(String noteId) throws Exception;
+
+	/**
+	 * 获取帖子点击次数
+	 * @param noteId
+	 * @return
+	 * @throws Exception
+	 */
+	public Long getClientCount(String noteId) throws Exception;
 	
 	/**
 	 * 获取帖子列表
