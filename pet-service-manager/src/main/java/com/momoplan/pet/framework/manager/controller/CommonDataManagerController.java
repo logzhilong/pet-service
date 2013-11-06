@@ -71,6 +71,7 @@ public class CommonDataManagerController {
 				return "/manager/commons/areaCodeUpdate";
 			}
 		} catch (Exception e) {
+			logger.error("addOrEditAreaCode"+e);
 			e.printStackTrace();
 			return "/manager/commons/areaCodeList";
 		}
@@ -93,6 +94,7 @@ public class CommonDataManagerController {
 				commonDataManagerService.areaCodeDelByid(myForm);
 				logger.debug("wlcome to pet manager DelAreaCode......");
 		} catch (Exception e) {
+			logger.error("areaCodeDel"+e);
 			e.printStackTrace();
 		}
 		String jsonStr = json.toString();
@@ -110,7 +112,6 @@ public class CommonDataManagerController {
 	 */
 	@RequestMapping("/alerts/areaCodeSaveOrUpdate.html")
 	public void saveOrUpdateAreaCode(String father,CommonAreaCode myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
-//		long now = System.currentTimeMillis();
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
 		json.put("message", "操作成功!");
@@ -128,6 +129,7 @@ public class CommonDataManagerController {
 			myForm.setPname(commonDataManagerService.getCommonAreaCodeByid(code).getName());
 			commonDataManagerService.insertOrUpdateAreaCode(myForm);
 		}catch(Exception e){
+			logger.error("saveOrUpdateAreaCode"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -149,6 +151,7 @@ public class CommonDataManagerController {
 		try {
 			logger.debug("地区:"+areaCode.toString());
 			List<CommonAreaCode> areaCodes=commonDataManagerService.getConmonArealistBypid(areaCode);
+			//拼接字符串作为显示区域级联的效果
 			StringBuffer sb = new StringBuffer("[");
 			if(areaCodes.size()>0){
 				int i=0;
@@ -171,6 +174,7 @@ public class CommonDataManagerController {
 			response.setCharacterEncoding("utf-8");
 			response.getWriter().write(res);
 		} catch (Exception e) {
+			logger.error("getConmonArealistBypid"+ e);
 			e.printStackTrace();
 		}
 	}

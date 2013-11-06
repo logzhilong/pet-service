@@ -10,8 +10,8 @@ import com.momoplan.pet.framework.manager.vo.Petuser;
 
 public interface TrustUserService {
 	/**
-	 * 获取所有用户
-	 * @param pageBean
+	 * 获取所有(当前用户下)托管用户
+	 * @param pageBean将数据迅如pb,做分页
 	 * @param trustUser
 	 * @return
 	 * @throws Exception
@@ -19,13 +19,13 @@ public interface TrustUserService {
 	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,HttpServletRequest request) throws Exception;
 	
 	/**
-	 * 增加或者修改用户
+	 * 增加或者修改托管用户
 	 * @param petuser
 	 * @throws Exception
 	 */
 	public void addOrUpdatetrust(Petuser petuser,HttpServletRequest request)throws Exception;
 	/**
-	 * 根据id托管用户信息
+	 * 根据id获取托管用户信息
 	 * @param petuser
 	 * @return
 	 * @throws Exception

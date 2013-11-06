@@ -21,17 +21,19 @@
 				</a>
 			</li>
 			<li>
-<!-- 			onsubmit="return navTabSearch(this);" -->
-			
 				<form  method="post" onsubmit="return divSearch(this, 'jbsxBox1');"  action="${ctx }/manager/bbs/forumrightmanagelist.html?id=${forumid}">
 						<input type="text" name="tname"/>
 						<button type="submit">搜索</button>
 				</form>
 			</li>
 			<li class="line">line</li>
+			<li>&nbsp;&nbsp;&nbsp;</li>
+			<li><a class="edit" href="${ctx }/manager/forummamage/Toupdateforum.html?id=${forumid}" rel="quanzi001"  target="dialog" max="false"  mask="true" title="修改圈子" width="600" height="350" >
+					<span>修改本圈</span>
+				</a></li>
+			<li class="line">line</li>
 		</ul>
 	</div>
-
 	<table class="table" width="105%" layoutH="30">
 		<thead>
 			<tr>
@@ -48,6 +50,7 @@
 			</tr>
 		</thead>
 		<tbody id="alertListTbody">
+			
 			<c:forEach items="${forums }" var="itm" varStatus="idx">
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
@@ -62,8 +65,8 @@
 					<td>${itm.isDel }</td>
 					<td>${itm.state }</td>
 					<td>${itm.type }</td>
-					<td>${itm.ct }</td>
-					<td>${itm.et }</td>
+					<td><fmt:formatDate value="${itm.ct}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<td><fmt:formatDate value="${itm.et}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 				</tr>
 			</c:forEach>
 		</tbody>

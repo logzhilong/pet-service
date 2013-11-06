@@ -47,6 +47,7 @@ public class UserManageController {
 			model.addAttribute("musers", musers);
 			return "/manager/usermanage/UserManageList";
 		} catch (Exception e) {
+			logger.error("usermanageList"+e);
 			e.printStackTrace();
 			return "/manager/usermanage/UserManageList";
 		}
@@ -78,8 +79,7 @@ public class UserManageController {
 				// 获取当前用户角色
 				MgrUserRoleRel userRoleRel = new MgrUserRoleRel();
 				userRoleRel.setUserId(mgrUser.getId());
-				List<MgrUserRoleRel> roles1 = roleUserManageService
-						.getRoleUserListbyUserid(userRoleRel);
+				List<MgrUserRoleRel> roles1 = roleUserManageService.getRoleUserListbyUserid(userRoleRel);
 				List<RoleUserUpdate> list = new ArrayList<RoleUserUpdate>();
 				for (MgrRole role : roles) {
 					RoleUserUpdate roleUserUpdate = new RoleUserUpdate();
@@ -122,6 +122,7 @@ public class UserManageController {
 		try {
 			userManageService.SaveOrUpdateUser(roletype, mgrUser);
 		} catch (Exception e) {
+			logger.error("usermanageSaveOrUpdate"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -151,6 +152,7 @@ public class UserManageController {
 		try {
 			userManageService.delUserByid(mgrUser);
 		} catch (Exception e) {
+			logger.error("usermanageSaveOrUpdate"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -166,7 +168,7 @@ public class UserManageController {
 		try {
 			return "/manager/pwdmanage/pwdManageUpdate";
 		} catch (Exception e) {
-			logger.debug("ToUpdatepwdExctption" + e);
+			logger.error("ToUpdatepwdExctption" + e);
 			return null;
 		}
 	}

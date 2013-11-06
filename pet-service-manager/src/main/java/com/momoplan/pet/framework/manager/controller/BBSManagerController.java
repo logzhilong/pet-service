@@ -50,7 +50,7 @@ public class BBSManagerController {
 	 * 
 	 * @param forum
 	 * @param model
-	 * @return list1.html
+	 * @return 
 	 */
 	@RequestMapping("/manager/bbs/ToaddOrUpdateForum.html")
 	public String ToaddOrEditAreaCode(Forum forum, Model model) {
@@ -71,6 +71,7 @@ public class BBSManagerController {
 				return "/manager/bbs/forumUpdate";
 			}
 		} catch (Exception e) {
+			logger.error("ToaddOrEditAreaCode"+e);
 			e.printStackTrace();
 			return null;
 		}
@@ -96,6 +97,7 @@ public class BBSManagerController {
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0002");
 		try {
+			//看地区是否有选择,若有,则作为条件
 			if (!"all".equals(fatherid) && !"all".equals(sunid)
 					&& !"all".equals(grandsunid) && !"".equals(fatherid)) {
 
@@ -107,8 +109,9 @@ public class BBSManagerController {
 					forum.setAreaCode(fatherid);
 				}
 			}
-			bBSManagerService.addOrUpdateForum(forum);
+			bBSManagerService.addOrUpdateForum(forum,request);
 		} catch (Exception e) {
+			logger.error("addOrUpdateForum"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -140,6 +143,7 @@ public class BBSManagerController {
 		try {
 			bBSManagerService.DelForum(forum);
 		} catch (Exception e) {
+			logger.error("DelForum"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -152,7 +156,7 @@ public class BBSManagerController {
 	@RequestMapping("/manager/bbs/main.html")
 	public String main(Model model, HttpServletRequest request,
 			HttpServletResponse response) {
-		logger.debug("wlcome to pet-service-bbs manager main ......");
+		    logger.debug("wlcome to pet-service-bbs manager main ......");
 		return "/manager/bbs/main";
 	}
 
@@ -168,17 +172,13 @@ public class BBSManagerController {
 	public String forumList(Forum myForm, PageBean<Forum> pageBean, Model model) {
 		logger.debug("wlcome to pet-service-bbs manager forumList ......");
 		try {
-			// 测试时先写死，分页尚未实现 >>>>>>>>>>
-			// pageBean.setPageNo(1);
-			// pageBean.setPageSize(100);
-			// 测试时先写死，分页尚未实现 <<<<<<<<<<
 			pageBean = bBSManagerService.listForum(pageBean, myForm);
 			model.addAttribute("pageBean", pageBean);
 			// 读取所有国家(查询级联)
-			List<CommonAreaCode> codes = commonDataManagerService
-					.getConmonArealist();
+			List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 			model.addAttribute("codes", codes);
 		} catch (Exception e) {
+			logger.error("forumList"+e);
 			logger.error(e.getMessage());
 		}
 		return "/manager/bbs/forumList";
@@ -202,6 +202,7 @@ public class BBSManagerController {
 			pageBean.setPageSize(100);
 			// 测试时先写死，分页尚未实现 <<<<<<<<<<
 		} catch (Exception e) {
+			logger.error("forumManager"+e);
 			logger.error(e.getMessage());
 		}
 		return "/manager/bbs/forumManager";
@@ -230,6 +231,7 @@ public class BBSManagerController {
 				return fmRight(id, model);
 			}
 		} catch (Exception e) {
+			logger.error("forumManagerMain"+e);
 			e.printStackTrace();
 			return null;
 		}
@@ -255,7 +257,6 @@ public class BBSManagerController {
 	public String forumrightmanagelist(String tname,Forum forum, Model model) {
 		try {
 			forum.setDescript(tname);
-		
 			List<Note> forums = bBSManagerService.getAllNotesByForumId(forum);
 			logger.debug("forumrightmanagelist" + forums.toString());
 			model.addAttribute("forums", forums);
@@ -299,7 +300,6 @@ public class BBSManagerController {
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
-
 			if (multipartResolver.isMultipart(req)) {
 				MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) req;
 				Iterator<String> iter = multiRequest.getFileNames();
@@ -368,8 +368,20 @@ public class BBSManagerController {
 			out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "上传错误!......" + "\"}");
 			out.flush();
 			out.close();
-			
 		}
 	}
-
+	
+	
+	
+	@RequestMapping("/manager/forummamage/Toupdateforum.html")
+	public String Toupdateforum(Forum forum,Model model){
+		try {
+			forum=bBSManagerService.getForumbyid(forum);
+			model.addAttribute("fos", forum);
+			return "/manager/bbs/forumUpdate";
+		} catch (Exception e) {
+			logger.error("Toupdateforum"+e);
+			return  null;
+		}
+	}
 }

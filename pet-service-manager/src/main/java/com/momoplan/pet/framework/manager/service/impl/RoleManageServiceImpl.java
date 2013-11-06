@@ -29,16 +29,11 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 */
 	public List<MgrRole> getAllRole() throws Exception {
 		logger.debug("welcome to getAllRole.....................");
-		try {
 			MgrRoleCriteria mgrRoleCriteria=new MgrRoleCriteria();
 			MgrRoleCriteria.Criteria criteria=mgrRoleCriteria.createCriteria();
 			criteria.andIdIsNotNull();
 			List<MgrRole> roles=mgrroleMaper.selectByExample(mgrRoleCriteria);
 			return roles;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	/**
@@ -73,12 +68,7 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 */
 	public MgrRole getRoleByid(MgrRole role) throws Exception {
 		logger.debug("welcome to getRoleByid.....................");
-		try {
 			return mgrroleMaper.selectByPrimaryKey(role.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	
 	
@@ -89,12 +79,8 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 */
 	public void delRoleByid(MgrRole role)throws Exception{
 		logger.debug("welcome to delRoleByid.....................");
-		try {
 			if("" != role.getId() && null !=role.getId()){
 				mgrroleMaper.deleteByPrimaryKey(role.getId());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 }

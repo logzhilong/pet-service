@@ -49,7 +49,7 @@ public class NoteController {
 			return "/manager/notemanage/NoteDetail";
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug("获取详情异常"+e);
+			logger.error("获取详情异常"+e);
 			return "/manager/notemanage/NoteDetail";
 		}
 	}
@@ -75,7 +75,7 @@ public class NoteController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug("wlcome to note notemanager ToNoteAddOrUpdate......"+ e);
+			logger.error("ToNoteAddOrUpdate"+ e);
 			return "";
 		}
 	}
@@ -106,7 +106,7 @@ public class NoteController {
 			response.getWriter().write(jsonStr);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug("NoteAddOrUpdate"+e);
+			logger.error("NoteAddOrUpdate"+e);
 		}
 	}
 	/**
@@ -127,6 +127,7 @@ public class NoteController {
 			try {
 				noteService.NoteDel(note);
 			} catch (Exception e) {
+				logger.error("NoteDel"+e);
 				json.put("message", e.getMessage());
 				e.printStackTrace();
 			}
@@ -136,7 +137,7 @@ public class NoteController {
 			response.getWriter().write(jsonStr);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.debug("NoteAddOrUpdate"+e);
+			logger.error("NoteAddOrUpdate"+e);
 		}
 	}
 	
