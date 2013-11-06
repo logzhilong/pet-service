@@ -1,5 +1,7 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 import com.momoplan.pet.framework.manager.service.NoteService;
 import com.momoplan.pet.framework.manager.service.RoleManageService;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;
@@ -56,7 +59,7 @@ public class NoteController {
 	 * @return
 	 */
 	@RequestMapping("/manager/notemanager/ToNoteAddOrUpdate.html")
-	public String ToNoteAddOrUpdate(Note note,Model model){
+	public String ToNoteAddOrUpdate(Note note,Model model,HttpServletRequest request){
 		logger.debug("wlcome to note notemanager ToNoteAddOrUpdate......");
 		try {
 			if(note != null && !"".equals(note.getId()) && null != note.getId()){
@@ -66,7 +69,8 @@ public class NoteController {
 				return "/manager/notemanage/NoteUpdate";
 			}else{
 				model.addAttribute("forumId", note.getForumId());
-
+				List<MgrTrustUser> trustUserlist= noteService.trustUserslist(request);
+				model.addAttribute("trustUserlist",trustUserlist);
 				return "/manager/notemanage/NoteAdd";
 			}
 		} catch (Exception e) {
@@ -90,7 +94,6 @@ public class NoteController {
 			json.put("callbackType", "closeCurrent");
 			json.put("forwardUrl", "");
 			json.put("rel", "jbsxBox1");
-//			json.put("navTabId", "jbsxBox1");
 			try {
 				noteService.NoteAddOrUpdate(note);
 			} catch (Exception e) {

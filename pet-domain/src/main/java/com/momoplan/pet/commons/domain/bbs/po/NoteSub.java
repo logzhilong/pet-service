@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-26 12:09:32
+* @date 2013-11-05 11:03:47
 */
 public class NoteSub implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -28,6 +28,8 @@ public class NoteSub implements Serializable {
     private Date ct;
 
     private String area;
+
+    private String state;
 
     private String content;
 
@@ -79,6 +81,14 @@ public class NoteSub implements Serializable {
         this.area = area;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public String getContent() {
         return content;
     }
@@ -105,6 +115,7 @@ public class NoteSub implements Serializable {
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getArea() == null ? other.getArea() == null : this.getArea().equals(other.getArea()))
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
             && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()));
     }
 
@@ -118,6 +129,7 @@ public class NoteSub implements Serializable {
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getArea() == null) ? 0 : getArea().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
         return result;
     }

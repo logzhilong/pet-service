@@ -4,100 +4,107 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
+import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
 import com.momoplan.pet.framework.bbs.service.NoteSubService;
+import com.momoplan.pet.framework.bbs.vo.NoteSubVo;
+import com.momoplan.pet.framework.bbs.vo.PageBean;
 
 @Service
 public class NoteSubServiceImpl implements NoteSubService {
-	private NoteSubMapper noteSubMapper = null;
+	
+	private static Logger logger = LoggerFactory.getLogger(NoteSubServiceImpl.class);
+
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
+	private NoteSubMapper noteSubMapper = null;
+	
 	@Autowired
-	public NoteSubServiceImpl(NoteSubMapper noteSubMapper,
-			 NoteSubRepository noteSubRepository,
-			MapperOnCache mapperOnCache) {
+	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,
+			MapperOnCache mapperOnCache, NoteSubMapper noteSubMapper) {
 		super();
-		this.noteSubMapper = noteSubMapper;
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
+		this.noteSubMapper = noteSubMapper;
 	}
 
 	/**
 	 * 回复帖子
-	 * 
 	 */
 	@Override
-	public Object replyNote(NoteSub noteSub) throws Exception{
-			NoteSub bbsNoteSub = new NoteSub();
-			bbsNoteSub.setId(IDCreater.uuid());
-			bbsNoteSub.setUserId(noteSub.getUserId());
-			bbsNoteSub.setNoteId(noteSub.getNoteId());
-			bbsNoteSub.setContent(noteSub.getContent());
-			bbsNoteSub.setCt(new Date());
-			bbsNoteSub.setArea(noteSub.getArea());
-			bbsNoteSub.setPid(noteSub.getPid());
-			noteSubRepository.insertSelective(bbsNoteSub);
-			String noteId =noteSub.getNoteId();
-			Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
-			note.setEt(new Date());
-			mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
-			return bbsNoteSub;
+	public String replyNote(NoteSub po) throws Exception {
+		Date now = new Date();
+		po.setId(IDCreater.uuid());
+		po.setCt(now);
+		noteSubRepository.insertSelective(po);
+		String noteId = po.getNoteId();
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
+		note.setEt(now);
+		note.setRt(now);//default new Date(0)
+		//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正
+		mapperOnCache.updateByPrimaryKeySelective(note, note.getId());
+		logger.debug("//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正");
+		logger.debug(note.toString());
+		return po.getId();
 	}
 
-	/**
-	 * 
-	 * 根据回帖id获取回帖
-	 */
-	@Override
-	public Object getReplyNoteSubByReplyNoteid(ClientRequest ClientRequest) throws Exception{
-			String noteSubid=PetUtil.getParameter(ClientRequest, "noteSubid");
-			return noteSubMapper.selectByPrimaryKey(noteSubid);
-	}
-	/**
-	 * 根据帖子id获取所有回复
-	 */
-	@Override
-	public Object getAllReplyNoteByNoteid(String noteid,int pageNo,int pageSize) throws Exception{
-			NoteSubCriteria noteSubCriteria=new NoteSubCriteria();
-			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
-			noteSubCriteria.setMysqlLength(pageSize);
-			noteSubCriteria.setOrderByClause("ct desc");
-			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
-			criteria.andNoteIdEqualTo(noteid);
-			List<NoteSub> noteSubs = noteSubMapper.selectByExample(noteSubCriteria);
-			List<NoteSub> list=new ArrayList<NoteSub>();
-			for(NoteSub sub :noteSubs){
-				sub.setContent(noteSubMapper.selectByPrimaryKey(sub.getId()).getContent());
-				list.add(sub);
-			}
-			return list;
+	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize){
+		List<NoteSub> list = null;
+		long totalCount = 0;
+		if(StringUtils.isEmpty(userId)){
+			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+			totalCount = noteSubRepository.totalReply(noteId);
+		}else{
+			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
+			criteria.andNoteIdEqualTo(noteId);
+			criteria.andUserIdEqualTo(userId);
+			totalCount = noteSubMapper.countByExample(noteSubCriteria);
+			noteSubCriteria.setMysqlOffset(pageNo * pageSize);
+			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
+			list = noteSubMapper.selectByExample(noteSubCriteria);
+		}
+		PageBean<NoteSub> p = new PageBean<NoteSub>();
+		p.setData(list);
+		p.setTotalCount(totalCount);
+		return p;
 	}
 	
-	/**
-	 *我回复过的帖子列表
-	 * 
-	 */
-	public Object getMyReplyNoteListByUserid(ClientRequest ClientRequest) throws Exception{
-			NoteSubCriteria noteSubCriteria=new NoteSubCriteria();
-			NoteSubCriteria.Criteria criteria=noteSubCriteria.createCriteria();
-			noteSubCriteria.setOrderByClause("ct desc");
-			int pageNo=PetUtil.getParameterInteger(ClientRequest, "pageNo");
-			int pageSize=PetUtil.getParameterInteger(ClientRequest, "pageSize");
-			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
-			noteSubCriteria.setMysqlLength(pageSize);
-			criteria.andUserIdEqualTo(PetUtil.getParameter(ClientRequest, "userId"));
-			List<NoteSub> noteSubs=noteSubMapper.selectByExample(noteSubCriteria);
-			return noteSubs;
+	@Override
+	public PageBean<NoteSubVo> getReplyByNoteId(String noteId,String userId, int pageNo, int pageSize) throws Exception {
+		PageBean<NoteSub> list = getNoteSubList(noteId, userId, pageNo, pageSize);
+		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
+		for(NoteSub n : list.getData()){
+			String nid = n.getId();
+			n = mapperOnCache.selectByPrimaryKey(NoteSub.class, nid);//这么做是为了取最新的状态,都是缓存取值
+			NoteSubVo vo = new NoteSubVo();
+			BeanUtils.copyProperties(n, vo);
+			String uid = n.getUserId();
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+			vo.setNickname(user.getNickname());
+			vo.setUserIcon(user.getImg());
+			vos.add(vo);
+		}
+		PageBean<NoteSubVo> p = new PageBean<NoteSubVo>();
+		
+		p.setData(vos);
+		p.setPageNo(pageNo);
+		p.setPageSize(pageSize);
+		p.setTotalCount(list.getTotalCount());
+		return p;
 	}
+
 }

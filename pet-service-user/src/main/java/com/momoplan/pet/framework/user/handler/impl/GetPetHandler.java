@@ -57,7 +57,7 @@ public class GetPetHandler extends AbstractHandler {
 				logger.debug("根据userid 获取用户信息 userid="+userid);
 			}else{
 				String token = clientRequest.getToken();
-				userid = getToken(token).getUserid();
+				userid = getUseridFParamSToken(clientRequest);
 				logger.debug("根据token 获取用户信息 token="+token);
 			}
 			List<PetInfo> list = userService.getPetInfo(userid);

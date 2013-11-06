@@ -1,20 +1,19 @@
-package com.momoplan.pet.framework.bbs.vo;
+package com.momoplan.pet.commons.repository.bbs;
 /**
- * 获取列表的动作
+ * 帖子状态
  * @author liangc
  */
-public enum Action {
-	//"action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
+public enum NoteState {
 	//=============================================
 	//== 枚举值 
 	//=============================================
-	ALL("全部","ALL"),
-	EUTE("精华","EUTE"),
-	NEW_ET("最新回复","NEW_ET"),
-	NEW_CT("最新发布","NEW_CT"),
-	SEARCH("查询","SEARCH");
+	ACTIVE("正常","ACTIVE"),
+	AUDIT("审核中","AUDIT"),
+	PASS("审核通过","PASS"),
+	REJECT("审核拒绝","REJECT"),
+	REPORT("被举报","REPORT");
 
-    private Action(String name, String code) {
+    private NoteState(String name, String code) {
         this.name = name;  
         this.code = code;  
     }
@@ -26,7 +25,7 @@ public enum Action {
     private String code;
     
     public static String getName(String code) {  
-        for (Action st : Action.values()) {  
+        for (NoteState st : NoteState.values()) {  
             if (code.equals(st.getCode())) {
                 return st.getName();
             }  

@@ -20,7 +20,7 @@ import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 @Component("replyNote")
 public class ReplyNoteHandler extends AbstractHandler {
 
-	private Logger logger = LoggerFactory.getLogger(ReplyNoteHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(ReplyNoteHandler.class);
 
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
@@ -30,11 +30,10 @@ public class ReplyNoteHandler extends AbstractHandler {
 			noteSub.setUserId(PetUtil.getParameter(clientRequest, "userId"));
 			noteSub.setNoteId(PetUtil.getParameter(clientRequest, "noteId"));
 			noteSub.setContent(PetUtil.getParameter(clientRequest, "content"));
-			noteSub.setArea(PetUtil.getParameter(clientRequest, "area"));
 			noteSub.setPid(PetUtil.getParameter(clientRequest, "pid"));
-			Object object = noteSubService.replyNote(noteSub);
+			String id = noteSubService.replyNote(noteSub);
 			logger.debug("回帖成功 body=" + gson.toJson(clientRequest));
-			rtn = new Success(true, object).toString();
+			rtn = new Success(true, id).toString();
 		} catch (Exception e) {
 			logger.error("回帖失败 body=" + gson.toJson(clientRequest));
 			logger.error("login : ", e);

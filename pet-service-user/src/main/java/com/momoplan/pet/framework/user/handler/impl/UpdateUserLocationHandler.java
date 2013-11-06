@@ -49,14 +49,9 @@ public class UpdateUserLocationHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String userid = PetUtil.getParameter(clientRequest, "userid");
+			String userid = getUseridFParamSToken(clientRequest);
 			String longitude = PetUtil.getParameter(clientRequest, "longitude");
 			String latitude = PetUtil.getParameter(clientRequest, "latitude");
-			if(StringUtils.isEmpty(userid)){
-				String token = clientRequest.getToken();
-				SsoAuthenticationToken tokenObj = getToken(token);
-				userid = tokenObj.getUserid()+"";
-			}
 			userService.updateUserLocation(userid, Double.valueOf(longitude), Double.valueOf(latitude));
 			logger.debug("修改用户坐标成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();

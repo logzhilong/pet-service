@@ -36,4 +36,9 @@ public interface CacheKeysConstance {
 	 * 置顶帖子的缓存，LIST_NOTE_TOP + fid
 	 */
 	public static final String LIST_NOTE_TOP = "service_bbs.list.note_top:";
+	/**
+	 * 用户回帖的记录,hash存储结构可以排除重复记录， USER_REPLY_NOTE + userId
+	 */
+	public static final String USER_REPLY_NOTE = "service_bbs.hash.user_reply_note:";
+
 }

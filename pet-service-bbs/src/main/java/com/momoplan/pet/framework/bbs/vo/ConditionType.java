@@ -3,18 +3,14 @@ package com.momoplan.pet.framework.bbs.vo;
  * 获取列表的动作
  * @author liangc
  */
-public enum Action {
-	//"action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
+public enum ConditionType {
 	//=============================================
 	//== 枚举值 
 	//=============================================
-	ALL("全部","ALL"),
-	EUTE("精华","EUTE"),
-	NEW_ET("最新回复","NEW_ET"),
-	NEW_CT("最新发布","NEW_CT"),
-	SEARCH("查询","SEARCH");
-
-    private Action(String name, String code) {
+	NOTE_NAME("帖子名称查找，默认","NOTE_NAME"),
+	I_CREATE("我发过的帖子","I_CREATE"),
+	I_REPLY("我回复过的帖子","I_REPLY");
+    private ConditionType(String name, String code) {
         this.name = name;  
         this.code = code;  
     }
@@ -26,7 +22,7 @@ public enum Action {
     private String code;
     
     public static String getName(String code) {  
-        for (Action st : Action.values()) {  
+        for (ConditionType st : ConditionType.values()) {  
             if (code.equals(st.getCode())) {
                 return st.getName();
             }  

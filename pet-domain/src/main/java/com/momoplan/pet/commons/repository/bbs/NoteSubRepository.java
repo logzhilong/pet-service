@@ -2,6 +2,7 @@ package com.momoplan.pet.commons.repository.bbs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,25 +39,63 @@ public class NoteSubRepository implements CacheKeysConstance{
 		this.noteMapper = noteMapper;
 		this.noteSubMapper = noteSubMapper;
 	}
-
+	
+	/**
+	 * 获取我回复过的帖子的ID集合
+	 * @param userId
+	 * @return
+	 */
+	public List<String> getNoteIdListOfMyReply(String userId){
+		String key = USER_REPLY_NOTE+userId;
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			if(!jedis.exists(key)){
+				NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+				noteSubCriteria.createCriteria().andUserIdEqualTo(userId);
+				List<NoteSub> l = noteSubMapper.selectByExample(noteSubCriteria);
+				if(l!=null){
+					for(NoteSub s : l){
+						jedis.hset(key, s.getNoteId(), "1");
+						logger.debug("初始化我参与过的帖子缓存 userid="+s.getUserId()+" ; noteid="+s.getNoteId());
+					}
+				}
+			}
+			Set<String> set = jedis.hkeys(key);
+			if(set!=null&&set.size()>0){
+				List<String> list = new ArrayList<String>();
+				list.addAll(set);
+				return list;
+			}
+		}catch(Exception e){
+			//TODO 这种异常很严重啊，要发邮件通知啊
+			logger.error("insertSelective",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return null;
+	}
+	
 	/**
 	 * 回帖
 	 * @param po
 	 * @throws Exception
 	 */
 	public void insertSelective(NoteSub po)throws Exception{
-		//入库并加入缓存
+		logger.debug("入库并加入缓存");
 		mapperOnCache.insertSelective(po, po.getId());
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
-			//增加到 回帖总数列表
+			logger.debug("增加到 回帖总数列表");
 			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getNoteId());
 			String forumId = note.getForumId();
-			//forumId 圈子的 回帖总数
+			logger.debug("forumId 圈子的 回帖总数");
 			lpushNoteSubTotalCount(jedis,LIST_NOTE_SUB_TOTALCOUNT+forumId,forumId);
-			//需求是：最新的回帖排在最下面,【队列】结构
+			logger.debug("需求是：最新的回帖排在最下面,【队列】结构");
 			rpushListNoteSub(jedis,po);
+			logger.debug("用户回过的帖子，记录在一个 hash 结构中 "+USER_REPLY_NOTE+po.getUserId());
+			jedis.hset(USER_REPLY_NOTE+po.getUserId(), po.getNoteId(), "0");
 		}catch(Exception e){
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
@@ -98,6 +137,35 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}
 		return -1L;
 	}
+
+	/**
+	 * 获取noteId的回帖数
+	 * @param noteId
+	 * @return
+	 */
+	public List<NoteSub> getReplyListByNoteId(String noteId,int pageSize,int pageNo){
+		pageSize-=1;//因为下脚标在0开始，所以取20条记录时 0～19，size 是要取的条数
+		String key = LIST_NOTE_SUB+noteId;
+		ShardedJedis jedis = null;
+		try{
+			jedis = redisPool.getConn();
+			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize);
+			if(list!=null){
+				List<NoteSub> nsl = new ArrayList<NoteSub>(list.size());
+				for(String j : list){
+					NoteSub ns = gson.fromJson(j, NoteSub.class);
+					nsl.add(ns);
+				}
+				return nsl;
+			}
+		}catch(Exception e){
+			logger.error("totalReply",e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return null;
+	}
+	
 	
 	/**
 	 * 需求是：最新的回帖排在最下面,【队列】结构
@@ -128,8 +196,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param jedis
 	 * @param po
 	 * @param key
+	 * @throws Exception 
 	 */
-	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key){
+	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key) throws Exception{
 		NoteSubCriteria noteCriteria = new NoteSubCriteria();
 		NoteSubCriteria.Criteria criteria = noteCriteria.createCriteria();
 		criteria.andNoteIdEqualTo(po.getNoteId());
@@ -140,13 +209,14 @@ public class NoteSubRepository implements CacheKeysConstance{
 		String[] arr = new String[noteList.size()];
 		int i=0;
 		for(NoteSub note : noteList){
+			note = mapperOnCache.selectByPrimaryKey(NoteSub.class, note.getId());//这样会带上内容
 			String json = gson.toJson(note);
 			arr[i++] = json;
 			logger.debug(key+" rpush "+json);
 		}
 		jedis.rpush(key, arr);
 		logger.info("初始化 回帖 缓存队列 完成.");
-	}	
+	}
 	
 	/**
 	 * 初始化 forumId 圈子的回帖总数

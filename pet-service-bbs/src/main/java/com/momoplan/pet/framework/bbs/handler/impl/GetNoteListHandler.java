@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 /**
@@ -36,13 +38,16 @@ public class GetNoteListHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String fid=PetUtil.getParameter(clientRequest, "forumPid");
+			String fid=PetUtil.getParameter(clientRequest, "forumId");
 			boolean withTop=Boolean.valueOf(PetUtil.getParameter(clientRequest, "withTop"));
 			String action=PetUtil.getParameter(clientRequest, "action");
 			String condition=PetUtil.getParameter(clientRequest, "condition");
+			String conditionType=PetUtil.getParameter(clientRequest, "conditionType");
+			if(StringUtils.isEmpty(conditionType))
+				conditionType = ConditionType.NOTE_NAME.getCode();
 			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
-			List<NoteVo> list = noteService.getNoteList(fid,Action.valueOf(action),condition,withTop,pageNo,pageSize);
+			List<NoteVo> list = noteService.getNoteList(fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),withTop,pageNo,pageSize);
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,list).toString();
 		}catch(Exception e){
@@ -50,7 +55,6 @@ public class GetNoteListHandler extends AbstractHandler {
 			logger.error("login : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}

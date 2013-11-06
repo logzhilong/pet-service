@@ -23,7 +23,7 @@ public class PetUtil {
 	
 	public static String getParameter(PetRequest request, String key) {
 		Object value = request.getParams().get(key);
-		return value==null?null:value.toString();
+		return value!=null&&!"".equals(value)?value.toString():null;
 	}
 	
 	public static long getParameterLong(PetRequest request, String key) {
@@ -154,7 +154,8 @@ public class PetUtil {
 			logger.error("ClientRequest 参数反序列化异常",e);
 			throw new Exception("ClientRequest 参数反序列化异常",e);
 		}
-	}	
+	}
+	
 	//add by liangc <<<<<<<<<<<<<<
 	
 }

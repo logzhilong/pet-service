@@ -3,7 +3,7 @@ package com.momoplan.pet.framework.bbs.vo;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 
 @SuppressWarnings("serial")
-public class NoteVo extends Note{
+public class NoteSubVo extends Note{
 	/**
 	 * 昵称
 	 */
@@ -12,22 +12,6 @@ public class NoteVo extends Note{
 	 * 头像
 	 */
 	private String userIcon = null;
-	/**
-	 * creater total reply
-	 */
-	private Long cTotalReply = 0L;
-	/**
-	 * 回帖数
-	 */
-	private Long totalReply = 0L;
-	
-	public Long getcTotalReply() {
-		return cTotalReply;
-	}
-
-	public void setcTotalReply(Long cTotalReply) {
-		this.cTotalReply = cTotalReply;
-	}
 
 	public String getNickname() {
 		return nickname;
@@ -43,14 +27,6 @@ public class NoteVo extends Note{
 
 	public void setUserIcon(String userIcon) {
 		this.userIcon = userIcon;
-	}
-
-	public Long getTotalReply() {
-		return totalReply;
-	}
-
-	public void setTotalReply(Long totalReply) {
-		this.totalReply = totalReply;
 	}
 
 }

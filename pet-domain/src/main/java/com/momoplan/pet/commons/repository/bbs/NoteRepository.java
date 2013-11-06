@@ -231,14 +231,15 @@ public class NoteRepository implements CacheKeysConstance{
 		try{
 			jedis = redisPool.getConn();
 			String key = LIST_NOTE_TOP+fid;
-			if(!jedis.exists(key)){
+			if(!jedis.exists(key)||jedis.llen(key)<1){
+				jedis.del(key);
 				// 获取置顶帖子
 				NoteCriteria noteCriteria1 = new NoteCriteria();
 				noteCriteria1.setMysqlOffset(0);
 				noteCriteria1.setMysqlLength(5);
 				noteCriteria1.setOrderByClause("ct desc");
 				NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
-				if (!fid.equals("0")) {
+				if (!"0".equals(fid)) {
 					criteria1.andForumIdEqualTo(fid);
 				}
 				criteria1.andIsTopEqualTo(true);

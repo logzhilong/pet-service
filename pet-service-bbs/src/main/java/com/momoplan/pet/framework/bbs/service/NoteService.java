@@ -2,32 +2,12 @@ package com.momoplan.pet.framework.bbs.service;
 
 import java.util.List;
 
-import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 public interface NoteService {
-
-	/**
-	 * 发送帖子
-	 * @param note
-	 * userId用户id,forumId圈子id,name帖子名称,content帖子内容
-	 * @return
-	 * @throws Exception
-	 */
-	public Object sendNote(Note note) throws Exception;
- 
-	 /**
-	  * 根据帖子name搜索
-	  * @param note
-	  * forumid圈子id(如果为0标识全站搜索否则为某圈子内搜索),notename帖子名称
-	  * @param pageNo
-	  * @param pageSize
-	  * @return
-	  * @throws Exception
-	  */
-	public Object searchNote(Note note,int pageNo,int pageSize) throws Exception;
 
 	/**
 	 * 查看帖子详情
@@ -35,39 +15,14 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object detailNote(String id) throws Exception;
+	public NoteVo getNoteById(String id) throws Exception;
 
-	/**
-	 * 删除帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object delNote(ClientRequest ClientRequest) throws Exception ;
-
-
-	/**
-	 * 根据id举报帖子
-	 * @param noteid帖子id
-	 * @return
-	 * @throws Exception
-	 */
-	public Object reportNote(String noteid) throws Exception;
-	
-	
-	
 	/**
 	 * 更新帖子点击数
 	 * @param ClientRequest
 	 * @return
 	 */
-	public Object updateClickCount(ClientRequest ClientRequest) throws Exception;
-	
-	/**
-	 * 我发表过的帖子列表
-	 * 
-	 */
-	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception;
+	public void updateClickCount(String noteId) throws Exception;
 	
 	/**
 	 * 获取帖子列表
@@ -80,6 +35,15 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<NoteVo> getNoteList(String forumid,Action action,String condition,boolean withTop,int pageno,int pagesize) throws Exception;
-	
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageno,int pagesize) throws Exception;
+
+	/**
+	 * 发送帖子
+	 * @param note
+	 * userId用户id,forumId圈子id,name帖子名称,content帖子内容
+	 * @return
+	 * @throws Exception
+	 */
+	public String sendNote(Note note) throws Exception;
+
 }
