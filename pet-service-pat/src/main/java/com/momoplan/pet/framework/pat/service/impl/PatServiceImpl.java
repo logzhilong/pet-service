@@ -144,6 +144,11 @@ public class PatServiceImpl implements PatService {
 		clientRequest.setMethod(method);
 		clientRequest.setParams(params);
 		String body = MyGson.getInstance().toJson(clientRequest);
+		path = commonConfig.get(path);
+		logger.debug("========");
+		logger.debug(path);
+		logger.debug(body);
+		logger.debug("========");
 		String responseStr = PostRequest.postText(path, "body",body);
 		JSONObject json = new JSONObject(responseStr);
 		JSONObject entity = json.getJSONObject("entity");
