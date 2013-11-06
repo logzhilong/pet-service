@@ -49,8 +49,10 @@
 
 	<import resource="classpath:spring/applicationContext-mybatis-transaction.xml"/>
 
+	<import resource="applicationContext-jms.xml"/>
+
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="classpath:spring/applicationContext-mybatis-pat.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-user.xml"/>
-
+	<import resource="classpath:spring/applicationContext-mybatis-states.xml"/>
 </beans>

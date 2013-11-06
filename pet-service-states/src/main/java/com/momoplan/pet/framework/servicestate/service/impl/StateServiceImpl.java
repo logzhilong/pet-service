@@ -221,16 +221,27 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		reply.setCt(new Date());
 		statesUserStatesReplyRepository.insertSelective(reply);
 		String puserid = reply.getPuserid();
-		if(StringUtils.isEmpty(puserid)){
-			StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, reply.getStateid());
-			puserid = states.getUserid();
-			logger.debug("回复动态：puserid="+puserid);
-		}else{
-			logger.debug("回复回复：puserid="+puserid);
+		StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, reply.getStateid());
+		pushMsg2XMPP(reply.getUserid(), states.getUserid(), states, reply);
+		if(StringUtils.isNotEmpty(puserid)){
+			pushMsg2XMPP(reply.getUserid(), puserid, states, reply);
 		}
+		return reply.getId();
+	}
+	
+	private void pushMsg2XMPP(String fuid,String tuid,StatesUserStates states,StatesUserStatesReply reply){
 		try{
+//			回复：
+//			msgType=reply
+//			contentType=topic/dynamic
+//			content=
+//				tipic:帖子标题
+//				dynamic:动态前10个字
+//			contentID=帖子/动态 ID
+//			picID=动态图片，帖子无图片
+//			body=回复内容
 			JSONObject fromUserJson = getUserinfo(reply.getUserid());
-			JSONObject toUserJson = getUserinfo(puserid);
+			JSONObject toUserJson = getUserinfo(tuid);
 			logger.debug("from_user="+fromUserJson.toString());
 			logger.debug("to_user="+toUserJson.toString());
 			JSONObject jsonObj = new JSONObject();
@@ -241,7 +252,15 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			jsonObj.put("msgtime", reply.getCt().getTime());
 			jsonObj.put("fromNickname",fromUserJson.get("nickname"));
 			jsonObj.put("fromHeadImg", fromUserJson.get("img"));
+
+			jsonObj.put("contentType", "dynamic");
+			jsonObj.put("contentID", states.getId());
+			if(states.getImgid()!=null&&!"".equals(states.getImgid())){
+				jsonObj.put("picID", states.getImgid());
+			}
+			jsonObj.put("content",states.getMsg().length()>10?states.getMsg().substring(0, 10):states.getMsg());
 			jsonObj.put("body", reply.getMsg());
+			
 			TextMessage tm = new ActiveMQTextMessage();
 			tm.setText(jsonObj.toString());
 			ActiveMQQueue queue = new ActiveMQQueue();
@@ -250,9 +269,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			logger.debug("queue_name="+Constants.PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
 		}catch(Exception e){
 			logger.error("send message",e);
-			throw e;
 		}
-		return reply.getId();
 	}
 	
 	/**
