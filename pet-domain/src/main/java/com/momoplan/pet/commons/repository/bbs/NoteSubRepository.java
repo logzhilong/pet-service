@@ -154,6 +154,10 @@ public class NoteSubRepository implements CacheKeysConstance{
 		ShardedJedis jedis = null;
 		try{
 			jedis = redisPool.getConn();
+			if(!jedis.exists(key)||jedis.llen(key)==0){
+				//初始化将加载所有的数据到缓存
+				initListNoteSub(jedis,noteId,key);
+			}
 			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize);
 			if(list!=null){
 				List<NoteSub> nsl = new ArrayList<NoteSub>(list.size());
@@ -182,7 +186,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			//init key 对应的队列
 			if(!jedis.exists(key)||jedis.llen(key)==0){
 				//初始化将加载所有的数据到缓存
-				initListNoteSub(jedis,po,key);
+				initListNoteSub(jedis,po.getNoteId(),key);
 			}else{
 				//如果不初始化，则将最新的放入缓存即可
 				NoteSub noteSub = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
@@ -203,10 +207,10 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param key
 	 * @throws Exception 
 	 */
-	private void initListNoteSub(ShardedJedis jedis,NoteSub po,String key) throws Exception{
+	private void initListNoteSub(ShardedJedis jedis,String noteId,String key) throws Exception{
 		NoteSubCriteria noteCriteria = new NoteSubCriteria();
 		NoteSubCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andNoteIdEqualTo(po.getNoteId());
+		criteria.andNoteIdEqualTo(noteId);
 		noteCriteria.setOrderByClause("ct asc");
 		List<NoteSub> noteList = noteSubMapper.selectByExample(noteCriteria);
 		logger.info("初始化 回帖 缓存队列 key="+key);
