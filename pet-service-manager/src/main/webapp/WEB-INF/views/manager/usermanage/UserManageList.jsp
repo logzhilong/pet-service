@@ -44,8 +44,8 @@
 				<tr target="id" rel="${ite.id }">
 					<td align="left">${idx.index+1 }</td>
 					<td align="left"><a  href="${ctx }/manager/mgrusermanager/TousermanageSaveOrUpdate.html?id=${ite.id}" target="dialog" max="false" rel="rolemanage_update_dialog" mask="true" title="修改" width="550" height="360">${ite.name}</a></td>
-					<td align="left">${ite.ct }</td>
-					<td align="left">${ite.et }</td>
+					<td><fmt:formatDate value="${ite.ct}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<td><fmt:formatDate value="${ite.et}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 					<td align="left">${ite.cb }</td>
 					<td align="left">${ite.eb }</td>
 					<td align="left">${ite.enable }</td>

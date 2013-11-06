@@ -30,8 +30,8 @@ public class TrustUserServiceImpl implements TrustUserService {
 	private CommonConfig commonConfig=new CommonConfig();
 	@SuppressWarnings("static-access")
 	@Override
-	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,HttpServletRequest request)
-			throws Exception {
+	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,HttpServletRequest request)throws Exception {
+		logger.debug("welcome to AllTrustUser.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
 		MgrTrustUserCriteria.Criteria criteria=trustUserCriteria.createCriteria();
 		SessionManager manager = null;
@@ -58,6 +58,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 	@SuppressWarnings("static-access")
 	@Override
 	public void addOrUpdatetrust(Petuser petuser,HttpServletRequest request) throws Exception {
+		logger.debug("welcome to addOrUpdatetrust.....................");
 		if("".equals(petuser.getId()) || null==petuser.getId())
 		{
 			String url = commonConfig.get("service.uri.pet_sso", null);
@@ -90,6 +91,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 
 	@Override
 	public Petuser getPetUserByid(Petuser petuser) throws Exception {
+		logger.debug("welcome to getPetUserByid.....................");
 		String url = commonConfig.get("service.uri.pet_user", null);
 		String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ petuser.getId() + "\"}}";
 		String res = PostRequest.postText(url, "body", body.toString());
@@ -104,6 +106,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 
 	@Override
 	public void delPetUser(Petuser petuser) throws Exception {
+		logger.debug("welcome to delPetUser.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();getClass();
 		MgrTrustUserCriteria.Criteria criteria=trustUserCriteria.createCriteria();
 		criteria.andIdEqualTo(petuser.getId());

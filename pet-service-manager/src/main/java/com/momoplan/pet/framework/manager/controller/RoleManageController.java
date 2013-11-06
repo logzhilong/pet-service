@@ -46,6 +46,7 @@ public class RoleManageController {
 			return "/manager/rolemanage/roleManageList";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("rolemanageList"+e);
 			return "/manager/rolemanage/roleManageList";
 		}
 	}
@@ -149,12 +150,9 @@ public class RoleManageController {
 			model.addAttribute("mgrUsers", mgrUsers);
 			return "/manager/rolemanage/roleManageUserList";
 		} catch (Exception e) {
+			logger.error("Torolemanageuserlist"+e);
 			e.printStackTrace();
 			return "/manager/rolemanage/roleManageUserList";
 		}
 	}
-	
-	
-	
-	
 }

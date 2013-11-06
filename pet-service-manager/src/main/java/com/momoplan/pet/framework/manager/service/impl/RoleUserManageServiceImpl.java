@@ -14,7 +14,7 @@ import com.momoplan.pet.framework.manager.service.RoleUserManageService;
 
 @Service
 public class RoleUserManageServiceImpl implements RoleUserManageService {
-	private static Logger logger = LoggerFactory.getLogger(RoleManageServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(RoleUserManageServiceImpl.class);
 	@Autowired
 	private MgrUserRoleRelMapper userRoleRelMapper=null;
 	
@@ -25,16 +25,12 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public MgrUserRoleRel getRoleUserByid(MgrUserRoleRel userRoleRel) throws Exception{
-		try {
+			logger.debug("welcome to getRoleUserByid.....................");
 			if("" !=userRoleRel.getId() && null !=userRoleRel.getId()){
 				return userRoleRelMapper.selectByPrimaryKey(userRoleRel.getId());
 			}else {
 				return null;
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	/**
 	 * 根据关系表的角色id获取关系集合
@@ -43,15 +39,11 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public List<MgrUserRoleRel> getRoleUserListbyRoleid(MgrUserRoleRel userRoleRel)throws Exception{
-		try {
+		    logger.debug("welcome to getRoleUserListbyRoleid.....................");
 			MgrUserRoleRelCriteria userRoleRelCriteria =new MgrUserRoleRelCriteria();
 			MgrUserRoleRelCriteria.Criteria criteria=userRoleRelCriteria.createCriteria();
 			criteria.andRoleIdEqualTo(userRoleRel.getRoleId());
 			return userRoleRelMapper.selectByExample(userRoleRelCriteria);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	/**
 	 * 
@@ -61,15 +53,10 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public List<MgrUserRoleRel> getRoleUserListbyUserid(MgrUserRoleRel userRoleRel)throws Exception{
-		try {
 			MgrUserRoleRelCriteria userRoleRelCriteria =new MgrUserRoleRelCriteria();
 			MgrUserRoleRelCriteria.Criteria criteria=userRoleRelCriteria.createCriteria();
 			criteria.andUserIdEqualTo(userRoleRel.getUserId());
 			return userRoleRelMapper.selectByExample(userRoleRelCriteria);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 	/**
 	 * 增加或者修改关系
@@ -97,13 +84,10 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public void delRoleUser(MgrUserRoleRel userRoleRel)throws Exception{
-		try {
+		    logger.debug("welcome to delRoleUser.....................");
 			if("" != userRoleRel.getId() && null != userRoleRel.getId()){
 				userRoleRelMapper.deleteByPrimaryKey(userRoleRel.getId());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }

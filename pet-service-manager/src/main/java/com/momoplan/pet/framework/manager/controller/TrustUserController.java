@@ -63,6 +63,7 @@ public class TrustUserController {
 				return "/manager/trustusermanager/TrustUserUpdate";
 			}
 		} catch (Exception e) {
+			logger.error("TouserAddOrUpdate"+e);
 			e.printStackTrace();
 			return null;
 		}
@@ -131,7 +132,7 @@ public class TrustUserController {
 			trustUserService.addOrUpdatetrust(petuser,request);
 			model.addAttribute("petuser", petuser);
 		} catch (Exception e) {
-			logger.debug("trustUserDetailFail"+e);
+			logger.error("trustUserDetailFail"+e);
 			e.printStackTrace();
 		}
 		return "/manager/trustusermanager/TrustUseDetail";

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.domain.manager.mapper.MgrRoleMapper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserMapper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrUserRoleRelMapper;
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
@@ -26,18 +25,20 @@ import com.momoplan.pet.framework.manager.vo.WebUser;
 
 @Service
 public class UserManageServiceImpl implements UserManageService {
-
-	private static Logger logger = LoggerFactory.getLogger(RoleUserManageServiceImpl.class);
-	@Autowired
-	private MgrRoleMapper mgrroleMaper = null;
-	@Autowired
+	private static Logger logger = LoggerFactory.getLogger(UserManageServiceImpl.class);
 	private MgrUserMapper mgrUserMapper = null;
+	private Md5PlusShaPasswordEncoder md5 = null;
+	private MgrUserRoleRelMapper userRoleRelMapper = null;
+	@Autowired
+	public UserManageServiceImpl(MgrUserMapper mgrUserMapper, Md5PlusShaPasswordEncoder md5,MgrUserRoleRelMapper userRoleRelMapper) {
+		super();
+		this.mgrUserMapper = mgrUserMapper;
+		this.md5 = md5;
+		this.userRoleRelMapper = userRoleRelMapper;
+	}
+
 	@Autowired
 	private RoleUserManageService roleUserManageService;
-	@Autowired
-	private Md5PlusShaPasswordEncoder md5 = null;
-	@Autowired
-	private MgrUserRoleRelMapper userRoleRelMapper = null;
 
 	/**
 	 * 获取所有角色
@@ -47,13 +48,8 @@ public class UserManageServiceImpl implements UserManageService {
 	 */
 	public List<MgrUser> getAllUser() throws Exception {
 		logger.debug("welcome to getAllUser.....................");
-		try {
 			MgrUserCriteria mgrUserCriteria = new MgrUserCriteria();
 			return mgrUserMapper.selectByExample(mgrUserCriteria);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	/**
@@ -121,12 +117,7 @@ public class UserManageServiceImpl implements UserManageService {
 	 */
 	public MgrUser getUserByid(MgrUser mgrUser) throws Exception {
 		logger.debug("welcome to getRoleByid.....................");
-		try {
 			return mgrUserMapper.selectByPrimaryKey(mgrUser.getId());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	/**
@@ -139,8 +130,7 @@ public class UserManageServiceImpl implements UserManageService {
 		logger.debug("welcome to delRoleByid.....................");
 		if ("" != mgrUser.getId() && null != mgrUser.getId()) {
 			MgrUserRoleRelCriteria userRoleRelCriteria = new MgrUserRoleRelCriteria();
-			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria
-					.createCriteria();
+			MgrUserRoleRelCriteria.Criteria criteria = userRoleRelCriteria.createCriteria();
 			criteria.andUserIdEqualTo(mgrUser.getId());
 			userRoleRelMapper.deleteByExample(userRoleRelCriteria);
 			mgrUserMapper.deleteByPrimaryKey(mgrUser.getId());
