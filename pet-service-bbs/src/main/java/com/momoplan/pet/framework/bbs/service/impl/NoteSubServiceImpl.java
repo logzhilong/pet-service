@@ -66,7 +66,8 @@ public class NoteSubServiceImpl implements NoteSubService {
 		long totalCount = 0;
 		if(StringUtils.isEmpty(userId)){
 			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
-			totalCount = noteSubRepository.totalReply(noteId);
+			if(list!=null)
+				totalCount = noteSubRepository.totalReply(noteId);
 		}else{
 			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
 			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
@@ -87,13 +88,19 @@ public class NoteSubServiceImpl implements NoteSubService {
 	public PageBean<NoteSubVo> getReplyByNoteId(String noteId,String userId, int pageNo, int pageSize) throws Exception {
 		PageBean<NoteSub> list = getNoteSubList(noteId, userId, pageNo, pageSize);
 		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
-		for(NoteSub n : list.getData()){
-			String nid = n.getId();
-			n = mapperOnCache.selectByPrimaryKey(NoteSub.class, nid);//这么做是为了取最新的状态,都是缓存取值
+		for(NoteSub ns : list.getData()){
+			String nsid = ns.getId();
+			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(NoteSub.class, nsid);//这么做是为了取最新的状态,都是缓存取值
 			NoteSubVo vo = new NoteSubVo();
-			BeanUtils.copyProperties(n, vo);
-			String uid = n.getUserId();
+			BeanUtils.copyProperties(noteSub, vo);
+			String uid = noteSub.getUserId();
 			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+			logger.debug("---------------");
+			logger.debug("userId="+uid);
+			logger.debug("user="+user);
+			logger.debug("noteSub="+noteSub);
+			logger.debug("vo="+vo);
+			logger.debug("---------------");
 			vo.setNickname(user.getNickname());
 			vo.setUserIcon(user.getImg());
 			vos.add(vo);

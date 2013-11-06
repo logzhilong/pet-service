@@ -13,7 +13,7 @@ import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 
 @Component("delUserState")
 public class DelUserStateHandler extends AbstractHandler{
-	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(DelUserStateHandler.class);
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;

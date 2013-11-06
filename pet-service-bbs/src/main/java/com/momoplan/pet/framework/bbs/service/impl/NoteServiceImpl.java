@@ -27,8 +27,6 @@ import com.momoplan.pet.framework.bbs.vo.Action;
 import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
-import freemarker.template.utility.DateUtil;
-
 @Service
 public class NoteServiceImpl implements NoteService {
 	private NoteMapper noteMapper = null;

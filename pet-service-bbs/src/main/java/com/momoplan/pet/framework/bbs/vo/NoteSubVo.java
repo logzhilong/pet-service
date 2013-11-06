@@ -1,9 +1,9 @@
 package com.momoplan.pet.framework.bbs.vo;
 
-import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 
 @SuppressWarnings("serial")
-public class NoteSubVo extends Note{
+public class NoteSubVo extends NoteSub{
 	/**
 	 * 昵称
 	 */
