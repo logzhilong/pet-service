@@ -85,8 +85,7 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@Override
 	public Long getClientCount(String noteId) throws Exception {
-		noteRepository.getClickCount(noteId, min);
-		return null;
+		return noteRepository.getClickCount(noteId, min);
 	}
 	/**
 	 * 获取帖子列表
