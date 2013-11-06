@@ -216,7 +216,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 				logger.debug("----------------------------");
 				logger.debug("分页 start="+start+" ; end="+end);
 				logger.debug("----------------------------");
-				list2.subList(start, end);
+				list2 = list2.subList(start, end);
 			}
 			list.clear();
 			list.addAll(list2);
