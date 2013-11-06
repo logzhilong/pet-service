@@ -185,14 +185,20 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		if(isSelf){
 			logger.debug("取自己的动态，不区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, pageSize, pageNo);
+			if(list==null){
+				logger.debug("结果集为空");
+				return null;
+			}
 			logger.debug("结果集大小 list.size="+list.size());
 		}else{
 			logger.debug("取好友的动态，要区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, Integer.MAX_VALUE, 0);
-			if(list!=null)
-				logger.debug("结果集大小 list.size="+list.size());
-			else
-				logger.debug("结果集大小 list="+list);
+			if(list==null){
+				logger.debug("结果集为空");
+				return null;
+			}
+			logger.debug("结果集大小 list.size="+list.size());
+			
 			List<StatesUserStates> list2 = new ArrayList<StatesUserStates>();
 			//TODO 目前都取出来，在本地分页吧，数据多时，需要创建缓冲区
 			for(StatesUserStates states : list){
