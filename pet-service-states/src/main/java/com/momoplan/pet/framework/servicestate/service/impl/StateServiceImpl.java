@@ -180,11 +180,14 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 
 	@Override
 	public List<StatesUserStatesVo> getUserStates(String userid, int pageSize, int pageNo, boolean isSelf) throws Exception {
-		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
+		List<StatesUserStatesVo> resList = null;
 		List<StatesUserStates> list = null;
 		if(isSelf){
 			logger.debug("取自己的动态，不区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, pageSize, pageNo);
+			logger.debug("----------------------------");
+			logger.debug("分页 pageSize="+pageSize+" ; pageNo="+pageNo);
+			logger.debug("----------------------------");
 			if(list==null){
 				logger.debug("结果集为空");
 				return null;
@@ -210,15 +213,21 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			if(list2!=null&&list2.size()>0){
 				int start = pageNo*pageSize>list2.size()?list2.size():pageNo*pageSize;
 				int end = pageSize*(pageNo+1)>list2.size()?list2.size():pageSize*(pageNo+1);
+				logger.debug("----------------------------");
+				logger.debug("分页 start="+start+" ; end="+end);
+				logger.debug("----------------------------");
 				list2.subList(start, end);
 			}
 			list.clear();
 			list.addAll(list2);
 		}
-		JSONObject userJson = getUserinfo(userid);
-		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
-		userMap.put(userid, userJson);
-		buildStatesUserStatesVoList(list,resList,userMap,userid);
+		if(list!=null){
+			resList = new ArrayList<StatesUserStatesVo>();
+			JSONObject userJson = getUserinfo(userid);
+			Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
+			userMap.put(userid, userJson);
+			buildStatesUserStatesVoList(list,resList,userMap,userid);
+		}
 		return resList;
 	}
 	
