@@ -66,7 +66,8 @@ public class NoteSubServiceImpl implements NoteSubService {
 		long totalCount = 0;
 		if(StringUtils.isEmpty(userId)){
 			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
-			totalCount = noteSubRepository.totalReply(noteId);
+			if(list!=null)
+				totalCount = noteSubRepository.totalReply(noteId);
 		}else{
 			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
 			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();

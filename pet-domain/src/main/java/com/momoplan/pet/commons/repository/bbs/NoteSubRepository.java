@@ -195,7 +195,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 				logger.debug(key+" rpush "+noteSubJson);
 			}
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error(e.getMessage(),e);
 			throw e;
 		}
 	}
@@ -214,17 +214,21 @@ public class NoteSubRepository implements CacheKeysConstance{
 		noteCriteria.setOrderByClause("ct asc");
 		List<NoteSub> noteList = noteSubMapper.selectByExample(noteCriteria);
 		logger.info("初始化 回帖 缓存队列 key="+key);
-		logger.info("初始化 回帖 缓存队列 noteSubList.size="+noteList.size());
+		logger.info("初始化 回帖 缓存队列 noteSubList="+noteList);
 		String[] arr = new String[noteList.size()];
-		int i=0;
-		for(NoteSub note : noteList){
-			note = mapperOnCache.selectByPrimaryKey(NoteSub.class, note.getId());//这样会带上内容
-			String json = gson.toJson(note);
-			arr[i++] = json;
-			logger.debug(key+" rpush "+json);
+		int size = 0;
+		if(noteList!=null){
+			int i=0;
+			for(NoteSub note : noteList){
+				note = mapperOnCache.selectByPrimaryKey(NoteSub.class, note.getId());//这样会带上内容
+				String json = gson.toJson(note);
+				arr[i++] = json;
+				logger.debug(key+" rpush "+json);
+			}
+			jedis.rpush(key, arr);
+			size = noteList.size();
 		}
-		jedis.rpush(key, arr);
-		logger.info("初始化 回帖 缓存队列 完成.");
+		logger.info("初始化 回帖 缓存队列 完成. size="+size);
 	}
 	
 	/**
