@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
@@ -33,18 +34,20 @@ public class FeedbackServiceImpl implements FeedbackService {
 		String feedback = PetUtil.getParameter(clientRequest, "feedback");
 		String email = PetUtil.getParameter(clientRequest, "email");
 		Date createTime = new Date();
+		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("userid",userid);
 		jsonObj.put("feedback",feedback);
 		jsonObj.put("email",email);
 		jsonObj.put("createTime",createTime);
+		String json = MyGson.getInstance().toJson(jsonObj);
 		try {
 			TextMessage tm = new ActiveMQTextMessage();
-			tm.setText(jsonObj.toString());
+			tm.setText(json.toString());
 			ActiveMQQueue queue = new ActiveMQQueue();
 			queue.setPhysicalName(Constants.PET_FEEDBACK);
 			apprequestTemplate.convertAndSend(queue, tm);
-			logger.info("user's feedbacks :"+jsonObj);
+			logger.info("user's feedbacks :"+json);
 		} catch (Exception e) {
 			logger.debug("jms send error"+e);
 			throw e;
