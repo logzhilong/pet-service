@@ -88,12 +88,12 @@ public class NoteSubServiceImpl implements NoteSubService {
 	public PageBean<NoteSubVo> getReplyByNoteId(String noteId,String userId, int pageNo, int pageSize) throws Exception {
 		PageBean<NoteSub> list = getNoteSubList(noteId, userId, pageNo, pageSize);
 		List<NoteSubVo> vos = new ArrayList<NoteSubVo>();
-		for(NoteSub n : list.getData()){
-			String nid = n.getId();
-			n = mapperOnCache.selectByPrimaryKey(NoteSub.class, nid);//这么做是为了取最新的状态,都是缓存取值
+		for(NoteSub ns : list.getData()){
+			String nsid = ns.getId();
+			NoteSub noteSub = mapperOnCache.selectByPrimaryKey(NoteSub.class, nsid);//这么做是为了取最新的状态,都是缓存取值
 			NoteSubVo vo = new NoteSubVo();
-			BeanUtils.copyProperties(n, vo);
-			String uid = n.getUserId();
+			BeanUtils.copyProperties(noteSub, vo);
+			String uid = noteSub.getUserId();
 			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
 			vo.setNickname(user.getNickname());
 			vo.setUserIcon(user.getImg());
