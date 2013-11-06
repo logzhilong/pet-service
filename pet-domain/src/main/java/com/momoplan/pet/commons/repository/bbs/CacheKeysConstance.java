@@ -37,6 +37,10 @@ public interface CacheKeysConstance {
 	 */
 	public static final String LIST_NOTE_TOP = "service_bbs.list.note_top:";
 	/**
+	 * 帖子的点击次数，LIST_NOTE_CLICK_COUNT + noteId
+	 */
+	public static final String LIST_NOTE_CLICK_COUNT = "service_bbs.list.note_click_count:";
+	/**
 	 * 用户回帖的记录,hash存储结构可以排除重复记录， USER_REPLY_NOTE + userId
 	 */
 	public static final String USER_REPLY_NOTE = "service_bbs.hash.user_reply_note:";
