@@ -106,30 +106,14 @@ public class TrustUserServiceImpl implements TrustUserService {
 		JSONObject object = new JSONObject(res);
 		if(null != object.getString("entity") && "" != object.getString("entity")){
 			JSONObject object1 = new JSONObject(object.getString("entity"));
-			if(null != object1.getString("nickname") && "" != object1.getString("nickname")){
 				petuser.setNickname(object1.getString("nickname"));
-			}
-			if(null != object1.getString("phoneNumber") && "" != object1.getString("phoneNumber")){
 				petuser.setPhonenumber(object1.getString("phoneNumber"));
-			}
-			if(null != object1.getString("id") && "" != object1.getString("id")){
 				petuser.setId(object1.getString("id"));
-			}
-			if(null != object1.getString("createTime") && "" != object1.getString("createTime")){
 				petuser.setCreatetime(object1.getString("createTime"));
-			}
-			if(null != object1.getString("hobby") && "" != object1.getString("hobby")){
 				petuser.setHobby(object1.getString("hobby"));
-			}
-			if(null != object1.getString("gender") && "" != object1.getString("gender")){
 				petuser.setGender(object1.getString("gender"));
-			}
-			if(null != object1.getString("signature") && "" != object1.getString("signature")){
 				petuser.setSignature(object1.getString("signature"));
-			}
-			if(null != object1.getString("img") && "" != object1.getString("img")){
 				petuser.setImg(object1.getString("img"));
-			}
 		}
 		return petuser;
 	}
