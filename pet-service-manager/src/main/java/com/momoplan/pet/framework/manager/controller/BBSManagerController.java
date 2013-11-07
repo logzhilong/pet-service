@@ -281,89 +281,6 @@ public class BBSManagerController {
 	 * 
 	 * @return model
 	 */
-	// @RequestMapping("/manager/notemanage/upimg.html")
-	// public void upImg(Model model, HttpServletRequest req,HttpServletResponse
-	// response) throws Exception {
-	// logger.debug("wlcome to upimg ......");
-	// try {
-	// CommonsMultipartResolver multipartResolver = new
-	// CommonsMultipartResolver(req.getSession().getServletContext());
-	// // 用于显示在在线编辑器里，图片的路径
-	// String newFileName = null;
-	// if (multipartResolver.isMultipart(req)) {
-	// MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)
-	// req;
-	// Iterator<String> iter = multiRequest.getFileNames();
-	// while (iter.hasNext()) {
-	// // 上传文件信息
-	// MultipartFile file = multiRequest.getFile(iter.next());
-	// if (file != null) {
-	// String name = file.getOriginalFilename();
-	// String path = "D:\\uploadimg\\" + name;
-	// // 将上传文件存储至本地
-	// File localFile = new File(path);
-	// if (!localFile.exists()) {
-	// localFile.mkdirs();
-	// }
-	// file.transferTo(localFile);
-	// DefaultHttpClient httpclient = new DefaultHttpClient();
-	// // 请求处理页面
-	// HttpPost httppost = new
-	// HttpPost("http://123.178.27.74/pet-file-server/put");
-	// // 创建待处理的文件
-	// FileBody file1 = new FileBody(new File(path));
-	//
-	// // 对请求的表单域进行填充
-	// MultipartEntity reqEntity = new MultipartEntity();
-	// reqEntity.addPart("file", file1);
-	// reqEntity.addPart("fileName", new StringBody(name));
-	// //TODO暂时先放一个能通过token
-	// reqEntity.addPart("token", new
-	// StringBody("694359BE12E04E0088B78F297CDD3F61"));
-	// reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
-	// // 设置请求
-	// httppost.setEntity(reqEntity);
-	// // 执行
-	// HttpResponse response1 = httpclient.execute(httppost);
-	// String output=null;
-	// if (HttpStatus.SC_OK == response1.getStatusLine().getStatusCode()) {
-	// logger.debug("连接通过!");
-	// HttpEntity entity = response1.getEntity();
-	// // 显示内容
-	// if (entity != null) {
-	// output=EntityUtils.toString(entity);
-	// JSONObject jsonObj = new JSONObject(output);
-	// String success = jsonObj.getString("success");
-	// if(success == "true"){
-	// String enty = jsonObj.getString("entity");
-	// newFileName ="http://123.178.27.74/pet-file-server/get/"+enty;
-	// }else{
-	// newFileName="http://123.178.27.74/pet-file-server/get/4F20CD8AAEB34C87A733657543863159";
-	// }
-	// }
-	// if (entity != null) {
-	// entity.consumeContent();
-	// }
-	// }
-	// logger.debug("返回值为:"+output);
-	// PrintWriter out = response.getWriter();
-	// out.println("{\"err\":\"" + "" + "\",\"msg\":\""+newFileName + "\"}");
-	// out.flush();
-	// out.close();
-	// }
-	// }
-	// }
-	// logger.debug("上传成功!");
-	// } catch (Exception e) {
-	// logger.error("上传异常:"+e);
-	// e.printStackTrace();
-	// PrintWriter out = response.getWriter();
-	// out.println("{\"err\":\"" + "error" + "\",\"msg\":\"" + "上传错误!......" +
-	// "\"}");
-	// out.flush();
-	// out.close();
-	// }
-	// }
 	@RequestMapping("/manager/notemanage/upimg.html")
 	public void upImg(Model model, HttpServletRequest req,HttpServletResponse response) throws Exception {
 		logger.debug("wlcome to upimg ......");
@@ -395,6 +312,29 @@ public class BBSManagerController {
 		} catch (Exception e) {
 			logger.error("Toupdateforum" + e);
 			return null;
+		}
+	}
+	
+	@RequestMapping("/manager/forummamage/upimgforforum.html")
+	public void upimgforforum(Model model, HttpServletRequest req,HttpServletResponse response)throws Exception{
+		logger.debug("wlcome to upimg ......");
+		PrintWriter out = response.getWriter();
+		try {
+			// 用于显示在在线编辑器里，图片的路径
+			String newFileName = null;
+			UpImgVo imgVo=new UpImgVo();
+			String enty=imgVo.upimg(req);
+			if(enty != null && "" != enty){
+				newFileName = "http://123.178.27.74/pet-file-server/get/" + enty;
+			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			out.println("{\"err\":\"" + "error" + "\",\"msg\":\""+ "上传错误!......" + "\"}");
+		}
+		finally{
+			out.flush();
+			out.close();
 		}
 	}
 }

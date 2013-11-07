@@ -61,8 +61,12 @@ public class TrustUserServiceImpl implements TrustUserService {
 		logger.debug("welcome to addOrUpdatetrust.....................");
 		if("".equals(petuser.getId()) || null==petuser.getId())
 		{
+			String img=petuser.getImg();
+			if( null != img && "" != img){
+			petuser.setImg(img.substring(img.indexOf("get")+4, 83));
+			}
 			String url = commonConfig.get("service.uri.pet_sso", null);
-			String body = "{\"method\":\"register\",\"params\":{\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\",\"password\":\""+ petuser.getPassword() + "\"}}";
+			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""+ petuser.getHobby() + "\",\"img\":\""+ petuser.getImg() + "\",\"signature\":\""+ petuser.getSignature() + "\",\"gender\":\""+ petuser.getGender() + "\",\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\",\"password\":\""+ petuser.getPassword() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
 			JSONObject object1 = new JSONObject(object.getString("entity"));
@@ -76,6 +80,10 @@ public class TrustUserServiceImpl implements TrustUserService {
 			trustUserMapper.insertSelective(mgrTrustUser);
 		}
 		else{
+			String img=petuser.getImg();
+			if( null != img && "" != img){
+				petuser.setImg(img.substring(img.indexOf("get")+4, 83));
+			}
 			String url = commonConfig.get("service.uri.pet_user", null);
 			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""+ petuser.getId() + "\",\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
@@ -96,11 +104,33 @@ public class TrustUserServiceImpl implements TrustUserService {
 		String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ petuser.getId() + "\"}}";
 		String res = PostRequest.postText(url, "body", body.toString());
 		JSONObject object = new JSONObject(res);
-		JSONObject object1 = new JSONObject(object.getString("entity"));
-		petuser.setNickname(object1.getString("nickname"));
-		petuser.setPhonenumber(object1.getString("phoneNumber"));
-		petuser.setId(object1.getString("id"));
-		petuser.setCreatetime(object1.getString("createTime"));
+		if(null != object.getString("entity") && "" != object.getString("entity")){
+			JSONObject object1 = new JSONObject(object.getString("entity"));
+			if(null != object1.getString("nickname") && "" != object1.getString("nickname")){
+				petuser.setNickname(object1.getString("nickname"));
+			}
+			if(null != object1.getString("phoneNumber") && "" != object1.getString("phoneNumber")){
+				petuser.setPhonenumber(object1.getString("phoneNumber"));
+			}
+			if(null != object1.getString("id") && "" != object1.getString("id")){
+				petuser.setId(object1.getString("id"));
+			}
+			if(null != object1.getString("createTime") && "" != object1.getString("createTime")){
+				petuser.setCreatetime(object1.getString("createTime"));
+			}
+			if(null != object1.getString("hobby") && "" != object1.getString("hobby")){
+				petuser.setHobby(object1.getString("hobby"));
+			}
+			if(null != object1.getString("gender") && "" != object1.getString("gender")){
+				petuser.setGender(object1.getString("gender"));
+			}
+			if(null != object1.getString("signature") && "" != object1.getString("signature")){
+				petuser.setSignature(object1.getString("signature"));
+			}
+			if(null != object1.getString("img") && "" != object1.getString("img")){
+				petuser.setImg(object1.getString("img"));
+			}
+		}
 		return petuser;
 	}
 

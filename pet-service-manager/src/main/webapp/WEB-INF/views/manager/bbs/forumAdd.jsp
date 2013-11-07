@@ -7,17 +7,17 @@
 	onsubmit="return validateCallback(this,dialogAjaxDone);">
 
 	<div class="pageContent">
-		<div class="pageFormContent" layoutH="80">
-			<fieldset>
+		<div class="pageFormContent" layoutH="50">
+			<fieldset style="height: 280px;">
 				<legend>创建圈子信息</legend>
 				<dl>
 					<dt>父级圈子:</dt>
-					<select class="combox" name="pid" >
+					<select class="combox" name="pid">
 						<option value="all">--请选择父级圈子--</option>
 						<c:forEach var="itr" items="${forums }">
-	  							<option value="${itr.id }">${itr.name }</option>
-	  					</c:forEach>
-					</select> 
+							<option value="${itr.id }">${itr.name }</option>
+						</c:forEach>
+					</select>
 				</dl>
 				<dl>
 					<dt>圈子名字：</dt>
@@ -34,7 +34,8 @@
 				<dl>
 					<dt>点击数量:</dt>
 					<dd>
-						<input type="text" name="clientCount" value="${forum.clientCount }" />
+						<input type="text" name="clientCount"
+							value="${forum.clientCount }" />
 					</dd>
 				</dl>
 				<dl>
@@ -45,11 +46,17 @@
 				</dl>
 				<dl>
 					<dt>圈子头像：</dt>
-					<dd>
-						<input type="text" name="logoImg" value="${forum.logoImg }" />
+					<dd >
+						<textarea style="width:130px;"  class="editor"
+							tools="Img" name="logoImg" cols="45" rows="4" 
+							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
+							upimgext="jpg,jpeg,gif,png" upflashext="swf"
+							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
+							${note2.content }
+						</textarea>
 					</dd>
 				</dl>
-			<!-- 			
+				<!-- 			
 				<dl><dt>选择地区:</dt>
 					<select class="combox" name="fatherid" ref="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">
 						<option value="all">--请选择国家--</option>

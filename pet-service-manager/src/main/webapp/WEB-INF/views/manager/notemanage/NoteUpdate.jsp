@@ -30,12 +30,12 @@
 						<select name="isDel">
 							<c:choose>
 								<c:when test="${note2.isDel }">
-									<option value="true">true</option>
 									<option value="false">false</option>
+									<option value="true">true</option>
 								</c:when>
 								<c:otherwise>
-									<option value="false">false</option>
 									<option value="true">true</option>
+									<option value="false">false</option>
 								</c:otherwise>
 							</c:choose>
 						</select>

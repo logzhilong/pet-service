@@ -23,6 +23,11 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 public class UpImgVo {
 	private Logger logger = LoggerFactory.getLogger(UpImgVo.class);
+	/**
+	 * 上传图片调用此类
+	 * @param req传入request获取File信息
+	 * @return
+	 */
 	@SuppressWarnings("deprecation")
 	public String upimg(HttpServletRequest req){
 		try {

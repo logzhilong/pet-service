@@ -116,6 +116,10 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if (fo != null && !"".equals(fo.getId())) {
 			logger.debug("selectByPK.po=" + fo.toString());
+			String img=forum.getLogoImg();
+			if( null != img && "" != img){
+				forum.setLogoImg(img.substring(img.indexOf("get")+4, 83));
+			}
 			return forumMapper.updateByPrimaryKeySelective(forum);
 		} else {
 			forum.setId(IDCreater.uuid());
@@ -126,6 +130,10 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			forum.setCb(user1.getName());
 			if ("all".equals(forum.getPid())) {
 				forum.setPid(null);
+			}
+			String img=forum.getLogoImg();
+			if( null != img && "" != img){
+			forum.setLogoImg(img.substring(img.indexOf("get")+4, 83));
 			}
 			return forumMapper.insertSelective(forum);
 		}
