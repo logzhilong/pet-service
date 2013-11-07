@@ -26,7 +26,7 @@ class PushXmpp :
 			 fromHeadImg="${fromHeadImg}"
 			 contentType="${contentType}"
 			 content="${content}"
-			 contenteID="${contentID}" 
+			 contentID="${contentID}" 
 			 picID="${picID}"
 		>
 			<body>${body}</body>

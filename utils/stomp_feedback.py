@@ -20,7 +20,7 @@ class Main :
 		conn.set_listener('',MyListener())
 		conn.start()
 		conn.connect(wait=True)
-		conn.subscribe( destination=('/topic/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
+		conn.subscribe( destination=('/queue/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
 		while True:
 			time.sleep(30)
 		conn.disconnect()
