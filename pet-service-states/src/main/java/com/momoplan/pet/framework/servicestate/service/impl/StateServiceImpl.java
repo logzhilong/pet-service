@@ -104,7 +104,8 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		logger.debug("获取全部好友的动态 userid="+userid);
 		logger.debug("1、获取好友列表");
 		JSONArray jsonArray = getFriendList(userid);
-		logger.debug("friend_list="+jsonArray.toString());
+		if(jsonArray!=null)
+			logger.debug("friend_list="+jsonArray.toString());
 		logger.debug("2、根据好友列表获取动态");
 		StatesUserStatesCriteria statesUserStatesCriteria = new StatesUserStatesCriteria();
 		StatesUserStatesCriteria.Criteria c1 = statesUserStatesCriteria.createCriteria();
