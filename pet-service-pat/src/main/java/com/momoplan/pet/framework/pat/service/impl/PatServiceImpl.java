@@ -34,11 +34,6 @@ import com.momoplan.pet.framework.pat.service.PatService;
 public class PatServiceImpl implements PatService {
 
 	private static Logger logger = LoggerFactory.getLogger(PatServiceImpl.class);
-	public static String XMPP_DOMAIN = "xmpp.domain";
-	public static String PET_PUSH_TO_XMPP = "pet_push_to_xmpp";
-	public static String SERVICE_URI_PET_USER = "service.uri.pet_user";
-	public static String MEDHOD_GET_USERINFO = "getUserinfo";
-
 	
 	private PatUserPatRepository patUserPatRepository = null;
 	private MapperOnCache mapperOnCache = null;

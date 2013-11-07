@@ -9,7 +9,7 @@ public enum ConditionType {
 	//=============================================
 	NOTE_NAME("帖子名称查找，默认","NOTE_NAME"),
 	I_CREATE("我发过的帖子","I_CREATE"),
-	I_REPLY("我回复过的帖子","I_REPLY");
+	I_REPLY("某人参与过回复的帖子","I_REPLY");
     private ConditionType(String name, String code) {
         this.name = name;  
         this.code = code;  
