@@ -88,6 +88,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 		return r;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T,K> T selectByPrimaryKey(Class<T> clazz,K pk) throws Exception {
 		RedisPool redisPool = SpringContextHolder.getBean(RedisPool.class);
 		ShardedJedis jedis = redisPool.getConn();
@@ -99,6 +100,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 			if(jedis!=null){
 				try {
 					json = jedis.get(cacheKey);
+					jedis.expire(cacheKey, EX_SECONDS);
 					logger.debug("cacheKey = "+cacheKey);
 				} catch (Exception e) {
 					logger.debug("连接缓存失败：" + e.getMessage());
@@ -110,6 +112,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 				if(t!=null && jedis!=null){
 					String j = myGson.toJson(t);
 					jedis.set(cacheKey, j);
+					jedis.setex(cacheKey, EX_SECONDS , j);
 				}
 				logger.debug("数据库取值 : " + t);
 			} else {

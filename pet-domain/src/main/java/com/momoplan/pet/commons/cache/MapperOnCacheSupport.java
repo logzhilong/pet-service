@@ -14,7 +14,9 @@ import com.momoplan.pet.commons.cache.utils.SpringContextHolder;
 public class MapperOnCacheSupport {
 
 	private static Logger logger = LoggerFactory.getLogger(MapperOnCacheSupport.class);
-
+	
+	protected static int EX_SECONDS = 60*60*24;//24小时
+	
 	protected Gson myGson = MyGson.getInstance();
 	
 	protected String getMapperName(Class<?> clazz) {
@@ -47,7 +49,7 @@ public class MapperOnCacheSupport {
 				}
 				json = myGson.toJson(t);
 				logger.debug("写入缓存"+method+" :  k="+cacheKey+" ; v="+json);
-				jedis.set(cacheKey, json);
+				jedis.setex(cacheKey, EX_SECONDS, json);
 				redisPool.closeConn(jedis);
 			}
 		}
