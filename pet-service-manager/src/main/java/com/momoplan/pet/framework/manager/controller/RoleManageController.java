@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.momoplan.pet.commons.domain.manager.po.MgrRole;
 import com.momoplan.pet.commons.domain.manager.po.MgrUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrUserRoleRel;
-import com.momoplan.pet.framework.manager.service.MgrUserService;
 import com.momoplan.pet.framework.manager.service.RoleManageService;
 import com.momoplan.pet.framework.manager.service.RoleUserManageService;
 import com.momoplan.pet.framework.manager.service.UserManageService;
@@ -47,6 +46,7 @@ public class RoleManageController {
 			return "/manager/rolemanage/roleManageList";
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error("rolemanageList"+e);
 			return "/manager/rolemanage/roleManageList";
 		}
 	}
@@ -150,12 +150,9 @@ public class RoleManageController {
 			model.addAttribute("mgrUsers", mgrUsers);
 			return "/manager/rolemanage/roleManageUserList";
 		} catch (Exception e) {
+			logger.error("Torolemanageuserlist"+e);
 			e.printStackTrace();
 			return "/manager/rolemanage/roleManageUserList";
 		}
 	}
-	
-	
-	
-	
 }

@@ -159,7 +159,7 @@ public class NoteRepository implements CacheKeysConstance{
 		String key = LIST_NOTE_TOTALCOUNT+forumId;
 		try{
 			jedis = redisPool.getConn();
-			Long total = -1L;
+			Long total = 0L;
 			try{
 				total = jedis.llen(key);
 			}catch(Exception e){}
@@ -174,7 +174,7 @@ public class NoteRepository implements CacheKeysConstance{
 		}finally{
 			redisPool.closeConn(jedis);
 		}
-		return -1L;
+		return 0L;
 	}
 	
 	
@@ -217,7 +217,7 @@ public class NoteRepository implements CacheKeysConstance{
 		}finally{
 			redisPool.closeConn(jedis);
 		}
-		return -1L;
+		return 0L;
 	}
 	
 	/**
@@ -231,14 +231,15 @@ public class NoteRepository implements CacheKeysConstance{
 		try{
 			jedis = redisPool.getConn();
 			String key = LIST_NOTE_TOP+fid;
-			if(!jedis.exists(key)){
+			if(!jedis.exists(key)||jedis.llen(key)<1){
+				jedis.del(key);
 				// 获取置顶帖子
 				NoteCriteria noteCriteria1 = new NoteCriteria();
 				noteCriteria1.setMysqlOffset(0);
 				noteCriteria1.setMysqlLength(5);
 				noteCriteria1.setOrderByClause("ct desc");
 				NoteCriteria.Criteria criteria1 = noteCriteria1.createCriteria();
-				if (!fid.equals("0")) {
+				if (!"0".equals(fid)) {
 					criteria1.andForumIdEqualTo(fid);
 				}
 				criteria1.andIsTopEqualTo(true);
@@ -266,4 +267,47 @@ public class NoteRepository implements CacheKeysConstance{
 		}
 		return null;
 	}
+	
+	public Long getClickCount(String noteId,Long min){
+		ShardedJedis jedis = null;
+		String key = LIST_NOTE_CLICK_COUNT+noteId;
+		try{
+			jedis = redisPool.getConn();
+			if(!jedis.exists(key)||jedis.llen(key)<1){
+				updateClickCount(noteId,min);
+			}
+			return jedis.llen(key);
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+		return min+1;
+	}
+	
+	/**
+	 * 更新帖子的点击次数，从指定值开始
+	 * @param noteId
+	 * @param start
+	 */
+	public void updateClickCount(String noteId,Long min){
+		ShardedJedis jedis = null;
+		String key = LIST_NOTE_CLICK_COUNT+noteId;
+		try{
+			jedis = redisPool.getConn();
+			Long end = 1L;
+			if(!jedis.exists(key)||jedis.llen(key)<1){
+				end = min;
+			}
+			for(long s=0;s<end;s++){
+				jedis.lpush(key, "1");
+			}
+			logger.debug("更新点击次数： key="+key+" end="+end);
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}finally{
+			redisPool.closeConn(jedis);
+		}
+	}
+	
 }

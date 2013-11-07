@@ -14,6 +14,7 @@
     <result column="TYPE" property="type" jdbcType="VARCHAR" />
     <result column="CT" property="ct" jdbcType="TIMESTAMP" />
     <result column="ET" property="et" jdbcType="TIMESTAMP" />
+    <result column="RT" property="rt" jdbcType="TIMESTAMP" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.momoplan.pet.commons.domain.bbs.po.Note" extends="BaseResultMap" >
     <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
@@ -78,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List" >
     ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, IS_DEL, STATE, TYPE, 
-    CT, ET
+    CT, ET, RT
   </sql>
   <sql id="Blob_Column_List" >
     CONTENT
@@ -136,9 +137,9 @@
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
     insert into BBS_NOTE (ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, 
-      IS_DEL, STATE, TYPE, CT, ET, CONTENT)
+      IS_DEL, STATE, TYPE, CT, ET, RT, CONTENT)
     values (#{id}, #{forumId}, #{userId}, #{name}, #{clientCount}, #{isEute}, #{isTop}, 
-      #{isDel}, #{state}, #{type}, #{ct}, #{et}, #{content})
+      #{isDel}, #{state}, #{type}, #{ct}, #{et}, #{rt}, #{content})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
     insert into BBS_NOTE
@@ -178,6 +179,9 @@
       </if>
       <if test="et != null" >
         ET,
+      </if>
+      <if test="rt != null" >
+        RT,
       </if>
       <if test="content != null" >
         CONTENT,
@@ -219,6 +223,9 @@
       </if>
       <if test="et != null" >
         #{et},
+      </if>
+      <if test="rt != null" >
+        #{rt},
       </if>
       <if test="content != null" >
         #{content},
@@ -270,6 +277,9 @@
       <if test="record.et != null" >
         ET = #{record.et},
       </if>
+      <if test="record.rt != null" >
+        RT = #{record.rt},
+      </if>
       <if test="record.content != null" >
         CONTENT = #{record.content},
       </if>
@@ -292,6 +302,7 @@
       TYPE = #{record.type},
       CT = #{record.ct},
       ET = #{record.et},
+      RT = #{record.rt},
       CONTENT = #{record.content}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -310,7 +321,8 @@
       STATE = #{record.state},
       TYPE = #{record.type},
       CT = #{record.ct},
-      ET = #{record.et}
+      ET = #{record.et},
+      RT = #{record.rt}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -351,6 +363,9 @@
       <if test="et != null" >
         ET = #{et},
       </if>
+      <if test="rt != null" >
+        RT = #{rt},
+      </if>
       <if test="content != null" >
         CONTENT = #{content},
       </if>
@@ -370,6 +385,7 @@
       TYPE = #{type},
       CT = #{ct},
       ET = #{et},
+      RT = #{rt},
       CONTENT = #{content}
     where ID = #{id}
   </update>
@@ -385,7 +401,8 @@
       STATE = #{state},
       TYPE = #{type},
       CT = #{ct},
-      ET = #{et}
+      ET = #{et},
+      RT = #{rt}
     where ID = #{id}
   </update>
 </mapper>

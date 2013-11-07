@@ -42,6 +42,7 @@ public class BaseSessionInitializationStrategy implements SessionAuthenticationS
 				MgrUser user = mgrUserService.getMgrUserByName(userName);
 				List<MgrRole> roles = mgrUserService.getRoleByUserId(user.getId());
 				cu = new WebUser();
+				logger.debug(cu.toString());
 				BeanUtils.copyProperties(user, cu);
 				cu.setRoles(roles);
 				SessionManager.initSession(request, cu, true);

@@ -30,10 +30,9 @@ public class SendNoteHandler extends AbstractHandler {
 			note.setForumId(PetUtil.getParameter(clientRequest,"forumId"));
 			note.setName(PetUtil.getParameter(clientRequest, "name"));
 			note.setContent(PetUtil.getParameter(clientRequest, "content"));
-			
-			Object object=noteService.sendNote(note);
+			String id=noteService.sendNote(note);
 			logger.debug("发帖成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,object).toString();
+			rtn = new Success(true,id).toString();
 		}catch(Exception e){
 			logger.error("发帖失败 body="+gson.toJson(clientRequest));
 			logger.error("sendNote : ",e);

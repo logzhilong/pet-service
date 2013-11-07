@@ -161,17 +161,13 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 				});
 				logger.debug("****** 请检查排序结果");
 				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				int f = pageNo*pageSize;
-				int t = (pageNo+1)*pageSize;
-				if(f>reslist.size())
+				int start = pageNo*pageSize;
+				int end = start+pageSize;
+				if(start>reslist.size())
 					return null;
-				if(t>reslist.size())
-					t = reslist.size();
-				reslist.subList(f,t);
+				if(end>reslist.size())
+					end = reslist.size();
+				reslist.subList(start,end);
 			}
 			return reslist;
 		}catch(Exception e){

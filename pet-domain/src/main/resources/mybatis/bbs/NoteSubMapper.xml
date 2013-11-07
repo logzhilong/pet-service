@@ -8,6 +8,8 @@
     <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
     <result column="CT" property="ct" jdbcType="TIMESTAMP" />
     <result column="AREA" property="area" jdbcType="VARCHAR" />
+    <result column="STATE" property="state" jdbcType="VARCHAR" />
+    <result column="SEQ" property="seq" jdbcType="INTEGER" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.momoplan.pet.commons.domain.bbs.po.NoteSub" extends="BaseResultMap" >
     <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
@@ -71,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    ID, PID, NOTE_ID, USER_ID, CT, AREA
+    ID, PID, NOTE_ID, USER_ID, CT, AREA, STATE, SEQ
   </sql>
   <sql id="Blob_Column_List" >
     CONTENT
@@ -128,8 +130,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteSub" >
-    insert into BBS_NOTE_SUB (ID, PID, NOTE_ID, USER_ID, CT, AREA, CONTENT)
-    values (#{id}, #{pid}, #{noteId}, #{userId}, #{ct}, #{area}, #{content})
+    insert into BBS_NOTE_SUB (ID, PID, NOTE_ID, USER_ID, CT, AREA, STATE, SEQ, CONTENT
+      )
+    values (#{id}, #{pid}, #{noteId}, #{userId}, #{ct}, #{area}, #{state}, #{seq}, #{content}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.NoteSub" >
     insert into BBS_NOTE_SUB
@@ -151,6 +155,12 @@
       </if>
       <if test="area != null" >
         AREA,
+      </if>
+      <if test="state != null" >
+        STATE,
+      </if>
+      <if test="seq != null" >
+        SEQ,
       </if>
       <if test="content != null" >
         CONTENT,
@@ -174,6 +184,12 @@
       </if>
       <if test="area != null" >
         #{area},
+      </if>
+      <if test="state != null" >
+        #{state},
+      </if>
+      <if test="seq != null" >
+        #{seq},
       </if>
       <if test="content != null" >
         #{content},
@@ -207,6 +223,12 @@
       <if test="record.area != null" >
         AREA = #{record.area},
       </if>
+      <if test="record.state != null" >
+        STATE = #{record.state},
+      </if>
+      <if test="record.seq != null" >
+        SEQ = #{record.seq},
+      </if>
       <if test="record.content != null" >
         CONTENT = #{record.content},
       </if>
@@ -223,6 +245,8 @@
       USER_ID = #{record.userId},
       CT = #{record.ct},
       AREA = #{record.area},
+      STATE = #{record.state},
+      SEQ = #{record.seq},
       CONTENT = #{record.content}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -235,7 +259,9 @@
       NOTE_ID = #{record.noteId},
       USER_ID = #{record.userId},
       CT = #{record.ct},
-      AREA = #{record.area}
+      AREA = #{record.area},
+      STATE = #{record.state},
+      SEQ = #{record.seq}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -258,6 +284,12 @@
       <if test="area != null" >
         AREA = #{area},
       </if>
+      <if test="state != null" >
+        STATE = #{state},
+      </if>
+      <if test="seq != null" >
+        SEQ = #{seq},
+      </if>
       <if test="content != null" >
         CONTENT = #{content},
       </if>
@@ -271,6 +303,8 @@
       USER_ID = #{userId},
       CT = #{ct},
       AREA = #{area},
+      STATE = #{state},
+      SEQ = #{seq},
       CONTENT = #{content}
     where ID = #{id}
   </update>
@@ -280,7 +314,9 @@
       NOTE_ID = #{noteId},
       USER_ID = #{userId},
       CT = #{ct},
-      AREA = #{area}
+      AREA = #{area},
+      STATE = #{state},
+      SEQ = #{seq}
     where ID = #{id}
   </update>
 </mapper>

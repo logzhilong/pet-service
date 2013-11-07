@@ -58,6 +58,7 @@ public class ConfigManagerController {
 		        model.addAttribute("configlist", configlist);
 			return "/manager/configmanager/comManageList";
 		} catch (Exception e) {
+			logger.error("ConfigGetCommonList"+e);
 		e.printStackTrace();
 		return  "/manager/configmanager/comManageList";
 		}
@@ -77,10 +78,10 @@ public class ConfigManagerController {
 				String valu=configManager.getProperty(key);
 				model.addAttribute("valu", valu);
 				model.addAttribute("key", key);
-				
 				return "/manager/configmanager/commanageUpdate";
 			}
 		} catch (Exception e) {
+			logger.error("ToConfigconfigmanageraveOrUpdate"+e);
 			e.printStackTrace();
 			return "/manager/configmanager/commanageUpdate";
 		}
@@ -111,6 +112,7 @@ public class ConfigManagerController {
 				}
 			}
 		} catch (Exception e) {
+			logger.error("ConfigconfigmanageraveOrUpdate"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
@@ -137,6 +139,7 @@ public class ConfigManagerController {
 				configManager.deleteProperty(key);
 			}
 		} catch (Exception e) {
+			logger.error("ConfigCommonDel"+e);
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}

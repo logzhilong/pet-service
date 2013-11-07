@@ -1,9 +1,49 @@
 package com.momoplan.pet.framework.bbs.service;
 
-import com.momoplan.pet.commons.bean.ClientRequest;
+import java.util.List;
+
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.framework.bbs.vo.Action;
+import com.momoplan.pet.framework.bbs.vo.ConditionType;
+import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 public interface NoteService {
+
+	/**
+	 * 查看帖子详情
+	 * @param 帖子id
+	 * @return
+	 * @throws Exception
+	 */
+	public NoteVo getNoteById(String id) throws Exception;
+
+	/**
+	 * 更新帖子点击数
+	 * @param ClientRequest
+	 * @return
+	 */
+	public void updateClickCount(String noteId) throws Exception;
+
+	/**
+	 * 获取帖子点击次数
+	 * @param noteId
+	 * @return
+	 * @throws Exception
+	 */
+	public Long getClientCount(String noteId) throws Exception;
+	
+	/**
+	 * 获取帖子列表
+	 * @param forumid 圈子ID
+	 * @param action 动作 "action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
+	 * @param condition 查询条件
+	 * @param withTop 是否带置顶
+	 * @param pageno 
+	 * @param pagesize
+	 * @return
+	 * @throws Exception
+	 */
+	public List<NoteVo> getNoteList(String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageno,int pagesize) throws Exception;
 
 	/**
 	 * 发送帖子
@@ -12,95 +52,6 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object sendNote(Note note) throws Exception;
- 
-	 /**
-	  * 根据帖子name搜索
-	  * @param note
-	  * forumid圈子id(如果为0标识全站搜索否则为某圈子内搜索),notename帖子名称
-	  * @param pageNo
-	  * @param pageSize
-	  * @return
-	  * @throws Exception
-	  */
-	public Object searchNote(Note note,int pageNo,int pageSize) throws Exception;
+	public String sendNote(Note note) throws Exception;
 
-	/**
-	 * 查看帖子详情
-	 * @param 帖子id
-	 * @return
-	 * @throws Exception
-	 */
-	public Object detailNote(String id) throws Exception;
-
-	/**
-	 * 删除帖子
-	 * 
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object delNote(ClientRequest ClientRequest) throws Exception ;
-
-
-	/**
-	 * 根据id举报帖子
-	 * @param noteid帖子id
-	 * @return
-	 * @throws Exception
-	 */
-	public Object reportNote(String noteid) throws Exception;
-	
-	
-	
-	/**
-	 * 更新帖子点击数
-	 * @param ClientRequest
-	 * @return
-	 */
-	public Object updateClickCount(ClientRequest ClientRequest) throws Exception;
-	
-	/**
-	 * 我发表过的帖子列表
-	 * 
-	 */
-	public Object getMyNotedListByuserid(ClientRequest ClientRequest) throws Exception;
-	
-	/**
-	 * 某圈子今日新增帖子列表
-	 * @param fid圈子id(fid为0则是全站搜索,否则某圈子内部搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getTodayNewNoteListByFid(String fid,int pageNo,int pageSize)throws Exception;
-	/**
-	 * 某圈子最新帖子
-	 * @param forumid圈子id(如果为0 则全站搜索否则圈子内部搜索)
-	 * @param pageno
-	 * @param pagesize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object newNoteByFid(String forumid,int pageno,int pagesize) throws Exception;
-	/**
-	 * 获取精华
-	 * @param fid圈子id(为0则全站搜索否则某圈子内搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getEuteNoteList(String fid,int pageNo,int pageSize) throws Exception;
-	
-	/**
-	 * 获取最新回复
-	 * @param fid圈子id(为0则全站否走某圈子内搜索)
-	 * @param pageNo
-	 * @param pageSize
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getNewReplysByReplyct(String fid,int pageNo,int pageSize) throws Exception;
-	
 }

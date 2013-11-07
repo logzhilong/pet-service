@@ -15,8 +15,10 @@
 				</div>
 				<c:forEach items="${forumss }" var="itm" varStatus="idx">
 					<tr target="id" rel="${itm.id }">
-						<li><a title="${itm.name }" href="${ctx }/manager/bbs/forumrightmanagelist.html?id=${itm.id}" rel="jbsxBox1" target="ajax">${itm.name}
+						<li>
+							<a title="${itm.name }" href="${ctx }/manager/bbs/forumrightmanagelist.html?id=${itm.id}" rel="jbsxBox1" target="ajax">${itm.name}
 							</a>
+							
 						</li>
 					</tr>
 				</c:forEach>

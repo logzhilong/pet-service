@@ -27,11 +27,10 @@ public class AttentionForumHandler extends AbstractHandler {
 		try{
 			UserForumRel userForumRel=new UserForumRel();
 			userForumRel.setUserId(PetUtil.getParameter(clientRequest, "userId"));
-			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumid"));
-			
-		Object object=userForumRelService.attentionForum(userForumRel);
+			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumId"));
+			userForumRelService.attentionForum(userForumRel);
 			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,object).toString();
+			rtn = new Success(true,"OK").toString();
 		}catch(Exception e){
 			logger.error("关注圈子失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);

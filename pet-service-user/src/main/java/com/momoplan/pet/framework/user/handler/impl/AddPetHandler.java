@@ -43,7 +43,7 @@ public class AddPetHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			String token = clientRequest.getToken();
-			String userid = getToken(token).getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			PetInfo petInfo = revicePetInfo(clientRequest);
 			petInfo.setUserid(userid);
 			logger.debug(petInfo.toString());

@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-26 12:09:32
+* @date 2013-11-04 12:25:53
 */
 public class Note implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -40,6 +40,8 @@ public class Note implements Serializable {
     private Date ct;
 
     private Date et;
+
+    private Date rt;
 
     private String content;
 
@@ -139,6 +141,14 @@ public class Note implements Serializable {
         this.et = et;
     }
 
+    public Date getRt() {
+        return rt;
+    }
+
+    public void setRt(Date rt) {
+        this.rt = rt;
+    }
+
     public String getContent() {
         return content;
     }
@@ -171,6 +181,7 @@ public class Note implements Serializable {
             && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()))
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getEt() == null ? other.getEt() == null : this.getEt().equals(other.getEt()))
+            && (this.getRt() == null ? other.getRt() == null : this.getRt().equals(other.getRt()))
             && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()));
     }
 
@@ -190,6 +201,7 @@ public class Note implements Serializable {
         result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getEt() == null) ? 0 : getEt().hashCode());
+        result = prime * result + ((getRt() == null) ? 0 : getRt().hashCode());
         result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
         return result;
     }

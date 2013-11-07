@@ -9,27 +9,29 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
-
-@Component("findOneState")
-public class FindOneStateHandler extends AbstractHandler{
-	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
+/**
+ * 获取用户动态，根据动态ID
+ * @author liangc
+ */
+@Component("getUserStateById")
+public class GetUserStateByIdHandler extends AbstractHandler{
+	
+	private static Logger logger = LoggerFactory.getLogger(GetUserStateByIdHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String userid = authenticationToken.getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			StatesUserStatesVo vo = stateService.findOneState(userid,stateid);
 			rtn = new Success(true,vo).toString();
 			logger.debug("获取一条动态 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("获取一条动态 失败 body="+gson.toJson(clientRequest));
-			logger.error("findOneState : ",e);
+			logger.error("getUserStateById : ",e);
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);

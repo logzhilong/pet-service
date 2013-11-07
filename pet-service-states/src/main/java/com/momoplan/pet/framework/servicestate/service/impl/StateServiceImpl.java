@@ -180,16 +180,28 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 
 	@Override
 	public List<StatesUserStatesVo> getUserStates(String userid, int pageSize, int pageNo, boolean isSelf) throws Exception {
-		List<StatesUserStatesVo> resList = new ArrayList<StatesUserStatesVo>();
+		List<StatesUserStatesVo> resList = null;
 		List<StatesUserStates> list = null;
 		if(isSelf){
 			logger.debug("取自己的动态，不区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, pageSize, pageNo);
+			logger.debug("----------------------------");
+			logger.debug("分页 pageSize="+pageSize+" ; pageNo="+pageNo);
+			logger.debug("----------------------------");
+			if(list==null){
+				logger.debug("结果集为空");
+				return null;
+			}
 			logger.debug("结果集大小 list.size="+list.size());
 		}else{
 			logger.debug("取好友的动态，要区分状态");
 			list = statesUserStatesRepository.getStatesUserStatesListByUserid(userid, Integer.MAX_VALUE, 0);
+			if(list==null){
+				logger.debug("结果集为空");
+				return null;
+			}
 			logger.debug("结果集大小 list.size="+list.size());
+			
 			List<StatesUserStates> list2 = new ArrayList<StatesUserStates>();
 			//TODO 目前都取出来，在本地分页吧，数据多时，需要创建缓冲区
 			for(StatesUserStates states : list){
@@ -201,15 +213,21 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			if(list2!=null&&list2.size()>0){
 				int start = pageNo*pageSize>list2.size()?list2.size():pageNo*pageSize;
 				int end = pageSize*(pageNo+1)>list2.size()?list2.size():pageSize*(pageNo+1);
-				list2.subList(start, end);
+				logger.debug("----------------------------");
+				logger.debug("分页 start="+start+" ; end="+end);
+				logger.debug("----------------------------");
+				list2 = list2.subList(start, end);
 			}
 			list.clear();
 			list.addAll(list2);
 		}
-		JSONObject userJson = getUserinfo(userid);
-		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
-		userMap.put(userid, userJson);
-		buildStatesUserStatesVoList(list,resList,userMap,userid);
+		if(list!=null){
+			resList = new ArrayList<StatesUserStatesVo>();
+			JSONObject userJson = getUserinfo(userid);
+			Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();
+			userMap.put(userid, userJson);
+			buildStatesUserStatesVoList(list,resList,userMap,userid);
+		}
 		return resList;
 	}
 	
@@ -221,16 +239,27 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		reply.setCt(new Date());
 		statesUserStatesReplyRepository.insertSelective(reply);
 		String puserid = reply.getPuserid();
-		if(StringUtils.isEmpty(puserid)){
-			StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, reply.getStateid());
-			puserid = states.getUserid();
-			logger.debug("回复动态：puserid="+puserid);
-		}else{
-			logger.debug("回复回复：puserid="+puserid);
+		StatesUserStates states = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, reply.getStateid());
+		pushMsg2XMPP(reply.getUserid(), states.getUserid(), states, reply);
+		if(StringUtils.isNotEmpty(puserid)){
+			pushMsg2XMPP(reply.getUserid(), puserid, states, reply);
 		}
+		return reply.getId();
+	}
+	
+	private void pushMsg2XMPP(String fuid,String tuid,StatesUserStates states,StatesUserStatesReply reply){
 		try{
+//			回复：
+//			msgType=reply
+//			contentType=topic/dynamic
+//			content=
+//				tipic:帖子标题
+//				dynamic:动态前10个字
+//			contentID=帖子/动态 ID
+//			picID=动态图片，帖子无图片
+//			body=回复内容
 			JSONObject fromUserJson = getUserinfo(reply.getUserid());
-			JSONObject toUserJson = getUserinfo(puserid);
+			JSONObject toUserJson = getUserinfo(tuid);
 			logger.debug("from_user="+fromUserJson.toString());
 			logger.debug("to_user="+toUserJson.toString());
 			JSONObject jsonObj = new JSONObject();
@@ -241,7 +270,15 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			jsonObj.put("msgtime", reply.getCt().getTime());
 			jsonObj.put("fromNickname",fromUserJson.get("nickname"));
 			jsonObj.put("fromHeadImg", fromUserJson.get("img"));
+
+			jsonObj.put("contentType", "dynamic");
+			jsonObj.put("contentID", states.getId());
+			if(states.getImgid()!=null&&!"".equals(states.getImgid())){
+				jsonObj.put("picID", states.getImgid());
+			}
+			jsonObj.put("content",states.getMsg().length()>10?states.getMsg().substring(0, 10):states.getMsg());
 			jsonObj.put("body", reply.getMsg());
+			
 			TextMessage tm = new ActiveMQTextMessage();
 			tm.setText(jsonObj.toString());
 			ActiveMQQueue queue = new ActiveMQQueue();
@@ -250,9 +287,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 			logger.debug("queue_name="+Constants.PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
 		}catch(Exception e){
 			logger.error("send message",e);
-			throw e;
 		}
-		return reply.getId();
 	}
 	
 	/**

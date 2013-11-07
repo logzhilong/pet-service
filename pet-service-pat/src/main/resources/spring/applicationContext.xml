@@ -15,6 +15,7 @@
 				<value>classpath:properties/application-db.properties</value>
 				<value>classpath:properties/zoo.properties</value>
 				<value>classpath:properties/cache.properties</value>
+				<value>classpath:properties/jms.properties</value>
 			</list>
 	  	</constructor-arg>
   	</bean>
@@ -49,8 +50,10 @@
 
 	<import resource="classpath:spring/applicationContext-mybatis-transaction.xml"/>
 
+	<import resource="applicationContext-jms.xml"/>
+
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="classpath:spring/applicationContext-mybatis-pat.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-user.xml"/>
-
+	<import resource="classpath:spring/applicationContext-mybatis-states.xml"/>
 </beans>

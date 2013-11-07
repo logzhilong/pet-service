@@ -23,7 +23,8 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
  */
 @Component("getAllFriendStates")
 public class GetAllFriendStatesHandler extends AbstractHandler {
-	private Logger logger = LoggerFactory.getLogger(AddUserStateHandler.class);
+	
+	private static Logger logger = LoggerFactory.getLogger(GetAllFriendStatesHandler.class);
 
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {

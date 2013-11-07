@@ -22,11 +22,9 @@
 				-->
 						<dt>
 							名称:<input type="text" name="name" value="${myForm.name }"/>
-							<div class="buttonActive">
-								<div class="buttonContent">
+							
 									<button type="submit">搜索</button>
-								</div>
-							</div>
+								
 						</dt>
 					</form>
 				</td>
@@ -75,7 +73,6 @@
 			-->
 				<th width="150" align="center" >创建时间</th>
 				<th width="80" align="center" >创建人</th>
-				<th width="80" align="center" >序号</th>
 			</tr>
 		</thead>
 		<tbody id="alertListTbody" >
@@ -90,11 +87,10 @@
 					<td>${itm.descript }</td>
 					<td>${itm.clientCount }</td>
 					<td>${itm.replyCount }</td>
+					<td><fmt:formatDate value="${itm.ct }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+					<td>${itm.cb }</td>
 <%-- 				<td>${itm.areaCode }</td>
 					<td>${itm.areaDesc }</td> --%>
-					<td>${itm.ct }</td>
-					<td>${itm.cb }</td>
-					<td>${itm.seq }</td>
 				</tr>
 			</c:forEach>
 		</tbody>

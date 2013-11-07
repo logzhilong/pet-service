@@ -21,9 +21,9 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
  *
  */
 @Component("getUserState")
-public class GetUserStateViewHandler extends AbstractHandler {
+public class GetUserStateListHandler extends AbstractHandler {
 
-	private Logger logger = LoggerFactory.getLogger(GetUserStateViewHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(GetUserStateListHandler.class);
 
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
@@ -40,10 +40,9 @@ public class GetUserStateViewHandler extends AbstractHandler {
 			logger.debug("获取[好友/个人]动态 成功 body=" + gson.toJson(clientRequest));
 		} catch (Exception e) {
 			logger.debug("获取[好友/个人]动态 失败 body=" + gson.toJson(clientRequest));
-			logger.error("getAllFriendStates : ", e);
+			logger.error("获取动态列表 : ", e);
 			rtn = new Success(false, e.getMessage()).toString();
 		} finally {
-			logger.debug(rtn);
 			writeStringToResponse(rtn, response);
 		}
 	}

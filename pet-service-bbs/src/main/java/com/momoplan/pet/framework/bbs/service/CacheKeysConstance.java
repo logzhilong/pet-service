@@ -33,4 +33,14 @@ public interface CacheKeysConstance {
 	 */
 	public static final String LIST_NOTE_SUB = "service_bbs.list.note_sub:";
 	
+	/**
+	 * 帖子的举报记录， HASH_NOTE_REPORT + noteId
+	 */
+	public static final String HASH_NOTE_REPORT = "service_bbs.hash.note_report:";
+
+	/**
+	 * 帖子回复的举报记录， HASH_REPLY_REPORT + replyId
+	 */
+	public static final String HASH_REPLY_REPORT = "service_bbs.hash.reply_report:";
+
 }
