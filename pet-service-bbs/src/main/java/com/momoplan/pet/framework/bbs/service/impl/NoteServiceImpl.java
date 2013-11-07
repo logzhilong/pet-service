@@ -170,9 +170,13 @@ public class NoteServiceImpl implements NoteService {
 		String uid = note.getUserId();
 		String nid = note.getId();
 		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-		vo.setNickname(user.getNickname());
-		vo.setUserIcon(user.getImg());
-		vo.setClientCount(getClientCount(note.getId()));//from redis list len
+		if(user!=null){
+			vo.setNickname(user.getNickname());
+			vo.setUserIcon(user.getImg());
+			vo.setClientCount(getClientCount(note.getId()));//from redis list len
+		}else{
+			logger.debug("不存在的用户 USER_ID="+uid);
+		}
 		Long totalReply = noteSubRepository.totalReply(nid);
 		vo.setTotalReply(totalReply);
 		return vo;
