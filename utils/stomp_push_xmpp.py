@@ -29,7 +29,9 @@ class PushXmpp :
 			 contentID="${contentID}" 
 			 picID="${picID}"
 		>
-			<body>${body}</body>
+			<body>
+				<![CDATA[${body}]]>
+			</body>
 		</message>
 		'''
 	def __init__(self,param):
@@ -41,6 +43,8 @@ class PushXmpp :
 			log.debug("revice param = %s" % self.param)
 			p = json.loads(self.param)
 			template = string.Template(self.msg_tmp)
+			if p.has_key('picID') == False :
+				p['picID'] = ''
 			self.msg = template.safe_substitute(p)
 		except:
 			exstr = traceback.format_exc()
