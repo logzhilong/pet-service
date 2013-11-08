@@ -12,6 +12,7 @@ import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPat;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 /**
  * 用户的赞操作
  * @author liangc
@@ -84,7 +85,6 @@ public class PatUserPatRepository implements CacheKeysConstance{
 			logger.debug("赞:key="+key+" ; val="+val);
 			storePool.set(key, val);
 		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}
 	}

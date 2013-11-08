@@ -12,15 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.Jedis;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 /**
  * 用户动态后台存储对象
  * @author liangc
@@ -29,17 +30,18 @@ import com.momoplan.pet.commons.domain.states.po.StatesUserStatesCriteria;
 public class StatesUserStatesRepository implements CacheKeysConstance{
 	
 	private static Logger logger = LoggerFactory.getLogger(StatesUserStatesRepository.class);
+	private static Gson gson = MyGson.getInstance();
 	
-	private RedisPool redisPool= null;
-	
+	private StorePool storePool= null;
 	private MapperOnCache mapperOnCache = null;
-	private Gson gson = MyGson.getInstance();
 	private StatesUserStatesMapper statesUserStatesMapper = null;
 	
 	@Autowired
-	public StatesUserStatesRepository(RedisPool redisPool, MapperOnCache mapperOnCache, StatesUserStatesMapper statesUserStatesMapper) {
+	public StatesUserStatesRepository(StorePool storePool,
+			MapperOnCache mapperOnCache,
+			StatesUserStatesMapper statesUserStatesMapper) {
 		super();
-		this.redisPool = redisPool;
+		this.storePool = storePool;
 		this.mapperOnCache = mapperOnCache;
 		this.statesUserStatesMapper = statesUserStatesMapper;
 	}
@@ -51,10 +53,10 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 	 */
 	public void insertSelective(StatesUserStates po)throws Exception{
 		mapperOnCache.insertSelective(po, po.getId());
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		String uid = po.getUserid();
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String key = HASH_USER_STATES+uid;
 			String field = po.getId();
 			String value = gson.toJson(po);
@@ -64,7 +66,7 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
@@ -75,10 +77,10 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 	 */
 	public void updateSelective(StatesUserStates po)throws Exception{
 		mapperOnCache.updateByPrimaryKey(po, po.getId());
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		String uid = po.getUserid();
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String key = HASH_USER_STATES+uid;
 			String field = po.getId();
 			String value = gson.toJson(po);
@@ -88,7 +90,7 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("updateSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
@@ -96,10 +98,10 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 	public void delete(String id) throws Exception{
 		StatesUserStates po = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, id);
 		mapperOnCache.deleteByPrimaryKey(StatesUserStates.class, id);
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		String uid = po.getUserid();
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String key = HASH_USER_STATES+uid;
 			String field = po.getId();
 			logger.debug("删除缓存 key="+key);
@@ -108,7 +110,7 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("delete",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
@@ -121,9 +123,9 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 	 */
 	public List<StatesUserStates> getStatesUserStatesListByUserid(String uid,int pageSize,int pageNo){
 		String key = HASH_USER_STATES+uid;
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			boolean hasCache = jedis.exists(key)&&jedis.hlen(key)>0;
 			if(!hasCache){
 				//初始化用户动态缓存列表
@@ -174,7 +176,7 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return null;
 	}

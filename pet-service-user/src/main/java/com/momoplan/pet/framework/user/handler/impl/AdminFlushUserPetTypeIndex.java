@@ -43,9 +43,10 @@ public class AdminFlushUserPetTypeIndex extends AbstractHandler {
 			String _pwd = getParameter(clientRequest, "pwd");
 			String keys = UserService.USERID_PETTYPE_INDEX;
 			if(!PWD.equals(_pwd)){
-				logger.debug("口令错误，暂时不校验口令");
+				String m = "错误的口令 pwd="+_pwd;
+				logger.debug(m);
+				throw new Exception(m);
 			}
-			
 			PetInfoCriteria petInfoCriteria = new PetInfoCriteria();
 			if(_uid!=null&&!"all".equalsIgnoreCase(_uid)){
 				petInfoCriteria.createCriteria().andUseridEqualTo(_uid);

@@ -6,7 +6,7 @@ import org.json.JSONArray;
 
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
-import com.momoplan.pet.framework.user.CacheKeysConstance;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 import com.momoplan.pet.framework.user.vo.UserVo;
 
 /**

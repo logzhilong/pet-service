@@ -43,7 +43,9 @@ public class AdminFlushSearchUserIndex extends AbstractHandler {
 			String _pwd = getParameter(clientRequest, "pwd");
 			String keys = UserService.SEARCH_USER_INDEX;
 			if(!PWD.equals(_pwd)){
-				logger.debug("口令错误，暂时不校验口令");
+				String m = "错误的口令 pwd="+_pwd;
+				logger.debug(m);
+				throw new Exception(m);
 			}
 			SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
 			if(_uid!=null&&!"all".equalsIgnoreCase(_uid)){

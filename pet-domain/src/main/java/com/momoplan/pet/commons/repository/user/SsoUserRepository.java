@@ -11,62 +11,62 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.ShardedJedis;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.mapper.SsoUserMapper;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.domain.user.po.SsoUserCriteria;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 
 public class SsoUserRepository implements CacheKeysConstance {
 
 	private static Logger logger = LoggerFactory.getLogger(SsoUserRepository.class);
+	private static Gson gson = MyGson.getInstance();
 
-	@Autowired
-	private RedisPool redisPool= null;
-	@Autowired
 	private MapperOnCache mapperOnCache = null;
-	@Autowired
 	private SsoUserMapper ssoUserMapper = null;
-	private Gson gson = MyGson.getInstance();
-	@Autowired
 	private StorePool storePool = null;
+	
+	@Autowired
+	public SsoUserRepository(MapperOnCache mapperOnCache,
+			SsoUserMapper ssoUserMapper, StorePool storePool) {
+		super();
+		this.mapperOnCache = mapperOnCache;
+		this.ssoUserMapper = ssoUserMapper;
+		this.storePool = storePool;
+	}
 
 	public SsoUser getSsoUserByName(String username) {
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
-			String useridStr = null;
-			try{
-				useridStr = jedis.hget(CF_INDEX_USER_USERNAME, username);
-			}catch(Exception e){
-				logger.debug(username+" login error [hget]: "+e.getMessage());
-			}
-			if(StringUtils.isEmpty(useridStr)){
+			jedis = storePool.getConn();
+			String index = SEARCH_USER_INDEX+"*:"+username+"*";
+			logger.debug("index="+index);
+			Set<String> set = jedis.keys(index);
+			String userid = "";
+			if(set!=null&&set.size()>0){
+				String k = set.iterator().next();
+				userid = jedis.get(k);
+				logger.debug("用户名索引 k="+k+" ; v="+userid); 
+			}else{
 				SsoUserCriteria ssoUserCriteria = new SsoUserCriteria();
 				ssoUserCriteria.createCriteria().andUsernameEqualTo(username);
 				List<SsoUser> ssoUserList = ssoUserMapper.selectByExample(ssoUserCriteria);
 				if(ssoUserList!=null&&ssoUserList.size()>0){
 					SsoUser user = ssoUserList.get(0);
-					useridStr = user.getId()+"";
-					try{
-						jedis.hset(CF_INDEX_USER_USERNAME, username, useridStr);
-					}catch(Exception e){
-						logger.debug(username+" login error [hset] : "+e.getMessage());
-					}
+					updateUserIndex(user);
 				}
 			}
-			return mapperOnCache.selectByPrimaryKey(SsoUser.class, useridStr);
+			return mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
 		}catch(Exception e){
 			logger.error("getSsoUserByName 异常",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return null;
 	}
@@ -84,7 +84,6 @@ public class SsoUserRepository implements CacheKeysConstance {
 		authenticationToken.setUserid(userId);
 		authenticationToken.setCreateDate(new Date());
 		String json = gson.toJson(authenticationToken);
-
 		Jedis jedis = null;
 		try{
 			jedis = storePool.getConn();

@@ -12,15 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.Jedis;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesReplyMapper;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 /**
  * 用户动态后台存储对象
  * @author liangc
@@ -29,17 +30,19 @@ import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReplyCriteria;
 public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 	
 	private static Logger logger = LoggerFactory.getLogger(StatesUserStatesReplyRepository.class);
+	private static Gson gson = MyGson.getInstance();
 	
-	private RedisPool redisPool= null;
+	private StorePool storePool= null;
 	
 	private MapperOnCache mapperOnCache = null;
-	private Gson gson = MyGson.getInstance();
 	private StatesUserStatesReplyMapper statesUserStatesReplyMapper = null;
 	
 	@Autowired
-	public StatesUserStatesReplyRepository(RedisPool redisPool, MapperOnCache mapperOnCache, StatesUserStatesReplyMapper statesUserStatesReplyMapper) {
+	public StatesUserStatesReplyRepository(StorePool storePool,
+			MapperOnCache mapperOnCache,
+			StatesUserStatesReplyMapper statesUserStatesReplyMapper) {
 		super();
-		this.redisPool = redisPool;
+		this.storePool = storePool;
 		this.mapperOnCache = mapperOnCache;
 		this.statesUserStatesReplyMapper = statesUserStatesReplyMapper;
 	}
@@ -51,38 +54,36 @@ public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 	 */
 	public void insertSelective(StatesUserStatesReply po)throws Exception{
 		mapperOnCache.insertSelective(po, po.getId());
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		String stateid = po.getStateid();
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String key = HASH_USER_STATES_REPLY+stateid;
 			String field = po.getId();
 			String value = gson.toJson(po);
 			logger.debug("缓存动态回复 key="+key+" ; value="+value);
 			jedis.hset(key, field, value);//缓存回复
 		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
 	public void delete(String id) throws Exception{
 		StatesUserStatesReply po = mapperOnCache.selectByPrimaryKey(StatesUserStatesReply.class, id);
 		mapperOnCache.deleteByPrimaryKey(StatesUserStatesReply.class, id);
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			String key = HASH_USER_STATES_REPLY+po.getStateid();
 			String field = po.getId();
 			logger.debug("删除动态回复缓存 key="+key);
 			jedis.hdel(key, field);
 		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("delete",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
@@ -95,9 +96,9 @@ public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 	 */
 	public List<StatesUserStatesReply> getStatesUserStatesReplyListByStatesId(String stateid,int pageSize,int pageNo){
 		String key = HASH_USER_STATES_REPLY+stateid;
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			boolean hasCache = jedis.exists(key)&&jedis.hlen(key)>0;
 			if(!hasCache){
 				//初始化用户动态缓存列表
@@ -135,10 +136,6 @@ public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 				});
 				logger.debug("****** 请检查排序结果");
 				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
-				logger.debug("****** 请检查排序结果");
 				int f = pageNo*pageSize;
 				int t = (pageNo+1)*pageSize;
 				if(f>reslist.size())
@@ -149,10 +146,9 @@ public class StatesUserStatesReplyRepository implements CacheKeysConstance{
 			}
 			return reslist;
 		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
-			logger.error("insertSelective",e);
+			logger.error("getStatesUserStatesReplyListByStatesId",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return null;
 	}

@@ -42,10 +42,13 @@ public class AdminFlushFriendShipIndex extends AbstractHandler {
 		try{
 			String _pwd = getParameter(clientRequest, "pwd");
 			String keys = UserService.FRIEND_KEY;
-			if(!PWD.equals(_pwd)){
-				logger.debug("口令错误，暂时不校验口令");
-			}
 			
+			if(!PWD.equals(_pwd)){
+				String m = "错误的口令 pwd="+_pwd;
+				logger.debug(m);
+				throw new Exception(m);
+			}
+
 			UserFriendshipCriteria userFriendshipCriteria = new UserFriendshipCriteria();
 			List<UserFriendship> list = userFriendshipMapper.selectByExample(userFriendshipCriteria);
 			

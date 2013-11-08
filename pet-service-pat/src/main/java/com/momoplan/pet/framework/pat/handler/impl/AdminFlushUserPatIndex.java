@@ -16,7 +16,7 @@ import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.pat.mapper.PatUserPatMapper;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPat;
 import com.momoplan.pet.commons.domain.pat.po.PatUserPatCriteria;
-import com.momoplan.pet.commons.repository.pat.CacheKeysConstance;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 import com.momoplan.pet.commons.repository.pat.PatUserPatRepository;
 import com.momoplan.pet.framework.pat.handler.AbstractHandler;
 
@@ -50,9 +50,10 @@ public class AdminFlushUserPatIndex extends AbstractHandler {
 		try{
 			String _pwd = getParameter(clientRequest, "pwd");
 			if(!PWD.equals(_pwd)){
-				logger.debug("口令错误，暂时不校验口令");
+				String m = "错误的口令 pwd="+_pwd;
+				logger.debug(m);
+				throw new Exception(m);
 			}
-			
 			PatUserPatCriteria patUserPatCriteria = new PatUserPatCriteria();
 			List<PatUserPat> list = patUserPatMapper.selectByExample(patUserPatCriteria);
 			String keys = CacheKeysConstance.USER_PAT;
