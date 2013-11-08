@@ -179,6 +179,9 @@ $(function(){
 									<li>
 										<a title="公共配置管理" href="${ctx }/manager/configmanager/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
 									</li>
+									<li>
+										<a title="索引管理" href="${ctx }/manager/indexmg/indexmamagerlist.html" target="navTab" rel="commanage0001">索引管理</a>								
+									</li>
 								</ul>
 							</li>
 						</ul>
@@ -230,7 +233,7 @@ $(function(){
 
 	</div>
 
-	<div id="footer">Copyright &copy; 2013 <a href="" target="dialog">XXXXXX.ltd</a> Tel：88888888</div>
+	<div id="footer">Copyright &copy; 2013 <a href="" target="dialog">北京爱宠联盟信息有限公司</a> Tel：88888888</div>
 </body>
 </html>
 
