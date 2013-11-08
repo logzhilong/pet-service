@@ -25,17 +25,17 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>是否可用：</dt>
+					<dt>是否删除：</dt>
 					<dd>
 						<select name="isDel">
 							<c:choose>
 								<c:when test="${note2.isDel }">
-									<option value="false">false</option>
 									<option value="true">true</option>
+									<option value="false">false</option>
 								</c:when>
 								<c:otherwise>
-									<option value="true">true</option>
 									<option value="false">false</option>
+									<option value="true">true</option>
 								</c:otherwise>
 							</c:choose>
 						</select>

@@ -1,11 +1,15 @@
 package com.momoplan.pet.framework.manager.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +17,11 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
-import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
-import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
+import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
@@ -29,15 +33,14 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	private Logger logger = LoggerFactory
 			.getLogger(BBSManagerServiceImpl.class);
 	private ForumMapper forumMapper = null;
-	private NoteMapper noteMapper = null;
 	@Autowired
 	CommonDataManagerService commonDataManagerService;
+	private CommonConfig commonConfig = new CommonConfig();
 
 	@Autowired
-	public BBSManagerServiceImpl(ForumMapper forumMapper, NoteMapper noteMapper) {
+	public BBSManagerServiceImpl(ForumMapper forumMapper) {
 		super();
 		this.forumMapper = forumMapper;
-		this.noteMapper = noteMapper;
 	}
 
 	@Override
@@ -53,7 +56,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andPidEqualTo(id);
 		}
 		if (StringUtils.isEmpty(vo.getName())) {
-			if ("all".equals(vo.getAreaCode())&& "all".equals(vo.getAreaCode())) {
+			if ("all".equals(vo.getAreaCode())
+					&& "all".equals(vo.getAreaCode())) {
 			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
 				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
 			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
@@ -63,42 +67,56 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andNameLike("%" + vo.getName() + "%");
 		}
 		int totalCount = forumMapper.countByExample(forumCriteria);
-		forumCriteria.setMysqlOffset((pageBean.getPageNo() - 1)* pageBean.getPageSize());
+		forumCriteria.setMysqlOffset((pageBean.getPageNo() - 1)
+				* pageBean.getPageSize());
 		forumCriteria.setMysqlLength(pageBean.getPageSize());
 		List<Forum> list = forumMapper.selectByExample(forumCriteria);
 		pageBean.setData(list);
 		pageBean.setTotalRecorde(totalCount);
-		//做为地区显示,暂时不用
-//		for (Forum forum : pageBean.getData()) {
-//			int i = forum.getAreaCode().indexOf("-");
-//			if (i != -1) {
-//				CommonAreaCode code2 = new CommonAreaCode();
-//				String sheng = forum.getAreaCode().substring(0,forum.getAreaCode().indexOf("-"));
-//				code2.setId(sheng);
-//				String sheng1 = commonDataManagerService.getCommonAreaCodeByid(code2).getName();
-//
-//				if (forum.getAreaCode().indexOf("-") != forum.getAreaCode().lastIndexOf("-")) {
-//					String shi = forum.getAreaCode().substring(forum.getAreaCode().indexOf("-") + 1,forum.getAreaCode().lastIndexOf("-"));
-//					code2.setId(shi);
-//					String sheng2 = commonDataManagerService.getCommonAreaCodeByid(code2).getName();
-//
-//					String qu = forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-") + 1);
-//					code2.setId(qu);
-//					String sheng3 = commonDataManagerService.getCommonAreaCodeByid(code2).getName();
-//					forum.setAreaCode(sheng1 + "-" + sheng2 + "-" + sheng3);
-//				} else {
-//					String qu = forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-") + 1);
-//					code2.setId(qu);
-//					String sheng3 = commonDataManagerService.getCommonAreaCodeByid(code2).getName();
-//					forum.setAreaCode(sheng1 + "-" + sheng3);
-//				}
-//			} else {
-//				CommonAreaCode code2 = new CommonAreaCode();
-//				code2.setId(forum.getAreaCode());
-//				String ee = commonDataManagerService.getCommonAreaCodeByid(code2).getName();
-//				forum.setAreaCode(ee);
-//			}
-//		}
+		// 做为地区显示,暂时不用
+		// for (Forum forum : pageBean.getData()) {
+		// int i = forum.getAreaCode().indexOf("-");
+		// if (i != -1) {
+		// CommonAreaCode code2 = new CommonAreaCode();
+		// String sheng =
+		// forum.getAreaCode().substring(0,forum.getAreaCode().indexOf("-"));
+		// code2.setId(sheng);
+		// String sheng1 =
+		// commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+		//
+		// if (forum.getAreaCode().indexOf("-") !=
+		// forum.getAreaCode().lastIndexOf("-")) {
+		// String shi =
+		// forum.getAreaCode().substring(forum.getAreaCode().indexOf("-") +
+		// 1,forum.getAreaCode().lastIndexOf("-"));
+		// code2.setId(shi);
+		// String sheng2 =
+		// commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+		//
+		// String qu =
+		// forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-") +
+		// 1);
+		// code2.setId(qu);
+		// String sheng3 =
+		// commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+		// forum.setAreaCode(sheng1 + "-" + sheng2 + "-" + sheng3);
+		// } else {
+		// String qu =
+		// forum.getAreaCode().substring(forum.getAreaCode().lastIndexOf("-") +
+		// 1);
+		// code2.setId(qu);
+		// String sheng3 =
+		// commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+		// forum.setAreaCode(sheng1 + "-" + sheng3);
+		// }
+		// } else {
+		// CommonAreaCode code2 = new CommonAreaCode();
+		// code2.setId(forum.getAreaCode());
+		// String ee =
+		// commonDataManagerService.getCommonAreaCodeByid(code2).getName();
+		// forum.setAreaCode(ee);
+		// }
+		// }
 		return pageBean;
 	}
 
@@ -110,30 +128,31 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	 */
 	@SuppressWarnings("static-access")
 	@Override
-	public int addOrUpdateForum(Forum forum,HttpServletRequest request) throws Exception {
+	public int addOrUpdateForum(Forum forum, HttpServletRequest request)
+			throws Exception {
 		logger.debug("welcome to addOrUpdateForum.....................");
 		String id = forum.getId();
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if (fo != null && !"".equals(fo.getId())) {
 			logger.debug("selectByPK.po=" + fo.toString());
-			String img=forum.getLogoImg();
-			if( null != img && "" != img){
-				forum.setLogoImg(img.substring(img.indexOf("get")+4, 83));
+			String img = forum.getLogoImg();
+			if (null != img && "" != img) {
+				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
 			}
 			return forumMapper.updateByPrimaryKeySelective(forum);
 		} else {
 			forum.setId(IDCreater.uuid());
 			forum.setCt(new Date());
 			SessionManager manager = null;
-		    WebUser user1 = manager.getCurrentUser(request);
-			
+			WebUser user1 = manager.getCurrentUser(request);
+
 			forum.setCb(user1.getName());
 			if ("all".equals(forum.getPid())) {
 				forum.setPid(null);
 			}
-			String img=forum.getLogoImg();
-			if( null != img && "" != img){
-			forum.setLogoImg(img.substring(img.indexOf("get")+4, 83));
+			String img = forum.getLogoImg();
+			if (null != img && "" != img) {
+				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
 			}
 			return forumMapper.insertSelective(forum);
 		}
@@ -197,7 +216,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	 */
 	@Override
 	public List<Forum> getSunForumListbyPid(Forum forum) throws Exception {
-		logger.debug("welcome to getSunForumListbyPid.....................");
+		logger.debug("welcome to getSunForumList.....................");
 		ForumCriteria forumCriteria = new ForumCriteria();
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		criteria.andPidEqualTo(forum.getId());
@@ -215,15 +234,38 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	@Override
 	public List<Note> getAllNotesByForumId(Forum forum) throws Exception {
 		logger.debug("welcome to getAllNotesByForumId.....................");
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (forum.getId() != null) {
-			criteria.andForumIdEqualTo(forum.getId());
+		String url = commonConfig.get("service.uri.pet_bbs", null);
+		String body=null;
+		if(forum.getDescript() != null &&  "" != forum.getDescript()){
+			 body = "{\"method\":\"getNoteList\",\"params\":{\"condition\":\""+ forum.getDescript() + "\",\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "SEARCH"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
+		}else{
+			 body = "{\"method\":\"getNoteList\",\"params\":{\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "ALL"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
 		}
-		if (forum.getDescript() != null) {
-			criteria.andNameLike("%" + forum.getDescript() + "%");
+		String res = PostRequest.postText(url, "body", body.toString());
+		JSONObject object = new JSONObject(res);
+		JSONArray ja = object.getJSONArray("entity");
+		List<Note> notes=new  ArrayList<Note>();
+		
+		for (int i = 0; i < ja.length(); i++) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  
+			JSONObject jo = (JSONObject) ja.get(i);
+			logger.debug(jo.toString());
+			Note note=new Note();
+			note.setId(jo.getString("id"));
+			note.setForumId(jo.getString("forumId"));
+			note.setName(jo.getString("name"));
+			note.setUserId(jo.getString("userId"));
+			note.setClientCount(jo.getLong("clientCount"));
+			note.setIsDel(jo.getBoolean("isDel"));
+			note.setIsEute(jo.getBoolean("isEute"));
+			note.setState(jo.getString("state"));
+			note.setType(jo.getString("type"));
+			note.setIsTop(jo.getBoolean("isTop"));
+			note.setCt(sdf.parse(jo.getString("ct")));
+			note.setEt(sdf.parse(jo.getString("et")));
+			note.setRt(sdf.parse(jo.getString("rt")));
+			notes.add(note);
 		}
-		List<Note> notes = noteMapper.selectByExample(noteCriteria);
 		return notes;
 	}
 }
