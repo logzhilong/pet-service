@@ -8,38 +8,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.Jedis;
 
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 
 public class NoteSubRepository implements CacheKeysConstance{
 
 	private static Logger logger = LoggerFactory.getLogger(NoteSubRepository.class);
 	private static Gson gson = MyGson.getInstance();
 
-	private RedisPool redisPool= null;
+	private StorePool storePool = null;
 	private MapperOnCache mapperOnCache = null;
 	private NoteMapper noteMapper = null;
 	private NoteSubMapper noteSubMapper = null;
 	
 	@Autowired
-	public NoteSubRepository(RedisPool redisPool, MapperOnCache mapperOnCache, NoteMapper noteMapper, NoteSubMapper noteSubMapper) {
+	public NoteSubRepository(StorePool storePool, MapperOnCache mapperOnCache,
+			NoteMapper noteMapper, NoteSubMapper noteSubMapper) {
 		super();
-		this.redisPool = redisPool;
+		this.storePool = storePool;
 		this.mapperOnCache = mapperOnCache;
 		this.noteMapper = noteMapper;
 		this.noteSubMapper = noteSubMapper;
 	}
-	
 	/**
 	 * 获取我回复过的帖子的ID集合
 	 * @param userId
@@ -47,9 +48,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 */
 	public List<String> getNoteIdListOfMyReply(String userId){
 		String key = USER_REPLY_NOTE+userId;
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			if(!jedis.exists(key)){
 				NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
 				noteSubCriteria.createCriteria().andUserIdEqualTo(userId);
@@ -71,7 +72,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return null;
 	}
@@ -89,9 +90,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 			seq = 1L;
 		po.setSeq((int)(seq+0));
 		mapperOnCache.insertSelective(po, po.getId());
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			logger.debug("增加到 回帖总数列表");
 			Note note = mapperOnCache.selectByPrimaryKey(Note.class, po.getNoteId());
 			String forumId = note.getForumId();
@@ -105,7 +106,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			//TODO 这种异常很严重啊，要发邮件通知啊
 			logger.error("insertSelective",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 	}
 	
@@ -115,7 +116,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param key
 	 * @param forumId
 	 */
-	private void lpushNoteSubTotalCount(ShardedJedis jedis,String key,String forumId){
+	private void lpushNoteSubTotalCount(Jedis jedis,String key,String forumId){
 		if(!jedis.exists(key))
 			initTotalCount(jedis,key,forumId);
 		else//初始化时的总数，已经包括了当前的这次请求
@@ -129,9 +130,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 */
 	public Long totalReply(String noteId){
 		String key = LIST_NOTE_SUB+noteId;
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			if(!jedis.exists(key)||jedis.llen(key)==0){
 				initListNoteSub(jedis,noteId,key);
 			}
@@ -141,7 +142,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}catch(Exception e){
 			logger.debug("获取回复总数 ERROR="+e.getMessage());
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return 0L;
 	}
@@ -154,9 +155,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	public List<NoteSub> getReplyListByNoteId(String noteId,int pageSize,int pageNo){
 		pageSize-=1;//因为下脚标在0开始，所以取20条记录时 0～19，size 是要取的条数
 		String key = LIST_NOTE_SUB+noteId;
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			if(!jedis.exists(key)||jedis.llen(key)==0){
 				//初始化将加载所有的数据到缓存
 				initListNoteSub(jedis,noteId,key);
@@ -173,7 +174,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		}catch(Exception e){
 			logger.error("totalReply",e);
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
 		return null;
 	}
@@ -183,7 +184,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * 需求是：最新的回帖排在最下面,【队列】结构
 	 * @param po
 	 */
-	private void rpushListNoteSub(ShardedJedis jedis,NoteSub po) throws Exception {
+	private void rpushListNoteSub(Jedis jedis,NoteSub po) throws Exception {
 		String key = LIST_NOTE_SUB+po.getNoteId();
 		try {
 			//init key 对应的队列
@@ -210,7 +211,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param key
 	 * @throws Exception 
 	 */
-	private void initListNoteSub(ShardedJedis jedis,String noteId,String key) throws Exception{
+	private void initListNoteSub(Jedis jedis,String noteId,String key) throws Exception{
 		NoteSubCriteria noteCriteria = new NoteSubCriteria();
 		NoteSubCriteria.Criteria criteria = noteCriteria.createCriteria();
 		criteria.andNoteIdEqualTo(noteId);
@@ -241,7 +242,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @param forumId
 	 * @return
 	 */
-	private Long initTotalCount(ShardedJedis jedis,String key,String forumId){
+	private Long initTotalCount(Jedis jedis,String key,String forumId){
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.createCriteria().andForumIdEqualTo(forumId);
 		List<Note> noteList = noteMapper.selectByExample(noteCriteria);
@@ -250,7 +251,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		for(Note note : noteList){
 			noteIds.add(note.getId());
 		}
-		int count = -1;
+		int count = 0;
 		if(noteIds.size()>0){
 			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
 			noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
@@ -271,9 +272,9 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @return
 	 */
 	public Long totalCount(String forumId){
-		ShardedJedis jedis = null;
+		Jedis jedis = null;
 		try{
-			jedis = redisPool.getConn();
+			jedis = storePool.getConn();
 			Long total = 0L;
 			String key = LIST_NOTE_SUB_TOTALCOUNT+forumId;
 			try{
@@ -284,14 +285,13 @@ public class NoteSubRepository implements CacheKeysConstance{
 				logger.debug("帖子总数 缓存取值 : "+total);
 				return total;
 			}
-			//TODO 
 			return initTotalCount(jedis,key,forumId);
 		}catch(Exception e){
 			logger.debug(e.getMessage());
 		}finally{
-			redisPool.closeConn(jedis);
+			storePool.closeConn(jedis);
 		}
-		return -1L;
+		return 0L;
 	}
 	
 }
