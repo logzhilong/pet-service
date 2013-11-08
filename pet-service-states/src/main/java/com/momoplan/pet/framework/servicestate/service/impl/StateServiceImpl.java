@@ -112,19 +112,19 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		c1.andStateEqualTo("0");//2013-10-26：经过讨论，这里只显示正常状态的
 		Map<String,JSONObject> userMap = new HashMap<String,JSONObject>();//好友+我自己，都在这里
 		userMap.put(userid, getUserinfo(userid));//我自己，加入映射表
+		List<String> useridList = new ArrayList<String>();
+		useridList.add(userid);//我自己
+		//TODO or 其他人，用 or 代替 in 可以提高效率
 		if(jsonArray!=null&&jsonArray.length()>0){
-			//TODO or 其他人，用 or 代替 in 可以提高效率
-			List<String> useridList = new ArrayList<String>();
 			for(int i=0;i<jsonArray.length();i++){
 				JSONObject jsonObj = jsonArray.getJSONObject(i);
 				String uid = jsonObj.getString("id");
 				userMap.put(uid, jsonObj);
 				useridList.add(uid);
 			}
-			if(useridList!=null&&useridList.size()>0)
-				c1.andUseridIn(useridList);
 		}
-		statesUserStatesCriteria.or(statesUserStatesCriteria.createCriteria().andUseridEqualTo(userid));//我自己
+		if(useridList!=null&&useridList.size()>0)
+			c1.andUseridIn(useridList);
 		//排序
 		statesUserStatesCriteria.setOrderByClause("ct desc");
 		//分页
