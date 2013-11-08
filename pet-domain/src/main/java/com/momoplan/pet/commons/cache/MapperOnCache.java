@@ -100,7 +100,6 @@ public class MapperOnCache extends MapperOnCacheSupport {
 			if(jedis!=null){
 				try {
 					json = jedis.get(cacheKey);
-					jedis.expire(cacheKey, EX_SECONDS);
 					logger.debug("cacheKey = "+cacheKey);
 				} catch (Exception e) {
 					logger.debug("连接缓存失败：" + e.getMessage());
@@ -117,6 +116,7 @@ public class MapperOnCache extends MapperOnCacheSupport {
 				logger.debug("数据库取值 : " + t);
 			} else {
 				t = myGson.fromJson(json, clazz);
+				jedis.expire(cacheKey, EX_SECONDS);
 				logger.debug("缓存取值 : " + json);
 			}
 			return t;
