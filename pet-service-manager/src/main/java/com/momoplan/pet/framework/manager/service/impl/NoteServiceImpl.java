@@ -55,7 +55,7 @@ public class NoteServiceImpl implements NoteService {
 		String id = note.getId();
 		Note note2 = noteMapper.selectByPrimaryKey(id);
 		if (note2 != null && !"".equals(note2.getId())) {
-			note2.setEt(new Date());
+			note.setEt(new Date());
 			logger.debug("修该帖子" + note2.toString());
 			noteMapper.updateByPrimaryKeySelective(note);
 		} else {
