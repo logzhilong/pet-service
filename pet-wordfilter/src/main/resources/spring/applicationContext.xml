@@ -42,8 +42,6 @@
     	<constructor-arg index="0" value="${cache.server}" />
     </bean>
 	
-	<import resource="classpath:spring/applicationContext-mybatis-transaction.xml"/>
-
 	<!-- 一个数据库一个配置文件~ -->
 	<import resource="classpath:spring/applicationContext-mybatis-states.xml"/>
 

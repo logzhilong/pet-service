@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesAuditMapper;
-import com.momoplan.pet.commons.domain.states.mapper.StatesUserStatesMapper;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesAudit;
 import com.momoplan.pet.commons.repository.states.StatesUserStatesRepository;
@@ -21,16 +20,14 @@ public class WordFilterServiceImpl implements WordFilterService {
 
 	private static Logger logger = LoggerFactory.getLogger(WordFilterServiceImpl.class);
 
-	private StatesUserStatesMapper statesUserStatesMapper = null;
 	private StatesUserStatesAuditMapper statesUserStatesAuditMapper = null;
 	private MapperOnCache mapperOnCache = null;
 	private StatesUserStatesRepository statesUserStatesRepository = null;
 	
 	@Autowired
-	public WordFilterServiceImpl(StatesUserStatesMapper statesUserStatesMapper, StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache,
+	public WordFilterServiceImpl(StatesUserStatesAuditMapper statesUserStatesAuditMapper, MapperOnCache mapperOnCache,
 			StatesUserStatesRepository statesUserStatesRepository) {
 		super();
-		this.statesUserStatesMapper = statesUserStatesMapper;
 		this.statesUserStatesAuditMapper = statesUserStatesAuditMapper;
 		this.mapperOnCache = mapperOnCache;
 		this.statesUserStatesRepository = statesUserStatesRepository;
