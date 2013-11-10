@@ -13,9 +13,13 @@ class MyListener(object):
 		log.info("error : %s" % message)
 	def on_message(self,headers,message):
 		log.debug("message : %s" % message)
-		p = PushXmpp(message)	
-		p.build()
-		p.post()
+		try:
+			p = PushXmpp(message)	
+			p.build()
+			p.post()
+		except:
+			err = traceback.format_exc()
+			log.debug(err)
 
 class PushXmpp :
 	head={'Content-Type':'text/xml','charset':'utf-8'}
@@ -29,9 +33,7 @@ class PushXmpp :
 			 contentID="${contentID}" 
 			 picID="${picID}"
 		>
-			<body>
-				<![CDATA[${body}]]>
-			</body>
+			<body><![CDATA[${body}]]></body>
 		</message>
 		'''
 	def __init__(self,param):
@@ -39,16 +41,12 @@ class PushXmpp :
 		self.param = param
 
 	def build(self):
-		try:
-			log.debug("revice param = %s" % self.param)
-			p = json.loads(self.param)
-			template = string.Template(self.msg_tmp)
-			if p.has_key('picID') == False :
-				p['picID'] = ''
-			self.msg = template.safe_substitute(p)
-		except:
-			exstr = traceback.format_exc()
-			log.error(exstr)
+		log.debug("revice param = %s" % self.param)
+		p = json.loads(self.param)
+		template = string.Template(self.msg_tmp)
+		if p.has_key('picID') == False :
+			p['picID'] = ''
+		self.msg = template.safe_substitute(p)
 	
 	def post(self):
 		msg = self.msg.encode("utf-8")

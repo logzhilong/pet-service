@@ -15,22 +15,26 @@ CREATE TABLE `user_states` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `reply` (
+CREATE TABLE `user_states_reply` (
   `id` varchar(255) NOT NULL,
-  `msg` varchar(255) DEFAULT NULL COMMENT '回复信息',
-  `pet_userid` varchar(255) DEFAULT NULL COMMENT '发送回复的用户id',
-  `reply_time` datetime DEFAULT NULL COMMENT '回复时间',
   `stateid` varchar(255) DEFAULT NULL COMMENT '动态id',
-  `fid` varchar(255) DEFAULT NULL COMMENT '父id',
+  `pid` varchar(255) DEFAULT NULL COMMENT '动态id',
+  `msg` varchar(2000) DEFAULT NULL COMMENT '回复信息',
+  `puserid` varchar(255) DEFAULT NULL COMMENT '发送回复的用户id',
+  `userid` varchar(255) DEFAULT NULL COMMENT '发送回复的用户id',
+  `ct` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `user_zan` (
+CREATE TABLE `user_states_audit` (
   `id` varchar(255) NOT NULL,
-  `userid` bigint(20) NOT NULL COMMENT '用户id',
-  `zanid` bigint(20) DEFAULT NULL COMMENT 'zan',
-  `type` int(20) DEFAULT NULL COMMENT '类型',
-  `create_time` varchar(255) DEFAULT NULL COMMENT '创建时间',
+  `bid` varchar(255) DEFAULT NULL ,
+  `biz` varchar(255) DEFAULT NULL ,
+  `content` varchar(5000) DEFAULT NULL ,
+  `version` int ,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+

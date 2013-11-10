@@ -22,7 +22,8 @@ class Main :
 		conn.connect(wait=True)
 		conn.subscribe( destination=('/queue/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
 		while True:
-			time.sleep(30)
+			time.sleep(2)
+			log.info('heart beat.')
 		conn.disconnect()
 
 if(__name__=='__main__'):
