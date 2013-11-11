@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTextMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.DateUtils;
@@ -29,22 +37,25 @@ import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
 public class NoteServiceImpl implements NoteService {
+
 	private NoteMapper noteMapper = null;
 	private NoteSubMapper noteSubMapper = null;
 	private NoteRepository noteRepository = null;
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
-
+	private JmsTemplate apprequestTemplate = null;
+	
 	@Autowired
 	public NoteServiceImpl(NoteMapper noteMapper, NoteSubMapper noteSubMapper,
 			NoteRepository noteRepository, NoteSubRepository noteSubRepository,
-			MapperOnCache mapperOnCache) {
+			MapperOnCache mapperOnCache, JmsTemplate apprequestTemplate) {
 		super();
 		this.noteMapper = noteMapper;
 		this.noteSubMapper = noteSubMapper;
 		this.noteRepository = noteRepository;
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
+		this.apprequestTemplate = apprequestTemplate;
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
@@ -64,12 +75,40 @@ public class NoteServiceImpl implements NoteService {
 		po.setIsDel(false);
 		po.setIsEute(false);
 		po.setIsTop(false);
-		//TODO 发帖要走审核啊
-		po.setState(NoteState.ACTIVE.getCode());
+		po.setState(NoteState.AUDIT.getCode());
 		po.setType("0");
 		logger.debug("发帖子 ：" + po.toString());
-		noteRepository.insertSelective(po);
+		noteRepository.insertSelective(po,NoteState.AUDIT);
+		sendJMS(po);
 		return po.getId();
+	}
+	
+	/**
+	 * 向校验内容的应用send消息
+	 * 
+	 * @param userState
+	 * @param biz
+	 */
+	private void sendJMS(Note po) {
+		TextMessage tm = new ActiveMQTextMessage();
+		try {
+			JSONObject json = new JSONObject();
+			json.put("biz", "bbs_note");
+			json.put("bid", po.getId());
+			json.put("content", po.getContent());
+			String msg = json.toString();
+			logger.debug(msg);
+			tm.setText(msg);
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName("pet_wordfilter");
+			apprequestTemplate.convertAndSend(queue, tm);
+		} catch (JMSException e) {
+			logger.debug("sendJMS error :" + e);
+			e.printStackTrace();
+		} catch (JSONException e) {
+			logger.debug("sendJMS error :" + e);
+			e.printStackTrace();
+		}
 	}
 	
 	static long min = 100;

@@ -155,10 +155,9 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 
 	@Override
 	public boolean reportContent(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
+		//TODO 要改成通过缓存实现
 		String stateid = PetUtil.getParameter(clientRequest, "stateid");
 		// 举报类型（暂时不用）
-		// int reporttype =
-		// PetUtil.getParameterInteger(clientRequest,"reporttype");
 		StatesUserStates userState = mapperOnCache.selectByPrimaryKey(StatesUserStates.class, stateid);
 		if (null == userState) {
 			return false;
@@ -170,12 +169,7 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 		} else {
 			userState.setState("5");
 		}
-		// StatesUserStatesCriteria statesUserStatesCriteria = new
-		// StatesUserStatesCriteria();
-		// StatesUserStatesCriteria.Criteria criteria =
-		// statesUserStatesCriteria.createCriteria();
 		mapperOnCache.updateByPrimaryKeySelective(userState, stateid);
-		// userState.merge();
 		return true;
 	}
 

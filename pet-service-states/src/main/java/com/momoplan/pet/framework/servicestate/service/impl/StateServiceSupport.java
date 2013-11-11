@@ -12,6 +12,7 @@ import javax.jms.TextMessage;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,16 +193,21 @@ public class StateServiceSupport {
 	 */
 	protected void sendJMS(StatesUserStates userState, String biz) {
 		TextMessage tm = new ActiveMQTextMessage();
-		logger.debug("\nbid:" + userState.getId().toString());
-		logger.debug("\nmsg:" + userState.getMsg());
 		try {
-			tm.setStringProperty("biz", biz);
-			tm.setStringProperty("bid", userState.getId().toString());
-			tm.setStringProperty("content", userState.getMsg());
+			JSONObject json = new JSONObject();
+			json.put("biz", biz);
+			json.put("bid", userState.getId().toString());
+			json.put("content", userState.getMsg());
+			String msg = json.toString();
+			logger.debug(msg);
+			tm.setText(msg);
 			ActiveMQQueue queue = new ActiveMQQueue();
-			queue.setPhysicalName("queue/pet_wordfilter");
+			queue.setPhysicalName("pet_wordfilter");
 			apprequestTemplate.convertAndSend(queue, tm);
 		} catch (JMSException e) {
+			logger.debug("sendJMS error :" + e);
+			e.printStackTrace();
+		} catch (JSONException e) {
 			logger.debug("sendJMS error :" + e);
 			e.printStackTrace();
 		}

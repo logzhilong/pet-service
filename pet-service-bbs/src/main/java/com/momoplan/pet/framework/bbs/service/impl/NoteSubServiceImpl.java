@@ -105,7 +105,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 			jsonObj.put("contentType", "topic");
 			jsonObj.put("contentID", note.getId());
 			jsonObj.put("content",note.getName());
-			jsonObj.put("body", reply.getContent());
+			jsonObj.put("body", reply.getSeq());
 			
 			TextMessage tm = new ActiveMQTextMessage();
 			logger.debug("send msg="+jsonObj.toString());

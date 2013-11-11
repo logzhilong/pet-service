@@ -42,25 +42,29 @@ public class NoteRepository implements CacheKeysConstance{
 	 * @param po
 	 * @throws Exception
 	 */
-	public void insertSelective(Note po)throws Exception{
-		//入库并加入缓存
-		mapperOnCache.insertSelective(po,po.getId());
-		Jedis jedis = null;
-		String forumId = po.getForumId() ; 
-		try{
-			jedis = storePool.getConn();
-			//增加到 帖子总数列表
-			lpushTotalCount(jedis,LIST_NOTE_TOTALCOUNT+forumId,forumId);
-			//增加到 当天帖子总数
-			lpushTotalToday(jedis,LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr(),forumId);
-			//需求是：最新的帖子排在最上面,【堆栈】结构
-			//这个逻辑不成立，更新帖子时，顺序会发生变化，所以不适合做缓存
-			//lpushListNote(jedis,po);
-		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
-			logger.error("insertSelective",e);
-		}finally{
-			storePool.closeConn(jedis);
+	public void insertSelective(Note po,NoteState noteState)throws Exception{
+		if(NoteState.AUDIT.equals(noteState)){
+			logger.debug("审核中的帖子【入库】:"+po.toString());
+			mapperOnCache.insertSelective(po,po.getId());
+		}else{
+			logger.debug("审核后的帖子【更新】:"+po.toString());
+			mapperOnCache.updateByPrimaryKeySelective(po, po.getId());
+		}
+		if(NoteState.PASS.equals(noteState)){//如果审核通过了，就加入缓存中
+			logger.debug("审核通过的帖子加入缓存.");
+			Jedis jedis = null;
+			String forumId = po.getForumId() ; 
+			try{
+				jedis = storePool.getConn();
+				//增加到 帖子总数列表
+				lpushTotalCount(jedis,LIST_NOTE_TOTALCOUNT+forumId,forumId);
+				//增加到 当天帖子总数
+				lpushTotalToday(jedis,LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr(),forumId);
+			}catch(Exception e){
+				logger.error("insertSelective",e);
+			}finally{
+				storePool.closeConn(jedis);
+			}
 		}
 	}
 	private void lpushTotalCount(Jedis jedis,String key,String forumId){
@@ -77,59 +81,7 @@ public class NoteRepository implements CacheKeysConstance{
 			jedis.lpush(key, "n");
 		}
 	}
-	/**
-	 * 需求是：最新的帖子排在最上面,【堆栈】结构
-	 * <br/>
-	 *  2013-10-18 : 这个逻辑不成立，更新帖子时，顺序会发生变化，所以不适合做缓存
-	 * @param jedis
-	 * @param po
-	 * @throws Exception
-	 */
-	@Deprecated
-	private void lpushListNote(Jedis jedis,Note po) throws Exception {
-		String key = LIST_NOTE+po.getForumId();
-		try {
-			//init key 对应的堆
-			if(!jedis.exists(key)||jedis.llen(key)==0){
-				initListNote(jedis,po,key);
-			}else{//初始化时的总数，已经包括了当前的这次请求，不必再插入
-				Note note = mapperOnCache.selectByPrimaryKey(po.getClass(), po.getId());
-				String noteJson = gson.toJson(note);
-				jedis.lpush(key,noteJson);
-				logger.debug(key+" lpush "+noteJson);
-			}
-		} catch (Exception e) {
-			logger.debug(e.getMessage());
-			throw e;
-		}
-	}
-	
-	/**
-	 * 初始化缓存堆，如果手动清除了缓存，此处可以重新构建
-	 * @param jedis
-	 * @param po
-	 * @param key
-	 */
-	@Deprecated
-	private void initListNote(Jedis jedis,Note po,String key){
-		NoteCriteria noteCriteria = new NoteCriteria();
-		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andForumIdEqualTo(po.getForumId());
-		noteCriteria.setOrderByClause("et desc");
-		List<Note> noteList = noteMapper.selectByExample(noteCriteria);
-		logger.info("初始化 帖子 缓存堆 key="+key);
-		logger.info("初始化 帖子 缓存堆 noteList.size="+noteList.size());
-		String[] arr = new String[noteList.size()];
-		int i=0;
-		for(Note note : noteList){
-			String json = gson.toJson(note);
-			arr[i++] = json;
-			logger.debug(key+" lpush "+json);
-		}
-		jedis.lpush(key, arr);
-		logger.info("初始化 帖子 缓存堆 完成.");
-	}
-	
+
 	/**
 	 * 初始化 指定圈子 总帖子数
 	 * @param jedis

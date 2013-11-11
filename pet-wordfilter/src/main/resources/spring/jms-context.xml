@@ -13,7 +13,7 @@
 	</bean>
 	
 	<jms:listener-container destination-type="queue" concurrency="1" acknowledge="dups-ok">
-		<jms:listener destination="${queue.name}" ref="myListener" />
+		<jms:listener destination="pet_wordfilter" ref="myListener" />
 	</jms:listener-container>
 
 </beans>
