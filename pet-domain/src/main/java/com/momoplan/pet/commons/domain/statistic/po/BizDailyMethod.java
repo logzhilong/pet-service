@@ -5,54 +5,49 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
-* BizDailyRegistor
-* table:biz_daily_registor
+* BizDailyMethod
+* table:biz_daily_method
 * 
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
 * @date 2013-11-11 17:28:39
 */
-public class BizDailyRegistor implements Serializable {
+public class BizDailyMethod implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键
-     */
     private String id;
 
     /**
-     * 业务产生日期
+     * 日期
      */
     private String bizDate;
 
     /**
-     * 渠道
+     * 服务
      */
-    private String channel;
+    private String service;
 
     /**
-     * 该天用户注册用户总数
+     * 方法名
      */
-    private String totallyUser;
+    private String method;
 
     /**
-     * @return 主键
+     * 该service的method触发次数
      */
+    private String totalCount;
+
     public String getId() {
         return id;
     }
 
-    /**
-     * @param id 
-	 *            主键
-     */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * @return 业务产生日期
+     * @return 日期
      */
     public String getBizDate() {
         return bizDate;
@@ -60,40 +55,55 @@ public class BizDailyRegistor implements Serializable {
 
     /**
      * @param bizDate 
-	 *            业务产生日期
+	 *            日期
      */
     public void setBizDate(String bizDate) {
         this.bizDate = bizDate;
     }
 
     /**
-     * @return 渠道
+     * @return 服务
      */
-    public String getChannel() {
-        return channel;
+    public String getService() {
+        return service;
     }
 
     /**
-     * @param channel 
-	 *            渠道
+     * @param service 
+	 *            服务
      */
-    public void setChannel(String channel) {
-        this.channel = channel;
+    public void setService(String service) {
+        this.service = service;
     }
 
     /**
-     * @return 该天用户注册用户总数
+     * @return 方法名
      */
-    public String getTotallyUser() {
-        return totallyUser;
+    public String getMethod() {
+        return method;
     }
 
     /**
-     * @param totallyUser 
-	 *            该天用户注册用户总数
+     * @param method 
+	 *            方法名
      */
-    public void setTotallyUser(String totallyUser) {
-        this.totallyUser = totallyUser;
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    /**
+     * @return 该service的method触发次数
+     */
+    public String getTotalCount() {
+        return totalCount;
+    }
+
+    /**
+     * @param totalCount 
+	 *            该service的method触发次数
+     */
+    public void setTotalCount(String totalCount) {
+        this.totalCount = totalCount;
     }
 
     @Override
@@ -107,11 +117,12 @@ public class BizDailyRegistor implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        BizDailyRegistor other = (BizDailyRegistor) that;
+        BizDailyMethod other = (BizDailyMethod) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getBizDate() == null ? other.getBizDate() == null : this.getBizDate().equals(other.getBizDate()))
-            && (this.getChannel() == null ? other.getChannel() == null : this.getChannel().equals(other.getChannel()))
-            && (this.getTotallyUser() == null ? other.getTotallyUser() == null : this.getTotallyUser().equals(other.getTotallyUser()));
+            && (this.getService() == null ? other.getService() == null : this.getService().equals(other.getService()))
+            && (this.getMethod() == null ? other.getMethod() == null : this.getMethod().equals(other.getMethod()))
+            && (this.getTotalCount() == null ? other.getTotalCount() == null : this.getTotalCount().equals(other.getTotalCount()));
     }
 
     @Override
@@ -120,8 +131,9 @@ public class BizDailyRegistor implements Serializable {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getBizDate() == null) ? 0 : getBizDate().hashCode());
-        result = prime * result + ((getChannel() == null) ? 0 : getChannel().hashCode());
-        result = prime * result + ((getTotallyUser() == null) ? 0 : getTotallyUser().hashCode());
+        result = prime * result + ((getService() == null) ? 0 : getService().hashCode());
+        result = prime * result + ((getMethod() == null) ? 0 : getMethod().hashCode());
+        result = prime * result + ((getTotalCount() == null) ? 0 : getTotalCount().hashCode());
         return result;
     }
 

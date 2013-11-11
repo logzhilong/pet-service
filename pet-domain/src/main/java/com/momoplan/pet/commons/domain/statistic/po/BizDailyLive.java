@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-12 17:27:19
+* @date 2013-11-11 17:28:39
 */
 public class BizDailyLive implements Serializable {
     private static final long serialVersionUID = 1L;
