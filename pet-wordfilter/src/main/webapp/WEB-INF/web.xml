@@ -14,14 +14,4 @@
         <listener-class>com.momoplan.pet.commons.spring.BootstrapContextLoaderListener</listener-class>
     </listener>
 	
-	<!-- Spring 刷新Introspector防止内存泄露 -->
-	<listener>
-		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-	</listener>
-		
-	<welcome-file-list>
-		<welcome-file>login.html</welcome-file>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
-	
 </web-app>
