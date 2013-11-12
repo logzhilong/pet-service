@@ -19,6 +19,9 @@ public class FileBean {
 	private String filePath = null;
 	//来源
 	private String fileSrc = null;
+	//图片压缩, null or not null
+	private String compressImage = null;
+	
 	private InputStream fileStream = null;
 	
 	public FileBean() {
@@ -31,6 +34,14 @@ public class FileBean {
 		this.fileType = fileType;
 		this.filePath = filePath;
 		this.fileSrc = fileSrc;
+	}
+	
+	public String getCompressImage() {
+		return compressImage;
+	}
+
+	public void setCompressImage(String compressImage) {
+		this.compressImage = compressImage;
 	}
 
 	public String getPwd() {

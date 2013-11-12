@@ -1,12 +1,19 @@
 package com.momoplan.pet.framework.fileserver.service.impl;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +24,7 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.fileserver.po.FileIndex;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.fileserver.service.FileServer;
+import com.momoplan.pet.framework.fileserver.utils.ImageTools;
 import com.momoplan.pet.framework.fileserver.vo.FileBean;
 
 @Service
@@ -53,7 +61,34 @@ public class FileServerImpl implements FileServer{
 	public String put(FileBean fileBean) throws Exception {
 		String id = IDCreater.uuid();
 		String realPath = buildFilePath(id);
-        FileUtils.copyInputStreamToFile(fileBean.getFileStream(), new File(realPath));
+		InputStream is = fileBean.getFileStream();
+		int ss = is.available();
+		if(StringUtils.isNotEmpty(fileBean.getCompressImage())){
+			String format = "jpg";
+			MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
+			Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
+			while(it.hasNext()){
+				ImageReader r = it.next();
+				format = r.getFormatName();
+				logger.debug(format);
+			}
+			logger.debug("//是图片，需要压缩这张图片 format="+format);
+			BufferedImage bi = ImageIO.read(mis);
+			int sw = bi.getWidth();
+			int sh = bi.getHeight();
+			double rw = 320;
+			double rh = (rw/sw)*sh;
+			bi = ImageTools.getResizePicture(bi, rw, rh);
+			logger.debug("sw="+sw+";rw="+sw);
+			logger.debug("sh="+sh+";rh="+rh);
+			File output = new File(realPath);
+			ImageIO.write( bi ,format , output);
+			long rs = output.length();
+			logger.debug("ss="+ss+";rs="+rs);
+		}else{
+			logger.debug("//不需要压缩");
+			FileUtils.copyInputStreamToFile(is, new File(realPath));
+		}
         logger.debug("成功上传");
         String basePath = commonConfig.get("uploadPath","/home/appusr/static");
         String filePath = realPath.replaceFirst(basePath, "");
@@ -67,6 +102,12 @@ public class FileServerImpl implements FileServer{
         fileIndex.setCt(new Date());
         mapperOnCache.insertSelective(fileIndex,id);
         logger.debug("成功加入索引 ："+fileIndex.toString());
+        try{
+        	if(is!=null)
+        		is.close();
+        }catch(Exception e){
+        	logger.debug(e.getMessage());
+        }
         return id;
 	}
 
