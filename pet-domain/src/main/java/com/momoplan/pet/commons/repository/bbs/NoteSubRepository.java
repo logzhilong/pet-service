@@ -162,7 +162,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 				//初始化将加载所有的数据到缓存
 				initListNoteSub(jedis,noteId,key);
 			}
-			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize);
+			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize-1);
 			if(list!=null){
 				List<NoteSub> nsl = new ArrayList<NoteSub>(list.size());
 				for(String j : list){
