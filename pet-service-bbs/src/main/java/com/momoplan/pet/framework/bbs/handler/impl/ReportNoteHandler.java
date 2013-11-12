@@ -16,6 +16,7 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
+import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteState;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 import com.momoplan.pet.framework.bbs.service.CacheKeysConstance;
@@ -29,7 +30,9 @@ public class ReportNoteHandler extends AbstractHandler {
 	private Logger logger = LoggerFactory.getLogger(ReportNoteHandler.class);
 	@Autowired
 	private RedisPool redisPool = null;
-
+	@Autowired 
+	private NoteRepository noteRepository = null;
+	
 	/**
 	 * 举报的阀值
 	 */
@@ -77,8 +80,8 @@ public class ReportNoteHandler extends AbstractHandler {
 			if(count>=t){
 				Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteid);
 				note.setState(NoteState.REPORT.getCode());//被举报
-				logger.debug("更改动态状态为 5 ; noteid="+noteid);
-				mapperOnCache.updateByPrimaryKeySelective(note, noteid);
+				logger.debug("更改动态状态为 REPORT ; noteid="+noteid);
+				noteRepository.insertOrUpdateSelective(note, NoteState.REPORT);
 				jedis.del(key);
 			}
 		}catch(Exception e){
@@ -108,10 +111,10 @@ public class ReportNoteHandler extends AbstractHandler {
 			Long count = jedis.hlen(key);
 			logger.debug("//达到阀值以后，更新状态，并清空举信息");
 			if(count>=t){
-				NoteSub note = mapperOnCache.selectByPrimaryKey(NoteSub.class, replyId);
-				note.setState(NoteState.REPORT.getCode());//被举报
+				NoteSub noteSub = mapperOnCache.selectByPrimaryKey(NoteSub.class, replyId);
+				noteSub.setState(NoteState.REPORT.getCode());//被举报
 				logger.debug("更改动态状态为 被举报 ; replyId="+replyId);
-				mapperOnCache.updateByPrimaryKeySelective(note, replyId);
+				mapperOnCache.updateByPrimaryKeySelective(noteSub, replyId);
 				jedis.del(key);
 			}
 		}catch(Exception e){

@@ -42,7 +42,7 @@ public class NoteRepository implements CacheKeysConstance{
 	 * @param po
 	 * @throws Exception
 	 */
-	public void insertSelective(Note po,NoteState noteState)throws Exception{
+	public void insertOrUpdateSelective(Note po,NoteState noteState)throws Exception{
 		if(NoteState.AUDIT.equals(noteState)){
 			logger.debug("审核中的帖子【入库】:"+po.toString());
 			mapperOnCache.insertSelective(po,po.getId());
@@ -50,21 +50,29 @@ public class NoteRepository implements CacheKeysConstance{
 			logger.debug("审核后的帖子【更新】:"+po.toString());
 			mapperOnCache.updateByPrimaryKeySelective(po, po.getId());
 		}
-		if(NoteState.PASS.equals(noteState)){//如果审核通过了，就加入缓存中
-			logger.debug("审核通过的帖子加入缓存.");
-			Jedis jedis = null;
-			String forumId = po.getForumId() ; 
-			try{
+		String forumId = po.getForumId() ; 
+		//帖子总数列表
+		String totalCountKey = LIST_NOTE_TOTALCOUNT+forumId;
+		//当天帖子总数
+		String totalTodayKey = LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr();
+		Jedis jedis = null;
+		try{
+			if(NoteState.PASS.equals(noteState)){//如果审核通过了，就加入缓存中
+				logger.debug("审核通过的帖子加入缓存.");
 				jedis = storePool.getConn();
-				//增加到 帖子总数列表
-				lpushTotalCount(jedis,LIST_NOTE_TOTALCOUNT+forumId,forumId);
-				//增加到 当天帖子总数
-				lpushTotalToday(jedis,LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr(),forumId);
-			}catch(Exception e){
-				logger.error("insertSelective",e);
-			}finally{
-				storePool.closeConn(jedis);
+				lpushTotalCount(jedis,totalCountKey,forumId);
+				lpushTotalToday(jedis,totalTodayKey,forumId);
 			}
+			if(NoteState.REJECT.equals(noteState)||NoteState.DELETE.equals(noteState)||NoteState.REPORT.equals(noteState)){//审核拒绝、删除、被举报，都要清理缓存的计数器
+				logger.debug(noteState.getName()+" 清理计数器 -1");
+				jedis = storePool.getConn();
+				lpopTotalCount(jedis,totalCountKey);
+				lpopTotalToday(jedis,totalTodayKey);
+			}
+		}catch(Exception e){
+			logger.error("insertSelective",e);
+		}finally{
+			storePool.closeConn(jedis);
 		}
 	}
 	private void lpushTotalCount(Jedis jedis,String key,String forumId){
@@ -79,6 +87,17 @@ public class NoteRepository implements CacheKeysConstance{
 			initTotalToday(jedis, key, forumId);
 		}else{//初始化时的总数，已经包括了当前的这次请求
 			jedis.lpush(key, "n");
+		}
+	}
+	
+	private void lpopTotalCount(Jedis jedis,String key){
+		if(jedis.exists(key)){
+			jedis.lpop(key);
+		}
+	}
+	private void lpopTotalToday(Jedis jedis,String key){
+		if(jedis.exists(key)){
+			jedis.lpop(key);
 		}
 	}
 
