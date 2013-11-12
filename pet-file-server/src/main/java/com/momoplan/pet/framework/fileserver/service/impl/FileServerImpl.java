@@ -25,6 +25,7 @@ import com.momoplan.pet.commons.domain.fileserver.po.FileIndex;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.fileserver.service.FileServer;
 import com.momoplan.pet.framework.fileserver.utils.ImageTools;
+import com.momoplan.pet.framework.fileserver.utils.Point;
 import com.momoplan.pet.framework.fileserver.vo.FileBean;
 
 @Service
@@ -82,6 +83,18 @@ public class FileServerImpl implements FileServer{
 			logger.debug("sw="+sw+";rw="+sw);
 			logger.debug("sh="+sh+";rh="+rh);
 			File output = new File(realPath);
+			logger.debug("加水印...");
+			InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
+			BufferedImage top = ImageIO.read(tis);
+			int tw = top.getWidth();
+			int th = top.getHeight();
+			if(th>rh/3){
+				double rth = rh/3;
+				double rtw = (rth/th)*tw;
+				top = ImageTools.getResizePicture(top,rtw,rth);
+			}
+			bi = ImageTools.pressImage( bi,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
+			logger.debug("输出...");
 			ImageIO.write( bi ,format , output);
 			long rs = output.length();
 			logger.debug("ss="+ss+";rs="+rs);

@@ -49,14 +49,22 @@ public class ImageTools {
 		BufferedImage originalPic = ImageIO.read(mis);
 		int sw = originalPic.getWidth();
 		int sh = originalPic.getHeight();
-		double rw = 1920;
+		double rw = 500;
 		double rh = (rw/sw)*sh;
 		System.out.printf("sw=%s sh=%s\r\nrw=%s rh=%s\r\n", sw+"",sh+"",rw+"",rh+"");
 		BufferedImage res = getResizePicture(originalPic,rw,rh);
-		ImageIO.write(res,format, output);
 		System.out.println("OK...");
-		System.out.println(input.length());
-		System.out.println(output.length());
+		InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
+		BufferedImage top = ImageIO.read(tis);
+		int tw = top.getWidth();
+		int th = top.getHeight();
+		if(th>rh/3){
+			double rth = rh/3;
+			double rtw = (rth/th)*tw;
+			top = getResizePicture(top,rtw,rth);
+		}
+		res = pressImage(res,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
+		ImageIO.write(res,format, output);
 		is.close();
 	}
 	
