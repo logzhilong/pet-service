@@ -105,6 +105,7 @@ public class ForumServiceImpl implements ForumService {
 	 */
 	public List<ForumNode> getAllForumAsTree(String userId) throws Exception{
 		ForumCriteria forumCriteria = new ForumCriteria();
+		forumCriteria.setOrderByClause("seq asc");
 		// TODO 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
 		// 我关注的圈子
