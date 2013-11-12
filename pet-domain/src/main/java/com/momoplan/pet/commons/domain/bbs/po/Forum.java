@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-09-26 12:09:32
+* @date 2013-11-12 11:25:18
 */
 public class Forum implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -40,6 +40,8 @@ public class Forum implements Serializable {
     private String cb;
 
     private Long seq;
+
+    private String type;
 
     public String getId() {
         return id;
@@ -137,6 +139,14 @@ public class Forum implements Serializable {
         this.seq = seq;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -160,7 +170,8 @@ public class Forum implements Serializable {
             && (this.getAreaDesc() == null ? other.getAreaDesc() == null : this.getAreaDesc().equals(other.getAreaDesc()))
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getCb() == null ? other.getCb() == null : this.getCb().equals(other.getCb()))
-            && (this.getSeq() == null ? other.getSeq() == null : this.getSeq().equals(other.getSeq()));
+            && (this.getSeq() == null ? other.getSeq() == null : this.getSeq().equals(other.getSeq()))
+            && (this.getType() == null ? other.getType() == null : this.getType().equals(other.getType()));
     }
 
     @Override
@@ -179,6 +190,7 @@ public class Forum implements Serializable {
         result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getCb() == null) ? 0 : getCb().hashCode());
         result = prime * result + ((getSeq() == null) ? 0 : getSeq().hashCode());
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         return result;
     }
 
