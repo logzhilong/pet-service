@@ -35,8 +35,8 @@ public class ReplyNoteHandler extends AbstractHandler {
 			logger.debug("回帖成功 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, id).toString();
 		} catch (Exception e) {
-			logger.error("回帖失败 body=" + gson.toJson(clientRequest));
-			logger.error("login : ", e);
+			logger.debug("回帖失败 body=" + gson.toJson(clientRequest));
+			logger.error("replyNote : ", e);
 			rtn = new Success(false, e.toString()).toString();
 		} finally {
 			logger.debug(rtn);

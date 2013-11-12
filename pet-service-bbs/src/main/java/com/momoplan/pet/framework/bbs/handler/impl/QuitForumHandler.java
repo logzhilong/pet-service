@@ -14,8 +14,6 @@ import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
  * 退出圈子
- * 
- * @author qiyongc
  */
 @Component("quitForum")
 public class QuitForumHandler extends AbstractHandler {
@@ -33,8 +31,8 @@ public class QuitForumHandler extends AbstractHandler {
 			logger.debug("退出圈子成功 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, "OK").toString();
 		} catch (Exception e) {
-			logger.error("退出圈子失败 body=" + gson.toJson(clientRequest));
-			logger.error("login : ", e);
+			logger.debug("退出圈子失败 body=" + gson.toJson(clientRequest));
+			logger.error("quitForum : ", e);
 			rtn = new Success(false, e.toString()).toString();
 		} finally {
 			logger.debug(rtn);

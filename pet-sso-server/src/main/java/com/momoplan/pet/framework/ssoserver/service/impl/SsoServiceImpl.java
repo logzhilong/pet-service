@@ -1,8 +1,12 @@
 package com.momoplan.pet.framework.ssoserver.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +17,10 @@ import redis.clients.jedis.ShardedJedis;
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
+import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumCondition;
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.mapper.SsoChatServerMapper;
 import com.momoplan.pet.commons.domain.user.mapper.SsoVersionMapper;
@@ -23,6 +29,7 @@ import com.momoplan.pet.commons.domain.user.po.SsoChatServerCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.domain.user.po.SsoVersion;
 import com.momoplan.pet.commons.domain.user.po.SsoVersionCriteria;
+import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.user.SsoUserRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.ssoserver.service.SsoService;
@@ -68,9 +75,84 @@ public class SsoServiceImpl implements SsoService {
 		logger.debug("register : "+user.toString());
 		SsoAuthenticationToken token = ssoUserRepository.createToken(user.getId());
 		logger.debug("token : "+gson.toJson(token));
+		logger.debug("//TODO 131112:默认要关注一些圈子");
+		addUserForumRel(user);
 		return token;
 	}
-
+	/**
+	 * 按照条件，来关注圈子
+	 * @param user
+	 * @throws Exception 
+	 */
+	private void addUserForumRel(SsoUser user) {
+		//要关注的条件
+		List<UserForumCondition> ufcList = getUserForumCondition();
+		if(ufcList!=null&&ufcList.size()>0){
+			logger.debug("//获取有默认需要关注的圈子");
+			for(UserForumCondition ufc:ufcList){
+				logger.debug("//TODO 131112 ： 这里是可以按照条件来判断是否要关注的，但目前可以无条件关注");
+				String forumId = ufc.getForumId();
+				String userId = user.getId();
+				logger.debug("注册关注 userid="+userId+" ; forumid="+forumId);
+				String json = null;
+				try{
+					HashMap<String,Object> params = new HashMap<String,Object>();
+					params.put("forumId", forumId);
+					params.put("userId", userId);
+					json = callService("service.uri.pet_bbs", "attentionForum", params);
+					logger.debug("关注成功 "+json);
+				}catch(Exception e){
+					logger.debug("关注失败 "+json);
+					logger.debug(e.getMessage());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 调用HTTP服务
+	 * @param service
+	 * @param method
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	private String callService(String service,String method,HashMap<String,Object> params) throws Exception{
+		String url = commonConfig.get(service);
+		ClientRequest request = new ClientRequest();
+		request.setMethod(method);
+		request.setParams(params);
+		String param = gson.toJson(request);
+		logger.debug("param="+param);
+		String json = PostRequest.postText(url, "body",param);
+		logger.debug("resJson="+json);
+		return json;
+	}
+	
+	private List<UserForumCondition> getUserForumCondition(){
+		List<UserForumCondition> list = null;
+		try {
+			String json = callService("service.uri.pet_bbs", "getUserForumCondition", null);
+			if(json!=null&&!"".equals(json)){
+				JSONObject result = new JSONObject(json);
+				boolean success = result.getBoolean("success");
+				JSONArray entity = result.getJSONArray("entity");
+				if(success&&entity!=null&&entity.length()>0){
+					list = new ArrayList<UserForumCondition>();
+					for(int i=0;i<entity.length();i++){
+						JSONObject element = entity.getJSONObject(i);
+						logger.debug(element.toString());
+						UserForumCondition vo = gson.fromJson(element.toString(), UserForumCondition.class);
+						list.add(vo);
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("getUserForumCondition",e);
+		}
+		return list;
+	}
+	
 	private SsoChatServer getSsoChatServer(){
 		String xmppDomain = commonConfig.get("xmpp.domain");
 		ShardedJedis jedis = null;

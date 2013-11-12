@@ -42,7 +42,6 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 				mapperOnCache.deleteByPrimaryKey(p.getClass(), p.getId());
 			}
 	}
-
 	/**
 	 * 关注圈子
 	 * 
@@ -50,8 +49,19 @@ public class UserForumRelServiceImpl implements UserForumRelService {
 	 */
 	@Override
 	public void attentionForum(UserForumRel po) throws Exception {
-		po.setId(IDCreater.uuid());
-		mapperOnCache.insertSelective(po, po.getId());
+		String userId = po.getUserId();
+		String forumId = po.getForumId();
+		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
+		UserForumRelCriteria.Criteria criteria = userForumRelCriteria.createCriteria();
+		criteria.andUserIdEqualTo(userId);
+		criteria.andForumIdEqualTo(forumId);
+		int c = userForumRelMapper.countByExample(userForumRelCriteria);
+		if(c>0){
+			logger.debug("重复的关注 userId="+userId+" ; forumId="+forumId); 
+		}else{
+			po.setId(IDCreater.uuid());
+			mapperOnCache.insertSelective(po, po.getId());
+		}
 	}
 
 }

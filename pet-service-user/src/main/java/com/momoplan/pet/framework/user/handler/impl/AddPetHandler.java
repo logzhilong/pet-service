@@ -42,7 +42,6 @@ public class AddPetHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try{
-			String token = clientRequest.getToken();
 			String userid = getUseridFParamSToken(clientRequest);
 			PetInfo petInfo = revicePetInfo(clientRequest);
 			petInfo.setUserid(userid);

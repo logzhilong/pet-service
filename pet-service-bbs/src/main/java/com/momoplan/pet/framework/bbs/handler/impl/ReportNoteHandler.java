@@ -47,8 +47,8 @@ public class ReportNoteHandler extends AbstractHandler {
 			logger.debug("举报帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
 		}catch(Exception e){
-			logger.error("举报帖子失败 body="+gson.toJson(clientRequest));
-			logger.error("login : ",e);
+			logger.debug("举报帖子失败 body="+gson.toJson(clientRequest));
+			logger.error("reportNote : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);

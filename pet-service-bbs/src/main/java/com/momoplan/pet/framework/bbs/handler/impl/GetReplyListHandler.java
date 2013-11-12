@@ -48,8 +48,8 @@ public class GetReplyListHandler extends AbstractHandler {
 			logger.debug("根据帖子id获取所有回复成功 body=" + gson.toJson(clientRequest));
 			rtn = success.toString();
 		} catch (Exception e) {
-			logger.error("根据帖子id获取所有回复失败 body=" + gson.toJson(clientRequest));
-			logger.error("login : ", e);
+			logger.debug("根据帖子id获取所有回复失败 body=" + gson.toJson(clientRequest));
+			logger.error("getReplyList : ", e);
 			rtn = new Success(false, e.toString()).toString();
 		} finally {
 			writeStringToResponse(rtn, response);
