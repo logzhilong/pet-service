@@ -268,12 +268,16 @@ public class UserServiceSupport {
 		String json = callService("service.uri.pet_bbs","getForum",p);
 		logger.debug("根据类型获取圈子："+json);
 		JSONObject success = new JSONObject(json);
-		if(success.getBoolean("success")){
-			JSONObject entity = success.getJSONObject("entity");
-			String id = entity.getString("id");
-			Forum f = new Forum();
-			f.setId(id);
-			return f;
+		try{
+			if(success.getBoolean("success")){
+				JSONObject entity = success.getJSONObject("entity");
+				String id = entity.getString("id");
+				Forum f = new Forum();
+				f.setId(id);
+				return f;
+			}
+		}catch(Exception e){
+			logger.debug(e.getMessage());
 		}
 		return null;
 	}
