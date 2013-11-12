@@ -60,11 +60,14 @@ public class NoteServiceImpl implements NoteService {
 			noteMapper.updateByPrimaryKeySelective(note);
 		} else {
 			logger.debug(note.toString());
-			String con=note.getContent();
-			con=con.replace("\"", "\\\"");
+			String con = note.getContent();
+			con = con.replace("\"", "\\\"");
 			System.out.println(con);
 			String url = commonConfig.get("service.uri.pet_bbs", null);
-			String body = "{\"method\":\"sendNote\",\"params\":{\"userId\":\""+ note.getUserId() + "\",\"forumId\":\""+ note.getForumId() + "\",\"name\":\"" + note.getName()+ "\",\"content\":\"" + con + "\"}}";
+			String body = "{\"method\":\"sendNote\",\"params\":{\"userId\":\""
+					+ note.getUserId() + "\",\"forumId\":\""
+					+ note.getForumId() + "\",\"name\":\"" + note.getName()
+					+ "\",\"content\":\"" + con + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			logger.debug("增加帖子" + res.toString());
 		}
@@ -107,7 +110,8 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@SuppressWarnings("static-access")
 	@Override
-	public List<MgrTrustUser> trustUserslist(HttpServletRequest request)throws Exception {
+	public List<MgrTrustUser> trustUserslist(HttpServletRequest request)
+			throws Exception {
 		logger.debug("welcome to trustUserslist.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
 		MgrTrustUserCriteria.Criteria criteria = trustUserCriteria.createCriteria();
@@ -121,9 +125,14 @@ public class NoteServiceImpl implements NoteService {
 			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ uid + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
-			JSONObject object1 = new JSONObject(object.getString("entity"));
-			user.setNrootId(object1.getString("nickname"));
+			if (object.getBoolean("success")) {
+				if (res.indexOf("entity") >= 0) {
+					JSONObject object1 = new JSONObject(object.getString("entity"));
+					user.setNrootId(object1.getString("nickname"));
+				}
+			}
 		}
+
 		return trustUserlist;
 	}
 }

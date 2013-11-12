@@ -74,10 +74,7 @@ public class BBSManagerController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/manager/bbs/addOrUpdateForum.html")
-	public void addOrUpdateForum(String fatherid, String sunid,
-			String grandsunid, Forum forum, Model model,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public void addOrUpdateForum(String fatherid, String sunid,String grandsunid, Forum forum, Model model,HttpServletRequest request, HttpServletResponse response)throws Exception {
 		logger.debug("wlcome to pet-service-bbs manager addorupdate ......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
@@ -104,10 +101,9 @@ public class BBSManagerController {
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
-		String jsonStr = json.toString();
-		logger.debug(jsonStr);
+		logger.debug(json.toString());
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonStr);
+		response.getWriter().write(json.toString());
 	}
 
 	/**
@@ -120,8 +116,7 @@ public class BBSManagerController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/manager/bbs/DelForum.html")
-	public void DelForum(Forum forum, Model model, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public void DelForum(Forum forum, Model model, HttpServletRequest request,HttpServletResponse response) throws Exception {
 		logger.debug("wlcome to pet-service-bbs manager del ......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
@@ -136,15 +131,13 @@ public class BBSManagerController {
 			json.put("message", e.getMessage());
 			e.printStackTrace();
 		}
-		String jsonStr = json.toString();
-		logger.debug(jsonStr);
+		logger.debug(json.toString());
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonStr);
+		response.getWriter().write(json.toString());
 	}
 
 	@RequestMapping("/manager/bbs/main.html")
-	public String main(Model model, HttpServletRequest request,
-			HttpServletResponse response) {
+	public String main(Model model, HttpServletRequest request,HttpServletResponse response) {
 		logger.debug("wlcome to pet-service-bbs manager main ......");
 		return "/manager/bbs/main";
 	}
@@ -164,8 +157,7 @@ public class BBSManagerController {
 			pageBean = bBSManagerService.listForum(pageBean, myForm);
 			model.addAttribute("pageBean", pageBean);
 			// 读取所有国家(查询级联)
-			List<CommonAreaCode> codes = commonDataManagerService
-					.getConmonArealist();
+			List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 			model.addAttribute("codes", codes);
 		} catch (Exception e) {
 			logger.error("forumList" + e);
@@ -175,7 +167,8 @@ public class BBSManagerController {
 	}
 
 	/**
-	 * 根据父圈子ID，找到子圈子，并进行管理； 此处为功能入口
+	 * 根据父圈子ID，找到子圈子集合，并进行管理；
+	 * 此处为功能入口
 	 * 
 	 * @param myForm
 	 * @param pageBean
@@ -183,18 +176,7 @@ public class BBSManagerController {
 	 * @return
 	 */
 	@RequestMapping("/manager/bbs/forumManager.html")
-	public String forumManager(String sss, Forum myForm,
-			PageBean<Forum> pageBean, Model model) {
-		logger.debug("wlcome to pet-service-bbs manager forumManager ......");
-		try {
-			// 测试时先写死，分页尚未实现 >>>>>>>>>>
-			pageBean.setPageNo(1);
-			pageBean.setPageSize(100);
-			// 测试时先写死，分页尚未实现 <<<<<<<<<<
-		} catch (Exception e) {
-			logger.error("forumManager" + e);
-			logger.error(e.getMessage());
-		}
+	public String forumManager() {
 		return "/manager/bbs/forumManager";
 	}
 
@@ -216,9 +198,9 @@ public class BBSManagerController {
 			forumss = bBSManagerService.getSunForumListbyPid(forum);
 			model.addAttribute("forumss", forumss);
 			if ("left".equals(target)) {
-				return fmLeft(id, model);
+				return "/manager/bbs/forumManagerLeft";
 			} else {
-				return fmRight(id, model);
+				return "/manager/bbs/forumManagerRight";
 			}
 		} catch (Exception e) {
 			logger.error("forumManagerMain" + e);
@@ -226,15 +208,6 @@ public class BBSManagerController {
 			return null;
 		}
 	}
-
-	private String fmLeft(String id, Model model) {
-		return "/manager/bbs/forumManagerLeft";
-	}
-
-	public String fmRight(String id, Model model) {
-		return "/manager/bbs/forumManagerRight";
-	}
-
 	/**
 	 * 获取某圈子子集贴子 管理右侧的帖子集合
 	 * 
@@ -247,7 +220,7 @@ public class BBSManagerController {
 		try {
 			forum.setDescript(tname);
 			List<Note> forums = bBSManagerService.getAllNotesByForumId(forum);
-			logger.debug("forumrightmanagelist" + forums.toString());
+			logger.debug("forumrightmanagelist" + forums);
 			model.addAttribute("forums", forums);
 			model.addAttribute("forumid", forum.getId());
 

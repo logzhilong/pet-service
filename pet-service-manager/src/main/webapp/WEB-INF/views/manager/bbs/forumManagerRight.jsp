@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-
+<form id="pagerForm" onsubmit="return divSearch(this, 'jbsxBox');" action="demo/pagination/list1.html" method="post">
+	<input type="hidden" name="pageNum" value="1" />
+	<input type="hidden" name="numPerPage" value="${model.numPerPage}" />
+	<input type="hidden" name="orderField" value="${param.orderField}" />
+	<input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+	</form>
 
 <div class="pageContent">
 	<div class="panelBar">
@@ -54,11 +59,13 @@
 			<c:forEach items="${forums }" var="itm" varStatus="idx">
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
-					<td><a
-						href="${ctx }/manager/notemanager/notedetail.html?id=${itm.id }"
-						target="dialog" max="false"  mask="true"
-						title="帖子详情(${itm.name })" width="600" height="500"
-						close="forum.refresh"> ${itm.name } </a></td>
+					<td>
+						<a href="${ctx }/manager/notemanager/notedetail.html?id=${itm.id }"
+							target="dialog" max="false"  mask="true"
+							title="帖子详情(${itm.name })" width="600" height="500"
+							close="forum.refresh"> ${itm.name } 
+						</a>
+					</td>
 					<td>${itm.clientCount }</td>
 					<td>${itm.isEute }</td>
 					<td>${itm.isTop }</td>
@@ -71,6 +78,20 @@
 			</c:forEach>
 		</tbody>
 	</table>
+		<div class="panelBar" >
+		<div class="pages">
+			<span>显示</span>
+			<select name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+				<option value="20">20</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+				<option value="200">200</option>
+			</select>
+			<span>条，共23条</span>
+		</div>
+		
+		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="2"></div>
 
+	</div>
 </div>
 

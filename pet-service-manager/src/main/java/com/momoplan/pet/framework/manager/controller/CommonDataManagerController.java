@@ -97,10 +97,9 @@ public class CommonDataManagerController {
 			logger.error("areaCodeDel"+e);
 			e.printStackTrace();
 		}
-		String jsonStr = json.toString();
-		logger.debug(jsonStr);
+		logger.debug(json.toString());
 		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(jsonStr);
+		response.getWriter().write(json.toString());
 	}
 	/**
 	 * 增加或者修改Area
@@ -149,7 +148,7 @@ public class CommonDataManagerController {
 	@RequestMapping("/manager/commons/getConmonArealistBypid.html")
 	public void getConmonArealistBypid(CommonAreaCode areaCode,Model model,HttpServletResponse response){
 		try {
-			logger.debug("地区:"+areaCode.toString());
+			logger.debug("地区:"+areaCode);
 			List<CommonAreaCode> areaCodes=commonDataManagerService.getConmonArealistBypid(areaCode);
 			//拼接字符串作为显示区域级联的效果
 			StringBuffer sb = new StringBuffer("[");
@@ -169,10 +168,9 @@ public class CommonDataManagerController {
 					sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
 					sb.append("]");
 			}
-			String res = sb.toString();
-			logger.debug(res);
+			logger.debug(sb.toString());
 			response.setCharacterEncoding("utf-8");
-			response.getWriter().write(res);
+			response.getWriter().write(sb.toString());
 		} catch (Exception e) {
 			logger.error("getConmonArealistBypid"+ e);
 			e.printStackTrace();

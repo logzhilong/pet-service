@@ -47,8 +47,11 @@ public class TrustUserServiceImpl implements TrustUserService {
 			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ uid + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
+			if (object.getBoolean("success")) {
+				if (res.indexOf("entity") >= 0) {
 			JSONObject object1 = new JSONObject(object.getString("entity"));
 			user.setNrootId(object1.getString("nickname"));
+				}}
 		}
 		pageBean.setData(trustUserlist);
 		pageBean.setTotalRecorde(totalCount);
@@ -69,6 +72,8 @@ public class TrustUserServiceImpl implements TrustUserService {
 			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""+ petuser.getHobby() + "\",\"img\":\""+ petuser.getImg() + "\",\"signature\":\""+ petuser.getSignature() + "\",\"gender\":\""+ petuser.getGender() + "\",\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\",\"password\":\""+ petuser.getPassword() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
+			if (object.getBoolean("success")) {
+				if (res.indexOf("entity") >= 0) {
 			JSONObject object1 = new JSONObject(object.getString("entity"));
 			String userid=object1.getString("userid");
 			MgrTrustUser mgrTrustUser=new MgrTrustUser();
@@ -78,6 +83,8 @@ public class TrustUserServiceImpl implements TrustUserService {
 			mgrTrustUser.setNrootId(user.getId());
 			mgrTrustUser.setUserId(userid);
 			trustUserMapper.insertSelective(mgrTrustUser);
+				}
+				}
 		}
 		else{
 			String img=petuser.getImg();
@@ -104,7 +111,8 @@ public class TrustUserServiceImpl implements TrustUserService {
 		String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ petuser.getId() + "\"}}";
 		String res = PostRequest.postText(url, "body", body.toString());
 		JSONObject object = new JSONObject(res);
-		if(null != object.getString("entity") && "" != object.getString("entity")){
+		if (object.getBoolean("success")) {
+			if (res.indexOf("entity") >= 0) {
 			JSONObject object1 = new JSONObject(object.getString("entity"));
 				petuser.setNickname(object1.getString("nickname"));
 				petuser.setPhonenumber(object1.getString("phoneNumber"));
@@ -114,6 +122,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 				petuser.setGender(object1.getString("gender"));
 				petuser.setSignature(object1.getString("signature"));
 				petuser.setImg(object1.getString("img"));
+			}
 		}
 		return petuser;
 	}

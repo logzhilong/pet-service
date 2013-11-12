@@ -30,45 +30,38 @@ import com.momoplan.pet.framework.manager.vo.WebUser;
 
 @Service
 public class BBSManagerServiceImpl implements BBSManagerService {
-	private Logger logger = LoggerFactory
-			.getLogger(BBSManagerServiceImpl.class);
+	private Logger logger = LoggerFactory.getLogger(BBSManagerServiceImpl.class);
+	@Autowired
 	private ForumMapper forumMapper = null;
 	@Autowired
 	CommonDataManagerService commonDataManagerService;
 	private CommonConfig commonConfig = new CommonConfig();
-
-	@Autowired
-	public BBSManagerServiceImpl(ForumMapper forumMapper) {
-		super();
-		this.forumMapper = forumMapper;
-	}
-
 	@Override
 	public PageBean<Forum> listForum(PageBean<Forum> pageBean, Forum vo)
 			throws Exception {
 		logger.debug("welcome to listForum.....................");
 		String id = vo.getId();
 		ForumCriteria forumCriteria = new ForumCriteria();
+		forumCriteria.setOrderByClause("seq");
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		if (StringUtils.isEmpty(id)) {
 			criteria.andPidIsNull();
 		} else {
 			criteria.andPidEqualTo(id);
 		}
-		if (StringUtils.isEmpty(vo.getName())) {
-			if ("all".equals(vo.getAreaCode())
-					&& "all".equals(vo.getAreaCode())) {
-			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
-				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
-			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
-				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
-			}
-		} else {
-			criteria.andNameLike("%" + vo.getName() + "%");
-		}
+//		if (StringUtils.isEmpty(vo.getName())) {
+//			if ("all".equals(vo.getAreaCode())
+//					&& "all".equals(vo.getAreaCode())) {
+//			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
+//				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
+//			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
+//				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
+//			}
+//		} else {
+//			criteria.andNameLike("%" + vo.getName() + "%");
+//		}
 		int totalCount = forumMapper.countByExample(forumCriteria);
-		forumCriteria.setMysqlOffset((pageBean.getPageNo() - 1)
-				* pageBean.getPageSize());
+		forumCriteria.setMysqlOffset((pageBean.getPageNo() - 1)* pageBean.getPageSize());
 		forumCriteria.setMysqlLength(pageBean.getPageSize());
 		List<Forum> list = forumMapper.selectByExample(forumCriteria);
 		pageBean.setData(list);
@@ -129,12 +122,12 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	@SuppressWarnings("static-access")
 	@Override
 	public int addOrUpdateForum(Forum forum, HttpServletRequest request)
-			throws Exception {
+		throws Exception {
 		logger.debug("welcome to addOrUpdateForum.....................");
 		String id = forum.getId();
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if (fo != null && !"".equals(fo.getId())) {
-			logger.debug("selectByPK.po=" + fo.toString());
+			logger.debug("selectByPK.po=" + fo);
 			String img = forum.getLogoImg();
 			if (null != img && "" != img) {
 				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
@@ -218,6 +211,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	public List<Forum> getSunForumListbyPid(Forum forum) throws Exception {
 		logger.debug("welcome to getSunForumList.....................");
 		ForumCriteria forumCriteria = new ForumCriteria();
+		forumCriteria.setOrderByClause("seq");
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		criteria.andPidEqualTo(forum.getId());
 		List<Forum> forums = forumMapper.selectByExample(forumCriteria);
@@ -235,37 +229,41 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	public List<Note> getAllNotesByForumId(Forum forum) throws Exception {
 		logger.debug("welcome to getAllNotesByForumId.....................");
 		String url = commonConfig.get("service.uri.pet_bbs", null);
-		String body=null;
-		if(forum.getDescript() != null &&  "" != forum.getDescript()){
-			 body = "{\"method\":\"getNoteList\",\"params\":{\"condition\":\""+ forum.getDescript() + "\",\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "SEARCH"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
-		}else{
-			 body = "{\"method\":\"getNoteList\",\"params\":{\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "ALL"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
+		String body = null;
+		if (forum.getDescript() != null && "" != forum.getDescript()) {
+			body = "{\"method\":\"getNoteList\",\"params\":{\"condition\":\""+ forum.getDescript() + "\",\"forumId\":\"" + forum.getId()+ "\",\"action\":\"" + "SEARCH" + "\",\"withTop\":\""+ "true" + "\",\"pageNo\":\"" + "0" + "\",\"pageSize\":\""+ "500" + "\"}}";
+		} else {
+			body = "{\"method\":\"getNoteList\",\"params\":{\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "ALL"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
 		}
 		String res = PostRequest.postText(url, "body", body.toString());
 		JSONObject object = new JSONObject(res);
-		JSONArray ja = object.getJSONArray("entity");
-		List<Note> notes=new  ArrayList<Note>();
-		
-		for (int i = 0; i < ja.length(); i++) {
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");  
-			JSONObject jo = (JSONObject) ja.get(i);
-			logger.debug(jo.toString());
-			Note note=new Note();
-			note.setId(jo.getString("id"));
-			note.setForumId(jo.getString("forumId"));
-			note.setName(jo.getString("name"));
-			note.setUserId(jo.getString("userId"));
-			note.setClientCount(jo.getLong("clientCount"));
-			note.setIsDel(jo.getBoolean("isDel"));
-			note.setIsEute(jo.getBoolean("isEute"));
-			note.setState(jo.getString("state"));
-			note.setType(jo.getString("type"));
-			note.setIsTop(jo.getBoolean("isTop"));
-			note.setCt(sdf.parse(jo.getString("ct")));
-			note.setEt(sdf.parse(jo.getString("et")));
-			note.setRt(sdf.parse(jo.getString("rt")));
-			notes.add(note);
+		if (object.getBoolean("success")) {
+			if (res.indexOf("entity") >= 0) {
+				JSONArray ja = object.getJSONArray("entity");
+				List<Note> notes = new ArrayList<Note>();
+				for (int i = 0; i < ja.length(); i++) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+					JSONObject jo = (JSONObject) ja.get(i);
+					logger.debug(jo.toString());
+					Note note = new Note();
+					note.setId(jo.getString("id"));
+					note.setForumId(jo.getString("forumId"));
+					note.setName(jo.getString("name"));
+					note.setUserId(jo.getString("userId"));
+					note.setClientCount(jo.getLong("clientCount"));
+					note.setIsDel(jo.getBoolean("isDel"));
+					note.setIsEute(jo.getBoolean("isEute"));
+					note.setState(jo.getString("state"));
+					note.setType(jo.getString("type"));
+					note.setIsTop(jo.getBoolean("isTop"));
+					note.setCt(sdf.parse(jo.getString("ct")));
+					note.setEt(sdf.parse(jo.getString("et")));
+					note.setRt(sdf.parse(jo.getString("rt")));
+					notes.add(note);
+				}
+				return notes;
+			}
 		}
-		return notes;
+		return null;
 	}
 }

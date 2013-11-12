@@ -44,7 +44,7 @@ public class NoteController {
 		try {
 			Note note2=noteService.getNotebyid(note.getId());
 			noteService.updateClickCount(note2.getId());
-			logger.debug("获取帖子详情"+note2.toString());
+			logger.debug("获取帖子详情"+note2);
 			model.addAttribute("note2", note2);
 			return "/manager/notemanage/NoteDetail";
 		} catch (Exception e) {
@@ -64,7 +64,7 @@ public class NoteController {
 		try {
 			if(note != null && !"".equals(note.getId()) && null != note.getId()){
 				Note note2=noteService.getNotebyid(note.getId());
-				logger.debug("获取帖子详情"+note2.toString());
+				logger.debug("获取帖子详情"+note2);
 				model.addAttribute("note2", note2);
 				return "/manager/notemanage/NoteUpdate";
 			}else{

@@ -15,6 +15,13 @@
 						<input readonly="readonly" type="hidden" name="id" value="${fos.id }" />
 					</dd>
 				</dl>
+				
+				<dl>
+					<dt>排序:</dt>
+					<dd>
+						<input type="text" name="seq" value="${fos.seq }" />
+					</dd>
+				</dl>
 				<dl>
 					<dt>圈子名字：</dt>
 					<dd>
@@ -28,18 +35,6 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>点击数量:</dt>
-					<dd>
-						<input type="text" name="clientCount" value="${fos.clientCount }" />
-					</dd>
-				</dl>
-				<dl>
-					<dt>圈子回复量：</dt>
-					<dd>
-						<input type="text" name="replyCount" value="${fos.replyCount }" />
-					</dd>
-				</dl>
-				<dl>
 					<dt>圈子头像：</dt>
 					<dd >
 						<textarea style="width:130px;"  class="editor"
@@ -49,6 +44,18 @@
 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
 							${note2.content }
 						</textarea>
+					</dd>
+				</dl>
+				<dl>
+					<dt>点击数量:</dt>
+					<dd>
+						<input type="text" name="clientCount" value="${fos.clientCount }" />
+					</dd>
+				</dl>
+				<dl>
+					<dt>圈子回复量：</dt>
+					<dd>
+						<input type="text" name="replyCount" value="${fos.replyCount }" />
 					</dd>
 				</dl>
 			<!-- 

@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-
+<!--分页操作 -->
+<form id="pagerForm" method="post" action="${ctx }/manager/trustuser/userList.html">
+	<input type="hidden" name="pageNo" value="1" /> 
+	<input type="hidden" name=pageSize value="${pageBean.pageSize}" />
+</form>
 <div class="pageHeader">
 
 	<div class="searchBar">
@@ -73,6 +77,7 @@
 			-->
 				<th width="150" align="center" >创建时间</th>
 				<th width="80" align="center" >创建人</th>
+				<th width="80" align="center" >排序</th>
 			</tr>
 		</thead>
 		<tbody id="alertListTbody" >
@@ -89,12 +94,29 @@
 					<td>${itm.replyCount }</td>
 					<td><fmt:formatDate value="${itm.ct }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 					<td>${itm.cb }</td>
+					<td>${itm.seq }</td>
 <%-- 				<td>${itm.areaCode }</td>
 					<td>${itm.areaDesc }</td> --%>
 				</tr>
 			</c:forEach>
 		</tbody>
 	</table>
+	<!-- 分页操作 -->
+	<div class="panelBar">
+		<div class="pages">
+			<span>显示</span> <select name="pageSize"
+				onchange="navTabPageBreak({numPerPage:this.value})">
+				<option value="10">10</option>
+				<option value="20">20</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select> <span>条，共${pageBean.totalRecorde}条</span>
+		</div>
+		<div class="pagination" targetType="navTab"
+			totalCount="${pageBean.totalRecorde}"
+			numPerPage="${pageBean.pageSize}" pageNumShown="10"
+			currentPage="${pageBean.pageNo}"></div>
+	</div>	
 		
 </div>
 
