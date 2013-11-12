@@ -32,8 +32,8 @@ public class AttentionForumHandler extends AbstractHandler {
 			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,"OK").toString();
 		}catch(Exception e){
-			logger.error("关注圈子失败 body="+gson.toJson(clientRequest));
-			logger.error("login : ",e);
+			logger.debug("关注圈子失败 body="+gson.toJson(clientRequest));
+			logger.error("attentionForum : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);

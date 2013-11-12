@@ -158,6 +158,12 @@ public class NoteSubServiceImpl implements NoteSubService {
 			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
 			list = noteSubMapper.selectByExample(noteSubCriteria);
 		}
+		if(list!=null){
+			logger.debug(noteId+" 回复列表大小 list.size="+list.size());
+			for(NoteSub ns : list){
+				logger.debug("seq="+ns.getSeq());
+			}
+		}
 		PageBean<NoteSub> p = new PageBean<NoteSub>();
 		p.setData(list);
 		p.setTotalCount(totalCount);

@@ -14,7 +14,6 @@ import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 
 /**
  * 发帖
- * @author  qiyongc
  */
 @Component("sendNote")
 public class SendNoteHandler extends AbstractHandler {
@@ -34,7 +33,7 @@ public class SendNoteHandler extends AbstractHandler {
 			logger.debug("发帖成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,id).toString();
 		}catch(Exception e){
-			logger.error("发帖失败 body="+gson.toJson(clientRequest));
+			logger.debug("发帖失败 body="+gson.toJson(clientRequest));
 			logger.error("sendNote : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{

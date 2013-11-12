@@ -3,6 +3,7 @@ package com.momoplan.pet.framework.user.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -19,13 +20,16 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.GeoHash;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.cache.pool.StorePool;
+import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.user.mapper.PetInfoMapper;
 import com.momoplan.pet.commons.domain.user.mapper.UserFriendshipMapper;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.user.SsoUserRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.user.enums.GenderType;
@@ -256,5 +260,69 @@ public class UserServiceSupport {
 			redisPool.closeConn(jedis);
 		}
 		return null;
+	}
+	
+	private Forum getForumByType(String petType) throws Exception{
+		HashMap<String,Object> p = new HashMap<String,Object>();
+		p.put("petType", petType);
+		String json = callService("service.uri.pet_bbs","getForum",p);
+		logger.debug("根据类型获取圈子："+json);
+		JSONObject success = new JSONObject(json);
+		try{
+			if(success.getBoolean("success")){
+				JSONObject entity = success.getJSONObject("entity");
+				String id = entity.getString("id");
+				Forum f = new Forum();
+				f.setId(id);
+				return f;
+			}
+		}catch(Exception e){
+			logger.debug(e.getMessage());
+		}
+		return null;
+	}
+	
+	/**
+	 * 按照条件，来关注圈子
+	 * @param user
+	 * @throws Exception 
+	 */
+	protected void addUserForumRel(String userId,String petType) throws Exception {
+		Forum forum = getForumByType(petType);
+		if(forum!=null){
+			String forumId = forum.getId();
+			logger.debug("添加宠物时关注 userid="+userId+" ; petType="+petType+" ; forumid="+forumId);
+			String json = null;
+			try{
+				HashMap<String,Object> params = new HashMap<String,Object>();
+				params.put("forumId", forumId);
+				params.put("userId", userId);
+				json = callService("service.uri.pet_bbs", "attentionForum", params);
+				logger.debug("关注成功 "+json);
+			}catch(Exception e){
+				logger.debug("关注失败 "+json);
+				logger.debug(e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * 调用HTTP服务
+	 * @param service
+	 * @param method
+	 * @param params
+	 * @return
+	 * @throws Exception
+	 */
+	protected String callService(String service,String method,HashMap<String,Object> params) throws Exception{
+		String url = commonConfig.get(service);
+		ClientRequest request = new ClientRequest();
+		request.setMethod(method);
+		request.setParams(params);
+		String param = gson.toJson(request);
+		logger.debug("param="+param);
+		String json = PostRequest.postText(url, "body",param);
+		logger.debug("resJson="+json);
+		return json;
 	}
 }

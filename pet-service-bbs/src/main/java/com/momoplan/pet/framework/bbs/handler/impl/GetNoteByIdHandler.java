@@ -32,8 +32,8 @@ public class GetNoteByIdHandler extends AbstractHandler {
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,vo).toString();
 		}catch(Exception e){
-			logger.error("根据id获取帖子详情 body="+gson.toJson(clientRequest));
-			logger.error("login : ",e);
+			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
+			logger.error("getNoteById : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);

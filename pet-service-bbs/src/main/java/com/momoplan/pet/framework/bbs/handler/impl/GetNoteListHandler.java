@@ -51,8 +51,8 @@ public class GetNoteListHandler extends AbstractHandler {
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(true,list).toString();
 		}catch(Exception e){
-			logger.error("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
-			logger.error("login : ",e);
+			logger.debug("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
+			logger.error("getNoteList : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			writeStringToResponse(rtn,response);

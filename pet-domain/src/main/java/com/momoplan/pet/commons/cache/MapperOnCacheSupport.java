@@ -44,13 +44,21 @@ public class MapperOnCacheSupport {
 			throw e;
 		} finally {
 			if ( redisPool != null && jedis != null && obj!=null ) {
-				if(method.startsWith("update")){
-					t = (T) obj.getClass().getMethod("selectByPrimaryKey", pk.getClass()).invoke(obj, pk);
+				try{
+					if(method.startsWith("update")){
+						t = (T) obj.getClass().getMethod("selectByPrimaryKey", pk.getClass()).invoke(obj, pk);
+					}
+					json = myGson.toJson(t);
+					logger.debug("写入缓存"+method+" :  k="+cacheKey+" ; v="+json);
+					jedis.setex(cacheKey, EX_SECONDS, json);
+					redisPool.closeConn(jedis);
+				}catch(Exception e){
+					logger.debug("缓存 "+method+" 方法异常 : " + e.getMessage());
+					logger.debug("param : mapper="+mapper+" ; cacheKey="+cacheKey);
+					if(method.startsWith("update")){
+						throw e;
+					}
 				}
-				json = myGson.toJson(t);
-				logger.debug("写入缓存"+method+" :  k="+cacheKey+" ; v="+json);
-				jedis.setex(cacheKey, EX_SECONDS, json);
-				redisPool.closeConn(jedis);
 			}
 		}
 		return r;

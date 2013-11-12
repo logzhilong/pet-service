@@ -108,13 +108,13 @@ public class WordFilterServiceImpl implements WordFilterService {
 				Note note = mapperOnCache.selectByPrimaryKey(Note.class, bid);
 				note.setState(NoteState.REJECT.getCode());//审核拒绝
 				logger.debug(note.toString());
-				noteRepository.insertSelective(note, NoteState.REJECT);
+				noteRepository.insertOrUpdateSelective(note, NoteState.REJECT);
 			} else {
 				logger.debug("用户动态-内容审核-通过");
 				Note note = mapperOnCache.selectByPrimaryKey(Note.class, bid);
 				note.setState(NoteState.PASS.getCode());//审核通过
 				logger.debug(note.toString());
-				noteRepository.insertSelective(note, NoteState.PASS);		
+				noteRepository.insertOrUpdateSelective(note, NoteState.PASS);		
 			}
 		} catch (Exception e) {
 			logger.error("userStatesHandler",e);

@@ -78,7 +78,7 @@ public class NoteServiceImpl implements NoteService {
 		po.setState(NoteState.AUDIT.getCode());
 		po.setType("0");
 		logger.debug("发帖子 ：" + po.toString());
-		noteRepository.insertSelective(po,NoteState.AUDIT);
+		noteRepository.insertOrUpdateSelective(po,NoteState.AUDIT);
 		sendJMS(po);
 		return po.getId();
 	}
@@ -173,11 +173,10 @@ public class NoteServiceImpl implements NoteService {
 		stateList.add(NoteState.REJECT.getCode());//审核拒绝
 		stateList.add(NoteState.AUDIT.getCode());//审核中
 		stateList.add(NoteState.REPORT.getCode());//被举报
+		stateList.add(NoteState.DELETE.getCode());//被删除
 		//以上状态不显示
 		criteria.andStateNotIn(stateList);
-		
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
-		
 		// 获取置顶帖子
 		List<Note> list = new ArrayList<Note>();
 		if(withTop&&pageNo==0){//是否带着置顶的帖子，如果带，则放在最前面,只在第一页显示
@@ -235,6 +234,5 @@ public class NoteServiceImpl implements NoteService {
 		logger.debug(vo.toString());
 		return vo;
 	}
-
 
 }

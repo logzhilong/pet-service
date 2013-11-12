@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.bbs.mapper.UserForumConditionMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="forum_id" property="forumId" jdbcType="VARCHAR" />
+    <result column="condition_value" property="conditionValue" jdbcType="VARCHAR" />
+    <result column="condition_type" property="conditionType" jdbcType="VARCHAR" />
+    <result column="ct" property="ct" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, forum_id, condition_value, condition_type, ct
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from bbs_user_forum_condition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from bbs_user_forum_condition
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from bbs_user_forum_condition
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria" >
+    delete from bbs_user_forum_condition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
+    insert into bbs_user_forum_condition (id, forum_id, condition_value, condition_type, ct)
+    values (#{id}, #{forumId}, #{conditionValue}, #{conditionType}, #{ct})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
+    insert into bbs_user_forum_condition
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="forumId != null" >
+        forum_id,
+      </if>
+      <if test="conditionValue != null" >
+        condition_value,
+      </if>
+      <if test="conditionType != null" >
+        condition_type,
+      </if>
+      <if test="ct != null" >
+        ct,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="forumId != null" >
+        #{forumId},
+      </if>
+      <if test="conditionValue != null" >
+        #{conditionValue},
+      </if>
+      <if test="conditionType != null" >
+        #{conditionType},
+      </if>
+      <if test="ct != null" >
+        #{ct},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria" resultType="java.lang.Integer" >
+    select count(*) from bbs_user_forum_condition
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update bbs_user_forum_condition
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.forumId != null" >
+        forum_id = #{record.forumId},
+      </if>
+      <if test="record.conditionValue != null" >
+        condition_value = #{record.conditionValue},
+      </if>
+      <if test="record.conditionType != null" >
+        condition_type = #{record.conditionType},
+      </if>
+      <if test="record.ct != null" >
+        ct = #{record.ct},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update bbs_user_forum_condition
+    set id = #{record.id},
+      forum_id = #{record.forumId},
+      condition_value = #{record.conditionValue},
+      condition_type = #{record.conditionType},
+      ct = #{record.ct}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
+    update bbs_user_forum_condition
+    <set >
+      <if test="forumId != null" >
+        forum_id = #{forumId},
+      </if>
+      <if test="conditionValue != null" >
+        condition_value = #{conditionValue},
+      </if>
+      <if test="conditionType != null" >
+        condition_type = #{conditionType},
+      </if>
+      <if test="ct != null" >
+        ct = #{ct},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
+    update bbs_user_forum_condition
+    set forum_id = #{forumId},
+      condition_value = #{conditionValue},
+      condition_type = #{conditionType},
+      ct = #{ct}
+    where id = #{id}
+  </update>
+</mapper>

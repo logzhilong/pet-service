@@ -11,6 +11,7 @@ public enum NoteState {
 	AUDIT("审核中","AUDIT"),
 	PASS("审核通过","PASS"),
 	REJECT("审核拒绝","REJECT"),
+	DELETE("删除","DELETE"),
 	REPORT("被举报","REPORT");
 
     private NoteState(String name, String code) {

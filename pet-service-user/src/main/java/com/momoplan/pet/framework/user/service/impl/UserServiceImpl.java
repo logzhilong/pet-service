@@ -155,9 +155,10 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 		petInfo = mapperOnCache.selectByPrimaryKey(petInfo.getClass(), petInfo.getId());
 		logger.debug("保存宠物:"+petInfo.toString());
 		updateUserPetTypeIndex(petInfo,false);
+		addUserForumRel(petInfo.getUserid(),petInfo.getType()+"");//添加宠物时关注相关圈子
 		return petInfo.getId();
 	}
-
+	
 	@Override
 	public void addOrRemoveFriend(String st, String aid, String bid) throws Exception {
 		String ua = ssoUserRepository.getSsoUserByName(aid).getId();

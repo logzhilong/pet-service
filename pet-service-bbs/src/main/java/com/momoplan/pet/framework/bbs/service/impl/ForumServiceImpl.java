@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.UserForumConditionMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumCondition;
+import com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
@@ -32,17 +35,23 @@ public class ForumServiceImpl implements ForumService {
 	private ForumMapper forumMapper = null;
 	private NoteRepository noteRepository = null;
 	private NoteSubRepository noteSubRepository = null;
-
+	private UserForumConditionMapper userForumConditionMapper = null;
+	
 	@Autowired
-	public ForumServiceImpl(UserForumRelMapper userForumRelMapper, ForumMapper forumMapper , NoteRepository noteRepository,
-			NoteSubRepository noteSubRepository) {
+	public ForumServiceImpl(UserForumRelMapper userForumRelMapper,
+			ForumMapper forumMapper, NoteRepository noteRepository,
+			NoteSubRepository noteSubRepository,
+			UserForumConditionMapper userForumConditionMapper) {
 		super();
 		this.userForumRelMapper = userForumRelMapper;
 		this.forumMapper = forumMapper;
 		this.noteRepository = noteRepository;
 		this.noteSubRepository = noteSubRepository;
+		this.userForumConditionMapper = userForumConditionMapper;
 	}
-
+	
+	
+	
 	/**
 	 * add by liangc 构建一颗栏目树
 	 * 
@@ -105,6 +114,7 @@ public class ForumServiceImpl implements ForumService {
 	 */
 	public List<ForumNode> getAllForumAsTree(String userId) throws Exception{
 		ForumCriteria forumCriteria = new ForumCriteria();
+		forumCriteria.setOrderByClause("seq asc");
 		// TODO 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
 		// 我关注的圈子
@@ -205,6 +215,24 @@ public class ForumServiceImpl implements ForumService {
 		int count = userForumRelMapper.countByExample(userForumRelCriteria);
 		logger.debug(forumId+" 被关注数 : "+count);
 		return Long.valueOf(count);
+	}
+
+	@Override
+	public List<UserForumCondition> getUserForumCondition() throws Exception {
+		UserForumConditionCriteria userForumConditionCriteria = new UserForumConditionCriteria();
+		List<UserForumCondition> list = userForumConditionMapper.selectByExample(userForumConditionCriteria);
+		logger.debug("获取被推荐的圈子列表，供新注册用户关注 list="+list);
+		return list;
+	}
+
+	@Override
+	public Forum getForum(String petType) throws Exception {
+		ForumCriteria forumCriteria = new ForumCriteria();
+		forumCriteria.createCriteria().andTypeEqualTo(petType);
+		List<Forum> list = forumMapper.selectByExample(forumCriteria);
+		if(list!=null&&list.size()>0)
+			return list.get(0);
+		return null;
 	}
 	
 }
