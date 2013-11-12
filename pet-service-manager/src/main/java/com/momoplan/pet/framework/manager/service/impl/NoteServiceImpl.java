@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrTrustUserMapper;
@@ -30,7 +31,8 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	private MgrTrustUserMapper trustUserMapper = null;
 	private CommonConfig commonConfig = new CommonConfig();
-
+	@Autowired
+	private MapperOnCache onCache =null;
 	/**
 	 * 根据id获取帖子
 	 */
@@ -57,7 +59,7 @@ public class NoteServiceImpl implements NoteService {
 		if (note2 != null && !"".equals(note2.getId())) {
 			note.setEt(new Date());
 			logger.debug("修该帖子" + note2.toString());
-			noteMapper.updateByPrimaryKeySelective(note);
+			onCache.updateByPrimaryKeySelective(note, note.getId());
 		} else {
 			logger.debug(note.toString());
 			String con = note.getContent();

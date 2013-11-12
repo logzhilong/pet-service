@@ -13,12 +13,25 @@
 				<dl>
 					<dt>父级圈子:</dt>
 					<select class="combox" name="pid">
-						<option value="all">--请选择父级圈子--</option>
+						<option value="0">--请选择父级圈子--</option>
 						<c:forEach var="itr" items="${forums }">
 							<option value="${itr.id }">${itr.name }</option>
 						</c:forEach>
 					</select>
 				</dl>
+				<dl>
+					<dt>(子)圈子类型:</dt>
+					<select class="combox"  ref="fforum" refUrl="${ctx }/manager/bbs/Toaddforum.html?fid={value}">
+						<option value="">--请选择--</option>
+						<c:forEach var="itr" items="${xmllist }">
+	  							<option value="${itr.id }">${itr.name }</option>
+	  					</c:forEach>
+					</select> 
+					<select class="combox" name="type" id="fforum" ref="fd">
+						<option value="">--请选择--</option>
+					</select> 
+				</dl>
+				
 				<dl>
 					<dt>圈子名字：</dt>
 					<dd>
@@ -45,6 +58,12 @@
 					</dd>
 				</dl>
 				<dl>
+					<dt>圈子顺序：</dt>
+					<dd>
+						<input type="text" name="seq" value="${forum.seq }" />
+					</dd>
+				</dl>
+				<dl>
 					<dt>圈子头像：</dt>
 					<dd >
 						<textarea style="width:130px;"  class="editor"
@@ -56,6 +75,7 @@
 						</textarea>
 					</dd>
 				</dl>
+				
 				<!-- 			
 				<dl><dt>选择地区:</dt>
 					<select class="combox" name="fatherid" ref="w_comboxcity" refUrl="${ctx }/manager/commons/getConmonArealistBypid.html?pid={value}">

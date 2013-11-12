@@ -45,7 +45,7 @@
 			<li><a class="add"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
 				max="false" mask="true" title="添加"
-				width="400" height="400" close="forum.refresh"> <span>添加</span>
+				width="450" height="450" close="forum.refresh"> <span>添加</span>
 				</a>
 			</li>
 			<li>

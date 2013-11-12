@@ -22,6 +22,21 @@
 						<input type="text" name="seq" value="${fos.seq }" />
 					</dd>
 				</dl>
+				
+				<dl>
+					<dt>(子)圈子类型:</dt>
+					<select class="combox"  ref="fforum" refUrl="${ctx }/manager/bbs/Toaddforum.html?fid={value}">
+						<option value="1024">--请选择--</option>
+						<c:forEach var="itr" items="${xmllist }">
+	  							<option value="${itr.id }">${itr.name }</option>
+	  					</c:forEach>
+					</select> 
+					<select class="combox" name="type" id="fforum" ref="fd">
+						<option value="all">--请选择--</option>
+					</select>
+					*父圈忽略
+				</dl>
+				
 				<dl>
 					<dt>圈子名字：</dt>
 					<dd>

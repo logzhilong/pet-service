@@ -146,7 +146,7 @@ public class CommonDataManagerController {
 	 * @param response
 	 */
 	@RequestMapping("/manager/commons/getConmonArealistBypid.html")
-	public void getConmonArealistBypid(CommonAreaCode areaCode,Model model,HttpServletResponse response){
+	public void getConmonArealistBypid(CommonAreaCode areaCode,HttpServletResponse response){
 		try {
 			logger.debug("地区:"+areaCode);
 			List<CommonAreaCode> areaCodes=commonDataManagerService.getConmonArealistBypid(areaCode);

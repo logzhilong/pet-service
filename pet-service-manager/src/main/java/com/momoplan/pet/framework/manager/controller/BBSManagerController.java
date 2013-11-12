@@ -21,6 +21,7 @@ import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
 import com.momoplan.pet.framework.manager.vo.UpImgVo;
+import com.momoplan.pet.framework.manager.vo.Xmlparser;
 
 @Controller
 public class BBSManagerController {
@@ -43,16 +44,17 @@ public class BBSManagerController {
 	public String ToaddOrEditAreaCode(Forum forum, Model model) {
 		try {
 			if ("".equals(forum.getId()) || null == forum.getId()) {
-				List<CommonAreaCode> codes = commonDataManagerService
-						.getConmonArealist();
+				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				List<Forum> forums = bBSManagerService.getForumlist();
+				Xmlparser xmlparser=new Xmlparser();
+				List<Xmlparser> xmllist=xmlparser.getFForums();
+				model.addAttribute("xmllist", xmllist);
 				model.addAttribute("forums", forums);
 				logger.debug("wlcome to pet manager Forumadd......");
 				return "/manager/bbs/forumAdd";
 			} else {
-				List<CommonAreaCode> codes = commonDataManagerService
-						.getConmonArealist();
+				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				Forum fos = bBSManagerService.getForumbyid(forum);
 				model.addAttribute("fos", fos);
@@ -63,6 +65,36 @@ public class BBSManagerController {
 			logger.error("ToaddOrEditAreaCode" + e);
 			e.printStackTrace();
 			return null;
+		}
+	}
+	@RequestMapping("/manager/bbs/Toaddforum.html")
+	public void Toaddforum(Xmlparser xmlparser,Model model,HttpServletResponse response) {
+		try {
+			Xmlparser xmlparser2=new Xmlparser();
+			List<Xmlparser> list=xmlparser2.getsForum(xmlparser.getFid());
+			//拼接字符串作为显示子圈子类型级联的效果
+			StringBuffer sb = new StringBuffer("[");
+			if(list.size()>0){
+				int i=0;
+				sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
+				sb.append(",");
+				for(Xmlparser xml :list ){
+					if(i++>0){
+						sb.append(",");
+					}
+					sb.append("[\"").append(xml.getId()).append("\",\"").append(xml.getName()).append("\"]");
+				}
+				sb.append("]");
+			}
+			else{
+					sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
+					sb.append("]");
+			}
+			logger.debug(sb.toString());
+			response.setCharacterEncoding("utf-8");
+			response.getWriter().write(sb.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -279,6 +311,9 @@ public class BBSManagerController {
 	@RequestMapping("/manager/forummamage/Toupdateforum.html")
 	public String Toupdateforum(Forum forum, Model model) {
 		try {
+			Xmlparser xmlparser=new Xmlparser();
+			List<Xmlparser> xmllist=xmlparser.getFForums();
+			model.addAttribute("xmllist", xmllist);
 			forum = bBSManagerService.getForumbyid(forum);
 			model.addAttribute("fos", forum);
 			return "/manager/bbs/forumUpdate";
@@ -287,7 +322,13 @@ public class BBSManagerController {
 			return null;
 		}
 	}
-	
+	/**
+	 * 富文本上传图片
+	 * @param model
+	 * @param req
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping("/manager/forummamage/upimgforforum.html")
 	public void upimgforforum(Model model, HttpServletRequest req,HttpServletResponse response)throws Exception{
 		logger.debug("wlcome to upimg ......");
