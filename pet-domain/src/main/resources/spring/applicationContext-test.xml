@@ -43,12 +43,17 @@
     <bean id="cacheServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${cache.server}" />
     </bean>
+	<!-- 单节点存储 -->
+	<bean class="com.momoplan.pet.commons.cache.pool.StorePool">
+		<property name="storeServer" value="${store.server}" />
+	</bean>
 	
-	<!-- 一个数据库一个配置文件~ -->
 	<import resource="applicationContext-mybatis-bbs.xml"/>
+	<!-- 一个数据库一个配置文件~ 
 	<import resource="applicationContext-mybatis-states.xml"/>
 	<import resource="applicationContext-mybatis-statistic.xml"/>
 	<import resource="applicationContext-mybatis-manager.xml"/>
 	<import resource="applicationContext-mybatis-user.xml"/>
+	-->
 	
 </beans>

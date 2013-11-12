@@ -31,7 +31,7 @@ public class GetUserForumConditionHandler extends AbstractHandler {
 			rtn = new Success(true,list).toString();
 		}catch(Exception e){
 			logger.debug("获取被推荐的圈子列表 【失败】");
-			logger.error("login : ",e);
+			logger.error("getUserForumCondition : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);

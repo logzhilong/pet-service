@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-11-12 11:25:18
+* @date 2013-11-12 14:11:25
 */
 public class UserForumConditionCriteria {
     protected String orderByClause;
@@ -293,73 +293,73 @@ public class UserForumConditionCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andConditionIsNull() {
-            addCriterion("condition is null");
+        public Criteria andConditionValueIsNull() {
+            addCriterion("condition_value is null");
             return (Criteria) this;
         }
 
-        public Criteria andConditionIsNotNull() {
-            addCriterion("condition is not null");
+        public Criteria andConditionValueIsNotNull() {
+            addCriterion("condition_value is not null");
             return (Criteria) this;
         }
 
-        public Criteria andConditionEqualTo(String value) {
-            addCriterion("condition =", value, "condition");
+        public Criteria andConditionValueEqualTo(String value) {
+            addCriterion("condition_value =", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionNotEqualTo(String value) {
-            addCriterion("condition <>", value, "condition");
+        public Criteria andConditionValueNotEqualTo(String value) {
+            addCriterion("condition_value <>", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionGreaterThan(String value) {
-            addCriterion("condition >", value, "condition");
+        public Criteria andConditionValueGreaterThan(String value) {
+            addCriterion("condition_value >", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionGreaterThanOrEqualTo(String value) {
-            addCriterion("condition >=", value, "condition");
+        public Criteria andConditionValueGreaterThanOrEqualTo(String value) {
+            addCriterion("condition_value >=", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionLessThan(String value) {
-            addCriterion("condition <", value, "condition");
+        public Criteria andConditionValueLessThan(String value) {
+            addCriterion("condition_value <", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionLessThanOrEqualTo(String value) {
-            addCriterion("condition <=", value, "condition");
+        public Criteria andConditionValueLessThanOrEqualTo(String value) {
+            addCriterion("condition_value <=", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionLike(String value) {
-            addCriterion("condition like", value, "condition");
+        public Criteria andConditionValueLike(String value) {
+            addCriterion("condition_value like", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionNotLike(String value) {
-            addCriterion("condition not like", value, "condition");
+        public Criteria andConditionValueNotLike(String value) {
+            addCriterion("condition_value not like", value, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionIn(List<String> values) {
-            addCriterion("condition in", values, "condition");
+        public Criteria andConditionValueIn(List<String> values) {
+            addCriterion("condition_value in", values, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionNotIn(List<String> values) {
-            addCriterion("condition not in", values, "condition");
+        public Criteria andConditionValueNotIn(List<String> values) {
+            addCriterion("condition_value not in", values, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionBetween(String value1, String value2) {
-            addCriterion("condition between", value1, value2, "condition");
+        public Criteria andConditionValueBetween(String value1, String value2) {
+            addCriterion("condition_value between", value1, value2, "conditionValue");
             return (Criteria) this;
         }
 
-        public Criteria andConditionNotBetween(String value1, String value2) {
-            addCriterion("condition not between", value1, value2, "condition");
+        public Criteria andConditionValueNotBetween(String value1, String value2) {
+            addCriterion("condition_value not between", value1, value2, "conditionValue");
             return (Criteria) this;
         }
 

@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="forum_id" property="forumId" jdbcType="VARCHAR" />
-    <result column="condition" property="condition" jdbcType="VARCHAR" />
+    <result column="condition_value" property="conditionValue" jdbcType="VARCHAR" />
     <result column="condition_type" property="conditionType" jdbcType="VARCHAR" />
     <result column="ct" property="ct" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, forum_id, condition, condition_type, ct
+    id, forum_id, condition_value, condition_type, ct
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria" >
     select
@@ -103,8 +103,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
-    insert into bbs_user_forum_condition (id, forum_id, condition, condition_type, ct)
-    values (#{id}, #{forumId}, #{condition}, #{conditionType}, #{ct})
+    insert into bbs_user_forum_condition (id, forum_id, condition_value, condition_type, ct)
+    values (#{id}, #{forumId}, #{conditionValue}, #{conditionType}, #{ct})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
     insert into bbs_user_forum_condition
@@ -115,8 +115,8 @@
       <if test="forumId != null" >
         forum_id,
       </if>
-      <if test="condition != null" >
-        condition,
+      <if test="conditionValue != null" >
+        condition_value,
       </if>
       <if test="conditionType != null" >
         condition_type,
@@ -132,8 +132,8 @@
       <if test="forumId != null" >
         #{forumId},
       </if>
-      <if test="condition != null" >
-        #{condition},
+      <if test="conditionValue != null" >
+        #{conditionValue},
       </if>
       <if test="conditionType != null" >
         #{conditionType},
@@ -158,8 +158,8 @@
       <if test="record.forumId != null" >
         forum_id = #{record.forumId},
       </if>
-      <if test="record.condition != null" >
-        condition = #{record.condition},
+      <if test="record.conditionValue != null" >
+        condition_value = #{record.conditionValue},
       </if>
       <if test="record.conditionType != null" >
         condition_type = #{record.conditionType},
@@ -176,7 +176,7 @@
     update bbs_user_forum_condition
     set id = #{record.id},
       forum_id = #{record.forumId},
-      condition = #{record.condition},
+      condition_value = #{record.conditionValue},
       condition_type = #{record.conditionType},
       ct = #{record.ct}
     <if test="_parameter != null" >
@@ -189,8 +189,8 @@
       <if test="forumId != null" >
         forum_id = #{forumId},
       </if>
-      <if test="condition != null" >
-        condition = #{condition},
+      <if test="conditionValue != null" >
+        condition_value = #{conditionValue},
       </if>
       <if test="conditionType != null" >
         condition_type = #{conditionType},
@@ -204,7 +204,7 @@
   <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.bbs.po.UserForumCondition" >
     update bbs_user_forum_condition
     set forum_id = #{forumId},
-      condition = #{condition},
+      condition_value = #{conditionValue},
       condition_type = #{conditionType},
       ct = #{ct}
     where id = #{id}
