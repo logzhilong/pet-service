@@ -164,7 +164,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			}
 			List<String> list = jedis.lrange(key, pageNo*pageSize, (pageNo+1)*pageSize-1);
 			if(list!=null){
-				List<NoteSub> nsl = new ArrayList<NoteSub>(list.size());
+				List<NoteSub> nsl = new ArrayList<NoteSub>();
 				for(String j : list){
 					NoteSub ns = gson.fromJson(j, NoteSub.class);
 					nsl.add(ns);
