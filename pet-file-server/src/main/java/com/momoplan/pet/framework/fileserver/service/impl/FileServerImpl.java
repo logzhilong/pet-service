@@ -48,7 +48,7 @@ public class FileServerImpl implements FileServer{
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String today = format.format(new Date());
 		File realPath = new File(basePath+"/"+today);
-		if(!(realPath.exists()&&realPath.isDirectory())){
+		if(!realPath.exists()||!realPath.isDirectory()){
 			synchronized (realPath) {
 				realPath.mkdirs();
 			}
