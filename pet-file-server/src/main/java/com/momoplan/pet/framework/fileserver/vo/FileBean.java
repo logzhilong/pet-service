@@ -13,14 +13,18 @@ public class FileBean {
 	private String id = null;
 	
 	private String fileName = null;
-	//扩展名
-	private String fileType = null;
 	//相对路径
 	private String filePath = null;
 	//来源
 	private String fileSrc = null;
-	//图片压缩, null or not null
-	private String compressImage = null;
+	//文件类型
+	private String fileType = "IMAGE";
+	//如果是个图片，可以压缩, null or not null
+	private String compressImage = "N";
+	//如果是个图片，可以加顶图，即水印, 默认加水印
+	private String addTopImage = "Y";
+	//如果是个图片，可以指定宽度,默认宽度缩到 640
+	private Integer imageWidth = 640;
 	
 	private InputStream fileStream = null;
 	
@@ -36,6 +40,22 @@ public class FileBean {
 		this.fileSrc = fileSrc;
 	}
 	
+	public String getAddTopImage() {
+		return addTopImage;
+	}
+
+	public void setAddTopImage(String addTopImage) {
+		this.addTopImage = addTopImage;
+	}
+
+	public Integer getImageWidth() {
+		return imageWidth;
+	}
+
+	public void setImageWidth(Integer imageWidth) {
+		this.imageWidth = imageWidth;
+	}
+
 	public String getCompressImage() {
 		return compressImage;
 	}
@@ -100,4 +120,13 @@ public class FileBean {
 		this.fileStream = fileStream;
 	}
 
+	@Override
+	public String toString() {
+		return "FileBean [pwd=" + pwd + ", id=" + id + ", fileName=" + fileName
+				+ ", fileType=" + fileType + ", filePath=" + filePath
+				+ ", fileSrc=" + fileSrc + ", compressImage=" + compressImage
+				+ ", addTopImage=" + addTopImage + ", imageWidth=" + imageWidth
+				+ ", fileStream=" + fileStream + "]";
+	}
+	
 }

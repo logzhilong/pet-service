@@ -49,7 +49,7 @@ public class FileServiceController {
 	        logger.debug("文件类型: " + file.getContentType());  
 	        logger.debug("文件名称: " + file.getName());  
 	        logger.debug("文件原名: " + file.getOriginalFilename());
-	        logger.debug("图片压缩: " + form.getCompressImage());
+	        logger.debug("form: " + form.toString());
 	        logger.debug("========================================"+realPath);
 	        form.setFileStream(file.getInputStream());
 	        String fileId = fileServer.put(form);
