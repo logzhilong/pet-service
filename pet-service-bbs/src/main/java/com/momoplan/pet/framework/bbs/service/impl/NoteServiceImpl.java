@@ -207,7 +207,10 @@ public class NoteServiceImpl implements NoteService {
 		BeanUtils.copyProperties(note, vo);
 		String uid = note.getUserId();
 		String nid = note.getId();
-		SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+		SsoUser user = null;
+		if(uid!=null){
+			user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+		}
 		if(user!=null){
 			vo.setNickname(user.getNickname());
 			vo.setUserIcon(user.getImg());

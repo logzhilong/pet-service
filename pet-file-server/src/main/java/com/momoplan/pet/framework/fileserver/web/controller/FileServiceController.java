@@ -76,7 +76,7 @@ public class FileServiceController {
 			}
 			os.flush();
 		} catch (Exception e) {
-			logger.error("get file",e);
+			logger.debug("get file error : "+e.getMessage());
 		}finally{
 			try{
 				is.close();

@@ -3,6 +3,7 @@ package com.momoplan.pet.framework.fileserver.service.impl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class FileServerImpl implements FileServer{
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String today = format.format(new Date());
 		File realPath = new File(basePath+"/"+today);
-		if(!(realPath.exists()&&realPath.isDirectory())){
+		if(!realPath.exists()||!realPath.isDirectory()){
 			synchronized (realPath) {
 				realPath.mkdirs();
 			}
@@ -78,31 +79,42 @@ public class FileServerImpl implements FileServer{
 			int sh = bi.getHeight();
 			double rw = fileBean.getImageWidth();
 			double rh = (rw/sw)*sh;
-
+			
+			logger.debug("format="+format);
+			logger.debug("sw="+sw+" ; sh="+sh);
+			logger.debug("rw="+rw+" ; rh="+rh);
+			
 			if(StringUtils.isNotEmpty(fileBean.getCompressImage())&&("Y".equalsIgnoreCase(fileBean.getCompressImage())||"OK".equalsIgnoreCase(fileBean.getCompressImage()))){
 				logger.debug("压缩...");
 				bi = ImageTools.getResizePicture(bi, rw, rh);
-				logger.debug("sw="+sw+";rw="+sw);
-				logger.debug("sh="+sh+";rh="+rh);
+				logger.debug("压缩...sw="+sw+";rw="+sw);
+				logger.debug("压缩...sh="+sh+";rh="+rh);
 			}
 			
 			if(StringUtils.isNotEmpty(fileBean.getAddTopImage())&&("Y".equalsIgnoreCase(fileBean.getAddTopImage())||"OK".equalsIgnoreCase(fileBean.getAddTopImage()))){
 				logger.debug("加水印...");
 				InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
+				logger.debug("加水印...tis="+tis);
 				BufferedImage top = ImageIO.read(tis);
+				logger.debug("加水印...top="+top);
 				int tw = top.getWidth();
 				int th = top.getHeight();
+				logger.debug("加水印...tw="+tw+" ; th="+th);
 				if(th>rh/3){
 					double rth = rh/3;
 					double rtw = (rth/th)*tw;
+					logger.debug("加水印...rtw="+rtw+" ; rth="+rth);
 					top = ImageTools.getResizePicture(top,rtw,rth);
 				}
+				logger.debug("加水印...bi="+bi+" ; top="+top);
 				bi = ImageTools.pressImage( bi,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
 			}
 			logger.debug("输出...");
-			
 			File output = new File(realPath);
-			ImageIO.write( bi ,format , output);
+			logger.debug("输出...bi="+bi);
+			logger.debug("输出...format="+format);
+			logger.debug("输出...output="+output);
+			ImageIO.write( bi ,format , new FileOutputStream(output));
 			long rs = output.length();
 			logger.debug("ss="+ss+";rs="+rs);
 		}else{
