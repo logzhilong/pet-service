@@ -28,6 +28,12 @@
 						<input type="text" name="phonenumber"/>
 					</dd>
 				</dl>
+				<dl>
+					<dt>地区:</dt>
+					<dd>
+						<input type="text" name="city"/>
+					</dd>
+				</dl>
 
 				<dl>
 					<dt>性别:</dt>
@@ -61,11 +67,10 @@
 					<dt>人物头像：</dt>
 					<dd >
 						<textarea style="width:130px;"  class="editor"
-							tools="Img" name="img" cols="45" rows="2" 
+							tools="Img" name="img" cols="20" rows="2" 
 							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
 							upimgext="jpg,jpeg,gif,png" upflashext="swf"
 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
-							${note2.content }
 						</textarea>
 					</dd>
 				</dl>

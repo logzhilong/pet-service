@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 import com.momoplan.pet.framework.manager.service.NoteService;
@@ -141,4 +142,18 @@ public class NoteController {
 		}
 	}
 	
+	
+	@RequestMapping("/manager/notemamager/DelteedNotes.html")
+	public String getDelteedNotes(Forum forum,Model model){
+		try {
+			logger.debug("welcome to getdeleteedNotes........");
+			List<Note> list=noteService.getDeledNotes(forum);
+			model.addAttribute("list", list);
+			logger.debug("getdeleteedNotes+"+list);
+			return "/manager/notemanage/Delednotes";
+		} catch (Exception e) {
+			logger.error("getDeledNotes"+e);
+			return "";
+		}
+	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 
@@ -41,4 +42,11 @@ public interface NoteService {
 	 * @throws Exception
 	 */
 	public  List<MgrTrustUser> trustUserslist(HttpServletRequest request)throws Exception;
+	/**
+	 * 获取已经删除帖子列表
+	 * @param note
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Note> getDeledNotes(Forum forum)throws Exception;
 }

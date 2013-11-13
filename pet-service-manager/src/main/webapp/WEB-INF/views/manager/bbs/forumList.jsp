@@ -67,8 +67,8 @@
 		<thead>
 			<tr>
 				<th width="15" align="center"></th>
-				<th width="150" align="center">名称</th>
-				<th width="200" align="center">描述</th>
+				<th width="150" align="left">名称</th>
+				<th width="200" align="left">描述</th>
 				<th width="50" align="center">点击量</th>
 				<th width="50" align="center" >回帖量</th>
 			<!-- 
@@ -84,13 +84,13 @@
 			<c:forEach items="${pageBean.data }" var="itm" varStatus="idx">
 				<tr target="id" rel="${itm.id }">
 					<td>${idx.index+1 }</td>
-					<td>
+					<td align="left">
 						<a  href="${ctx }/manager/bbs/forumManager.html?id=${itm.id }"  rel="jbsxBox3"   target="dialog" max="false" mask="true" title="帖子管理(${itm.name })" width="1000" height="600" close="forum.refresh">
 							${itm.name }
 						</a>
 					</td>
-					<td>${itm.descript }</td>
-					<td>${itm.clientCount }</td>
+					<td align="left">${itm.descript }</td>
+					<td >${itm.clientCount }</td>
 					<td>${itm.replyCount }</td>
 					<td><fmt:formatDate value="${itm.ct }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 					<td>${itm.cb }</td>

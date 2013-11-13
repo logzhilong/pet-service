@@ -18,13 +18,6 @@
 						<input type="text" name="name" value="${note.name }" />
 					</dd>
 				</dl>
-
-				<dl>
-					<dt>点击数量:</dt>
-					<dd>
-						<input type="text" name="clientCount" value="${note.clientCount }" />
-					</dd>
-				</dl>
 				<dl>
 					<dt>选择用户:</dt>
 					<select name="userId" style="width: 130px;">

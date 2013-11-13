@@ -58,8 +58,10 @@ public class UpImgVo {
 						reqEntity.addPart("file", file1);
 						reqEntity.addPart("fileName", new StringBody(name));
 						//TODO暂时先放一个能通过token
-						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
+//						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
 						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
+						//压缩图片参数
+						reqEntity.addPart("compressImage", new StringBody("OK"));
 						// 设置请求
 						httppost.setEntity(reqEntity);
 						// 执行

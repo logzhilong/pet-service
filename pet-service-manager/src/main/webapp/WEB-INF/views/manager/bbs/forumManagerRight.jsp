@@ -35,7 +35,12 @@
 			<li>&nbsp;&nbsp;&nbsp;</li>
 			<li><a class="edit" href="${ctx }/manager/forummamage/Toupdateforum.html?id=${forumid}" rel="quanzi001"  target="dialog" max="false"  mask="true" title="修改圈子" width="600" height="350" >
 					<span>修改本圈</span>
-				</a></li>
+				</a>
+			</li>
+			<li><a class="delete" href="${ctx }/manager/notemamager/DelteedNotes.html?id=${forumid}" rel="quanzi001"  target="dialog" max="false"  mask="true" title="修改圈子" width="600" height="350" >
+					<span>已删除帖子</span>
+				</a>
+			</li>
 			<li class="line">line</li>
 		</ul>
 	</div>
@@ -43,15 +48,15 @@
 		<thead>
 			<tr>
 				<th width="100" align="center">编号</th>
-				<th width="200">名称</th>
+				<th width="300" align="left">名称</th>
 				<th width="100">点击量</th>
 				<th width="100">被举报</th>
 				<th width="100">置顶</th>
 				<th width="100">被删除</th>
 				<th width="100">状态</th>
 				<th width="100">类型</th>
-				<th width="500">创建时间</th>
-				<th width="500">最后修改时间</th>
+				<th width="300">创建时间</th>
+				<th width="300">最后修改时间</th>
 			</tr>
 		</thead>
 		<tbody id="alertListTbody">

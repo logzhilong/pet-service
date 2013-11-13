@@ -57,7 +57,7 @@
 							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
 							upimgext="jpg,jpeg,gif,png" upflashext="swf"
 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
-							${note2.content }
+							${fos.logoImg }
 						</textarea>
 					</dd>
 				</dl>
