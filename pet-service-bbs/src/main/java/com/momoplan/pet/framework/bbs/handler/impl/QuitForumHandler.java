@@ -26,7 +26,7 @@ public class QuitForumHandler extends AbstractHandler {
 		try {
 			UserForumRel userForumRel = new UserForumRel();
 			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumId"));
-			userForumRel.setUserId(PetUtil.getParameter(clientRequest, "userId"));
+			userForumRel.setUserId(getUseridFParamSToken(clientRequest));
 			userForumRelService.quitForum(userForumRel);
 			logger.debug("退出圈子成功 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, "OK").toString();
