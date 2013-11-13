@@ -21,15 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import com.momoplan.pet.commons.spring.CommonConfig;
+
 public class UpImgVo {
 	private Logger logger = LoggerFactory.getLogger(UpImgVo.class);
+	private CommonConfig commonConfig = new CommonConfig();
 	/**
 	 * 上传图片调用此类
 	 * @param req传入request获取File信息
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
-	public String upimg(HttpServletRequest req){
+	public String upimg(HttpServletRequest req,String ys){
 		try {
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
 			String enty =null;
@@ -41,7 +43,7 @@ public class UpImgVo {
 					MultipartFile file = multiRequest.getFile(iter.next());
 					if (file != null) {
 						String name = file.getOriginalFilename();
-						String path = "D:\\uploadimg\\" + name;
+						String path = "/tmp" + name;
 						// 将上传文件存储至本地
 						File localFile = new File(path);
 						if (!localFile.exists()) {
@@ -50,18 +52,20 @@ public class UpImgVo {
 						file.transferTo(localFile);
 						DefaultHttpClient httpclient = new DefaultHttpClient();
 						// 请求处理页面
-						HttpPost httppost = new HttpPost("http://123.178.27.74/pet-file-server/put");
+						String url = commonConfig.get("service.uri.pet_file_server", null);
+						HttpPost httppost = new HttpPost(url+"/put");
 						// 创建待处理的文件
 						FileBody file1 = new FileBody(new File(path));
 						// 对请求的表单域进行填充
 						MultipartEntity reqEntity = new MultipartEntity();
 						reqEntity.addPart("file", file1);
 						reqEntity.addPart("fileName", new StringBody(name));
-						//TODO暂时先放一个能通过token
-//						reqEntity.addPart("token", new StringBody("694359BE12E04E0088B78F297CDD3F61"));
 						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
-						//压缩图片参数
-						reqEntity.addPart("compressImage", new StringBody("OK"));
+						if(ys == "tpys"){
+							//压缩图片参数
+							reqEntity.addPart("compressImage", new StringBody("OK"));
+							
+						}
 						// 设置请求
 						httppost.setEntity(reqEntity);
 						// 执行

@@ -62,12 +62,11 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@Override
 	public void NoteAddOrUpdate(Note note) throws Exception {
-		logger.debug("welcome to NoteAddOrUpdate.....................");
 		String id = note.getId();
 		Note note2 = noteMapper.selectByPrimaryKey(id);
+		note.setCt(note2.getCt());
 		if (note2 != null && !"".equals(note2.getId())) {
-			note.setEt(new Date());
-			logger.debug("修该帖子" + note.toString());
+			logger.debug("修该帖子" + note2.toString());
 			boolean boo=note.getIsTop();
 			//如果指定帖子数量>5则按照创建时间选择后5条,保证指定仅有5条
 			if(boo){
@@ -88,6 +87,7 @@ public class NoteServiceImpl implements NoteService {
 			}
 			noteRepository.flushTopNoteByFid(note2.getForumId());
 			onCache.updateByPrimaryKeySelective(note, note.getId());
+			logger.debug("3333"+note);
 		} else {
 			logger.debug(note.toString());
 			String con = note.getContent();

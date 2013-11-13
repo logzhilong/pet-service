@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.momoplan.pet.commons.domain.bbs.po.CommonAreaCode;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.manager.service.BBSManagerService;
 import com.momoplan.pet.framework.manager.service.CommonDataManagerService;
 import com.momoplan.pet.framework.manager.vo.PageBean;
@@ -32,7 +33,7 @@ public class BBSManagerController {
 	private BBSManagerService bBSManagerService;
 	@Autowired
 	private CommonDataManagerService commonDataManagerService;
-
+	private CommonConfig commonConfig = new CommonConfig();
 	/**
 	 * To增加OR修改圈子
 	 * 
@@ -282,7 +283,7 @@ public class BBSManagerController {
 	}
 
 	/**
-	 * 上传图片 uploadimg文件上传
+	 * 帖子上传图片 uploadimg文件上传
 	 * 
 	 * @return model
 	 */
@@ -294,9 +295,10 @@ public class BBSManagerController {
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
 			UpImgVo imgVo=new UpImgVo();
-			String enty=imgVo.upimg(req);
+			String enty=imgVo.upimg(req,"tpys");
 			if(enty != null && "" != enty){
-				newFileName = "http://123.178.27.74/pet-file-server/get/" + enty;
+				String url = commonConfig.get("service.uri.pet_file_server", null);
+				newFileName = url+"/get/" + enty;
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}
 		} catch (Exception e) {
@@ -323,7 +325,7 @@ public class BBSManagerController {
 		}
 	}
 	/**
-	 * 富文本上传图片
+	 *人物富文本上传图片
 	 * @param model
 	 * @param req
 	 * @param response
@@ -337,9 +339,10 @@ public class BBSManagerController {
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
 			UpImgVo imgVo=new UpImgVo();
-			String enty=imgVo.upimg(req);
+			String enty=imgVo.upimg(req,"");
 			if(enty != null && "" != enty){
-				newFileName = "http://123.178.27.74/pet-file-server/get/" + enty;
+				String url = commonConfig.get("service.uri.pet_file_server", null);
+				newFileName = url+"/get/" + enty;
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}
 		} catch (Exception e) {

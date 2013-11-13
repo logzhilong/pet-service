@@ -18,13 +18,6 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt>点击数量:</dt>
-					<dd>
-						<input type="text" readonly="readonly" name="clientCount"
-							value="${note2.clientCount }" />
-					</dd>
-				</dl>
-				<dl>
 					<dt>是否删除：</dt>
 					<dd>
 						<select name="isDel">
@@ -58,6 +51,7 @@
 						</select>
 					</dd>
 				</dl>
+				
 				<dl>
 					<dt>是否置顶：</dt>
 					<dd>
@@ -75,22 +69,19 @@
 						</select>
 					</dd>
 				</dl>
-				<dl>
-					<dl style="margin-left: 1px; margin-top: 30px;">
+				<dl style="margin-left: 1px; margin-top: 30px;">
 					<dt>帖子内容:</dt>
 					<textarea style="width: 200%; height: 200%;" class="editor"
-						tools="simple" 
-						name="content" cols="45" rows="5" value=""
+						tools="simple" name="content" cols="45" rows="5" value=""
 						enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
 						upimgext="jpg,jpeg,gif,png" upflashext="swf"
 						upimgurl="${ctx }/manager/notemanage/upimg.html" skin="vista">
 						${note2.content }
 					</textarea>
 				</dl>
-				</dl>
 				
-				
-				
+
+
 
 			</fieldset>
 		</div>
