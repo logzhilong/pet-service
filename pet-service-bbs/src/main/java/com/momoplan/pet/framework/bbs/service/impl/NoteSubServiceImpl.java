@@ -180,15 +180,19 @@ public class NoteSubServiceImpl implements NoteSubService {
 			NoteSubVo vo = new NoteSubVo();
 			BeanUtils.copyProperties(noteSub, vo);
 			String uid = noteSub.getUserId();
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-			logger.debug("---------------");
-			logger.debug("userId="+uid);
-			logger.debug("user="+user);
-			logger.debug("noteSub="+noteSub);
-			logger.debug("vo="+vo);
-			logger.debug("---------------");
-			vo.setNickname(user.getNickname());
-			vo.setUserIcon(user.getImg());
+			if(StringUtils.isNotEmpty(uid)){
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+				logger.debug("---------------");
+				logger.debug("userId="+uid);
+				logger.debug("user="+user);
+				logger.debug("noteSub="+noteSub);
+				logger.debug("vo="+vo);
+				logger.debug("---------------");
+				vo.setNickname(user.getNickname());
+				vo.setUserIcon(user.getImg());
+			}else{
+				logger.debug("ERR : 用户ID为空 : note_sub_id="+noteSub.getId());
+			}
 			vos.add(vo);
 		}
 		PageBean<NoteSubVo> p = new PageBean<NoteSubVo>();
