@@ -110,7 +110,15 @@ public class NoteRepository implements CacheKeysConstance{
 	 */
 	private Long initTotalCount(Jedis jedis,String key,String forumId){
 		NoteCriteria noteCriteria = new NoteCriteria();
-		noteCriteria.createCriteria().andForumIdEqualTo(forumId);
+		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+		List<String> stateList = new ArrayList<String>();
+		stateList.add(NoteState.REJECT.getCode());//审核拒绝
+		stateList.add(NoteState.AUDIT.getCode());//审核中
+		stateList.add(NoteState.REPORT.getCode());//被举报
+		stateList.add(NoteState.DELETE.getCode());//被删除
+		//以上状态不显示
+		criteria.andStateNotIn(stateList);
+		criteria.andForumIdEqualTo(forumId);
 		int count = noteMapper.countByExample(noteCriteria);
 		logger.debug("key="+key+" forumId="+forumId+ " 初始化 帖子总数 数据库取值 : "+count);
 		String[] array = new String[count];
@@ -149,12 +157,23 @@ public class NoteRepository implements CacheKeysConstance{
 		return 0L;
 	}
 	
-	
 	private Long initTotalToday(Jedis jedis,String key,String forumId){
+		
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andCtGreaterThan(DateUtils.minusDays(new Date(),1));//大于昨天，就是今天
+		List<String> stateList = new ArrayList<String>();
+		stateList.add(NoteState.REJECT.getCode());//审核拒绝
+		stateList.add(NoteState.AUDIT.getCode());//审核中
+		stateList.add(NoteState.REPORT.getCode());//被举报
+		stateList.add(NoteState.DELETE.getCode());//被删除
+		//以上状态不显示
+		criteria.andStateNotIn(stateList);
 		criteria.andForumIdEqualTo(forumId);
+		Date d = DateUtils.minusDays(new Date(),1);
+		String dd = DateUtils.formatDate(d)+" 23:59:59";
+		d = DateUtils.getDate(dd,DateUtils.DEFAULT_DATETIME_FORMAT);
+		criteria.andCtGreaterThan(d);//大于昨天，就是今天
+		
 		int count = noteMapper.countByExample(noteCriteria);
 		logger.debug("初始化 今天 帖子总数 数据库取值 : "+count);
 		String[] array = new String[count];
@@ -191,7 +210,21 @@ public class NoteRepository implements CacheKeysConstance{
 		}
 		return 0L;
 	}
-	
+	public void flushTopNoteByFid(String fid)throws Exception{
+		Jedis jedis = null;
+		String key = LIST_NOTE_TOP+fid;
+		logger.debug(key+" 刷新置顶缓存...");
+		try{
+			jedis = storePool.getConn();
+			jedis.del(key);
+			logger.debug(key+" 刷新置顶缓存...OK.");
+		}catch(Exception e){
+			logger.debug(key+" 刷新置顶缓存...ERROR.");
+			logger.error(e.getMessage(),e);
+		}finally{
+			storePool.closeConn(jedis);
+		}
+	}
 	/**
 	 * 获取某个圈子置顶帖子的列表，缓存这个列表到 key-value ，当编辑这个圈子的置顶时，删除这个列表缓存即可
 	 * @param fid
