@@ -115,14 +115,20 @@ public class NoteSubServiceImpl implements NoteSubService {
 			logger.debug("queue_name="+PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
 			String pid = reply.getPid();
 			if(StringUtils.isNotEmpty(pid)){
-				logger.debug("+++++++继续+++++++推送+++++++");
 				NoteSub po = mapperOnCache.selectByPrimaryKey(NoteSub.class, pid);
-				toUserJson = getUserinfo(po.getUserId());
-				jsonObj.put("to", toUserJson.get("username"));
-				tm = new ActiveMQTextMessage();
-				tm.setText(jsonObj.toString());
-				apprequestTemplate.convertAndSend(queue, tm);
-				logger.debug("send msg="+jsonObj.toString());
+				boolean again = StringUtils.isNotEmpty(po.getUserId())&&!po.getUserId().equals(note.getUserId());
+				logger.debug("继续推送 note.getUserId()="+note.getUserId());
+				logger.debug("继续推送 po.getUserId()="+po.getUserId());
+				logger.debug("继续推送 pid="+pid+"; again="+again);
+				if(again){
+					logger.debug("+++++++继续+++++++推送+++++++");
+					toUserJson = getUserinfo(po.getUserId());
+					jsonObj.put("to", toUserJson.get("username"));
+					tm = new ActiveMQTextMessage();
+					tm.setText(jsonObj.toString());
+					apprequestTemplate.convertAndSend(queue, tm);
+					logger.debug("send msg="+jsonObj.toString());
+				}
 			}
 		}catch(Exception e){
 			logger.debug("推送消息异常不能中断程序");
