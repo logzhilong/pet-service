@@ -27,13 +27,15 @@ public class TrustUserServiceImpl implements TrustUserService {
 	Logger logger = LoggerFactory.getLogger(TrustUserServiceImpl.class);
 	@Resource
 	private MgrTrustUserMapper trustUserMapper = null;
-	private CommonConfig commonConfig=new CommonConfig();
+	private CommonConfig commonConfig = new CommonConfig();
+
 	@SuppressWarnings("static-access")
 	@Override
-	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,HttpServletRequest request)throws Exception {
+	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,
+			HttpServletRequest request) throws Exception {
 		logger.debug("welcome to AllTrustUser.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
-		MgrTrustUserCriteria.Criteria criteria=trustUserCriteria.createCriteria();
+		MgrTrustUserCriteria.Criteria criteria = trustUserCriteria.createCriteria();
 		SessionManager manager = null;
 		WebUser user1 = manager.getCurrentUser(request);
 		criteria.andNrootIdEqualTo(user1.getId());
@@ -44,84 +46,50 @@ public class TrustUserServiceImpl implements TrustUserService {
 		String url = commonConfig.get("service.uri.pet_user", null);
 		for (MgrTrustUser user : trustUserlist) {
 			String uid = user.getUserId();
-			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ uid + "\"}}";
+			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""
+					+ uid + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
 			if (object.getBoolean("success")) {
 				if (res.indexOf("entity") >= 0) {
-			JSONObject object1 = new JSONObject(object.getString("entity"));
-			user.setNrootId(object1.getString("nickname"));
-				}}
+					JSONObject object1 = new JSONObject(
+							object.getString("entity"));
+					try {
+						user.setNrootId(object1.getString("nickname"));
+					} catch (Exception e) {
+						user.setNrootId(null);
+					}
+				}
+			}
 		}
 		pageBean.setData(trustUserlist);
 		pageBean.setTotalRecorde(totalCount);
 		return pageBean;
 	}
 
-	@SuppressWarnings("static-access")
-	@Override
-	public void addOrUpdatetrust(Petuser petuser,HttpServletRequest request) throws Exception {
-		logger.debug("welcome to addOrUpdatetrust.....................");
-		if("".equals(petuser.getId()) || null==petuser.getId())
-		{
-			String img=petuser.getImg();
-			if( null != img && "" != img){
-			petuser.setImg(img.substring(img.indexOf("get")+4, 83));
-			}
-			String url = commonConfig.get("service.uri.pet_sso", null);
-			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""+ petuser.getHobby() + "\",\"img\":\""+ petuser.getImg() + "\",\"signature\":\""+ petuser.getSignature() + "\",\"gender\":\""+ petuser.getGender() + "\",\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\",\"password\":\""+ petuser.getPassword() + "\"}}";
-			String res = PostRequest.postText(url, "body", body.toString());
-			JSONObject object = new JSONObject(res);
-			if (object.getBoolean("success")) {
-				if (res.indexOf("entity") >= 0) {
-			JSONObject object1 = new JSONObject(object.getString("entity"));
-			String userid=object1.getString("userid");
-			MgrTrustUser mgrTrustUser=new MgrTrustUser();
-			mgrTrustUser.setId(IDCreater.uuid());
-			SessionManager manager = null;
-			WebUser user = manager.getCurrentUser(request);
-			mgrTrustUser.setNrootId(user.getId());
-			mgrTrustUser.setUserId(userid);
-			trustUserMapper.insertSelective(mgrTrustUser);
-				}
-				}
-		}
-		else{
-			String img=petuser.getImg();
-			if( null != img && "" != img){
-				petuser.setImg(img.substring(img.indexOf("get")+4, 83));
-			}
-			String url = commonConfig.get("service.uri.pet_user", null);
-			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""+ petuser.getId() + "\",\"nickname\":\""+ petuser.getNickname() + "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\"}}";
-			String res = PostRequest.postText(url, "body", body.toString());
-			JSONObject object = new JSONObject(res);
-			if(object.getString("entity").equals("OK")){
-				logger.debug("修改用户信息成功!");
-			}else {
-				logger.debug("修改用户信息失败!");
-			}
-		}
-		
-	}
-
 	@Override
 	public Petuser getPetUserByid(Petuser petuser) throws Exception {
 		logger.debug("welcome to getPetUserByid.....................");
 		String url = commonConfig.get("service.uri.pet_user", null);
-		String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ petuser.getId() + "\"}}";
+		String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""
+				+ petuser.getId() + "\"}}";
 		String res = PostRequest.postText(url, "body", body.toString());
 		JSONObject object = new JSONObject(res);
 		if (object.getBoolean("success")) {
 			if (res.indexOf("entity") >= 0) {
-			JSONObject object1 = new JSONObject(object.getString("entity"));
-				petuser.setNickname(object1.getString("nickname"));
-				petuser.setPhonenumber(object1.getString("phoneNumber"));
-				petuser.setId(object1.getString("id"));
-				petuser.setCreatetime(object1.getString("createTime"));
-				petuser.setHobby(object1.getString("hobby"));
-				petuser.setGender(object1.getString("gender"));
-				petuser.setSignature(object1.getString("signature"));
-				petuser.setImg(object1.getString("img"));
+				JSONObject object1 = new JSONObject(object.getString("entity"));
+				try {
+					petuser.setNickname(object1.getString("nickname"));
+					petuser.setPhonenumber(object1.getString("phoneNumber"));
+					petuser.setId(object1.getString("id"));
+					petuser.setCreatetime(object1.getString("createTime"));
+					petuser.setHobby(object1.getString("hobby"));
+					petuser.setGender(object1.getString("gender"));
+					petuser.setSignature(object1.getString("signature"));
+					petuser.setImg(object1.getString("img"));
+				} catch (Exception e) {
+					petuser = null;
+				}
 			}
 		}
 		return petuser;
@@ -130,10 +98,84 @@ public class TrustUserServiceImpl implements TrustUserService {
 	@Override
 	public void delPetUser(Petuser petuser) throws Exception {
 		logger.debug("welcome to delPetUser.....................");
-		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();getClass();
-		MgrTrustUserCriteria.Criteria criteria=trustUserCriteria.createCriteria();
+		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
+		getClass();
+		MgrTrustUserCriteria.Criteria criteria = trustUserCriteria
+				.createCriteria();
 		criteria.andIdEqualTo(petuser.getId());
 		trustUserMapper.deleteByExample(trustUserCriteria);
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public int addOrUpdatetrust(Petuser petuser, HttpServletRequest request)throws Exception {
+		logger.debug("welcome to addOrUpdatetrust.....................");
+		if ("".equals(petuser.getId()) || null == petuser.getId()) {
+			String img = petuser.getImg();
+			if (null != img && "" != img) {
+				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"
+						+ img.substring(img.indexOf("get") + 4, 83) + ",");
+			} else {
+				petuser.setImg("B7C2CF190DB348DAB1E1DD839DE1017E");
+			}
+			String url = commonConfig.get("service.uri.pet_sso", null);
+			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""
+					+ petuser.getHobby() + "\",\"img\":\"" + petuser.getImg()
+					+ "\",\"signature\":\"" + petuser.getSignature()
+					+ "\",\"gender\":\"" + petuser.getGender()
+					+ "\",\"nickname\":\"" + petuser.getNickname()
+					+ "\",\"phonenumber\":\"" + petuser.getPhonenumber()
+					+ "\",\"city\":\"" + petuser.getCity()
+					+ "\",\"password\":\"" + petuser.getPassword() + "\"}}";
+			String res = PostRequest.postText(url, "body", body.toString());
+			JSONObject object = new JSONObject(res);
+			if (object.getBoolean("success")) {
+				if (res.indexOf("entity") >= 0) {
+					JSONObject object1 = new JSONObject(
+							object.getString("entity"));
+					String userid;
+					try {
+						userid = object1.getString("userid");
+					} catch (Exception e) {
+						userid = "null";
+					}
+					MgrTrustUser mgrTrustUser = new MgrTrustUser();
+					mgrTrustUser.setId(IDCreater.uuid());
+					SessionManager manager = null;
+					WebUser user = manager.getCurrentUser(request);
+					mgrTrustUser.setNrootId(user.getId());
+					mgrTrustUser.setUserId(userid);
+					trustUserMapper.insertSelective(mgrTrustUser);
+				}
+				return 1;
+			}
+			else{
+				return 0;
+			}
+		} else {
+			String img = petuser.getImg();
+			if (null != img && "" != img) {
+				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"+ img.substring(img.indexOf("get") + 4, 83) + ",");
+			}
+			String url = commonConfig.get("service.uri.pet_user", null);
+			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""
+					+ petuser.getId()
+					+ "\",\"nickname\":\""
+					+ petuser.getNickname()
+					+ "\",\"phonenumber\":\""
+					+ petuser.getPhonenumber() + "\"}}";
+			String res = PostRequest.postText(url, "body", body.toString());
+			JSONObject object = new JSONObject(res);
+	
+			if (object.getString("entity").equals("OK")) {
+				logger.debug("修改用户信息成功!");
+				return 1;
+			} else {
+				logger.debug("修改用户信息失败!");
+				return 0;
+			}
+			
+		}
 	}
 
 }

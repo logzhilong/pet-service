@@ -109,9 +109,7 @@ public class UserManageController {
 	 * @return
 	 */
 	@RequestMapping("/manager/mgrusermanager/usermanageSaveOrUpdate.html")
-	public void usermanageSaveOrUpdate(String[] roletype, MgrUser mgrUser,
-			Model model, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
+	public void usermanageSaveOrUpdate(String[] roletype, MgrUser mgrUser,Model model, HttpServletRequest request,HttpServletResponse response) throws Exception {
 		logger.debug("wlcome to role manage usermanagerSaveOrUpdate......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);

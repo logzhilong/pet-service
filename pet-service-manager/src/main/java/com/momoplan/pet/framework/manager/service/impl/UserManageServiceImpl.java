@@ -72,8 +72,7 @@ public class UserManageServiceImpl implements UserManageService {
 			// 循环更新或者添加角色用户关系表
 			MgrUserRoleRel rel = new MgrUserRoleRel();
 			rel.setUserId(mgrUser.getId());
-			List<MgrUserRoleRel> list = roleUserManageService
-					.getRoleUserListbyUserid(rel);
+			List<MgrUserRoleRel> list = roleUserManageService.getRoleUserListbyUserid(rel);
 			for (MgrUserRoleRel rel2 : list) {
 				roleUserManageService.delRoleUser(rel2);
 			}

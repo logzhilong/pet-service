@@ -75,12 +75,16 @@ public class TrustUserController {
 		logger.debug("wlcome to manager trustuser userAddOrUpdate......");
 		JSONObject json = new JSONObject();
 		json.put("statusCode", 200);
-		json.put("message", "操作成功!");
 		json.put("callbackType", "closeCurrent");
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0003");
 		try {
-			trustUserService.addOrUpdatetrust(petuser,request);
+			int i=trustUserService.addOrUpdatetrust(petuser, request);
+			if(i>0){
+				json.put("message", "操作成功!");
+			}else{
+				json.put("message", "操作失败!");
+			}
 		} catch (Exception e) {
 			logger.error(e.toString());
 			json.put("message", e.getMessage());

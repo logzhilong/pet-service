@@ -23,7 +23,7 @@ public interface TrustUserService {
 	 * @param petuser
 	 * @throws Exception
 	 */
-	public void addOrUpdatetrust(Petuser petuser,HttpServletRequest request)throws Exception;
+	public int  addOrUpdatetrust(Petuser petuser,HttpServletRequest request)throws Exception;
 	/**
 	 * 根据id获取托管用户信息
 	 * @param petuser

@@ -49,17 +49,17 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		} else {
 			criteria.andPidEqualTo(id);
 		}
-//		if (StringUtils.isEmpty(vo.getName())) {
-//			if ("all".equals(vo.getAreaCode())
-//					&& "all".equals(vo.getAreaCode())) {
-//			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
-//				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
-//			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
-//				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
-//			}
-//		} else {
-//			criteria.andNameLike("%" + vo.getName() + "%");
-//		}
+		if (StringUtils.isEmpty(vo.getName())) {
+			if ("all".equals(vo.getAreaCode())
+					&& "all".equals(vo.getAreaCode())) {
+			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
+				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
+			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
+				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
+			}
+		} else {
+			criteria.andNameLike("%" + vo.getName() + "%");
+		}
 		int totalCount = forumMapper.countByExample(forumCriteria);
 		forumCriteria.setMysqlOffset((pageBean.getPageNo() - 1)* pageBean.getPageSize());
 		forumCriteria.setMysqlLength(pageBean.getPageSize());
@@ -138,7 +138,6 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			forum.setCt(new Date());
 			SessionManager manager = null;
 			WebUser user1 = manager.getCurrentUser(request);
-
 			forum.setCb(user1.getName());
 			if ("all".equals(forum.getPid())) {
 				forum.setPid(null);
@@ -246,19 +245,23 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 					JSONObject jo = (JSONObject) ja.get(i);
 					logger.debug(jo.toString());
 					Note note = new Note();
-					note.setId(jo.getString("id"));
-					note.setForumId(jo.getString("forumId"));
-					note.setName(jo.getString("name"));
-					note.setUserId(jo.getString("userId"));
-					note.setClientCount(jo.getLong("clientCount"));
-					note.setIsDel(jo.getBoolean("isDel"));
-					note.setIsEute(jo.getBoolean("isEute"));
-					note.setState(jo.getString("state"));
-					note.setType(jo.getString("type"));
-					note.setIsTop(jo.getBoolean("isTop"));
-					note.setCt(sdf.parse(jo.getString("ct")));
-					note.setEt(sdf.parse(jo.getString("et")));
-					note.setRt(sdf.parse(jo.getString("rt")));
+					try {
+						note.setId(jo.getString("id"));
+						note.setForumId(jo.getString("forumId"));
+						note.setName(jo.getString("name"));
+						note.setUserId(jo.getString("userId"));
+						note.setClientCount(jo.getLong("clientCount"));
+						note.setIsDel(jo.getBoolean("isDel"));
+						note.setIsEute(jo.getBoolean("isEute"));
+						note.setState(jo.getString("state"));
+						note.setType(jo.getString("type"));
+						note.setIsTop(jo.getBoolean("isTop"));
+						note.setCt(sdf.parse(jo.getString("ct")));
+						note.setEt(sdf.parse(jo.getString("et")));
+						note.setRt(sdf.parse(jo.getString("rt")));
+					} catch (Exception e) {
+						note.setId(jo.getString("id"));
+					}
 					notes.add(note);
 				}
 				return notes;

@@ -31,10 +31,18 @@
 				<dl>
 					<dt>性别:</dt>
 					<dd>
-						<select name="gender">
+					<c:if test="${petuser.gender eq 'male'}">
+					<select name="gender">
 						<option value="male">男</option>
 						<option value="female">女</option>
 						</select>
+					</c:if>
+					<c:if test="${petuser.gender eq  'female'}">
+					<select name="gender">
+						<option value="female">女</option>
+						<option value="male">男</option>
+						</select>
+					</c:if>
 					</dd>
 				</dl>
 				<dl>
@@ -46,6 +54,7 @@
 							upflashext="swf"
 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html"
 							skin="vista">
+							${petuser.img}
 						</textarea>
 					</dd>
 				</dl>
