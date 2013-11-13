@@ -144,20 +144,9 @@ public class NoteSubServiceImpl implements NoteSubService {
 	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize){
 		List<NoteSub> list = null;
 		long totalCount = 0;
-		if(StringUtils.isEmpty(userId)){
-			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
-			if(list!=null)
-				totalCount = noteSubRepository.totalReply(noteId);
-		}else{
-			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
-			criteria.andNoteIdEqualTo(noteId);
-			criteria.andUserIdEqualTo(userId);
-			totalCount = noteSubMapper.countByExample(noteSubCriteria);
-			noteSubCriteria.setMysqlOffset(pageNo * pageSize);
-			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
-			list = noteSubMapper.selectByExample(noteSubCriteria);
-		}
+		list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+		if(list!=null)
+			totalCount = noteSubRepository.totalReply(noteId);
 		if(list!=null){
 			logger.debug(noteId+" 回复列表大小 list.size="+list.size());
 			for(NoteSub ns : list){
