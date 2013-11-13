@@ -27,7 +27,7 @@ public class ReplyNoteHandler extends AbstractHandler {
 		String rtn = null;
 		try {
 			NoteSub noteSub = new NoteSub();
-			noteSub.setUserId(PetUtil.getParameter(clientRequest, "userId"));
+			noteSub.setUserId(getUseridFParamSToken(clientRequest));
 			noteSub.setNoteId(PetUtil.getParameter(clientRequest, "noteId"));
 			noteSub.setContent(PetUtil.getParameter(clientRequest, "content"));
 			noteSub.setPid(PetUtil.getParameter(clientRequest, "pid"));
