@@ -28,12 +28,7 @@
 						<input type="text" name="phonenumber"/>
 					</dd>
 				</dl>
-				<dl>
-					<dt>地区:</dt>
-					<dd>
-						<input type="text" name="city"/>
-					</dd>
-				</dl>
+				
 
 				<dl>
 					<dt>性别:</dt>
