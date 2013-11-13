@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
@@ -25,7 +24,7 @@ public class AllForumAsTreeHandler extends AbstractHandler {
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
 		try {
-			String userid = PetUtil.getParameter(clientRequest, "userId");
+			String userid = getUseridFParamSToken(clientRequest);
 			Object object = forumService.getAllForumAsTree(userid);
 			logger.debug("获取圈子(父圈套子圈)集合 body=" + gson.toJson(clientRequest));
 			rtn = new Success(true, object).toString();

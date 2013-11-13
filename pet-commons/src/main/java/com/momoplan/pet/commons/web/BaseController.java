@@ -50,6 +50,9 @@ public class BaseController extends PetUtil {
 		if(clientRequest.getParams()!=null&&StringUtils.isNotEmpty(getParameter(clientRequest, "userid"))){
 			userid = getParameter(clientRequest, "userid");
 			logger.debug("根据userid 获取用户信息 userid="+userid);
+		}else if(clientRequest.getParams()!=null&&StringUtils.isNotEmpty(getParameter(clientRequest, "userId"))){
+			userid = getParameter(clientRequest, "userId");
+			logger.debug("根据userId 获取用户信息 userId="+userid);
 		}else{
 			String token = clientRequest.getToken();
 			userid = getToken(token).getString("userid");

@@ -64,37 +64,44 @@ public class FileServerImpl implements FileServer{
 		String realPath = buildFilePath(id);
 		InputStream is = fileBean.getFileStream();
 		int ss = is.available();
-		if(StringUtils.isNotEmpty(fileBean.getCompressImage())){
+		if("IMAGE".equalsIgnoreCase(fileBean.getFileType())){//如果是一个图片
 			String format = "jpg";
 			MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
+			BufferedImage bi = ImageIO.read(mis);
 			Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
 			while(it.hasNext()){
 				ImageReader r = it.next();
 				format = r.getFormatName();
 				logger.debug(format);
 			}
-			logger.debug("//是图片，需要压缩这张图片 format="+format);
-			BufferedImage bi = ImageIO.read(mis);
 			int sw = bi.getWidth();
 			int sh = bi.getHeight();
-			double rw = 320;
+			double rw = fileBean.getImageWidth();
 			double rh = (rw/sw)*sh;
-			bi = ImageTools.getResizePicture(bi, rw, rh);
-			logger.debug("sw="+sw+";rw="+sw);
-			logger.debug("sh="+sh+";rh="+rh);
-			File output = new File(realPath);
-			logger.debug("加水印...");
-			InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
-			BufferedImage top = ImageIO.read(tis);
-			int tw = top.getWidth();
-			int th = top.getHeight();
-			if(th>rh/3){
-				double rth = rh/3;
-				double rtw = (rth/th)*tw;
-				top = ImageTools.getResizePicture(top,rtw,rth);
+
+			if(StringUtils.isNotEmpty(fileBean.getCompressImage())&&("Y".equalsIgnoreCase(fileBean.getCompressImage())||"OK".equalsIgnoreCase(fileBean.getCompressImage()))){
+				logger.debug("压缩...");
+				bi = ImageTools.getResizePicture(bi, rw, rh);
+				logger.debug("sw="+sw+";rw="+sw);
+				logger.debug("sh="+sh+";rh="+rh);
 			}
-			bi = ImageTools.pressImage( bi,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
+			
+			if(StringUtils.isNotEmpty(fileBean.getAddTopImage())&&("Y".equalsIgnoreCase(fileBean.getAddTopImage())||"OK".equalsIgnoreCase(fileBean.getAddTopImage()))){
+				logger.debug("加水印...");
+				InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
+				BufferedImage top = ImageIO.read(tis);
+				int tw = top.getWidth();
+				int th = top.getHeight();
+				if(th>rh/3){
+					double rth = rh/3;
+					double rtw = (rth/th)*tw;
+					top = ImageTools.getResizePicture(top,rtw,rth);
+				}
+				bi = ImageTools.pressImage( bi,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
+			}
 			logger.debug("输出...");
+			
+			File output = new File(realPath);
 			ImageIO.write( bi ,format , output);
 			long rs = output.length();
 			logger.debug("ss="+ss+";rs="+rs);

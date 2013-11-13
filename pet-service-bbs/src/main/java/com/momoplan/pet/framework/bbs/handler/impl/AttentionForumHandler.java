@@ -26,7 +26,7 @@ public class AttentionForumHandler extends AbstractHandler {
 		String rtn = null;
 		try{
 			UserForumRel userForumRel=new UserForumRel();
-			userForumRel.setUserId(PetUtil.getParameter(clientRequest, "userId"));
+			userForumRel.setUserId(getUseridFParamSToken(clientRequest));
 			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumId"));
 			userForumRelService.attentionForum(userForumRel);
 			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));

@@ -22,10 +22,8 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
-import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
@@ -41,18 +39,17 @@ public class NoteSubServiceImpl implements NoteSubService {
 
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
-	private NoteSubMapper noteSubMapper = null;
 	private CommonConfig commonConfig = null;
 	private JmsTemplate apprequestTemplate = null;
-
+	public static void main(String[] args) {
+		Date d = new Date(1384333352347L);
+		System.out.println(d);
+	}
 	@Autowired
-	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,
-			MapperOnCache mapperOnCache, NoteSubMapper noteSubMapper,
-			CommonConfig commonConfig, JmsTemplate apprequestTemplate) {
+	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,MapperOnCache mapperOnCache, CommonConfig commonConfig, JmsTemplate apprequestTemplate) {
 		super();
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
-		this.noteSubMapper = noteSubMapper;
 		this.commonConfig = commonConfig;
 		this.apprequestTemplate = apprequestTemplate;
 	}
@@ -75,6 +72,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 		logger.debug("//TODO 这最好不要直接去 update ，如果并发量大会有问题，可以放队列，待修正");
 		logger.debug(note.toString());
 		pushMsg(po,note);
+		
 		return po.getId();
 	}
 
@@ -87,7 +85,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 //			dynamic:动态前10个字
 //		contentID=帖子/动态 ID
 //		picID=动态图片，帖子无图片
-//		body=回复内容
+//		body=楼层
 		try{
 			JSONObject fromUserJson = getUserinfo(reply.getUserId());
 			JSONObject toUserJson = getUserinfo(note.getUserId());
@@ -107,18 +105,35 @@ public class NoteSubServiceImpl implements NoteSubService {
 			jsonObj.put("content",note.getName());
 			jsonObj.put("body", reply.getSeq());
 			
-			TextMessage tm = new ActiveMQTextMessage();
-			logger.debug("send msg="+jsonObj.toString());
-			tm.setText(jsonObj.toString());
 			ActiveMQQueue queue = new ActiveMQQueue();
 			queue.setPhysicalName(PET_PUSH_TO_XMPP);
+			
+			TextMessage tm = new ActiveMQTextMessage();
+			tm.setText(jsonObj.toString());
 			apprequestTemplate.convertAndSend(queue, tm);
+			logger.debug("send msg="+jsonObj.toString());
 			logger.debug("queue_name="+PET_PUSH_TO_XMPP+" ; msg="+jsonObj.toString());
+			String pid = reply.getPid();
+			if(StringUtils.isNotEmpty(pid)){
+				NoteSub po = mapperOnCache.selectByPrimaryKey(NoteSub.class, pid);
+				boolean again = StringUtils.isNotEmpty(po.getUserId())&&!po.getUserId().equals(note.getUserId());
+				logger.debug("继续推送 note.getUserId()="+note.getUserId());
+				logger.debug("继续推送 po.getUserId()="+po.getUserId());
+				logger.debug("继续推送 pid="+pid+"; again="+again);
+				if(again){
+					logger.debug("+++++++继续+++++++推送+++++++");
+					toUserJson = getUserinfo(po.getUserId());
+					jsonObj.put("to", toUserJson.get("username"));
+					tm = new ActiveMQTextMessage();
+					tm.setText(jsonObj.toString());
+					apprequestTemplate.convertAndSend(queue, tm);
+					logger.debug("send msg="+jsonObj.toString());
+				}
+			}
 		}catch(Exception e){
 			logger.debug("推送消息异常不能中断程序");
 			logger.error("send message",e);
 		}
-		
 	}
 	
 	protected JSONObject getUserinfo(String userid) throws Exception {
@@ -144,20 +159,9 @@ public class NoteSubServiceImpl implements NoteSubService {
 	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize){
 		List<NoteSub> list = null;
 		long totalCount = 0;
-		if(StringUtils.isEmpty(userId)){
-			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
-			if(list!=null)
-				totalCount = noteSubRepository.totalReply(noteId);
-		}else{
-			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
-			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
-			criteria.andNoteIdEqualTo(noteId);
-			criteria.andUserIdEqualTo(userId);
-			totalCount = noteSubMapper.countByExample(noteSubCriteria);
-			noteSubCriteria.setMysqlOffset(pageNo * pageSize);
-			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
-			list = noteSubMapper.selectByExample(noteSubCriteria);
-		}
+		list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+		if(list!=null)
+			totalCount = noteSubRepository.totalReply(noteId);
 		if(list!=null){
 			logger.debug(noteId+" 回复列表大小 list.size="+list.size());
 			for(NoteSub ns : list){
@@ -180,15 +184,19 @@ public class NoteSubServiceImpl implements NoteSubService {
 			NoteSubVo vo = new NoteSubVo();
 			BeanUtils.copyProperties(noteSub, vo);
 			String uid = noteSub.getUserId();
-			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
-			logger.debug("---------------");
-			logger.debug("userId="+uid);
-			logger.debug("user="+user);
-			logger.debug("noteSub="+noteSub);
-			logger.debug("vo="+vo);
-			logger.debug("---------------");
-			vo.setNickname(user.getNickname());
-			vo.setUserIcon(user.getImg());
+			if(StringUtils.isNotEmpty(uid)){
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, uid);// 在缓存中获取用户
+				logger.debug("---------------");
+				logger.debug("userId="+uid);
+				logger.debug("user="+user);
+				logger.debug("noteSub="+noteSub);
+				logger.debug("vo="+vo);
+				logger.debug("---------------");
+				vo.setNickname(user.getNickname());
+				vo.setUserIcon(user.getImg());
+			}else{
+				logger.debug("ERR : 用户ID为空 : note_sub_id="+noteSub.getId());
+			}
 			vos.add(vo);
 		}
 		PageBean<NoteSubVo> p = new PageBean<NoteSubVo>();
