@@ -105,6 +105,7 @@ public class SsoUserRepository implements CacheKeysConstance {
 			try{
 				json = jedis.hget(CF_TOKEN, token);//SsoAuthenticationToken
 			}catch(Exception e){
+				logger.debug("gettoken_error : "+e.getMessage());
 				throw new Exception("TOKEN 无效或已过期");
 			}
 			if(StringUtils.isEmpty(json))

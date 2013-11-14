@@ -28,6 +28,16 @@ public class FileBean {
 	
 	private InputStream fileStream = null;
 	
+	private String format = null;
+	
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
 	public FileBean() {
 		super();
 	}

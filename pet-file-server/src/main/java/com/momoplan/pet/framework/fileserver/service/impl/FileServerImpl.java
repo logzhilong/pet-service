@@ -69,12 +69,22 @@ public class FileServerImpl implements FileServer{
 			String format = "jpg";
 			MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
 			BufferedImage bi = ImageIO.read(mis);
-			Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
-			while(it.hasNext()){
-				ImageReader r = it.next();
-				format = r.getFormatName();
-				logger.debug(format);
-			}
+			
+			if(fileBean.getFormat()!=null)
+				try{
+					String[] f = fileBean.getFormat().split("/");
+					format = f[1];
+					logger.debug("getFormat success");
+				}catch(Exception e){
+					logger.debug("getFormat error:"+e.getMessage());
+				}
+//			Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
+//			while(it.hasNext()){
+//				ImageReader r = it.next();
+//				format = r.getFormatName();
+//				logger.debug(format);
+//			}
+			
 			int sw = bi.getWidth();
 			int sh = bi.getHeight();
 			double rw = fileBean.getImageWidth();
