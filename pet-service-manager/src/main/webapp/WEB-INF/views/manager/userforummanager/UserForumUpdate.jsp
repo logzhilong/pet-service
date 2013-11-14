@@ -12,7 +12,7 @@
 				<dt>关注圈子：</dt>
 				<dd>
 					<select name="forumId" style="width: 130px;">
-						<option value="all">${userForum.forumId }</option>
+						<option value="${fid}">${userForum.forumId }</option>
 						<c:forEach var="itr" items="${forums }">
 							<option value="${itr.id }">${itr.name }</option>
 						</c:forEach>

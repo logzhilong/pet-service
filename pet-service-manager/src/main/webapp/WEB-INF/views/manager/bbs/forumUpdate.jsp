@@ -22,20 +22,21 @@
 						<input type="text" name="seq" value="${fos.seq }" />
 					</dd>
 				</dl>
-				
+				<c:if test="${fos.type ne ''}">
 				<dl>
 					<dt>(子)圈子类型:</dt>
 					<select class="combox"  ref="fforum" refUrl="${ctx }/manager/bbs/Toaddforum.html?fid={value}">
-						<option value="1024">--请选择--</option>
+						<option value="${fos.type }">--请选择--</option>
 						<c:forEach var="itr" items="${xmllist }">
 	  							<option value="${itr.id }">${itr.name }</option>
 	  					</c:forEach>
 					</select> 
 					<select class="combox" name="type" id="fforum" ref="fd">
-						<option value="all">--请选择--</option>
+						<option value="${fos.type }">--请选择--</option>
 					</select>
-					*父圈忽略
+					*父圈忽略此项
 				</dl>
+				</c:if>
 				
 				<dl>
 					<dt>圈子名字：</dt>
@@ -49,30 +50,30 @@
 						<input type="text" name="descript" value="${fos.descript }" />
 					</dd>
 				</dl>
-				<dl>
-					<dt>圈子头像：</dt>
-					<dd >
-						<textarea style="width:130px;"  class="editor"
-							tools="Img" name="logoImg" cols="45" rows="4" 
-							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
-							upimgext="jpg,jpeg,gif,png" upflashext="swf"
-							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
-							${fos.logoImg }
-						</textarea>
-					</dd>
-				</dl>
-				<dl>
-					<dt>点击数量:</dt>
-					<dd>
-						<input type="text" name="clientCount" value="${fos.clientCount }" />
-					</dd>
-				</dl>
-				<dl>
-					<dt>圈子回复量：</dt>
-					<dd>
-						<input type="text" name="replyCount" value="${fos.replyCount }" />
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>圈子头像：</dt> -->
+<!-- 					<dd > -->
+<!-- 						<textarea style="width:130px;"  class="editor" -->
+<!-- 							tools="Img" name="logoImg" cols="45" rows="4"  -->
+<!-- 							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt" -->
+<!-- 							upimgext="jpg,jpeg,gif,png" upflashext="swf" -->
+<%-- 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista"> --%>
+<%-- 							${fos.logoImg } --%>
+<!-- 						</textarea> -->
+<!-- 					</dd> -->
+<!-- 				</dl> -->
+<!-- 				<dl> -->
+<!-- 					<dt>点击数量:</dt> -->
+<!-- 					<dd> -->
+<%-- 						<input type="text" name="clientCount" value="${fos.clientCount }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
+<!-- 				<dl> -->
+<!-- 					<dt>圈子回复量：</dt> -->
+<!-- 					<dd> -->
+<%-- 						<input type="text" name="replyCount" value="${fos.replyCount }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 			<!-- 
 				<dl>	
 					<dt>选择地区:</dt>

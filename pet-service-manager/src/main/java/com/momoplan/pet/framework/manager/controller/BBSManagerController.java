@@ -48,18 +48,22 @@ public class BBSManagerController {
 				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				List<Forum> forums = bBSManagerService.getForumlist();
+				//获取xml圈子类型
 				Xmlparser xmlparser=new Xmlparser();
 				List<Xmlparser> xmllist=xmlparser.getFForums();
+				logger.debug("解析xml,获取圈子类型:"+xmllist);
 				model.addAttribute("xmllist", xmllist);
 				model.addAttribute("forums", forums);
-				logger.debug("wlcome to pet manager Forumadd......");
+				logger.debug("wlcome to pet manager Forumadd......"+forums);
 				return "/manager/bbs/forumAdd";
 			} else {
 				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				Forum fos = bBSManagerService.getForumbyid(forum);
 				model.addAttribute("fos", fos);
-				logger.debug("wlcome to pet manager updateforum......");
+				
+				
+				logger.debug("wlcome to pet manager updateforum......"+fos);
 				return "/manager/bbs/forumUpdate";
 			}
 		} catch (Exception e) {
@@ -119,7 +123,6 @@ public class BBSManagerController {
 			// 看地区是否有选择,若有,则作为条件
 			if (!"all".equals(fatherid) && !"all".equals(sunid)
 					&& !"all".equals(grandsunid) && !"".equals(fatherid)) {
-
 				if (!"".equals(grandsunid) && !"all".equals(grandsunid)) {
 					forum.setAreaCode(fatherid + "-" + sunid + "-" + grandsunid);
 				} else if (!"".equals(sunid) && !"all".equals(sunid)) {
@@ -339,7 +342,7 @@ public class BBSManagerController {
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
 			UpImgVo imgVo=new UpImgVo();
-			String enty=imgVo.upimg(req,"");
+			String enty=imgVo.upimg(req,"ns");
 			if(enty != null && "" != enty){
 				String url = commonConfig.get("service.uri.pet_file_server", null);
 				newFileName = url+"/get/" + enty;

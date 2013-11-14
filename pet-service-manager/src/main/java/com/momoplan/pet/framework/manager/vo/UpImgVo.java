@@ -31,6 +31,7 @@ public class UpImgVo {
 	 * @param req传入request获取File信息
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public String upimg(HttpServletRequest req,String ys){
 		try {
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
@@ -64,7 +65,10 @@ public class UpImgVo {
 						if(ys == "tpys"){
 							//压缩图片参数
 							reqEntity.addPart("compressImage", new StringBody("OK"));
-							
+						}if(ys == "ns"){
+							reqEntity.addPart("compressImage", new StringBody("OK"));
+							reqEntity.addPart("addTopImage", new StringBody("no"));
+							reqEntity.addPart("imageWidth", new StringBody("300"));
 						}
 						// 设置请求
 						httppost.setEntity(reqEntity);

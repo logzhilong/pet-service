@@ -113,26 +113,17 @@ public class TrustUserServiceImpl implements TrustUserService {
 		if ("".equals(petuser.getId()) || null == petuser.getId()) {
 			String img = petuser.getImg();
 			if (null != img && "" != img) {
-				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"
-						+ img.substring(img.indexOf("get") + 4, 83) + ",");
+				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"+ img.substring(img.indexOf("get") + 4, 83) + ",");
 			} else {
 				petuser.setImg("B7C2CF190DB348DAB1E1DD839DE1017E");
 			}
 			String url = commonConfig.get("service.uri.pet_sso", null);
-			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""
-					+ petuser.getHobby() + "\",\"img\":\"" + petuser.getImg()
-					+ "\",\"signature\":\"" + petuser.getSignature()
-					+ "\",\"gender\":\"" + petuser.getGender()
-					+ "\",\"nickname\":\"" + petuser.getNickname()
-					+ "\",\"phonenumber\":\"" + petuser.getPhonenumber()
-					+ "\",\"city\":\"" + petuser.getCity()
-					+ "\",\"password\":\"" + petuser.getPassword() + "\"}}";
+			String body = "{\"method\":\"register\",\"params\":{\"hobby\":\""+ petuser.getHobby() + "\",\"img\":\"" + petuser.getImg()+ "\",\"signature\":\"" + petuser.getSignature()+ "\",\"gender\":\"" + petuser.getGender()+ "\",\"nickname\":\"" + petuser.getNickname()+ "\",\"phonenumber\":\"" + petuser.getPhonenumber()+ "\",\"city\":\"" + petuser.getCity()+ "\",\"password\":\"" + petuser.getPassword() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
 			if (object.getBoolean("success")) {
 				if (res.indexOf("entity") >= 0) {
-					JSONObject object1 = new JSONObject(
-							object.getString("entity"));
+					JSONObject object1 = new JSONObject(object.getString("entity"));
 					String userid;
 					try {
 						userid = object1.getString("userid");
@@ -158,15 +149,9 @@ public class TrustUserServiceImpl implements TrustUserService {
 				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"+ img.substring(img.indexOf("get") + 4, 83) + ",");
 			}
 			String url = commonConfig.get("service.uri.pet_user", null);
-			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""
-					+ petuser.getId()
-					+ "\",\"nickname\":\""
-					+ petuser.getNickname()
-					+ "\",\"phonenumber\":\""
-					+ petuser.getPhonenumber() + "\"}}";
+			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""+ petuser.getId()+ "\",\"nickname\":\""+ petuser.getNickname()+ "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
-	
 			if (object.getString("entity").equals("OK")) {
 				logger.debug("修改用户信息成功!");
 				return 1;

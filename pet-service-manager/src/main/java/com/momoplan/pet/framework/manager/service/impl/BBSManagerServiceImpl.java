@@ -37,9 +37,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	CommonDataManagerService commonDataManagerService;
 	private CommonConfig commonConfig = new CommonConfig();
 	@Override
-	public PageBean<Forum> listForum(PageBean<Forum> pageBean, Forum vo)
-			throws Exception {
-		logger.debug("welcome to listForum.....................");
+	public PageBean<Forum> listForum(PageBean<Forum> pageBean, Forum vo)throws Exception {
+		logger.debug("welcome to listForum....................."+vo);
 		String id = vo.getId();
 		ForumCriteria forumCriteria = new ForumCriteria();
 		forumCriteria.setOrderByClause("seq");
@@ -50,13 +49,13 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andPidEqualTo(id);
 		}
 		if (StringUtils.isEmpty(vo.getName())) {
-			if ("all".equals(vo.getAreaCode())
-					&& "all".equals(vo.getAreaCode())) {
-			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
-				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
-			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
-				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
-			}
+//			if ("all".equals(vo.getAreaCode())
+//					&& "all".equals(vo.getAreaCode())) {
+//			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
+//				criteria.andAreaCodeLike("%" + vo.getAreaDesc() + "%");
+//			} else if ("" != vo.getAreaCode() && null != vo.getAreaCode()) {
+//				criteria.andAreaCodeLike("%" + vo.getAreaCode() + "%");
+//			}
 		} else {
 			criteria.andNameLike("%" + vo.getName() + "%");
 		}
@@ -123,15 +122,15 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	@Override
 	public int addOrUpdateForum(Forum forum, HttpServletRequest request)
 		throws Exception {
-		logger.debug("welcome to addOrUpdateForum.....................");
+		logger.debug("welcome to addOrUpdateForum....................."+forum);
 		String id = forum.getId();
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if (fo != null && !"".equals(fo.getId())) {
 			logger.debug("selectByPK.po=" + fo);
-			String img = forum.getLogoImg();
-			if (null != img && "" != img) {
-				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
-			}
+//			String img = forum.getLogoImg();
+//			if (null != img && "" != img) {
+//				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
+//			}
 			return forumMapper.updateByPrimaryKeySelective(forum);
 		} else {
 			forum.setId(IDCreater.uuid());
@@ -142,10 +141,10 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			if ("all".equals(forum.getPid())) {
 				forum.setPid(null);
 			}
-			String img = forum.getLogoImg();
-			if (null != img && "" != img) {
-				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
-			}
+//			String img = forum.getLogoImg();
+//			if (null != img && "" != img) {
+//				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
+//			}
 			return forumMapper.insertSelective(forum);
 		}
 	}

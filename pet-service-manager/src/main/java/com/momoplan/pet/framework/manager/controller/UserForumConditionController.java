@@ -41,32 +41,49 @@ public class UserForumConditionController {
 			List<UserForumCondition> userforumlist=userforumService.GetUserForumList();
 			for(UserForumCondition condition:userforumlist) {
 				Forum forum=new Forum();
-				forum.setId(condition.getForumId());
-				condition.setForumId(bbsManagerService.getForumbyid(forum).getName());
+				try {
+					forum.setId(condition.getForumId());
+				} catch (Exception e) {
+					forum.setId("null");
+				}
+					condition.setForumId(bbsManagerService.getForumbyid(forum).getName());
 			}
 			model.addAttribute("userforumlist", userforumlist);
-			logger.debug("获取默认关注圈子表list"+userforumlist);
+			logger.debug("获取默认关注圈子表list"+userforumlist.toString());
 			return "/manager/userforummanager/UserForumList";
 		} catch (Exception e) {
 			logger.error("userforumlist"+e);
 			e.printStackTrace();
 			return "/manager/userforummanager/UserForumList";
 		}
+	
 	}
 	
 	
 	@RequestMapping("/manager/userforumcondition/ToAddOrUpdateuserforum.html")
 	public String ToAddOrUpdateuserforum(UserForumCondition condition,Model model){
 		try {
+			logger.debug("传进默认关注圈子:"+condition);
 			if("" != condition.getId() && null != condition.getId()){
-				UserForumCondition userForum=	userforumService.getuserforumByid(condition);
-				Forum forum=new Forum();
-				forum.setId(userForum.getForumId());
-				userForum.setForumId(bbsManagerService.getForumbyid(forum).getName());
-				model.addAttribute("userForum", userForum);
+				try {
+					UserForumCondition userForum=userforumService.getuserforumByid(condition);
+					//设置默认选项的value
+					String va=userForum.getForumId();
+					model.addAttribute("fid", va);
+					if(null != userForum.getForumId() && ""!= userForum.getForumId()){
+						Forum forum=new Forum();
+						forum.setId(userForum.getForumId());
+						userForum.setForumId(bbsManagerService.getForumbyid(forum).getName());
+						logger.debug("根据默认关注圈子id:"+userForum.getForumId() +"获取圈子名称为:"+bbsManagerService.getForumbyid(forum).getName());
+						model.addAttribute("userForum", userForum);
+					}
+				} catch (Exception e) {
+					logger.error("获取默认关注圈子异常:"+e);
+				}
 				//圈子集合
 				List<Forum> forums=userforumService.getForumlist();
 				model.addAttribute("forums", forums);
+				logger.debug("获取圈子集合"+forums.toString());
 				return  "/manager/userforummanager/UserForumUpdate";
 			}
 			else{

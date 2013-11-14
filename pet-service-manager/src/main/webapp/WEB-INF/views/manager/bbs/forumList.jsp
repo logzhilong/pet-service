@@ -45,7 +45,7 @@
 			<li><a class="add"
 				href="${ctx }/manager/bbs/ToaddOrUpdateForum.html" target="dialog"
 				max="false" mask="true" title="添加"
-				width="450" height="450" close="forum.refresh"> <span>添加</span>
+				width="500" height="300" close="forum.refresh"> <span>添加</span>
 				</a>
 			</li>
 			<li>
@@ -69,8 +69,8 @@
 				<th width="15" align="center"></th>
 				<th width="150" align="left">名称</th>
 				<th width="200" align="left">描述</th>
-				<th width="50" align="center">点击量</th>
-				<th width="50" align="center" >回帖量</th>
+<!-- 				<th width="50" align="center">点击量</th> -->
+<!-- 				<th width="50" align="center" >回帖量</th> -->
 			<!-- 
 				<th width="100" align="center" >地区</th> 
 				<th width="200" align="center" >详细地址</th>
@@ -90,8 +90,8 @@
 						</a>
 					</td>
 					<td align="left">${itm.descript }</td>
-					<td >${itm.clientCount }</td>
-					<td>${itm.replyCount }</td>
+<%-- 					<td >${itm.clientCount }</td> --%>
+<%-- 					<td>${itm.replyCount }</td> --%>
 					<td><fmt:formatDate value="${itm.ct }" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 					<td>${itm.cb }</td>
 					<td>${itm.seq }</td>

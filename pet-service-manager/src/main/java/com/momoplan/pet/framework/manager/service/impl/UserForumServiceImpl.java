@@ -28,12 +28,13 @@ public class UserForumServiceImpl implements UserForumService {
 	public List<UserForumCondition> GetUserForumList() throws Exception {
 		logger.debug("welcome to GetUserForumList.....................");
 		UserForumConditionCriteria forumConditionCriteria=new UserForumConditionCriteria();
+		logger.debug("获取关注圈子列表集合:"+conditionMapper.selectByExample(forumConditionCriteria));
 		return conditionMapper.selectByExample(forumConditionCriteria);
 	}
 	
 	@Override
 	public void addOrUpdateUserForum(UserForumCondition condition)throws Exception {
-		logger.debug("welcome to addOrUpdateUserForum.....................");
+		logger.debug("welcome to addOrUpdateUserForum....................."+condition);
 		String id=condition.getId();
 		UserForumCondition userForum=conditionMapper.selectByPrimaryKey(id);
 		if(userForum != null && !"" .equals(userForum.getId())){
@@ -49,17 +50,21 @@ public class UserForumServiceImpl implements UserForumService {
 	
 	@Override
 	public void deleteUserForoum(UserForumCondition condition) throws Exception {
-		logger.debug("welcome to deleteUserForoum.....................");
+		logger.debug("welcome to deleteUserForoum....................."+condition);
 		String id=condition.getId();
-		UserForumCondition userForum=conditionMapper.selectByPrimaryKey(id);
-		if(userForum != null && !"" .equals(userForum.getId())){
-			conditionMapper.deleteByPrimaryKey(condition.getId());
+		if(null != id && "" != id){
+			UserForumCondition userForum=conditionMapper.selectByPrimaryKey(id);
+			if(userForum != null && !"" .equals(userForum.getId())){
+				conditionMapper.deleteByPrimaryKey(condition.getId());
+			}else {
+				logger.debug("没有此默认关注圈子"+id);
+			}
 		}
 	}
 
 	@Override
 	public UserForumCondition getuserforumByid(UserForumCondition condition)throws Exception {
-		logger.debug("welcome to getuserforumByid...  ..................");
+		logger.debug("welcome to getuserforumByid...  .................."+condition);
 		if("" != condition.getId() && null != condition.getId()){
 			logger.debug("getuserforumByid"+conditionMapper.selectByPrimaryKey(condition.getId()));
 			return conditionMapper.selectByPrimaryKey(condition.getId());
@@ -75,6 +80,7 @@ public class UserForumServiceImpl implements UserForumService {
 			ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 			criteria.andPidIsNotNull();
 			List<Forum> forums = forumMapper.selectByExample(forumCriteria);
+			logger.debug("forumlist"+forums);
 			return forums;
 	}
 

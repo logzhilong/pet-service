@@ -13,16 +13,16 @@
 				<dl>
 					<dt>父级圈子:</dt>
 					<select class="combox" name="pid">
-						<option value="0">--请选择父级圈子--</option>
+						<option value="all">--请选择父级圈子--</option>
 						<c:forEach var="itr" items="${forums }">
 							<option value="${itr.id }">${itr.name }</option>
 						</c:forEach>
 					</select>
 				</dl>
 				<dl>
-					<dt>(子)圈子类型:</dt>
+					<dt>(子)圈子类型:</dt>*父圈不用选择
 					<select class="combox"  ref="fforum" refUrl="${ctx }/manager/bbs/Toaddforum.html?fid={value}">
-						<option value="">--请选择--</option>
+						<option value="all">--请选择--</option>
 						<c:forEach var="itr" items="${xmllist }">
 	  							<option value="${itr.id }">${itr.name }</option>
 	  					</c:forEach>
@@ -44,37 +44,37 @@
 						<input type="text" name="descript" value="${forum.descript }" />
 					</dd>
 				</dl>
-				<dl>
-					<dt>点击数量:</dt>
-					<dd>
-						<input type="text" name="clientCount"
-							value="${forum.clientCount }" />
-					</dd>
-				</dl>
-				<dl>
-					<dt>回复数量：</dt>
-					<dd>
-						<input type="text" name="replyCount" value="${forum.replyCount }" />
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>点击数量:</dt> -->
+<!-- 					<dd> -->
+<!-- 						<input type="text" name="clientCount" -->
+<%-- 							value="${forum.clientCount }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
+<!-- 				<dl> -->
+<!-- 					<dt>回复数量：</dt> -->
+<!-- 					<dd> -->
+<%-- 						<input type="text" name="replyCount" value="${forum.replyCount }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 				<dl>
 					<dt>圈子顺序：</dt>
 					<dd>
 						<input type="text" name="seq" value="${forum.seq }" />
 					</dd>
 				</dl>
-				<dl>
-					<dt>圈子头像：</dt>
-					<dd >
-						<textarea style="width:130px;"  class="editor"
-							tools="Img" name="logoImg" cols="45" rows="2" 
-							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt"
-							upimgext="jpg,jpeg,gif,png" upflashext="swf"
-							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista">
-							${forum.logoImg }
-						</textarea>
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>圈子头像：</dt> -->
+<!-- 					<dd > -->
+<!-- 						<textarea style="width:130px;"  class="editor" -->
+<!-- 							tools="Img" name="logoImg" cols="45" rows="2"  -->
+<!-- 							enctype="multipart/form-data" alt="" uplinkext="zip,rar,txt" -->
+<!-- 							upimgext="jpg,jpeg,gif,png" upflashext="swf" -->
+<%-- 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" skin="vista"> --%>
+<%-- 							${forum.logoImg } --%>
+<!-- 						</textarea> -->
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 				
 				<!-- 			
 				<dl><dt>选择地区:</dt>

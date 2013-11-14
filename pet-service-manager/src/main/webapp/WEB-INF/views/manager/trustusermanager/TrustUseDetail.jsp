@@ -54,7 +54,6 @@
 							upflashext="swf"
 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html"
 							skin="vista">
-							${petuser.img}
 						</textarea>
 					</dd>
 				</dl>
