@@ -22,8 +22,10 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSub;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
@@ -39,17 +41,18 @@ public class NoteSubServiceImpl implements NoteSubService {
 
 	private NoteSubRepository noteSubRepository = null;
 	private MapperOnCache mapperOnCache = null;
+	private NoteSubMapper noteSubMapper = null;
 	private CommonConfig commonConfig = null;
 	private JmsTemplate apprequestTemplate = null;
-	public static void main(String[] args) {
-		Date d = new Date(1384333352347L);
-		System.out.println(d);
-	}
+	
 	@Autowired
-	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,MapperOnCache mapperOnCache, CommonConfig commonConfig, JmsTemplate apprequestTemplate) {
+	public NoteSubServiceImpl(NoteSubRepository noteSubRepository,
+			MapperOnCache mapperOnCache, NoteSubMapper noteSubMapper,
+			CommonConfig commonConfig, JmsTemplate apprequestTemplate) {
 		super();
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
+		this.noteSubMapper = noteSubMapper;
 		this.commonConfig = commonConfig;
 		this.apprequestTemplate = apprequestTemplate;
 	}
@@ -156,18 +159,33 @@ public class NoteSubServiceImpl implements NoteSubService {
 		return entity;
 	}
 	
-	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize){
+	private PageBean<NoteSub> getNoteSubList(String noteId,String userId,int pageNo, int pageSize) throws Exception{
 		List<NoteSub> list = null;
 		long totalCount = 0;
-		list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
-		if(list!=null)
-			totalCount = noteSubRepository.totalReply(noteId);
-		if(list!=null){
-			logger.debug(noteId+" 回复列表大小 list.size="+list.size());
-			for(NoteSub ns : list){
-				logger.debug("seq="+ns.getSeq());
-			}
+		
+		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
+		
+		if(note.getUserId()!=null&&note.getUserId().equals(userId)){
+			logger.debug("楼主的回复");
+			//如果 noteId 对应的帖子的创建人 和 userId 相等，则只取 userId 的帖子
+			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+			NoteSubCriteria.Criteria criteria = noteSubCriteria.createCriteria();
+			criteria.andUserIdEqualTo(userId);
+			criteria.andNoteIdEqualTo(noteId);
+			totalCount = noteSubMapper.countByExample(noteSubCriteria);
+			
+			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
+			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
+			noteSubCriteria.setOrderByClause("seq asc");
+			
+			list = noteSubMapper.selectByExample(noteSubCriteria);
+		}else{
+			logger.debug("全部的回复");
+			list = noteSubRepository.getReplyListByNoteId(noteId, pageSize, pageNo);
+			if(list!=null)
+				totalCount = noteSubRepository.totalReply(noteId);
 		}
+		logger.debug(noteId+" 回复列表大小 totalCount="+totalCount);
 		PageBean<NoteSub> p = new PageBean<NoteSub>();
 		p.setData(list);
 		p.setTotalCount(totalCount);
