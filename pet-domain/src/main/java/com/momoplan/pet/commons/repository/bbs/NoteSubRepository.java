@@ -153,7 +153,6 @@ public class NoteSubRepository implements CacheKeysConstance{
 	 * @return
 	 */
 	public List<NoteSub> getReplyListByNoteId(String noteId,int pageSize,int pageNo){
-		pageSize-=1;//因为下脚标在0开始，所以取20条记录时 0～19，size 是要取的条数
 		String key = LIST_NOTE_SUB+noteId;
 		Jedis jedis = null;
 		try{
