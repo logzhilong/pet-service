@@ -8,13 +8,21 @@ public class ClientRequest extends PetComRequest{
 	String mac;
 	String imei;
 	String channel;
-	String version;
+	String service;
+	String connectTime;
+	
 
-	public String getVersion() {
-		return version;
+	public String getService() {
+		return service;
 	}
-	public void setVersion(String version) {
-		this.version = version;
+	public void setService(String service) {
+		this.service = service;
+	}
+	public String getConnectTime() {
+		return connectTime;
+	}
+	public void setConnectTime(String connectTime) {
+		this.connectTime = connectTime;
 	}
 	public String getMethod() {
 		return method;
