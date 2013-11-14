@@ -300,7 +300,7 @@ public class BBSManagerController {
 			UpImgVo imgVo=new UpImgVo();
 			String enty=imgVo.upimg(req,"tpys");
 			if(enty != null && "" != enty){
-				String url = commonConfig.get("service.uri.pet_file_server", null);
+				String url = commonConfig.get("pet_file_server", null);
 				newFileName = url+"/get/" + enty;
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}else {
@@ -346,7 +346,7 @@ public class BBSManagerController {
 			UpImgVo imgVo=new UpImgVo();
 			String enty=imgVo.upimg(req,"ns");
 			if(enty != null && "" != enty){
-				String url = commonConfig.get("service.uri.pet_file_server", null);
+				String url = commonConfig.get("pet_file_server", null);
 				newFileName = url+"/get/" + enty;
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}
