@@ -58,8 +58,9 @@ public class PwdInterceptor implements HandlerInterceptor {
 	}
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		logger.debug("preHandle....."+request.getContextPath());
 		String token = request.getParameter("token");
+		logger.debug("preHandle.....PATH : "+request.getContextPath());
+		logger.debug("preHandle.....TOKEN : "+token);
 		if(isWrongPwd(token)){
 			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
 		}else{
