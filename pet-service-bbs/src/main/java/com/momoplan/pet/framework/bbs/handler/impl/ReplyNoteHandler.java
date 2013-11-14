@@ -15,7 +15,6 @@ import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
 /**
  * 回帖
  * 
- * @author qiyongc
  */
 @Component("replyNote")
 public class ReplyNoteHandler extends AbstractHandler {

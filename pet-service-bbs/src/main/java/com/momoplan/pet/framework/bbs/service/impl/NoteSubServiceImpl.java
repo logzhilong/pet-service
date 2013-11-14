@@ -163,9 +163,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 		List<NoteSub> list = null;
 		long totalCount = 0;
 		
-		Note note = mapperOnCache.selectByPrimaryKey(Note.class, noteId);
-		
-		if(note.getUserId()!=null&&note.getUserId().equals(userId)){
+		if(StringUtils.isNotEmpty(userId)){
 			logger.debug("楼主的回复");
 			//如果 noteId 对应的帖子的创建人 和 userId 相等，则只取 userId 的帖子
 			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
