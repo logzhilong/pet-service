@@ -51,6 +51,9 @@ public class FileServiceController {
 	        logger.debug("文件原名: " + file.getOriginalFilename());
 	        logger.debug("form: " + form.toString());
 	        logger.debug("========================================"+realPath);
+	        String format = file.getContentType().toLowerCase();
+	        form.setFileName(file.getName());
+	        form.setFormat(format);
 	        form.setFileStream(file.getInputStream());
 	        String fileId = fileServer.put(form);
 	        rtn = new Success(true,fileId).toString();

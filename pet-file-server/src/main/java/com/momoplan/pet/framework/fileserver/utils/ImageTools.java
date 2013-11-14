@@ -34,8 +34,8 @@ public class ImageTools {
 	private static ImageReader reader = (ImageReader) readers.next();
 	
 	public static void main(String[] args) throws IOException {
-		File input = new File("/app/a2.jpg");
-		File output = new File("/app/a222");
+		File input = new File("/app/1.png");
+		File output = new File("/app/111");
 		InputStream is = new FileInputStream(input);
 		System.out.println(is.available());
 		MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
@@ -46,6 +46,7 @@ public class ImageTools {
 			System.out.println(r.getFormatName());
 			format = r.getFormatName();
 		}
+		System.out.println("============format:"+format);
 		BufferedImage originalPic = ImageIO.read(mis);
 		int sw = originalPic.getWidth();
 		int sh = originalPic.getHeight();

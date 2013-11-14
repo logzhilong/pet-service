@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,28 +35,26 @@ public class PwdInterceptor implements HandlerInterceptor {
 				logger.info("Clear memCache , size > 2000000");
 			}
 			logger.debug("memCache find token="+token);
-			return true;
+			return false;
 		}
 		String sso_server = commonConfig.get("service.uri.pet_sso");
 		try {
 			ClientRequest request = new ClientRequest();
 			request.setMethod("token");
 			request.setChannel("1");
-			HashMap<String,Object> params = new HashMap<String,Object>();
-			params.put("token", token);
-			request.setParams(params);
+			request.setToken(token);
 			String json = PostRequest.postText(sso_server, "body",MyGson.getInstance().toJson(request));
 			logger.debug("token : "+json);
-			Success success = MyGson.getInstance().fromJson(json, Success.class);
-			if(success.isSuccess()){
+			JSONObject success = new JSONObject(json);
+			if(success!=null&&success.getBoolean("success")){
 				memCache.put(token, true);
-				return true;
+				return false;
 			}
-			return false;
+			return true;
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 		}
-		return false;
+		return true;
 	}
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
