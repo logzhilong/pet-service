@@ -58,7 +58,11 @@ public class PwdInterceptor implements HandlerInterceptor {
 	}
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		String token = request.getParameter("token");
+		String token = request.getHeader("token");
+		if(token==null||"".equals(token)){
+			token = request.getParameter("token");
+			logger.debug("body 取 TOKEN");
+		}
 		logger.debug("preHandle.....PATH : "+request.getContextPath());
 		logger.debug("preHandle.....TOKEN : "+token);
 		if(isWrongPwd(token)){
