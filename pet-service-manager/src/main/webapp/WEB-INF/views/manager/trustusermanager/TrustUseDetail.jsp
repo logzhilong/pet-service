@@ -45,18 +45,18 @@
 					</c:if>
 					</dd>
 				</dl>
-				<dl>
-					<dt>人物头像：</dt>
-					<dd>
-						<textarea style="width: 130px;" class="editor" tools="Img" 
-							 name="img" cols="45" rows="2" enctype="multipart/form-data"
-							alt="" uplinkext="zip,rar,txt" upimgext="jpg,jpeg,gif,png"
-							upflashext="swf"
-							upimgurl="${ctx }/manager/forummamage/upimgforforum.html"
-							skin="vista">
-						</textarea>
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>人物头像：</dt> -->
+<!-- 					<dd> -->
+<!-- 						<textarea style="width: 130px;" class="editor" tools="Img"  -->
+<!-- 							 name="img" cols="45" rows="2" enctype="multipart/form-data" -->
+<!-- 							alt="" uplinkext="zip,rar,txt" upimgext="jpg,jpeg,gif,png" -->
+<!-- 							upflashext="swf" -->
+<%-- 							upimgurl="${ctx }/manager/forummamage/upimgforforum.html" --%>
+<!-- 							skin="vista"> -->
+<!-- 						</textarea> -->
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 			</fieldset>
 		</div>
 		<div class="formBar">

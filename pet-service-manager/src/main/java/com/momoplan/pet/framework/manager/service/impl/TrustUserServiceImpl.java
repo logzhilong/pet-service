@@ -31,8 +31,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 
 	@SuppressWarnings("static-access")
 	@Override
-	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,
-			HttpServletRequest request) throws Exception {
+	public PageBean<MgrTrustUser> AllTrustUser(PageBean<MgrTrustUser> pageBean,HttpServletRequest request) throws Exception {
 		logger.debug("welcome to AllTrustUser.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
 		MgrTrustUserCriteria.Criteria criteria = trustUserCriteria.createCriteria();
@@ -149,7 +148,7 @@ public class TrustUserServiceImpl implements TrustUserService {
 				petuser.setImg(img.substring(img.indexOf("get") + 4, 83) + "_"+ img.substring(img.indexOf("get") + 4, 83) + ",");
 			}
 			String url = commonConfig.get("service.uri.pet_user", null);
-			String body = "{\"method\":\"updateUser\",\"params\":{\"userid\":\""+ petuser.getId()+ "\",\"nickname\":\""+ petuser.getNickname()+ "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\"}}";
+			String body = "{\"method\":\"updateUser\",\"params\":{\"gender\":\""+ petuser.getGender()+ "\",\"userid\":\""+ petuser.getId()+ "\",\"nickname\":\""+ petuser.getNickname()+ "\",\"phonenumber\":\""+ petuser.getPhonenumber() + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
 			if (object.getString("entity").equals("OK")) {

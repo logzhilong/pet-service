@@ -54,7 +54,7 @@
 					<td><a
 						href="${ctx }/manager/trustuser/trustUserDetail.html?id=${itm.userId }"
 						rel="trustuser001" target="dialog" max="false" mask="true"
-						title="托管用户管理(${itm.nrootId })" width="500" height="300"
+						title="托管用户管理(${itm.nrootId })" width="400" height="300"
 						close="forum.refresh">${itm.nrootId } </a></td>
 				</tr>
 			</c:forEach>
