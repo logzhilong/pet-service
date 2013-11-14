@@ -44,7 +44,7 @@ public class UpImgVo {
 					MultipartFile file = multiRequest.getFile(iter.next());
 					if (file != null) {
 						String name = file.getOriginalFilename();
-						String path = "/tmp" + name;
+						String path = "/tmp/" + name;
 						// 将上传文件存储至本地
 						File localFile = new File(path);
 						if (!localFile.exists()) {
