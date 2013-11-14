@@ -1,29 +1,59 @@
 package com.momoplan.pet.framework.statistic.service;
 
-import java.io.IOException;
+import java.util.List;
 
-import org.codehaus.jackson.JsonProcessingException;
+import org.json.JSONObject;
 
-import com.momoplan.pet.commons.domain.statistic.po.DataUsers0;
-import com.momoplan.pet.framework.statistic.vo.ClientRequest;
+import com.momoplan.pet.commons.domain.statistic.po.BizDailyLive;
+import com.momoplan.pet.commons.domain.statistic.po.BizDailyMethod;
+import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;
 
 public interface StatisticService {
 
-//	public void testInsert() throws Exception ;
-	
-	public DataUsers0 findDevice(ClientRequest clientRequest) throws Exception;
-	
-	public void persistDevice(ClientRequest clientRequest) throws Exception;
-	
-	public void mergeUsageState(ClientRequest clientRequest) throws Exception;
+	/**
+	 * 将文件解析后得到的json处理成可持久化的实体，然后进行持久化 注册用户持久化
+	 * 
+	 * @param jList
+	 * @throws Exception
+	 */
+	public void insertBizDailyRegistors(final List<BizDailyRegistor> listBiz)
+			throws Exception;
 
-	public void persistRegisters(ClientRequest clientRequest,String ret) throws JsonProcessingException, IOException ;
-	
-	public void productDailyLivingTask() throws Exception;
-	
-	public void productDailyRegistorsTask() throws Exception;
-	
-	public void UpdateDataUsers1() throws Exception;
-	
+	/**
+	 * 将文件解析后得到的json处理成可持久化的实体，然后进行持久化 日活跃量持久化
+	 * 
+	 * @param jList
+	 * @throws Exception
+	 */
+	public void insertBizDailyLives(final List<BizDailyLive> listBiz) throws Exception;
 
+	/**
+	 * 将文件解析后得到的json处理成可持久化的实体，然后进行持久化 当天method统计持久化
+	 * 
+	 * @param jList
+	 * @throws Exception
+	 */
+	public void insertBizDailyMethod(final List<BizDailyMethod> listBiz) throws Exception;
+
+	/**
+	 * @param timeBucket
+	 * 时间段（week:7,month:30）
+	 * @return
+	 */
+	public List<BizDailyMethod> dateServiceMethod(int timeBucket);
+	
+	/**
+	 * @param timeBucket
+	 * 时间段（week:7,month:30）
+	 * @return
+	 */
+	public List<BizDailyLive> dateUsersByChannel(int timeBucket);
+	
+	/**
+	 * @param timeBucket
+	 * 时间段（week:7,month:30）
+	 * @return
+	 */
+	public List<BizDailyRegistor> dateRegistersByChannel(int timeBucket);
+	
 }

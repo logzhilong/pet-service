@@ -42,6 +42,8 @@ public class UpImgVo {
 				while (iter.hasNext()) {
 					// 上传文件信息
 					MultipartFile file = multiRequest.getFile(iter.next());
+					//content-type
+					String contentType = file.getContentType();
 					if (file != null) {
 						String name = file.getOriginalFilename();
 						String path = "/tmp/" + name;
@@ -52,20 +54,25 @@ public class UpImgVo {
 						}
 						file.transferTo(localFile);
 						DefaultHttpClient httpclient = new DefaultHttpClient();
+						
+						//设置消息头
 						// 请求处理页面
 						String url = commonConfig.get("service.uri.pet_file_server", null);
 						HttpPost httppost = new HttpPost(url+"/put");
+						httppost.setHeader("token", "pet-service-manager");
 						// 创建待处理的文件
-						FileBody file1 = new FileBody(new File(path));
+						FileBody file1 = new FileBody(new File(path),contentType);
+						
 						// 对请求的表单域进行填充
 						MultipartEntity reqEntity = new MultipartEntity();
 						reqEntity.addPart("file", file1);
 						reqEntity.addPart("fileName", new StringBody(name));
-						reqEntity.addPart("mimeType", new StringBody("image/jpeg"));
+						
 						if(ys == "tpys"){
 							//压缩图片参数
 							reqEntity.addPart("compressImage", new StringBody("OK"));
 						}if(ys == "ns"){
+							//设置任务头像
 							reqEntity.addPart("compressImage", new StringBody("OK"));
 							reqEntity.addPart("addTopImage", new StringBody("no"));
 							reqEntity.addPart("imageWidth", new StringBody("300"));
@@ -85,6 +92,9 @@ public class UpImgVo {
 								String success = jsonObj.getString("success");  
 								if(success == "true"){
 									enty = jsonObj.getString("entity"); 
+								}else{
+									enty = null;
+									logger.debug("上传失败:"+enty);
 								}
 							}
 							if (entity != null) {
@@ -94,7 +104,6 @@ public class UpImgVo {
 					}
 				}
 			}
-			logger.debug("上传成功!");
 			logger.debug("返回图片id:"+enty);
 			return enty;
 		} catch (Exception e) {

@@ -16,53 +16,25 @@
 	</bean>
 	
 	<!-- 业务对象 -->
-	<bean id="productDailyLiving" class="com.momoplan.pet.framework.statistic.scheduler.ProductDailyLivingTask" />
+	<bean id="startTask" class="com.momoplan.pet.framework.statistic.scheduler.PetTask" />
 	<!-- 调度业务 -->
-	<bean id="jobProductDailyLiving" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	 <property name="targetObject" ref="productDailyLiving" />
-	 <property name="targetMethod" value="productDailyLiving" />
+	<bean id="jobStartTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	 <property name="targetObject" ref="startTask" />
+	 <property name="targetMethod" value="startTask" />
 	</bean>
 	
-	<bean id="cronTriggerProductDailyLiving" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-	 <property name="jobDetail" ref="jobProductDailyLiving" />
-	 <property name="cronExpression" value="0 0 2 * * ?" />
-	</bean>
-	
-	<!-- 业务对象 -->
-	<bean id="productDailyRegistors" class="com.momoplan.pet.framework.statistic.scheduler.productDailyRegistorsTask" />
-	<!-- 调度业务 -->
-	<bean id="jobProductDailyRegistors" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	 <property name="targetObject" ref="productDailyRegistors" />
-	 <property name="targetMethod" value="productDailyRegistors" />
-	</bean>
-	
-	<bean id="cronTriggerProductDailyRegistors" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-	 <property name="jobDetail" ref="jobProductDailyRegistors" />
-	 <property name="cronExpression" value="0 0 2 * * ?" />
-	</bean>
-	
-	<!-- 业务对象 -->
-	<bean id="updateDataUsers1" class="com.momoplan.pet.framework.statistic.scheduler.UpdateDataUsersTask" />
-	<!-- 调度业务 -->
-	<bean id="jobUpdateDataUsers1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-	 <property name="targetObject" ref="updateDataUsers1" />
-	 <property name="targetMethod" value="updateDataUsers1" />
-	</bean>
-	
-	<bean id="cronTriggerUpdateDataUsers1" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-	 <property name="jobDetail" ref="jobUpdateDataUsers1" />
-	 <property name="cronExpression" value="0 0 3 * * ?" />
+	<bean id="cronTriggerStartTask" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	 <property name="jobDetail" ref="jobStartTask" />
+	 <property name="cronExpression" value="0 0 0 * * ?" />
 	</bean>
 	
 	<!-- 设置调度 -->
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 	 <property name="triggers">
 	  <list>
-	   <ref bean="cronTriggerProductDailyLiving" />
-	   <ref bean="cronTriggerProductDailyRegistors" />
+	   <ref bean="cronTriggerStartTask" />
 	  </list>
 	 </property>
-<!-- 	 <property name="taskExecutor" ref="executor" /> -->
 	</bean>
 
 </beans>
