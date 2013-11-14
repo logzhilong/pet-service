@@ -303,6 +303,8 @@ public class BBSManagerController {
 				String url = commonConfig.get("service.uri.pet_file_server", null);
 				newFileName = url+"/get/" + enty;
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
+			}else {
+				out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + "上传失败!"+ "\"}");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
