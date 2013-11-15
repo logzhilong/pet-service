@@ -42,6 +42,7 @@ public class FileServiceController {
 	@RequestMapping("/put")
 	public void putFile(FileBean form, MultipartFile file, HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String rtn = null;
+		String compressImage = request.getParameter("compressImage");
 		try{
 			String realPath = commonConfig.get("uploadPath","/home/appusr/static");
 	        logger.debug("========================================"+realPath);
@@ -49,6 +50,8 @@ public class FileServiceController {
 	        logger.debug("文件类型: " + file.getContentType());  
 	        logger.debug("文件名称: " + file.getName());  
 	        logger.debug("文件原名: " + file.getOriginalFilename());
+	        logger.debug("compressImage: " + compressImage);
+	        
 	        logger.debug("form: " + form.toString());
 	        logger.debug("========================================"+realPath);
 	        String format = file.getContentType().toLowerCase();
