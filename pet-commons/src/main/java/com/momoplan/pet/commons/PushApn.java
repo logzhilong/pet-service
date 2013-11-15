@@ -28,12 +28,19 @@ public class PushApn {
 			logger.debug("deviceToken="+deviceToken+" ; pwd="+pwd+" ; debug="+debug+" ; msg="+msg); 
 			PushNotificationPayload payLoad = new PushNotificationPayload();
 			payLoad.addSound("default"); // 铃音 默认
+			payLoad.addAlert(msg);
 			Device device = new BasicDevice();
 			device.setToken(deviceToken);
 			Push.payload(payLoad, cert, pwd , !debug , device);
 		} catch (Exception e) {
 			throw e;
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String token = "c2d3da17bcfdeb134768c462dbe3ff36b6a54e57214b732b74780d6dfb04c1ed";
+		sendMsgApn(token,"XXXXXXXXXXXX测试-TRUE","110110",false);
+		System.out.println("OK...");
 	}
 	
 }
