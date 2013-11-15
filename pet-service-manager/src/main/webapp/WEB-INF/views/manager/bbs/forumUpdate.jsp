@@ -44,12 +44,12 @@
 						<input type="text" name="name" value="${fos.name }" />
 					</dd>
 				</dl>
-				<dl>
-					<dt>圈子描述：</dt>
-					<dd>
-						<input type="text" name="descript" value="${fos.descript }" />
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>圈子描述：</dt> -->
+<!-- 					<dd> -->
+<%-- 						<input type="text" name="descript" value="${fos.descript }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 <!-- 				<dl> -->
 <!-- 					<dt>圈子头像：</dt> -->
 <!-- 					<dd > -->

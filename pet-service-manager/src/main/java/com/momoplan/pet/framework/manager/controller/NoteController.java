@@ -41,12 +41,13 @@ public class NoteController {
 	 */
 	@RequestMapping("/manager/notemanager/notedetail.html")
 	public String Notedetail(Note note,Model model){
-		logger.debug("wlcome to note notemanager Notedetail......");
+		logger.debug("wlcome to note notemanager Notedetail......"+note.toString());
 		try {
 			Note note2=noteService.getNotebyid(note.getId());
 			noteService.updateClickCount(note2.getId());
 			logger.debug("获取帖子详情"+note2);
 			model.addAttribute("note2", note2);
+			logger.debug("获取帖子详情controller"+note2.toString());
 			return "/manager/notemanage/NoteDetail";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,6 +97,7 @@ public class NoteController {
 			json.put("forwardUrl", "");
 			json.put("rel", "jbsxBox1");
 			try {
+				logger.debug("增加或者修改帖子congtroller"+note.toString());
 				noteService.NoteAddOrUpdate(note);
 			} catch (Exception e) {
 				json.put("message", e.getMessage());
@@ -126,9 +128,10 @@ public class NoteController {
 			json.put("forwardUrl", "");
 			json.put("navTabId", "");
 			try {
+				logger.debug("进入删除帖子controller"+note.toString());
 				noteService.NoteDel(note);
 			} catch (Exception e) {
-				logger.error("NoteDel"+e);
+				logger.error("删除帖子失败"+e);
 				json.put("message", e.getMessage());
 				e.printStackTrace();
 			}
@@ -146,13 +149,14 @@ public class NoteController {
 	@RequestMapping("/manager/notemamager/DelteedNotes.html")
 	public String getDelteedNotes(Forum forum,Model model){
 		try {
-			logger.debug("welcome to getdeleteedNotes........");
+			logger.debug("welcome to getdeleteedNotes........"+forum.toString());
 			List<Note> list=noteService.getDeledNotes(forum);
+			logger.debug("已删除帖子"+list.toString());
 			model.addAttribute("list", list);
 			logger.debug("getdeleteedNotes+"+list);
 			return "/manager/notemanage/Delednotes";
 		} catch (Exception e) {
-			logger.error("getDeledNotes"+e);
+			logger.error("getDeletedNotes异常"+e);
 			return "";
 		}
 	}

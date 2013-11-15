@@ -38,12 +38,12 @@
 						<input type="text" name="name" value="${forum.name }" />
 					</dd>
 				</dl>
-				<dl>
-					<dt>圈子描述：</dt>
-					<dd>
-						<input type="text" name="descript" value="${forum.descript }" />
-					</dd>
-				</dl>
+<!-- 				<dl> -->
+<!-- 					<dt>圈子描述：</dt> -->
+<!-- 					<dd> -->
+<%-- 						<input type="text" name="descript" value="${forum.descript }" /> --%>
+<!-- 					</dd> -->
+<!-- 				</dl> -->
 <!-- 				<dl> -->
 <!-- 					<dt>点击数量:</dt> -->
 <!-- 					<dd> -->

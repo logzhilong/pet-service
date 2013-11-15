@@ -38,7 +38,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	private CommonConfig commonConfig = new CommonConfig();
 	@Override
 	public PageBean<Forum> listForum(PageBean<Forum> pageBean, Forum vo)throws Exception {
-		logger.debug("welcome to listForum....................."+vo);
+		logger.debug("获取圈子集合输入....................."+vo);
 		String id = vo.getId();
 		ForumCriteria forumCriteria = new ForumCriteria();
 		forumCriteria.setOrderByClause("seq");
@@ -49,6 +49,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			criteria.andPidEqualTo(id);
 		}
 		if (StringUtils.isEmpty(vo.getName())) {
+			//有关地区,暂时不用
 //			if ("all".equals(vo.getAreaCode())
 //					&& "all".equals(vo.getAreaCode())) {
 //			} else if ("" != vo.getAreaDesc() && null != vo.getAreaDesc()) {
@@ -65,6 +66,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		List<Forum> list = forumMapper.selectByExample(forumCriteria);
 		pageBean.setData(list);
 		pageBean.setTotalRecorde(totalCount);
+		
 		// 做为地区显示,暂时不用
 		// for (Forum forum : pageBean.getData()) {
 		// int i = forum.getAreaCode().indexOf("-");
@@ -109,6 +111,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		// forum.setAreaCode(ee);
 		// }
 		// }
+		logger.debug("获取圈子集合:"+pageBean.toString());
 		return pageBean;
 	}
 
@@ -122,10 +125,10 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	@Override
 	public int addOrUpdateForum(Forum forum, HttpServletRequest request)
 		throws Exception {
-		logger.debug("welcome to addOrUpdateForum....................."+forum);
 		String id = forum.getId();
 		Forum fo = forumMapper.selectByPrimaryKey(id);
 		if (fo != null && !"".equals(fo.getId())) {
+			logger.debug("更新圈子输入"+forum);
 			logger.debug("selectByPK.po=" + fo);
 //			String img = forum.getLogoImg();
 //			if (null != img && "" != img) {
@@ -145,6 +148,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 //			if (null != img && "" != img) {
 //				forum.setLogoImg(img.substring(img.indexOf("get") + 4, 83));
 //			}
+			logger.debug("增加圈子:"+forum);
 			return forumMapper.insertSelective(forum);
 		}
 	}
@@ -162,11 +166,13 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		criteria.andPidEqualTo(forum.getId());
 		List<Forum> forums = forumMapper.selectByExample(forumCriteria);
+		logger.debug("删除父圈子圈子之前先删除子圈子:............"+forums.toString());
 		if (forums.size() > 0) {
 			for (Forum fo : forums) {
 				forumMapper.deleteByPrimaryKey(fo.getId());
 			}
 		}
+		logger.debug("删除父圈子:.........."+forum);
 		forumMapper.deleteByPrimaryKey(forum.getId());
 	}
 
@@ -178,7 +184,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	 */
 	@Override
 	public Forum getForumbyid(Forum forum) throws Exception {
-		logger.debug("welcome to getForumbyid.....................");
+		logger.debug("welcome to getForumbyid....................."+forum);
 		return forumMapper.selectByPrimaryKey(forum.getId());
 	}
 
@@ -196,6 +202,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		criteria.andPidIsNull();
 		List<Forum> forums = forumMapper.selectByExample(forumCriteria);
+		logger.debug("获取父圈子集合.................."+forums);
 		return forums;
 	}
 
@@ -213,6 +220,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 		ForumCriteria.Criteria criteria = forumCriteria.createCriteria();
 		criteria.andPidEqualTo(forum.getId());
 		List<Forum> forums = forumMapper.selectByExample(forumCriteria);
+		logger.debug("根据父圈子id"+forum.getId());
+		logger.debug("获取到子圈子集合............"+forums);
 		return forums;
 	}
 
@@ -225,7 +234,8 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 	 */
 	@Override
 	public List<Note> getAllNotesByForumId(Forum forum) throws Exception {
-		logger.debug("welcome to getAllNotesByForumId.....................");
+		logger.debug("welcome to 根据圈子id获取某圈子内帖子.....................");
+		logger.debug("圈子id.........."+forum.getId());
 		String url = commonConfig.get("service.uri.pet_bbs", null);
 		String body = null;
 		if (forum.getDescript() != null && "" != forum.getDescript()) {
@@ -234,6 +244,7 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 			body = "{\"method\":\"getNoteList\",\"params\":{\"forumId\":\""+ forum.getId() + "\",\"action\":\"" + "ALL"+ "\",\"withTop\":\"" + "true" + "\",\"pageNo\":\"" + "0"+ "\",\"pageSize\":\"" + "500" + "\"}}";
 		}
 		String res = PostRequest.postText(url, "body", body.toString());
+		logger.debug("调用获取帖子结合借口返回:"+res.toString());
 		JSONObject object = new JSONObject(res);
 		if (object.getBoolean("success")) {
 			if (res.indexOf("entity") >= 0) {
@@ -263,9 +274,11 @@ public class BBSManagerServiceImpl implements BBSManagerService {
 					}
 					notes.add(note);
 				}
+				logger.debug("获取到子圈子集合+"+notes);
 				return notes;
 			}
 		}
+		logger.debug("根据圈子id获取帖子集合失败:!"+object.toString());
 		return null;
 	}
 }

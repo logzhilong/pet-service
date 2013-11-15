@@ -34,6 +34,7 @@ public class UpImgVo {
 	@SuppressWarnings("deprecation")
 	public String upimg(HttpServletRequest req,String ys){
 		try {
+			logger.debug("开始上传图片................");
 			CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(req.getSession().getServletContext());
 			String enty =null;
 			if (multipartResolver.isMultipart(req)) {
@@ -44,6 +45,7 @@ public class UpImgVo {
 					MultipartFile file = multiRequest.getFile(iter.next());
 					//content-type
 					String contentType = file.getContentType();
+					logger.debug("上传图片类型:............."+contentType);
 					if (file != null) {
 						String name = file.getOriginalFilename();
 						String path = "/tmp/" + name;
@@ -83,11 +85,12 @@ public class UpImgVo {
 						HttpResponse response1 = httpclient.execute(httppost);
 						String output=null;
 						if (HttpStatus.SC_OK == response1.getStatusLine().getStatusCode()) {
-							logger.debug("连接通过!");
+							logger.debug("连接外网通过!");
 							HttpEntity entity = response1.getEntity();
 							// 显示内容
 							if (entity != null) {
 								output=EntityUtils.toString(entity);
+								logger.debug("上传图片返回信息:"+output.toString());
 								JSONObject jsonObj = new JSONObject(output);  
 								String success = jsonObj.getString("success");  
 								if(success == "true"){

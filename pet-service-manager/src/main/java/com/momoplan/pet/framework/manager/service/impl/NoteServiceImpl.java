@@ -47,7 +47,7 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@Override
 	public Note getNotebyid(String id) throws Exception {
-		logger.debug("welcome to getNotebyid.....................");
+		logger.debug("welcome to getNotebyid....................."+ id);
 		if ("" != id && null != id) {
 			Note note = noteMapper.selectByPrimaryKey(id);
 			logger.debug("跟据id为" + id.toString() + "获取实体为" + note.toString());
@@ -66,6 +66,7 @@ public class NoteServiceImpl implements NoteService {
 		Note note2 = noteMapper.selectByPrimaryKey(id);
 		if (note2 != null && !"".equals(note2.getId())) {
 			note.setCt(note2.getCt());
+			logger.debug("帖子id" + note2.getId());
 			logger.debug("修该帖子" + note2.toString());
 			boolean boo=note.getIsTop();
 			//如果指定帖子数量>5则按照创建时间选择后5条,保证指定仅有5条
@@ -88,7 +89,7 @@ public class NoteServiceImpl implements NoteService {
 			noteRepository.flushTopNoteByFid(note2.getForumId());
 			onCache.updateByPrimaryKeySelective(note, note.getId());
 		} else {
-			logger.debug(note.toString());
+			logger.debug("增加帖子:..................."+note.toString());
 			String con = note.getContent();
 			//为图片增加超链接
 			Matcher matcher = Pattern.compile("(<img.*?src=\")(.+?)(\".*?/>)").matcher(con);
@@ -108,13 +109,13 @@ public class NoteServiceImpl implements NoteService {
 				String target = map.get(k);
 				con = con.replaceAll(k, target);
 			}
-			
+			logger.debug("为帖子内容中图片增加超链接:.................."+con);
 			//转义
 			con = con.replace("\"", "\\\"");
 			String url = commonConfig.get("service.uri.pet_bbs", null);
 			String body = "{\"method\":\"sendNote\",\"params\":{\"userId\":\""+ note.getUserId() + "\",\"forumId\":\""+ note.getForumId() + "\",\"name\":\"" + note.getName()+ "\",\"content\":\"" + con + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
-			logger.debug("增加帖子" + res.toString());
+			logger.debug("增加帖子返回值" + res.toString());
 		}
 	}
 
@@ -126,10 +127,10 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@Override
 	public void NoteDel(Note note) throws Exception {
-		logger.debug("welcome to NoteDel.....................");
+		logger.debug("welcome to 删除帖子输入....................."+note.toString());
 		note.setIsDel(true);
 		onCache.updateByPrimaryKeySelective(note,note.getId());
-		logger.debug("删除帖子" + note.toString());
+		logger.debug("删除帖子输出................." + note.toString());
 	}
 
 	/**
@@ -155,8 +156,7 @@ public class NoteServiceImpl implements NoteService {
 	 */
 	@SuppressWarnings("static-access")
 	@Override
-	public List<MgrTrustUser> trustUserslist(HttpServletRequest request)
-			throws Exception {
+	public List<MgrTrustUser> trustUserslist(HttpServletRequest request)throws Exception {
 		logger.debug("welcome to trustUserslist.....................");
 		MgrTrustUserCriteria trustUserCriteria = new MgrTrustUserCriteria();
 		MgrTrustUserCriteria.Criteria criteria = trustUserCriteria.createCriteria();
@@ -167,18 +167,23 @@ public class NoteServiceImpl implements NoteService {
 		String url = commonConfig.get("service.uri.pet_user", null);
 		for (MgrTrustUser user : trustUserlist) {
 			String uid = user.getUserId();
+			logger.debug("根据托管用户id................."+uid);
 			String body = "{\"method\":\"getUserinfo\",\"params\":{\"userid\":\""+ uid + "\"}}";
 			String res = PostRequest.postText(url, "body", body.toString());
 			JSONObject object = new JSONObject(res);
 			if (object.getBoolean("success")) {
 				if (res.indexOf("entity") >= 0) {
 					JSONObject object1 = new JSONObject(object.getString("entity"));
+					logger.debug("根据托管用户id获取用户信息..........."+object1.toString());
 					try {
 						user.setNrootId(object1.getString("nickname"));
 					} catch (Exception e) {
 						user.setNrootId(null);
 					}
 				}
+			}else{
+				logger.debug("获取托管用户列表,根据用户id获取用户信息失败..............."+res.toString());
+				
 			}
 		}
 
@@ -193,6 +198,7 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsDelEqualTo(true);
 			criteria.andForumIdEqualTo(forum.getId());
 			List<Note> notes=noteMapper.selectByExample(noteCriteria);
+			logger.debug("根据圈子id....."+forum.getId()+"获取被删除帖子集合:......"+notes.toString());
 			return notes;
 		}else{
 			return null;

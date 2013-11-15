@@ -45,13 +45,15 @@ public class BBSManagerController {
 	public String ToaddOrEditAreaCode(Forum forum, Model model) {
 		try {
 			if ("".equals(forum.getId()) || null == forum.getId()) {
+				logger.debug("进入To增加圈子controller.......");
 				List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
 				model.addAttribute("codes", codes);
 				List<Forum> forums = bBSManagerService.getForumlist();
+				logger.debug("增加圈子时,获取父圈子集合........."+forums.toString());
 				//获取xml圈子类型
 				Xmlparser xmlparser=new Xmlparser();
 				List<Xmlparser> xmllist=xmlparser.getFForums();
-				logger.debug("解析xml,获取圈子类型:"+xmllist);
+				logger.debug("增加子圈子时,解析xml获取子圈子集合"+xmllist.toString());
 				model.addAttribute("xmllist", xmllist);
 				model.addAttribute("forums", forums);
 				logger.debug("wlcome to pet manager Forumadd......"+forums);
@@ -61,9 +63,9 @@ public class BBSManagerController {
 				model.addAttribute("codes", codes);
 				Forum fos = bBSManagerService.getForumbyid(forum);
 				model.addAttribute("fos", fos);
-				
-				
-				logger.debug("wlcome to pet manager updateforum......"+fos);
+				logger.debug("进入To修改圈子controller.......");
+				logger.debug("圈子id"+forum.getId());
+				logger.debug("修改圈子前获取圈子信息"+fos.toString());
 				return "/manager/bbs/forumUpdate";
 			}
 		} catch (Exception e) {
@@ -95,7 +97,7 @@ public class BBSManagerController {
 					sb.append("[\"").append("").append("\",\"").append("--请选择--").append("\"]");
 					sb.append("]");
 			}
-			logger.debug(sb.toString());
+			logger.debug("增加圈子前获取级联子圈子类型:"+sb.toString());
 			response.setCharacterEncoding("utf-8");
 			response.getWriter().write(sb.toString());
 		} catch (Exception e) {
@@ -131,6 +133,7 @@ public class BBSManagerController {
 					forum.setAreaCode(fatherid);
 				}
 			}
+			logger.debug("进入或者修改增加圈子controller......."+forum.toString());
 			bBSManagerService.addOrUpdateForum(forum, request);
 		} catch (Exception e) {
 			logger.error("addOrUpdateForum" + e);
@@ -161,6 +164,7 @@ public class BBSManagerController {
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0002");
 		try {
+			logger.debug("进入删除圈子controller..............删除圈子输入"+forum.toString());
 			bBSManagerService.DelForum(forum);
 		} catch (Exception e) {
 			logger.error("DelForum" + e);
@@ -188,9 +192,10 @@ public class BBSManagerController {
 	 */
 	@RequestMapping("/manager/bbs/forumList.html")
 	public String forumList(Forum myForm, PageBean<Forum> pageBean, Model model) {
-		logger.debug("wlcome to pet-service-bbs manager forumList ......");
+		logger.debug("wlcome to 获取父级圈子controller ......"+myForm.toString());
 		try {
 			pageBean = bBSManagerService.listForum(pageBean, myForm);
+			logger.debug("获取父级圈子controller 输出"+pageBean.toString());
 			model.addAttribute("pageBean", pageBean);
 			// 读取所有国家(查询级联)
 			List<CommonAreaCode> codes = commonDataManagerService.getConmonArealist();
@@ -292,19 +297,22 @@ public class BBSManagerController {
 	 */
 	@RequestMapping("/manager/notemanage/upimg.html")
 	public void upImg(Model model, HttpServletRequest req,HttpServletResponse response) throws Exception {
-		logger.debug("wlcome to upimg ......");
+		logger.debug("wlcome to 进入上传帖子图片 controller......");
 		PrintWriter out = response.getWriter();
 		try {
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
 			UpImgVo imgVo=new UpImgVo();
 			String enty=imgVo.upimg(req,"tpys");
+			logger.debug("上传帖子图片返回值:......"+enty);
 			if(enty != null && "" != enty){
 				String url = commonConfig.get("pet_file_server", null);
 				newFileName = url+"/get/" + enty;
+				logger.debug("上传完成讲返回值放入帖子增加图片富文本地址栏"+newFileName);
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}else {
 				out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + "上传失败!"+ "\"}");
+				logger.debug("上传图片失败............"+enty);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -320,8 +328,10 @@ public class BBSManagerController {
 		try {
 			Xmlparser xmlparser=new Xmlparser();
 			List<Xmlparser> xmllist=xmlparser.getFForums();
+			logger.debug("进入修改圈子controller.............解析子圈子类型xml"+xmllist.toString());
 			model.addAttribute("xmllist", xmllist);
 			forum = bBSManagerService.getForumbyid(forum);
+			logger.debug("更新圈子前获取圈子信息:"+forum.toString());
 			model.addAttribute("fos", forum);
 			return "/manager/bbs/forumUpdate";
 		} catch (Exception e) {
@@ -338,19 +348,22 @@ public class BBSManagerController {
 	 */
 	@RequestMapping("/manager/forummamage/upimgforforum.html")
 	public void upimgforforum(Model model, HttpServletRequest req,HttpServletResponse response)throws Exception{
-		logger.debug("wlcome to upimg ......");
+		logger.debug("wlcome to 上传托管用户头像controller ......");
 		PrintWriter out = response.getWriter();
 		try {
 			// 用于显示在在线编辑器里，图片的路径
 			String newFileName = null;
 			UpImgVo imgVo=new UpImgVo();
 			String enty=imgVo.upimg(req,"ns");
+			logger.debug("上传托管用户头像返回值"+enty);
 			if(enty != null && "" != enty){
 				String url = commonConfig.get("pet_file_server", null);
 				newFileName = url+"/get/" + enty;
+				logger.debug("上传托管用户头像后将返回值拼接显示在地址栏"+newFileName);
 			out.println("{\"err\":\"" + "" + "\",\"msg\":\"" + newFileName+ "\"}");
 			}
 		} catch (Exception e) {
+			logger.debug("上传人物头像失败"+e);
 			e.printStackTrace();
 			out.println("{\"err\":\"" + "error" + "\",\"msg\":\""+ "上传错误!......" + "\"}");
 		}
