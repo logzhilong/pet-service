@@ -48,6 +48,14 @@ public class IndexController {
 		TreeBean common = new TreeBean("01","0","公共数据");
 		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
 		
+		TreeBean bbsRoot = new TreeBean("02","0","圈子管理 (新)");
+		TreeBean forum = new TreeBean("0201","02","圈子管理","/petservice/bbs/forumMain.html");
+		TreeBean note = new TreeBean("0202","02","帖子管理","/petservice/bbs/noteMain.html");
+		tree.add(bbsRoot);
+		tree.add(forum);
+		tree.add(note);
+		
+		
 		tree.add(bbs);
 		tree.add(bbsMain);
 		tree.add(bbsList);
