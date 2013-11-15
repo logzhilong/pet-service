@@ -215,7 +215,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			if(StringUtils.isEmpty(name)){
 				name = fromname;
 			}
-			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
+			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, true);
 		}
 	}
 	
