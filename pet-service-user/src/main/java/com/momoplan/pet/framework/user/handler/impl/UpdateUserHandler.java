@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 /*
@@ -60,8 +59,8 @@ public class UpdateUserHandler extends AbstractHandler {
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("修改用户信息失败 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
-			rtn = new Success(false,e.getMessage()).toString();
+			logger.error("",e);
+			rtn = new Success(false,"修改用户信息失败:"+e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

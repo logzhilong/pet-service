@@ -38,11 +38,17 @@ public class IndexController {
 		root.setNode("0");
 		tree.add(root);
 		
-		TreeBean bbs = new TreeBean("00","0","账户管理");
+		TreeBean bbs = new TreeBean("00","0","客户管理");
 //		TreeBean bbsMain = new TreeBean("0001","00","圈子统计信息","/manager/bbs/main.html");
 //		TreeBean bbsList = new TreeBean("0002","00","圈子管理","/manager/bbs/forumList.html");
 //		TreeBean allCustomer = new TreeBean("0004","00","全部账户","/manager/trustuser/userList.html");
-		TreeBean trustList = new TreeBean("0003","00","托管账户","/manager/trustuser/userList.html");
+//		TreeBean trustList = new TreeBean("0003","00","托管账户","/manager/trustuser/userList.html");
+		
+		TreeBean ghostCustomer = new TreeBean("0001","00","幽灵客户","/petservice/customer/ghostMain.html");
+		tree.add(ghostCustomer);
+
+//		TreeBean realyCustomer = new TreeBean("0002","00","真实客户","/petservice/customer/realyMain.html");
+//		tree.add(realyCustomer);
 		
 		TreeBean common = new TreeBean("01","0","公共数据");
 		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
@@ -59,7 +65,7 @@ public class IndexController {
 //		tree.add(bbsList);
 		tree.add(common);
 		tree.add(commonAreaCode);
-		tree.add(trustList);
+//		tree.add(trustList);
 		
 		Gson g = MyGson.getInstance();
 		String json = g.toJson(tree);

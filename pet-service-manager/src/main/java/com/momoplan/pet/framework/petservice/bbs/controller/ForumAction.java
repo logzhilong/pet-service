@@ -15,11 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.google.gson.Gson;
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
+import com.momoplan.pet.framework.base.controller.BaseAction;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.vo.WebUser;
 import com.momoplan.pet.framework.manager.vo.Xmlparser;
@@ -27,16 +25,11 @@ import com.momoplan.pet.framework.petservice.bbs.service.ForumService;
 import com.momoplan.pet.framework.petservice.bbs.vo.ForumVo;
 
 @Controller
-public class ForumAction {
+public class ForumAction extends BaseAction{
 	
 	private static Logger logger = LoggerFactory.getLogger(ForumAction.class);
-	
-	private static Gson gson = MyGson.getInstance();
-	
 	@Autowired
 	private ForumService forumService = null;
-	@Autowired
-	private MapperOnCache mapperOnCache = null;
 	
 	@RequestMapping("/petservice/bbs/forumMain.html")
 	public String main(ForumVo myForm,Model model,HttpServletRequest request,HttpServletResponse response){

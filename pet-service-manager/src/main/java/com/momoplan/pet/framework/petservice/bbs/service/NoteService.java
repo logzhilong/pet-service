@@ -25,8 +25,8 @@ import com.momoplan.pet.commons.domain.manager.po.MgrTrustUserCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.petservice.bbs.controller.NoteAction;
-import com.momoplan.pet.framework.petservice.bbs.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
 import com.momoplan.pet.framework.petservice.bbs.vo.Page;
 

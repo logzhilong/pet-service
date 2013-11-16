@@ -14,8 +14,10 @@
 				<li>
 					<a class="add" href="${ctx }/petservice/bbs/forumAddOrEdit.html?pid=${pf.id}" target="dialog" mask="true" title="添加圈子" width="420" height="240" ><span>添加圈子</span></a>				
 				</li>
+				<li class="line">line</li>
 				<li><a class="edit" href="${ctx }/petservice/bbs/forumAddOrEdit.html?id={id}&pid=${pf.id}" target="dialog" warn="请选择一个圈子"><span>修改</span></a></li>
 				<c:if test="${pf!=null}">
+					<li class="line">line</li>
 					<li>
 						<a href="${ctx }/petservice/bbs/forumMain.html" target="ajax" rel="forumList" >
 							<span>&lt;返回上级</span>

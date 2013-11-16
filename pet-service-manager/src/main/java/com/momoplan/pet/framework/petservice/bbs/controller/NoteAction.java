@@ -22,40 +22,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.google.gson.Gson;
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
+import com.momoplan.pet.framework.base.controller.BaseAction;
+import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.petservice.bbs.service.NoteService;
-import com.momoplan.pet.framework.petservice.bbs.utils.UploadFile;
-import com.momoplan.pet.framework.petservice.bbs.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
 import com.momoplan.pet.framework.petservice.bbs.vo.Page;
 
 @Controller
-public class NoteAction {
+public class NoteAction extends BaseAction {
 	
 	private static Logger logger = LoggerFactory.getLogger(NoteAction.class);
-	
-	private static Gson gson = MyGson.getInstance();
-	
-	@Autowired
-	private MapperOnCache mapperOnCache = null;
 	@Autowired
 	private NoteService noteService = null;
-	@Autowired
-	private UploadFile uploadFile = null;
-	
+
 	@RequestMapping("/petservice/bbs/noteMain.html")
 	public String main(NoteVo myForm,Page<NoteVo> page, Model model,HttpServletRequest request,HttpServletResponse response) throws Exception {
 		logger.debug("/petservice/bbs/noteMain.html");
 		logger.debug("input:"+gson.toJson(myForm));
 		try {
-			page.setPageSize(40);
+			page.setPageSize(400);
 			page = noteService.getNoteList(page, myForm);
 			Forum f = mapperOnCache.selectByPrimaryKey(Forum.class, myForm.getForumId());
 			model.addAttribute("forum", f);
