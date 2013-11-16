@@ -68,20 +68,47 @@ public class NoteService {
 			throw new Exception("无托管用户，请先创建托管用户。");
 	}
 	
-	public Page<Note> getNoteList(Page<Note> page,NoteVo vo) throws Exception {
+	public Page<NoteVo> getNoteList(Page<NoteVo> page,NoteVo vo) throws Exception {
 		logger.debug("getNoteList: "+gson.toJson(vo));
-		NoteCriteria noteCriteria = new NoteCriteria();
-		noteCriteria.createCriteria().andForumIdEqualTo(vo.getForumId());
 		
+		NoteCriteria noteCriteria = new NoteCriteria();
+		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
+		criteria.andForumIdEqualTo(vo.getForumId());
+		criteria.andIsDelEqualTo(false);
+		if(!"ALL".equalsIgnoreCase(vo.getCondition_state())){
+			logger.debug("条件-状态："+vo.getCondition_state());
+			criteria.andStateEqualTo(vo.getCondition_state());
+		}
+		if(!"ALL".equalsIgnoreCase(vo.getCondition_isTop())){
+			logger.debug("条件-置顶："+vo.getCondition_isTop());
+			criteria.andIsTopEqualTo(Boolean.valueOf(vo.getCondition_isTop()));
+		}
+		if(!"ALL".equalsIgnoreCase(vo.getCondition_isEute())){
+			logger.debug("条件-精华："+vo.getCondition_isEute());
+			criteria.andIsEuteEqualTo(Boolean.valueOf(vo.getCondition_isEute()));
+		}
 		int totalCount = noteMapper.countByExample(noteCriteria);
 		noteCriteria.setMysqlOffset(page.getPageNo());
 		noteCriteria.setMysqlLength((page.getPageNo()+1)*page.getPageSize());
 		noteCriteria.setOrderByClause("et desc");
 		List<Note> list = noteMapper.selectByExample(noteCriteria);
-		
+		List<NoteVo> vol = new ArrayList<NoteVo>();
+		if(totalCount>0){
+			for(Note n : list){
+				NoteVo v = new NoteVo();
+				BeanUtils.copyProperties(n, v);
+				try{
+					SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, n.getUserId());
+					v.setUserName(user.getUsername());
+					v.setNickname(user.getNickname());
+				}catch(Exception e){
+					logger.debug(e.getMessage());
+				}
+				vol.add(v);
+			}
+		}
 		page.setTotalCount(totalCount);
-		page.setData(list);
-		
+		page.setData(vol);
 		return page;
 		
 	}
@@ -89,7 +116,12 @@ public class NoteService {
 	public void saveNote(Note vo) throws Exception {
 		if(vo.getId()!=null&&!"".equals(vo.getId())){
 			logger.debug("更新帖子 "+gson.toJson(vo));
-			vo.setEt(new Date());
+			Date now = new Date();
+			vo.setEt(now);
+			if(vo.getIsTop()){
+				logger.debug("更新为置顶帖,修改创建日期:"+now);
+				vo.setCt(now);
+			}
 			mapperOnCache.updateByPrimaryKeySelective(vo, vo.getId());
 		}else{
 			logger.debug("新增帖子需要调接口的 "+gson.toJson(vo));
@@ -111,6 +143,27 @@ public class NoteService {
 			if(!success.getBoolean("success")){
 				throw new Exception(success.getString("entity"));
 			}
+		}
+		filterTopNote(vo);
+	}
+	
+	private void filterTopNote(Note vo) throws Exception{
+		logger.debug("过滤置顶帖子");
+		NoteCriteria noteCriteria = new NoteCriteria();
+		noteCriteria.createCriteria()
+			.andForumIdEqualTo(vo.getForumId())
+			.andIsTopEqualTo(true)
+			.andIsDelEqualTo(false);
+		noteCriteria.setOrderByClause("ct asc");
+		List<Note> list = noteMapper.selectByExample(noteCriteria);
+		if(list!=null&&list.size()>5){
+			Note n = list.get(0);
+			n.setIsTop(false);
+			mapperOnCache.updateByPrimaryKeySelective(n, n.getId());
+			logger.debug("置顶总数："+list.size()+" ; 过滤 id="+n.getId()); 
+			filterTopNote(vo);
+		}else{
+			logger.debug("结束过滤");
 		}
 	}
 	

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-<div class="pageContent sortDrag" selector="h1" layoutH="2">
+<div class="pageContent" selector="h1" layoutH="2">
 <div id="forumList">
 
 <div class="panel" defH="600" id="forumList_panel">
@@ -12,7 +12,7 @@
 			<ul class="toolBar">
 			
 				<li>
-					<a class="add" href="${ctx }/petservice/bbs/forumAddOrEdit.html?pid=${pf.id}" target="dialog" mask="true" title="添加圈子" width="600" height="400" ><span>添加圈子</span></a>				
+					<a class="add" href="${ctx }/petservice/bbs/forumAddOrEdit.html?pid=${pf.id}" target="dialog" mask="true" title="添加圈子" width="420" height="240" ><span>添加圈子</span></a>				
 				</li>
 				<li><a class="edit" href="${ctx }/petservice/bbs/forumAddOrEdit.html?id={id}&pid=${pf.id}" target="dialog" warn="请选择一个圈子"><span>修改</span></a></li>
 				<c:if test="${pf!=null}">
@@ -31,6 +31,7 @@
 						<th width="50">序号</th>
 						<th>名称</th>
 						<th>创建人</th>
+						<th width="100" >类型</th>
 						<th>日期</th>
 					</tr>
 				</thead>
@@ -53,6 +54,7 @@
 							</c:choose>
 						</td>
 						<td>${itm.cb }</td>
+						<td align="center">${itm.type }</td>
 						<td align="center">
 							<fmt:formatDate value="${itm.ct }" type="both" />
 						</td>

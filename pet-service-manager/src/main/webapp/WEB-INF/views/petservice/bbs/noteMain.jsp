@@ -1,125 +1,114 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-<div class="pageContent sortDrag" selector="h1" layoutH="2">
-<div id="noteList">
 
-<div class="panel" defH="550" >
-	<h1>${forum.name }</h1>
-	<div>
-		<div class="panelBar">
-			<ul class="toolBar">
-				<li>
-					<a class="add" href="${ctx }/petservice/bbs/noteAddOrEdit.html?forumId=${forum.id}" target="dialog" mask="true" title="发帖子" width="650" height="650" ><span>添加</span></a>				
-				</li>
-				<li>
-					<a class="edit" href="${ctx }/petservice/bbs/noteAddOrEdit.html?id={id}&forumId=${forum.id}" target="dialog" warn="请选择一个帖子" width="650" height="650" ><span>修改</span></a>
-				</li>
-			</ul>
-		</div>
-		<div>
-			<table width="100%" class="list" border="0" style="background-color: white;">
-				<thead>
-					<tr>
-						<th width="20"></th>
-						<th>名称</th>
-						<th>状态</th>
-						<th width="40">置顶</th>
-						<th width="50">创建人</th>
-						<th width="150">创建时间</th>
-						<th width="150">修改时间</th>
-					</tr>
-				</thead>
-				<tbody>
-				<c:forEach items="${page.data }" var="itm" varStatus="idx">
-					<tr height="35" align="left" target="id" rel="${itm.id }" >
-						<td>${idx.index }</td>
-						<td>
-							<a href="${ctx }/petservice/bbs/noteView.html?id=${itm.id}" target="dialog" mask="true" title="查看帖子" width="650" height="650" >
-								${itm.name }
-							</a>
-						</td>
-						<td>${itm.state }</td>
-						<td align="center">
-							<c:choose>
-								<c:when test="${itm.isTop }">
-									是
-								</c:when>
-								<c:otherwise>
-									否
-								</c:otherwise>								
-							</c:choose>
-						</td>
-						<td>TODO</td>
-						<td align="center">
-							<fmt:formatDate value="${itm.ct }" type="both" />
-						</td>
-						<td align="center">
-							<fmt:formatDate value="${itm.et }" type="both" />
-						</td>
-					</tr>
-				</c:forEach>
-				</tbody>
-				
-			</table>
-		</div>	
-
-</div>
-
-</div>
-<%-- "forumList" --%>
-
-
-<%-- 分页 --%>
-<div class="panelBar">
-	<div class="pages">
-		<span>显示</span>
-		<div class="combox"><div id="combox_9119327" class="select">
-			<a href="javascript:" class="" name="numPerPage">${page.pageSize }</a>
-		</div></div>
-		<span>条，共[${page.totalCount}]条,当前第[${page.pageNo }]页</span>
+<div class="pageHeader" >
+	<div class="searchBar">
+		<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/bbs/noteMain.html" method="post">
+			<input type="hidden" name="forumId" value="${myForm.forumId }" /> 
+			状态:
+			<select name="condition_state" >
+				<option value="ALL" <c:if test="${ myForm.condition_state eq 'ALL' }">selected="selected"</c:if>>全部</option>
+				<option value="PASS" <c:if test="${ myForm.condition_state eq 'PASS' }">selected="selected"</c:if> >PASS--审核通过</option>
+				<option value="REJECT" <c:if test="${ myForm.condition_state eq 'REJECT' }">selected="selected"</c:if> >REJECT--审核拒绝</option>
+				<option value="REPORT" <c:if test="${ myForm.condition_state eq 'REPORT' }">selected="selected"</c:if> >REPORT--被举报</option>
+				<option value="AUDIT" <c:if test="${ myForm.condition_state eq 'AUDIT' }">selected="selected"</c:if> >AUDIT--审核中</option>
+				<option value="ACTIVE" <c:if test="${ myForm.condition_state eq 'ACTIVE' }">selected="selected"</c:if> >ACTIVE--正常</option>
+			</select>
+			置顶:
+			<select name="condition_isTop" >
+				<option value="ALL" <c:if test="${ myForm.condition_isTop eq 'ALL' }">selected="selected"</c:if>>全部</option>
+				<option value="true" <c:if test="${ myForm.condition_isTop eq 'true' }">selected="selected"</c:if> >是</option>
+				<option value="false" <c:if test="${ myForm.condition_isTop eq 'false' }">selected="selected"</c:if> >否</option>
+			</select>
+			精华:
+			<select name="condition_isEute" >
+				<option value="ALL" <c:if test="${ myForm.condition_isEute eq 'ALL' }">selected="selected"</c:if> >全部</option>
+				<option value="true" <c:if test="${ myForm.condition_isEute eq 'true' }">selected="selected"</c:if> >是</option>
+				<option value="false" <c:if test="${ myForm.condition_isEute eq 'false' }">selected="selected"</c:if> >否</option>
+			</select>
+			<button type="submit">查询</button>
+			<button type="button" class="close">返回圈子</button>
+		</form>
 	</div>
-	<div class="pagination" targettype="navTab" currentpage="1">
-		
-		<ul>
-			<c:choose>
-				<c:when test="${page.pageNo==0}">
-					<li class="j-first disabled">
-						<a class="first" href="javascript:alert(0);" ><span>首页-first</span></a>
-					</li>
-				</c:when>
-				<c:otherwise>
-					<li class="j-prev disabled">
-						<a class="previous" href="javascript:alert(0);"><span>上一页-prev</span></a>
-					</li>
-				</c:otherwise>
-			</c:choose>
-			<c:choose>
-				<c:when test="${ page.pageNo >= page.totalCount/page.pageSize }">
-					<li class="j-last">
-						<a class="last" href="javascript:alert(0);"><span>末页-last</span></a>
-					</li>
-				</c:when>
-				<c:otherwise>
-					<li class="j-next">
-						<a class="next" href="javascript:alert(0);"><span>下一页-next</span></a>
-					</li>
-				</c:otherwise>
-			</c:choose>
+</div>
 
+<div class="pageContent" id="noteList">
+	<div class="panelBar">
+		<ul class="toolBar">
+			<li>
+				<a class="add" href="${ctx }/petservice/bbs/noteAddOrEdit.html?forumId=${forum.id}" target="dialog" mask="true" title="发帖子" width="650" height="700" ><span>添加</span></a>				
+			</li>
+			<li class="line">line</li>
+			<li>
+				<a class="edit" href="${ctx }/petservice/bbs/noteAddOrEdit.html?id={id}&forumId=${forum.id}" target="dialog" warn="请选择一个帖子" width="650" height="700" ><span>修改</span></a>
+			</li>
+			<li class="line">line</li>
 		</ul>
 	</div>
+	<table class="table" width="100%" layoutH="115">
+		<thead>
+			<tr>
+				<th width="20"></th>
+				<th>名称</th>
+				<th>状态</th>
+				<th width="40">置顶</th>
+				<th width="40">精华</th>
+				<th width="150">创建人</th>
+				<th width="150">最后修改时间</th>
+				<th width="150">创建时间</th>
+			</tr>
+		</thead>
+		<tbody>
+		<c:forEach items="${page.data }" var="itm" varStatus="idx">
+			<tr height="35" align="left" target="id" rel="${itm.id }" >
+				<td>${idx.index+1 }</td>
+				<td>
+					<a href="${ctx }/petservice/bbs/noteAddOrEdit.html?id=${itm.id}&forumId=${forum.id}" target="dialog" mask="true" title="修改" width="650" height="650" >
+						${itm.name }
+					</a>
+				</td>
+				<td>${itm.state }</td>
+				<td align="center">
+					<c:choose>
+						<c:when test="${itm.isTop }">
+							<font color="red">是</font>
+						</c:when>
+						<c:otherwise>
+							<font color="green">否</font>
+						</c:otherwise>								
+					</c:choose>
+				</td>
+				<td align="center">
+					<c:choose>
+						<c:when test="${itm.isEute }">
+							<font color="red">是</font>
+						</c:when>
+						<c:otherwise>
+							<font color="green">否</font>
+						</c:otherwise>								
+					</c:choose>
+				</td>
+				<td>${itm.nickname }</td>
+				<td align="center">
+					<fmt:formatDate value="${itm.et }" type="both" />
+				</td>
+				<td align="center">
+					<fmt:formatDate value="${itm.ct }" type="both" />
+				</td>
+			</tr>
+		</c:forEach>
+		</tbody>
+		
+	</table>
+	
+	<div class="panelBar">
+		<div class="pages">
+			<span>显示</span>
+			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+				<option value="${page.pageSize }">${page.pageSize }</option>
+			</select>
+			<span>条，共[${page.totalCount}]条,当前第[${page.pageNo }]页</span>
+		</div>
+		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="1"></div>
+	</div>
 </div>
-
-
-
-
-
-<div class="formBar">
-	<ul>
-		<li>
-			<div class="button"><div class="buttonContent"><button type="button" class="close">返回圈子</button></div></div>
-		</li>
-	</ul>
-</div>
-
-

@@ -51,7 +51,7 @@ public class NoteAction {
 	private UploadFile uploadFile = null;
 	
 	@RequestMapping("/petservice/bbs/noteMain.html")
-	public String main(NoteVo myForm,Page<Note> page, Model model,HttpServletRequest request,HttpServletResponse response) throws Exception {
+	public String main(NoteVo myForm,Page<NoteVo> page, Model model,HttpServletRequest request,HttpServletResponse response) throws Exception {
 		logger.debug("/petservice/bbs/noteMain.html");
 		logger.debug("input:"+gson.toJson(myForm));
 		try {
@@ -59,6 +59,7 @@ public class NoteAction {
 			page = noteService.getNoteList(page, myForm);
 			Forum f = mapperOnCache.selectByPrimaryKey(Forum.class, myForm.getForumId());
 			model.addAttribute("forum", f);
+			model.addAttribute("myForm", myForm);
 			model.addAttribute("page", page);
 		} catch (Exception e) {
 			logger.error("圈子列表异常",e);
@@ -73,11 +74,17 @@ public class NoteAction {
 		String id = myForm.getId();
 		try{
 			if(StringUtils.isNotEmpty(id)){
+				//修改时发帖人不允许修改，只能修改 状态、标题、内容
 				Note n = mapperOnCache.selectByPrimaryKey(Note.class, id);
 				BeanUtils.copyProperties(n, myForm);
+				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, n.getUserId());
+				myForm.setUserName(user.getUsername());
+				myForm.setNickname(user.getNickname());
+			}else{
+				//新增时选择发帖帐号用
+				List<MgrTrustUserVo> tuList = noteService.getMgrTrustUserList(SessionManager.getCurrentUser(request).getId());
+				model.addAttribute("tuList", tuList);
 			}
-			List<MgrTrustUserVo> tuList = noteService.getMgrTrustUserList(SessionManager.getCurrentUser(request).getId());
-			model.addAttribute("tuList", tuList);
 			model.addAttribute("myForm", myForm);
 		}catch(Exception e){
 			logger.error("note save error",e);
@@ -166,25 +173,5 @@ public class NoteAction {
 			throw e;
 		}
 	}
-	
-	
-	@RequestMapping("/petservice/bbs/noteView.html")
-	public String view(NoteVo myForm,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
-		response.setCharacterEncoding("utf-8");
-		String id = myForm.getId();
-		try{
-			Note n = mapperOnCache.selectByPrimaryKey(Note.class, id);
-			SsoUser u = mapperOnCache.selectByPrimaryKey(SsoUser.class, n.getUserId());
-			BeanUtils.copyProperties(n, myForm);
-			myForm.setUserName(u.getUsername());
-			myForm.setNickname(u.getNickname());
-			model.addAttribute("myForm", myForm);
-		}catch(Exception e){
-			logger.error("note save error",e);
-			model.addAttribute("errorMsg", e.getMessage());
-		}
-		return "/petservice/bbs/noteView";
-	}
-	
 	
 }

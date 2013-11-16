@@ -10,6 +10,37 @@ public class NoteVo extends Note{
 	
 	private String nickname = null;
 	
+	/*
+	 * 查询条件
+	 */
+	private String condition_state = "ALL";
+	private String condition_isTop = "ALL";
+	private String condition_isEute = "ALL";
+	
+	public String getCondition_state() {
+		return condition_state;
+	}
+
+	public void setCondition_state(String condition_state) {
+		this.condition_state = condition_state;
+	}
+
+	public String getCondition_isTop() {
+		return condition_isTop;
+	}
+
+	public void setCondition_isTop(String condition_isTop) {
+		this.condition_isTop = condition_isTop;
+	}
+
+	public String getCondition_isEute() {
+		return condition_isEute;
+	}
+
+	public void setCondition_isEute(String condition_isEute) {
+		this.condition_isEute = condition_isEute;
+	}
+
 	public String getNickname() {
 		return nickname;
 	}

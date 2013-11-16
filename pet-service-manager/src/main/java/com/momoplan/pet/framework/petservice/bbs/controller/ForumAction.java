@@ -22,6 +22,7 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.vo.WebUser;
+import com.momoplan.pet.framework.manager.vo.Xmlparser;
 import com.momoplan.pet.framework.petservice.bbs.service.ForumService;
 import com.momoplan.pet.framework.petservice.bbs.vo.ForumVo;
 
@@ -69,6 +70,11 @@ public class ForumAction {
 			if(StringUtils.isNotEmpty(pid)){
 				Forum p = mapperOnCache.selectByPrimaryKey(Forum.class, pid);
 				myForm.setPname(p.getName());
+				//获取xml圈子类型
+				Xmlparser xmlparser=new Xmlparser();
+				List<Xmlparser> xmllist=xmlparser.getFForums();
+				logger.debug("增加子圈子时,解析xml获取子圈子集合"+xmllist.toString());
+				model.addAttribute("xmllist", xmllist);
 			}
 			model.addAttribute("myForm", myForm);
 		} catch (Exception e) {

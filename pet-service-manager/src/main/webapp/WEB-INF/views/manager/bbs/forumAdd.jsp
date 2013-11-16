@@ -29,7 +29,7 @@
 					</select> 
 					<select class="combox" name="type" id="fforum" ref="fd">
 						<option value="">--请选择--</option>
-					</select> 
+					</select>
 				</dl>
 				
 				<dl>
