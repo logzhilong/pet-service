@@ -103,14 +103,14 @@ def runner() :
 	cursor.close()
 	conn.commit()
 	conn.close()
+	log.debug( 'insert_rows=%s ; pv=%s' % ( len(result),count ) )
 	total.clear()
 	result.clear()	
-	log.debug( 'insert_rows=%s ; pv=%s' % ( len(result),count ) )
 	return 'success'
 
 if __name__ == '__main__' :
 
-	common_cfg = mod_conf.load('pet_analysis.ini')
+	common_cfg = mod_conf.load('access_log_analysis.ini')
 	LOG_LEVEL = lm.level['debug']
 	log = lm.LoggerFactory(common_cfg['common']['log_file'],'counter',LOG_LEVEL).getLog()
 	print common_cfg
