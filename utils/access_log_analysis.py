@@ -18,7 +18,7 @@ result = {}
 def visit(arg,dirname,names) :
 	log.debug( 'dirname=%s ; arg=%s' % (dirname,arg) )
 	for name in names :
-		if arg != name and ( not name.endswith('.done') ) :
+		if arg != name and ( not name.endswith('.done') and name.startswith('pet_access') ) :
 			subname = os.path.join(dirname,name)
 			log.debug( subname )
 			analysis(subname)	
