@@ -44,6 +44,10 @@ public class IndexController {
 		TreeBean trustList = new TreeBean("0003","00","我的托管","/manager/trustuser/userList.html");
 		TreeBean condotion = new TreeBean("0004","00","默认关注","/manager/userforumcondition/userforumlist.html");
 		
+		//数据统计页面
+		TreeBean statistic = new TreeBean("02","0","统计");
+		TreeBean statisticUser = new TreeBean("0001","02","用户数据统计","/manager/statistic/statisticUser.html");
+		TreeBean statisticMethod = new TreeBean("0002","02","业务数据统计","/manager/statistic/statisticMethod.html");
 		
 		TreeBean common = new TreeBean("01","0","公共数据");
 		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
@@ -55,6 +59,11 @@ public class IndexController {
 		tree.add(commonAreaCode);
 		tree.add(trustList);
 		tree.add(condotion);
+		
+		//将数据统计add到tree中
+		tree.add(statistic);
+		tree.add(statisticUser);
+		tree.add(statisticMethod);
 		
 		Gson g = MyGson.getInstance();
 		String json = g.toJson(tree);
