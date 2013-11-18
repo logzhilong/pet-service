@@ -119,8 +119,9 @@ public class TokenInterceptor implements HandlerInterceptor {
 						"iMobiCount","1",
 						"pszSubPort","***********"
 				};
-				PostRequest.postText(url, params);
-				logger.debug("发送短信 params="+gson.toJson(params));
+				String res = PostRequest.postText(url, params);
+				logger.debug("发送短信 input="+gson.toJson(params));
+				logger.debug("发送短信 output="+res);
 			}
 		}
 	}

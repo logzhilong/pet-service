@@ -28,6 +28,12 @@
 						<input type="text" name="phonenumber"/>
 					</dd>
 				</dl>
+				<dl>
+					<dt>年龄:</dt>
+					<dd>
+						<input type="text" name="birthdate"/>
+					</dd>
+				</dl>
 				
 
 				<dl>

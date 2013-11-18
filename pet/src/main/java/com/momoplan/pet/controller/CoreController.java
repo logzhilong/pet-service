@@ -221,7 +221,7 @@ public class CoreController {
 		petVersion.setCreateDate(new Timestamp(System.currentTimeMillis()));
 		petVersion.setPhoneType("android");
 		petVersion.persist();
-		FileOutputStream fileOS = new FileOutputStream(uploadService.getUploadUrl() + File.separator + petVersion.getId()+".petV");
+		FileOutputStream fileOS = new FileOutputStream("E:\\" + File.separator + petVersion.getId()+".petV");
 		fileOS.write(file.getBytes());
 		fileOS.close();
 		return petVersion.getPetVersion();

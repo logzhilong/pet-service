@@ -34,9 +34,10 @@ public class TrustUserController {
 	 */
 	@RequestMapping("/manager/trustuser/userList.html")
 	public String userList(PageBean<MgrTrustUser> pageBean,Model model,HttpServletRequest request){
-		logger.debug("wlcome to manager trustuser userList......");
+		logger.debug("wlcome to manager trustuser userList......"+pageBean.toString());
 		try {
 			PageBean<MgrTrustUser> bean= trustUserService.AllTrustUser(pageBean,request);
+			logger.debug("获取托管用户集合"+bean.toString());
 			model.addAttribute("pageBean", bean);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -79,11 +80,15 @@ public class TrustUserController {
 		json.put("forwardUrl", "");
 		json.put("navTabId", "panel0003");
 		try {
+			logger.debug("进入增加或者修改托管用户controller..........."+petuser.toString());
 			int i=trustUserService.addOrUpdatetrust(petuser, request);
 			if(i>0){
 				json.put("message", "操作成功!");
+				logger.debug("增加或者修改托管用户成功");
 			}else{
 				json.put("message", "操作失败!");
+				logger.debug("增加或者修改托管用户失败");
+
 			}
 		} catch (Exception e) {
 			logger.error(e.toString());
@@ -122,7 +127,9 @@ public class TrustUserController {
 	@RequestMapping("/manager/trustuser/trustUserDetail.html")
 	public String trustUserDetail(Petuser petuser,Model model){
 		try {
+			logger.debug("进入获取托管用户详情ocntroller.............."+petuser.toString());
 			petuser=trustUserService.getPetUserByid(petuser);
+			logger.debug("托管用户详情"+petuser.toString());
 			model.addAttribute("petuser", petuser);
 		} catch (Exception e) {
 			logger.debug("trustUserDetailFail"+e);
@@ -133,6 +140,7 @@ public class TrustUserController {
 	@RequestMapping("/manager/trustuser/trustUserUpdate.html")
 	public String trustUserUpdate(Petuser petuser,Model model,HttpServletRequest request){
 		try {
+			logger.debug("更新托管用户controller..............."+petuser.toString());
 			trustUserService.addOrUpdatetrust(petuser,request);
 			model.addAttribute("petuser", petuser);
 		} catch (Exception e) {

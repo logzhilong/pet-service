@@ -7,10 +7,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -73,7 +71,7 @@ public class FileServerImpl implements FileServer{
 			if(fileBean.getFormat()!=null)
 				try{
 					String[] f = fileBean.getFormat().split("/");
-					format = f[1];
+					format = f[1].split(";")[0].trim();
 					logger.debug("getFormat success");
 				}catch(Exception e){
 					logger.debug("getFormat error:"+e.getMessage());
@@ -99,6 +97,8 @@ public class FileServerImpl implements FileServer{
 				bi = ImageTools.getResizePicture(bi, rw, rh);
 				logger.debug("压缩...sw="+sw+";rw="+sw);
 				logger.debug("压缩...sh="+sh+";rh="+rh);
+			}else{
+				rw = sw;rh = sh;
 			}
 			
 			if(StringUtils.isNotEmpty(fileBean.getAddTopImage())&&("Y".equalsIgnoreCase(fileBean.getAddTopImage())||"OK".equalsIgnoreCase(fileBean.getAddTopImage()))){

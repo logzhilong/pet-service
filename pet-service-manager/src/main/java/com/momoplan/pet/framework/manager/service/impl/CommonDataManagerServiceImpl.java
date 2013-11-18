@@ -26,9 +26,7 @@ public class CommonDataManagerServiceImpl implements CommonDataManagerService {
 	private CommonAreaCodeMapper commonAreaCodeMapper = null;
 
 	@Override
-	public PageBean<CommonAreaCode> listAreaCode(String father,
-			String grandsunid, PageBean<CommonAreaCode> pageBean,
-			CommonAreaCode vo) throws Exception {
+	public PageBean<CommonAreaCode> listAreaCode(String father,String grandsunid, PageBean<CommonAreaCode> pageBean,CommonAreaCode vo) throws Exception {
 		logger.debug("welcome to listAreaCode.....................");
 		CommonAreaCodeCriteria commonAreaCodeCriteria = new CommonAreaCodeCriteria();
 		CommonAreaCodeCriteria.Criteria criteria = commonAreaCodeCriteria.createCriteria();

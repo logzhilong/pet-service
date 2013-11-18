@@ -41,5 +41,6 @@
         <name id = "3004">宠物鸟</name>
         <name id = "3005">两栖及爬行类</name>
         <name id = "3006">其他</name>
+        <name id = "3007">龙猫</name>
     </node>
 </petCategory>

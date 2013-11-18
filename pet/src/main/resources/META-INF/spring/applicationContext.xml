@@ -11,7 +11,7 @@
   		<constructor-arg>
 		   	<list>
 				<value>classpath:database.properties</value>
-				<value>classpath:properties/zoo.properties</value>
+				<value>classpath:zoo.properties</value>
 				<!--  
 				<value>classpath:sms.properties</value>
 				<value>classpath:proxyUri.properties</value>

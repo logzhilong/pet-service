@@ -18,7 +18,7 @@ import com.momoplan.pet.framework.ssoserver.CacheKeysConstance;
 import com.momoplan.pet.framework.ssoserver.handler.AbstractHandler;
 
 /**
- * 注册
+ * 获取验证码
  * @author liangc
  * body={"method":"getVerificationCode","params":{"phoneNum":"15199999999"}}
  */

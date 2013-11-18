@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -282,12 +283,31 @@ public class UserServiceSupport {
 		return null;
 	}
 	
+	private Map<String,String> excludePetType = new HashMap<String,String>();
+	{
+		excludePetType.put("1024", "狗-其他");
+		excludePetType.put("2006", "猫-其他");
+		excludePetType.put("3006", ",其他-其他");
+	}
+	private boolean canAddUserForumRel(String petType){
+		if(petType==null)
+			return false;
+		if(excludePetType.get(petType)!=null){
+			logger.debug(excludePetType.get(petType)+" 不需要默认关注");
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * 按照条件，来关注圈子
 	 * @param user
 	 * @throws Exception 
 	 */
 	protected void addUserForumRel(String userId,String petType) throws Exception {
+		if(canAddUserForumRel(petType)){
+			return ;
+		}
+		logger.debug("petType="+petType);
 		Forum forum = getForumByType(petType);
 		if(forum!=null){
 			String forumId = forum.getId();

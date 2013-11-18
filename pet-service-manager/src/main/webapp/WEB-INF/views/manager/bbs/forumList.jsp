@@ -68,7 +68,7 @@
 			<tr>
 				<th width="15" align="center"></th>
 				<th width="150" align="left">名称</th>
-				<th width="200" align="left">描述</th>
+<!-- 				<th width="200" align="left">描述</th> -->
 <!-- 				<th width="50" align="center">点击量</th> -->
 <!-- 				<th width="50" align="center" >回帖量</th> -->
 			<!-- 
@@ -89,7 +89,7 @@
 							${itm.name }
 						</a>
 					</td>
-					<td align="left">${itm.descript }</td>
+<%-- 					<td align="left">${itm.descript }</td> --%>
 <%-- 					<td >${itm.clientCount }</td> --%>
 <%-- 					<td>${itm.replyCount }</td> --%>
 					<td><fmt:formatDate value="${itm.ct }" pattern="yyyy-MM-dd HH:mm:ss"/></td>

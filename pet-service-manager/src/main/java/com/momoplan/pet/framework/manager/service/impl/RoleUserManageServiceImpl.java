@@ -25,8 +25,10 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public MgrUserRoleRel getRoleUserByid(MgrUserRoleRel userRoleRel) throws Exception{
-			logger.debug("welcome to getRoleUserByid.....................");
+			logger.debug("welcome to 根据id获取对应角色信息.....................");
+			logger.debug("用户id....................."+userRoleRel.getId());
 			if("" !=userRoleRel.getId() && null !=userRoleRel.getId()){
+				logger.debug("角色信息:"+userRoleRelMapper.selectByPrimaryKey(userRoleRel.getId()));
 				return userRoleRelMapper.selectByPrimaryKey(userRoleRel.getId());
 			}else {
 				return null;
@@ -43,6 +45,7 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 			MgrUserRoleRelCriteria userRoleRelCriteria =new MgrUserRoleRelCriteria();
 			MgrUserRoleRelCriteria.Criteria criteria=userRoleRelCriteria.createCriteria();
 			criteria.andRoleIdEqualTo(userRoleRel.getRoleId());
+			logger.debug("根据角色id"+userRoleRel.getRoleId()+"获取角色结合"+userRoleRelMapper.selectByExample(userRoleRelCriteria));
 			return userRoleRelMapper.selectByExample(userRoleRelCriteria);
 	}
 	/**
@@ -56,6 +59,8 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 			MgrUserRoleRelCriteria userRoleRelCriteria =new MgrUserRoleRelCriteria();
 			MgrUserRoleRelCriteria.Criteria criteria=userRoleRelCriteria.createCriteria();
 			criteria.andUserIdEqualTo(userRoleRel.getUserId());
+			logger.debug("根据用户id...."+userRoleRel.getUserId());
+			logger.debug("获取角色集合......"+userRoleRelMapper.selectByExample(userRoleRelCriteria));
 			return userRoleRelMapper.selectByExample(userRoleRelCriteria);
 	}
 	/**
@@ -72,6 +77,7 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 				 userRoleRelMapper.updateByPrimaryKeySelective(userRoleRel);
 			}else{
 				userRoleRel.setId(IDCreater.uuid());
+				logger.debug("增加用户关系表:"+userRoleRel.toString());
 				 userRoleRelMapper.insertSelective(userRoleRel);
 			}
 		} catch (Exception e) {
@@ -84,9 +90,10 @@ public class RoleUserManageServiceImpl implements RoleUserManageService {
 	 * @throws Exception
 	 */
 	public void delRoleUser(MgrUserRoleRel userRoleRel)throws Exception{
-		    logger.debug("welcome to delRoleUser.....................");
+		    logger.debug("welcome to delRoleUser....................."+userRoleRel.toString());
 			if("" != userRoleRel.getId() && null != userRoleRel.getId()){
 				userRoleRelMapper.deleteByPrimaryKey(userRoleRel.getId());
+				logger.debug("删除用户与角色关系成功!");
 			}
 	}
 

@@ -8,31 +8,6 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/beans
 		  http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-<!--  
-	<amq:connectionFactory id="jmsConnectionFactory"
-		brokerURL="${jms.brokerURL}" />
-
-	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
-		<property name="maxConnections" value="8" />
-		<property name="maximumActive" value="500" />
-		<property name="connectionFactory" ref="jmsConnectionFactory" />
-	</bean>
-
-
-	<camel:camelContext id="camelContext" >
-	</camel:camelContext>
-	<bean id="jmsCfg" class="org.apache.activemq.camel.component.ActiveMQConfiguration">
-                <property name="connectionFactory" ref="pooledConnectionFactory"></property>
-                <property name="cacheLevelName" value="CACHE_CONSUMER"/>
-    </bean>
-	<bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-		<constructor-arg type="org.apache.camel.component.jms.JmsConfiguration" ref="jmsCfg"></constructor-arg>
-		<property name="connectionFactory" ref="pooledConnectionFactory"></property>
-		<property name="transacted" value="true"></property>
-		<property name="lazyCreateTransactionManager" value="false"></property>
-	</bean>
--->
-
 	<amq:connectionFactory id="jmsFactory" brokerURL="${jms.brokerURL}" />
 	<!--  ActiveMQ destinations  -->  
 	<!--  使用topic方式-->  

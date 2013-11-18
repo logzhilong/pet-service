@@ -28,11 +28,11 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 * @throws Exception
 	 */
 	public List<MgrRole> getAllRole() throws Exception {
-		logger.debug("welcome to getAllRole.....................");
 			MgrRoleCriteria mgrRoleCriteria=new MgrRoleCriteria();
 			MgrRoleCriteria.Criteria criteria=mgrRoleCriteria.createCriteria();
 			criteria.andIdIsNotNull();
 			List<MgrRole> roles=mgrroleMaper.selectByExample(mgrRoleCriteria);
+			logger.debug("welcome to 获取所有用户角色....................."+roles.toString());
 			return roles;
 	}
 
@@ -43,18 +43,19 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 * @throws Exception
 	 */
 	public int SaveOrUpdateRole(MgrRole role) throws Exception {
-		logger.debug("welcome to SaveOrUpdateRole.....................");
 		String id = role.getId();
 		MgrRole mo = mgrroleMaper.selectByPrimaryKey(id);
 		if(mo!=null&&!"".equals(mo.getId())){
 			logger.debug("selectByPK.po="+mo.toString());
 			role.setEt(new Date());
+			logger.debug("修改用户角色"+role);
 			return mgrroleMaper.updateByPrimaryKeySelective(role);
 		}else{
 			role.setId(IDCreater.uuid());
 			role.setCt(new Date());
 			role.setEt(new Date());
 			role.setEnable(true);
+			logger.debug("增加用户角色......."+role);
 			return mgrroleMaper.insertSelective(role);
 		}
 	}
@@ -67,7 +68,7 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 * @throws Exception
 	 */
 	public MgrRole getRoleByid(MgrRole role) throws Exception {
-		logger.debug("welcome to getRoleByid.....................");
+		logger.debug("welcome to getRoleByid....................."+"userid:"+role.getId()+"用户"+mgrroleMaper.selectByPrimaryKey(role.getId()));
 			return mgrroleMaper.selectByPrimaryKey(role.getId());
 	}
 	
@@ -78,9 +79,10 @@ public class RoleManageServiceImpl implements RoleManageService {
 	 * @throws Exception
 	 */
 	public void delRoleByid(MgrRole role)throws Exception{
-		logger.debug("welcome to delRoleByid.....................");
+		logger.debug("welcome to delRoleByid....................."+role.getId());
 			if("" != role.getId() && null !=role.getId()){
 				mgrroleMaper.deleteByPrimaryKey(role.getId());
+				logger.debug("删除用户角色成功!");
 			}
 	}
 }

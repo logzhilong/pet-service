@@ -161,6 +161,8 @@ public class NoteServiceImpl implements NoteService {
 				criteria.andUserIdEqualTo(condition);
 			}else if(ConditionType.I_REPLY.equals(conditionType)){
 				List<String> noteIds = noteSubRepository.getNoteIdListOfMyReply(condition);
+				if(noteIds==null||noteIds.size()<1)
+					return null;
 				criteria.andIdIn(noteIds);
 			}
 			logger.debug("查询..."+conditionType.getName());

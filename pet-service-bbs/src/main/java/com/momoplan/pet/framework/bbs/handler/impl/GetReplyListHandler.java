@@ -30,7 +30,7 @@ public class GetReplyListHandler extends AbstractHandler {
 			int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize = PetUtil.getParameterInteger(clientRequest, "pageSize");
 			String noteid = PetUtil.getParameter(clientRequest, "noteId");
-			String userId = getUseridFParamSToken(clientRequest);
+			String userId = PetUtil.getParameter(clientRequest, "userId");
 			PageBean<NoteSubVo> vo = noteSubService.getReplyByNoteId(noteid,userId, pageNo, pageSize);
 			String jsonArr = null;
 			if(vo.getData()!=null&&vo.getData().size()>0)

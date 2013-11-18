@@ -59,7 +59,7 @@ public class StaticController {
 		response.setContentType("multipart/form-data");
 		response.setHeader("Content-Disposition", "attachment;fileName=" + petVersion.getPetVersion());
 		try {
-			InputStream inputStream = new FileInputStream(uploadService.getUploadUrl() + File.separator + petVersion.getId()+".petV");
+			InputStream inputStream = new FileInputStream("E:\\" + File.separator + petVersion.getId()+".petV");
 			OutputStream os = response.getOutputStream();
 			byte[] b = new byte[1024];
 			int length;

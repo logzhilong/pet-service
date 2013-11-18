@@ -8,11 +8,14 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Xmlparser {
+	private Logger logger = LoggerFactory.getLogger(Xmlparser.class);
 	private String id;
 	private String name;
 	private String fid;
@@ -56,8 +59,10 @@ public class Xmlparser {
 				xmlparser.setName(nl.item(i).getAttributes().getNamedItem("name").getNodeValue().toString());
 				list.add(xmlparser);
 			}
+		logger.debug("解析宠物类型XML...........获取父类型集合:"+list.toString());
 			return list;
 		} catch (Exception e) {
+			logger.debug("解析宠物类型XML获取父类集合异常..........."+e);
 			e.printStackTrace();
 		} finally {
 			if (is != null)
@@ -103,9 +108,12 @@ public class Xmlparser {
 					list3.add(xmlparser);
 				}
 			}
+			logger.debug("解析宠物类型xml,根据父类型id"+fid);
+			logger.debug("解析宠物类型xml,根据父类型id.获取子类型集合"+list3.toString());
 			return list3;
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.debug("解析宠物类型xml,根据父类型id.获取子类型集合"+e);
 		} finally {
 			if (is != null)
 				try {
