@@ -654,9 +654,9 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<zoo.server>192.168.99.50:2181,192.168.99.51:2181,192.168.99.53:2181</zoo.server>
+				<zoo.server>192.168.99.51:2181,192.168.99.52:2181,192.168.99.53:2181</zoo.server>
 				<jms.brokerURL>tcp://192.168.99.50:61616</jms.brokerURL>
-				<cache.server>192.168.99.50:6379,192.168.99.50:6380</cache.server>
+				<cache.server>192.168.99.53:6379,192.168.99.53:6380</cache.server>
 				<store.server>192.168.99.52:6379</store.server>
 			</properties>
 		</profile>
