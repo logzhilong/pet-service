@@ -180,10 +180,22 @@ $(function(){
 										<a title="公共配置管理" href="${ctx }/manager/configmanager/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
 									</li>
 									<li>
-										<a title="索引管理" href="${ctx }/manager/indexmg/indexmamagerlist.html" target="navTab" rel="commanage0001">索引管理</a>								
+										<a title="索引管理" href="${ctx }/manager/indexmg/indexmamagerlist.html" target="navTab" rel="commanage0002">索引管理</a>								
 									</li>
 								</ul>
 							</li>
+							<li>
+								<a>报表配置</a>
+								<ul>
+									<li>
+										<a title="服务字典" href="${ctx }/petservice/report/serviceDictMain.html" target="navTab" rel="serviceDictMainPanel">服务字典</a>								
+									</li>
+									<li>
+										<a title="渠道字典" href="${ctx }/petservice/report/channelDictMain.html" target="navTab" rel="channelDictMainPanel">渠道字典</a>							
+									</li>
+								</ul>
+							</li>
+							
 						</ul>
 					</div>
 
@@ -214,19 +226,8 @@ $(function(){
 					<li><a href="javascript:;">我的主页</a></li>
 				</ul>
 				<div class="navTab-panel tabsPageContent layoutBox">
-					<div class="page unitBox">
-						<div class="accountInfo"></div>
-						<div class="pageFormContent" layoutH="80">
-							欢迎来到服务器监控平台 v0.1<br/><br/><br/><br/>
-						
-							<h1>
-							<a href="${ctx }/static/dwz1.4.5/index.html" target="_blank">帮助（点我查看dwz demo）</a>
-							</h1>
-							<br/><br/><br/><br/>
-							
-						</div>
-					</div>
-					
+					<%-- 首页 --%>
+					<jsp:include page="/petservice/report/serviceCounter0.html" />
 				</div>
 			</div>
 		</div>

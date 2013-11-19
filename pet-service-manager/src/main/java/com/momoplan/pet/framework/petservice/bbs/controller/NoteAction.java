@@ -28,10 +28,10 @@ import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.framework.base.controller.BaseAction;
 import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
+import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.petservice.bbs.service.NoteService;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
-import com.momoplan.pet.framework.petservice.bbs.vo.Page;
 
 @Controller
 public class NoteAction extends BaseAction {

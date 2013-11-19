@@ -2,11 +2,13 @@ package com.momoplan.pet.framework.manager.service.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyLive;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyMethod;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;
 import com.momoplan.pet.framework.manager.service.StatisticService;
-
+@Service
 public class StatisticServiceImpl implements StatisticService{
 
 	@Override

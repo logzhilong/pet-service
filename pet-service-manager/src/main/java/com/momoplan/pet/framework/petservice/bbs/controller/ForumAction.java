@@ -95,11 +95,11 @@ public class ForumAction extends BaseAction{
 			WebUser user = SessionManager.getCurrentUser(request);
 			vo.setCb(user.getName());
 			forumService.saveForum(vo);
-			res = json.toString();
 		} catch (Exception e) {
 			logger.error("save forum error",e);
 			json.put("message","操作失败："+e.getMessage());	
 		}
+		res = json.toString();
 		logger.debug("save_output : "+res);
 		PetUtil.writeStringToResponse(res, response);
 	}

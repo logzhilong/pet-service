@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.petservice.bbs.vo;
+package com.momoplan.pet.framework.base.vo;
 
 import java.util.ArrayList;
 import java.util.List;

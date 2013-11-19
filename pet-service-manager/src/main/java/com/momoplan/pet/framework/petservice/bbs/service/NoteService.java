@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
@@ -24,11 +26,12 @@ import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrTrustUserCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
+import com.momoplan.pet.commons.repository.CacheKeysConstance;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
+import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.petservice.bbs.controller.NoteAction;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
-import com.momoplan.pet.framework.petservice.bbs.vo.Page;
 
 @Service
 public class NoteService {
@@ -41,6 +44,8 @@ public class NoteService {
 	private CommonConfig commonConfig = null;
 	@Autowired
 	private MapperOnCache mapperOnCache = null;
+	@Autowired
+	private StorePool storePool = null;
 	@Autowired
 	private NoteMapper noteMapper = null;
 	@Autowired
@@ -122,6 +127,13 @@ public class NoteService {
 				logger.debug("更新为置顶帖,修改创建日期:"+now);
 				vo.setCt(now);
 			}
+			logger.debug("//TODO 更新时要清空总数的缓存，否则总数对不上呢");
+			String forumId = vo.getForumId();
+			logger.debug("//clear cache 帖子总数列表");
+			String totalCountKey = CacheKeysConstance.LIST_NOTE_TOTALCOUNT+forumId;
+			logger.debug("//clear cache 当天帖子总数");
+			String totalTodayKey = CacheKeysConstance.LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr();
+			storePool.del(totalCountKey,totalTodayKey);
 			mapperOnCache.updateByPrimaryKeySelective(vo, vo.getId());
 		}else{
 			logger.debug("新增帖子需要调接口的 "+gson.toJson(vo));
