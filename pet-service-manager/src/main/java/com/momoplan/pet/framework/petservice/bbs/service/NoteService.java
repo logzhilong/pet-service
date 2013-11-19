@@ -27,6 +27,7 @@ import com.momoplan.pet.commons.domain.manager.po.MgrTrustUserCriteria;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.CacheKeysConstance;
+import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.base.vo.Page;
@@ -39,7 +40,9 @@ public class NoteService {
 	private static Logger logger = LoggerFactory.getLogger(NoteAction.class);
 	
 	private static Gson gson = MyGson.getInstance();
-	
+
+	@Autowired
+	private NoteRepository noteResponse = null;
 	@Autowired
 	private CommonConfig commonConfig = null;
 	@Autowired
@@ -133,6 +136,8 @@ public class NoteService {
 			String totalCountKey = CacheKeysConstance.LIST_NOTE_TOTALCOUNT+forumId;
 			logger.debug("//clear cache 当天帖子总数");
 			String totalTodayKey = CacheKeysConstance.LIST_NOTE_TOTALTODAY+forumId+":"+DateUtils.getTodayStr();
+			logger.debug("//totalCountKey="+totalCountKey);
+			logger.debug("//totalTodayKey="+totalTodayKey);
 			storePool.del(totalCountKey,totalTodayKey);
 			mapperOnCache.updateByPrimaryKeySelective(vo, vo.getId());
 		}else{
@@ -160,6 +165,10 @@ public class NoteService {
 	}
 	
 	private void filterTopNote(Note vo) throws Exception{
+		if(vo.getIsTop()){
+			logger.debug("刷新置顶缓存");
+			noteResponse.flushTopNoteByFid(vo.getForumId());
+		}
 		logger.debug("过滤置顶帖子");
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.createCriteria()
