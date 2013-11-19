@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.manager.mapper.MgrServiceDictMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.manager.po.MgrServiceDict" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="alias" property="alias" jdbcType="VARCHAR" />
+    <result column="service" property="service" jdbcType="VARCHAR" />
+    <result column="method" property="method" jdbcType="VARCHAR" />
+    <result column="ct" property="ct" jdbcType="TIMESTAMP" />
+    <result column="et" property="et" jdbcType="TIMESTAMP" />
+    <result column="cb" property="cb" jdbcType="VARCHAR" />
+    <result column="eb" property="eb" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, alias, service, method, ct, et, cb, eb
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDictCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mgr_service_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from mgr_service_dict
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from mgr_service_dict
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDictCriteria" >
+    delete from mgr_service_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDict" >
+    insert into mgr_service_dict (id, alias, service, method, ct, et, cb, eb)
+    values (#{id}, #{alias}, #{service}, #{method}, #{ct}, #{et}, #{cb}, #{eb})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDict" >
+    insert into mgr_service_dict
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="alias != null" >
+        alias,
+      </if>
+      <if test="service != null" >
+        service,
+      </if>
+      <if test="method != null" >
+        method,
+      </if>
+      <if test="ct != null" >
+        ct,
+      </if>
+      <if test="et != null" >
+        et,
+      </if>
+      <if test="cb != null" >
+        cb,
+      </if>
+      <if test="eb != null" >
+        eb,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="alias != null" >
+        #{alias},
+      </if>
+      <if test="service != null" >
+        #{service},
+      </if>
+      <if test="method != null" >
+        #{method},
+      </if>
+      <if test="ct != null" >
+        #{ct},
+      </if>
+      <if test="et != null" >
+        #{et},
+      </if>
+      <if test="cb != null" >
+        #{cb},
+      </if>
+      <if test="eb != null" >
+        #{eb},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDictCriteria" resultType="java.lang.Integer" >
+    select count(*) from mgr_service_dict
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update mgr_service_dict
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.alias != null" >
+        alias = #{record.alias},
+      </if>
+      <if test="record.service != null" >
+        service = #{record.service},
+      </if>
+      <if test="record.method != null" >
+        method = #{record.method},
+      </if>
+      <if test="record.ct != null" >
+        ct = #{record.ct},
+      </if>
+      <if test="record.et != null" >
+        et = #{record.et},
+      </if>
+      <if test="record.cb != null" >
+        cb = #{record.cb},
+      </if>
+      <if test="record.eb != null" >
+        eb = #{record.eb},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update mgr_service_dict
+    set id = #{record.id},
+      alias = #{record.alias},
+      service = #{record.service},
+      method = #{record.method},
+      ct = #{record.ct},
+      et = #{record.et},
+      cb = #{record.cb},
+      eb = #{record.eb}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDict" >
+    update mgr_service_dict
+    <set >
+      <if test="alias != null" >
+        alias = #{alias},
+      </if>
+      <if test="service != null" >
+        service = #{service},
+      </if>
+      <if test="method != null" >
+        method = #{method},
+      </if>
+      <if test="ct != null" >
+        ct = #{ct},
+      </if>
+      <if test="et != null" >
+        et = #{et},
+      </if>
+      <if test="cb != null" >
+        cb = #{cb},
+      </if>
+      <if test="eb != null" >
+        eb = #{eb},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrServiceDict" >
+    update mgr_service_dict
+    set alias = #{alias},
+      service = #{service},
+      method = #{method},
+      ct = #{ct},
+      et = #{et},
+      cb = #{cb},
+      eb = #{eb}
+    where id = #{id}
+  </update>
+</mapper>
