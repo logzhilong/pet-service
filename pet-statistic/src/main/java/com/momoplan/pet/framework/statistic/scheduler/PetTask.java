@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyLive;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyMethod;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;
@@ -62,8 +63,9 @@ public class PetTask {
 	public void startTask(){
 		try {
 			readFile(Constants.STATISTIC_FIEL,Constants.ACCESS_FILE_NAME);
+			renameFile(Constants.STATISTIC_FIEL);
 		} catch (Exception e) {
-			logger.error("task running error"+e);
+			logger.error("task running error："+e);
 		}
 	}
 	
@@ -87,7 +89,7 @@ public class PetTask {
 					File file  = new File(path+fileArray[i]);
 					InputStreamReader isr = new InputStreamReader(new FileInputStream(file), "UTF-8");
 					BufferedReader reader = new BufferedReader(isr);//读取文件
-					logger.debug("file reader:"+reader);
+					logger.debug("file reading...");
 					String tempString = null;
 					while((tempString = reader.readLine()) != null) {
 						tempString = tempString.substring(25, tempString.length());
@@ -99,9 +101,18 @@ public class PetTask {
 						//当日业务统计
 						countMethod(json);
 					}
+					isr.close();
+					reader.close();
 					statisticService.insertBizDailyRegistors(bizDailyRegistors);
 					statisticService.insertBizDailyLives(bizDailyLives);
 					statisticService.insertBizDailyMethod(bizDailyMethods);
+					
+					//初始化统计数据
+					totallyMethods.clear();
+					totallyUsers.clear();
+					totallyRegister.clear();
+					tokens.clear();
+					
 				} catch (Exception e) {
 					logger.error("file read error:"+e);
 					throw e;
@@ -133,9 +144,11 @@ public class PetTask {
 				bizDailyMethods.add(bdm);
 				return;
 			}
+			boolean notSame = true;
 			for (int i = 0; i < bizDailyMethods.size(); i++) {
 				//比较若service+method相等则count++其他不变(类似更新操作)
 				if(bizDailyMethods.get(i).getService().contains(json.getJSONObject("input").getString("service"))&&bizDailyMethods.get(i).getMethod().contains(json.getJSONObject("input").getString("method"))){
+					notSame = false;
 					//service+method相等的情况下，计数需要根据service+method累加，遍历map(service+method,count)
 					Set<String> s = totallyMethods.keySet();
 					for (Iterator<String> iterator = s.iterator(); iterator.hasNext();) {
@@ -143,21 +156,23 @@ public class PetTask {
 						//service+method相等时更新map中count值，然后插入到totallyMethods.get(i)对象中
 						if((json.getJSONObject("input").getString("service")+json.getJSONObject("input").getString("method")).contains(key)){
 							totallyMethods.put(key, totallyMethods.get(key)+1);
-							bizDailyMethods.get(i).setTotalCount(totallyUsers.get(key).toString());
+							bizDailyMethods.get(i).setTotalCount(totallyMethods.get(key).toString());
 							return;
 						}
 					}
-				}else{//比较若service+method不相等则插入一条新条目用于遍历统计
-					BizDailyMethod bdm = new BizDailyMethod();
-					bdm.setBizDate(yesterday());
-					bdm.setId(IDCreater.uuid());
-					bdm.setMethod(json.getJSONObject("input").getString("method"));
-					bdm.setService(json.getJSONObject("input").getString("service"));
-					totallyMethods.put(json.getJSONObject("input").getString("service")+json.getJSONObject("input").getString("method"), 1);
-					bdm.setTotalCount("1");
-					bizDailyMethods.add(bdm);
-					return;
 				}
+			}
+			//notSame = true 不存在相等的service+method测插入新的到队列
+			if (notSame) {
+				BizDailyMethod bdm = new BizDailyMethod();
+				bdm.setBizDate(yesterday());
+				bdm.setId(IDCreater.uuid());
+				bdm.setMethod(json.getJSONObject("input").getString("method"));
+				bdm.setService(json.getJSONObject("input").getString("service"));
+				totallyMethods.put(json.getJSONObject("input").getString("service") + json.getJSONObject("input").getString("method"), 1);
+				bdm.setTotalCount("1");
+				bizDailyMethods.add(bdm);
+				return;
 			}
 		} catch (JSONException e) {
 			logger.error("countMethod error :"+e);
@@ -180,15 +195,13 @@ public class PetTask {
 				for (int i = 0; i < tokens.size(); i++) {
 					if(json.getJSONObject("input").getString("token").contains(tokens.get(i))){
 						ifNewToken = false;
-						continue;
 					}
+				}
+				//如果是不是新的token说明这条数据是同一个用户，直接跳出逻辑
+				if(ifNewToken){
 					tokens.add(json.getJSONObject("input").getString("token"));
-					ifNewToken = true;
 					return;
 				}
-			}
-			if(!ifNewToken){//如果是不是新的token说明这条数据是同一个用户，直接跳出逻辑
-				return;
 			}
 			//如果list无数据，说明所读的为第一条数据，可直接插入该条数据
 			if(bizDailyLives.size()==0){
@@ -201,27 +214,31 @@ public class PetTask {
 				bizDailyLives.add(bdl);
 				return;
 			}
+			boolean notSame = true;
 			for (int i = 0; i < bizDailyLives.size(); i++) {
 				if(bizDailyLives.get(i).getChannel().contains(json.getJSONObject("input").getString("channel"))){//比较若channel相等则count++其他不变(类似更新操作)
+					notSame = false;
 					//channel相等的情况下，计数需要根据channel累加，遍历map(channel,count)
 					Set<String> s = totallyUsers.keySet();
 					for (Iterator<String> iterator = s.iterator(); iterator.hasNext();) {
 						String key = iterator.next();
 						if(json.getJSONObject("input").getString("channel").contains(key)){//channel相等时更新map中count值，然后插入到totallyUsers.get(i)对象中
 							totallyUsers.put(key, totallyUsers.get(key)+1);
-							bizDailyRegistors.get(i).setTotallyUser(totallyUsers.get(key).toString());
+							bizDailyLives.get(i).setTotallyUser(totallyUsers.get(key).toString());
 							return;
 						}
 					}
-				}else{//比较若channel不相等则插入一条新条目用于遍历统计
-					BizDailyLive bdl = new BizDailyLive();
-					bdl.setBizDate(yesterday());
-					bdl.setChannel(json.getJSONObject("input").getString("channel"));
-					bdl.setId(IDCreater.uuid());
-					totallyUsers.put(json.getJSONObject("input").getString("channel"), 1);//将channel不重复的数据put到map中
-					bdl.setTotallyUser("1");//计数为1
-					bizDailyLives.add(bdl);
 				}
+			}
+			//notSame = true 不存在相等的service+method测插入新的到队列
+			if(notSame){
+				BizDailyLive bdl = new BizDailyLive();
+				bdl.setBizDate(yesterday());
+				bdl.setChannel(json.getJSONObject("input").getString("channel"));
+				bdl.setId(IDCreater.uuid());
+				totallyUsers.put(json.getJSONObject("input").getString("channel"), 1);//将channel不重复的数据put到map中
+				bdl.setTotallyUser("1");//计数为1
+				bizDailyLives.add(bdl);
 			}
 		} catch (JSONException e) {
 			logger.error("countUser error :"+e);
@@ -249,8 +266,10 @@ public class PetTask {
 				bizDailyRegistors.add(bdr);
 				return;
 			}
+			boolean notSame = true;
 			for (int i = 0; i < bizDailyRegistors.size(); i++) {
 				if(bizDailyRegistors.get(i).getChannel().contains(json.getJSONObject("input").getString("channel"))){//比较若channel相等则count++其他不变(类似更新操作)
+					notSame = false;
 					//channel相等的情况下，计数需要根据channel累加，遍历map(channel,count)
 					Set<String> s = totallyRegister.keySet();
 					for (Iterator<String> iterator = s.iterator(); iterator.hasNext();) {
@@ -261,17 +280,18 @@ public class PetTask {
 							return;
 						}
 					}
-				}else{//比较若channel不相等则插入一条新条目用于遍历统计
-					BizDailyRegistor bdr = new BizDailyRegistor();
-					bdr.setBizDate(yesterday());
-					bdr.setChannel(json.getJSONObject("input").getString("channel"));
-					bdr.setId(IDCreater.uuid());
-					totallyRegister.put(json.getJSONObject("input").getString("channel"), 1);//将channel不重复的数据put到map中
-					bdr.setTotallyUser("1");//计数为1
-					bizDailyRegistors.add(bdr);
 				}
 			}
-			
+			//notSame = true 不存在相等的service+method测插入新的到队列
+			if(notSame){
+				BizDailyRegistor bdr = new BizDailyRegistor();
+				bdr.setBizDate(yesterday());
+				bdr.setChannel(json.getJSONObject("input").getString("channel"));
+				bdr.setId(IDCreater.uuid());
+				totallyRegister.put(json.getJSONObject("input").getString("channel"), 1);//将channel不重复的数据put到map中
+				bdr.setTotallyUser("1");//计数为1
+				bizDailyRegistors.add(bdr);
+			}
 		} catch (JSONException e) {
 			logger.error("countRegister error :"+e);
 		}
@@ -283,28 +303,22 @@ public class PetTask {
 	 * @param path
 	 */
 	public static void renameFile(String fileName){
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		String yesterday = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
-		File files  = new File(fileName);//获取目录下所有文件
-		String[] fileArray = files.list();
-		for (int i = 0; i < fileArray.length; i++) {//遍历文件名
-			if(fileArray[i].contains(Constants.ACCESS_FILE_NAME+"."+yesterday)){
-				File file  = new File(fileName+fileArray[i]);
-				file.renameTo(new File(file.getAbsolutePath()+".done"));
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			String yesterday = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
+			File files  = new File(fileName);//获取目录下所有文件
+			String[] fileArray = files.list();
+			for (int i = 0; i < fileArray.length; i++) {//遍历文件名
+				if(fileArray[i].contains(Constants.ACCESS_FILE_NAME+"."+yesterday)){
+					File file  = new File(fileName+fileArray[i]);
+					file.renameTo(new File(file.getAbsolutePath()+".done"));
+				}
 			}
+		} catch (Exception e) {
+			logger.error("rename file error : "+e);
 		}
+		
 	}
 	
-	public static void main(String[] args) {
-		Map<String,Integer> m = new HashMap<String, Integer>();
-		m.put("name1", 1);
-		m.put("name2", 2);
-		m.put("name1", 3);
-		Set s = m.keySet();
-		for (Iterator iterator = s.iterator(); iterator.hasNext();) {
-			String key = (String)iterator.next();
-			System.out.println(key+"="+m.get(key));
-		}
-	}
 }

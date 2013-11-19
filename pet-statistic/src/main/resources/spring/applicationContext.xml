@@ -13,7 +13,7 @@
   		<constructor-arg>
 		   	<list>
 				<value>classpath:properties/application-db.properties</value>
-				<value>classpath:properties/jms.properties</value>
+<!-- 				<value>classpath:properties/jms.properties</value> -->
 				<value>classpath:properties/zoo.properties</value>
 			</list>
 	  	</constructor-arg>
