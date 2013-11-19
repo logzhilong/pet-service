@@ -67,9 +67,9 @@ public class IndexController {
 		tree.add(commonAreaCode);
 //		tree.add(trustList);
 		//数据统计页面
-		TreeBean statistic = new TreeBean("02","0","统计");
-		TreeBean statisticUser = new TreeBean("0001","02","用户数据统计","/manager/statistic/statisticUser.html");
-		TreeBean statisticMethod = new TreeBean("0002","02","业务数据统计","/manager/statistic/statisticMethod.html");
+		TreeBean statistic = new TreeBean("03","0","统计");
+		TreeBean statisticUser = new TreeBean("0001","03","用户数据统计","/manager/statistic/statisticUser.html");
+		TreeBean statisticMethod = new TreeBean("0002","03","业务数据统计","/manager/statistic/statisticMethod.html");
 		
 		//将数据统计add到tree中
 		tree.add(statistic);
