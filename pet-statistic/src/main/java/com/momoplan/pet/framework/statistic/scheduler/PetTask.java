@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.momoplan.pet.commons.IDCreater;
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyLive;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyMethod;
 import com.momoplan.pet.commons.domain.statistic.po.BizDailyRegistor;

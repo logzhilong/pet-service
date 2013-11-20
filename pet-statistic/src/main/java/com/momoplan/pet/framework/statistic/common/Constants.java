@@ -13,7 +13,7 @@ public class Constants {
 	 */
 	public static String REPORT_THRESHOLD = "report.threshold";
 	
-	public static String STATISTIC_FIEL = "C://home/pet-data/"; //"/home/pet-data/";
+	public static String STATISTIC_FIEL = "/home/pet-data/";
 	public static String ACCESS_FILE_NAME = "pet_access";
 
 }
