@@ -27,7 +27,7 @@
 				<option value="false" <c:if test="${ myForm.condition_isEute eq 'false' }">selected="selected"</c:if> >否</option>
 			</select>
 			<button type="submit">查询</button>
-			<button type="button" class="close">返回圈子</button>
+			<button type="button" class="close">关闭</button>
 		</form>
 	</div>
 </div>

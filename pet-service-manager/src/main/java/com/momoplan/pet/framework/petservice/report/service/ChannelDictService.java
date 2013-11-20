@@ -49,6 +49,14 @@ public class ChannelDictService {
 		}
 	}
 
+	public MgrChannelDict getChannelDict(String channel)throws Exception {
+		MgrChannelDictCriteria mgrChannelDictCriteria = new MgrChannelDictCriteria();
+		mgrChannelDictCriteria.createCriteria().andCodeEqualTo(channel);
+		List<MgrChannelDict> list = mgrChannelDictMapper.selectByExample(mgrChannelDictCriteria);
+		if(list!=null&&list.size()>0)
+			return list.get(0);
+		return null;
+	}
 	
 	
 }

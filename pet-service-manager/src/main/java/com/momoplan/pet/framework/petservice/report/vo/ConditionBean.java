@@ -6,6 +6,16 @@ public class ConditionBean {
 	
 	private String serviceMethod = null;
 	
+	private String month = null;
+	
+	public String getMonth() {
+		return month;
+	}
+
+	public void setMonth(String month) {
+		this.month = month;
+	}
+
 	public String getServiceMethod() {
 		return serviceMethod;
 	}
