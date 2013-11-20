@@ -9,6 +9,7 @@ public class LoginResponse {
 	private SsoChatServer chatserver;
 	private SsoVersion version ;
 	private String firstImage ;
+	private String verifyCode ;
 	
 	public LoginResponse(SsoAuthenticationToken authenticationToken, SsoChatServer chatserver) {
 		super();
@@ -28,6 +29,14 @@ public class LoginResponse {
 		this.chatserver = chatserver;
 		this.version = version;
 		this.firstImage = firstImage;
+	}
+
+	public String getVerifyCode() {
+		return verifyCode;
+	}
+
+	public void setVerifyCode(String verifyCode) {
+		this.verifyCode = verifyCode;
 	}
 
 	public String getFirstImage() {
