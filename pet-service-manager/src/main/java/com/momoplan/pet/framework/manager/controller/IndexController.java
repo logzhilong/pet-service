@@ -50,8 +50,8 @@ public class IndexController {
 //		TreeBean realyCustomer = new TreeBean("0002","00","真实客户","/petservice/customer/realyMain.html");
 //		tree.add(realyCustomer);
 		
-		TreeBean common = new TreeBean("01","0","公共数据");
-		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
+//		TreeBean common = new TreeBean("01","0","公共数据");
+//		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
 		
 		TreeBean bbsRoot = new TreeBean("02","0","圈子管理 (新)");
 		TreeBean forum = new TreeBean("0201","02","圈子管理","/petservice/bbs/forumMain.html");
@@ -63,13 +63,13 @@ public class IndexController {
 		tree.add(bbs);
 //		tree.add(bbsMain);
 //		tree.add(bbsList);
-		tree.add(common);
-		tree.add(commonAreaCode);
+//		tree.add(common);
+//		tree.add(commonAreaCode);
 //		tree.add(trustList);
 		//数据统计页面
-		TreeBean statistic = new TreeBean("03","0","统计");
-		TreeBean statisticUser = new TreeBean("0301","03","用户数据统计","/manager/statistic/statisticUser.html");
-		TreeBean statisticMethod = new TreeBean("0302","03","业务数据统计","/manager/statistic/statisticMethod.html");
+		TreeBean statistic = new TreeBean("03","0","统计报表");
+		TreeBean statisticUser = new TreeBean("0301","03","渠道统计","/petservice/report/channelCounter0.html");
+		TreeBean statisticMethod = new TreeBean("0302","03","服务统计","/petservice/report/serviceCounter0.html");
 		
 		//将数据统计add到tree中
 		tree.add(statistic);

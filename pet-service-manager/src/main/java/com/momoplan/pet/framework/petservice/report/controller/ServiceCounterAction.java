@@ -28,9 +28,9 @@ import com.momoplan.pet.framework.petservice.report.vo.ConditionBean;
 import com.momoplan.pet.framework.petservice.report.vo.ServiceCounterVo;
 
 @Controller
-public class ReportAction extends BaseAction{
+public class ServiceCounterAction extends BaseAction{
 	
-	private static Logger logger = LoggerFactory.getLogger(ReportAction.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceCounterAction.class);
 	@Autowired
 	private ServiceDictService serviceDictService = null;
 	@Autowired

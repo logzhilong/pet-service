@@ -50,10 +50,10 @@ public class Md5PlusShaPasswordEncoder implements PasswordEncoder {
     	
     	PasswordEncoder passwordEncoder = new Md5PlusShaPasswordEncoder(md5PasswordEncoder,shaPasswordEncoder);
     	
-    	String pwd = "abc123";
+    	String pwd = "abcd1234";
     	pwd = passwordEncoder.encodePassword(pwd, null);
     	
-    	System.out.println(pwd);
+    	System.out.println("xxxxxx: "+pwd);
     	System.out.println(passwordEncoder.isPasswordValid(pwd,"123", null));
     	
     }

@@ -1,7 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-<div class="pageContent" selector="h1" layoutH="2">
-<div id="serviceDictList">
 <script type="text/javascript">
 $( document ).ready(function() {
 	showChart = function(){
@@ -15,9 +13,23 @@ $( document ).ready(function() {
 });
 </script>
 
-<div class="panel" defH="600" id="serviceDictList_panel">
-	
-	<h1>服务使用率统计-总数</h1>
+<div class="pageHeader" >
+	<div class="searchBar">
+			按总数排序:
+			<select name="sort" >
+				<option value="desc">从大到小</option>
+				<option value="asc">从小到大</option>
+			</select>
+			-
+			<button type="button" onclick="alert('开发中...');" >查询</button>
+			<button type="button" class="close">关闭</button>
+	</div>
+</div>
+
+
+<div class="pageContent" selector="h1" layoutH="2">
+<div>
+
 	<div>
 		<!-- left start -->
 		<div id="count0Charts" style="margin:10px;float:left;min-height:100px"></div>	
@@ -55,9 +67,6 @@ $( document ).ready(function() {
 		<!-- right end -->	
 		
 	</div>
-</div>
-
-
 
 </div>
 </div>

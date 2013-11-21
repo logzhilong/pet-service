@@ -12,13 +12,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.momoplan.pet.framework.petservice.report.controller.ReportAction;
+import com.momoplan.pet.framework.petservice.report.controller.ServiceCounterAction;
 import com.momoplan.pet.framework.petservice.report.vo.ServiceCounterVo;
 
 @Service
 public class ReportService {
 
-	private static Logger logger = LoggerFactory.getLogger(ReportAction.class);
+	private static Logger logger = LoggerFactory.getLogger(ServiceCounterAction.class);
 	
 	@Autowired
 	private ComboPooledDataSource statisticDataSource = null;

@@ -227,7 +227,7 @@ $(function(){
 				</ul>
 				<div class="navTab-panel tabsPageContent layoutBox">
 					<%-- 首页 --%>
-					<jsp:include page="/petservice/report/serviceCounter0.html" />
+					<jsp:include page="/petservice/report/channelCounter0.html" />
 				</div>
 			</div>
 		</div>
