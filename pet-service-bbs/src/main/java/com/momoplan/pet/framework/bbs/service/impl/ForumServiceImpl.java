@@ -115,13 +115,13 @@ public class ForumServiceImpl implements ForumService {
 	public List<ForumNode> getAllForumAsTree(String userId) throws Exception{
 		ForumCriteria forumCriteria = new ForumCriteria();
 		forumCriteria.setOrderByClause("seq asc");
-		// TODO 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新
+		logger.debug(" 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新");
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
-		// 我关注的圈子
+		logger.debug("我关注的圈子");
 		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
 		userForumRelCriteria.createCriteria().andUserIdEqualTo(userId);
 		List<UserForumRel> userForumRelList = userForumRelMapper.selectByExample(userForumRelCriteria);
-		// 转换成 hash 结构，当作字典用
+		logger.debug("转换成 hash 结构，当作字典用");
 		Map<String, String> userForumRelMap = new HashMap<String, String>();
 		if (userForumRelList != null && userForumRelList.size() > 0)
 			for (UserForumRel userForumRel : userForumRelList) {
@@ -132,7 +132,8 @@ public class ForumServiceImpl implements ForumService {
 		// 2、以父节点为索引，分组所有节点
 		List<Forum> rootList = new ArrayList<Forum>();
 		Map<String, List<Forum>> pMap = new HashMap<String, List<Forum>>();
-		for (Forum forum : forumlist) {// 构建基础数据结构
+		logger.debug("构建基础数据结构");
+		for (Forum forum : forumlist) {
 			// 1
 			if (StringUtils.isEmpty(forum.getPid())) {
 				rootList.add(forum);
@@ -144,12 +145,11 @@ public class ForumServiceImpl implements ForumService {
 				group.add(forum);
 				pMap.put(forum.getPid(), group);
 			}
-			//TODO 我关注的圈子 node0 应该在这里完成组装
 		}
-		logger.debug("ROOT: " + MyGson.getInstance().toJson(rootList));
-		logger.debug("GROUP : " + MyGson.getInstance().toJson(pMap));
+		//logger.debug("ROOT: " + MyGson.getInstance().toJson(rootList));
+		//logger.debug("GROUP : " + MyGson.getInstance().toJson(pMap));
 		List<ForumNode> treeList = new ArrayList<ForumNode>();
-		// TODO 把我关注的圈子，放在最前面的一个元素里
+		logger.debug("//把我关注的圈子，放在最前面的一个元素里");
 		ForumNode node0 = getAtteForum(forumlist, userForumRelMap);
 		treeList.add(node0);
 		for (Forum root : rootList) {
@@ -158,7 +158,8 @@ public class ForumServiceImpl implements ForumService {
 			ForumNode tree = buildTree(r, pMap, userForumRelMap);
 			treeList.add(tree);
 		}
-		logger.debug("getAllForumAsTree : " + MyGson.getInstance().toJson(treeList));
+		if(treeList!=null)
+			logger.debug("getAllForumAsTree : " + treeList.size());
 		return treeList;
 	}
 

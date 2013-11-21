@@ -33,7 +33,6 @@ public class AllForumAsTreeHandler extends AbstractHandler {
 			logger.error("getAllForumAsTree : ", e);
 			rtn = new Success(false, e.getMessage()).toString();
 		} finally {
-//			logger.debug(rtn);
 			writeStringToResponse(rtn, response);
 		}
 	}

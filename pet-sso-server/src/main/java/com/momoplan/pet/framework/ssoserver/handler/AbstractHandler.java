@@ -14,10 +14,11 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.handler.RequestHandler;
 import com.momoplan.pet.commons.spring.Bootstrap;
+import com.momoplan.pet.commons.web.BaseController;
 import com.momoplan.pet.framework.ssoserver.service.SsoService;
 import com.momoplan.pet.framework.ssoserver.service.impl.SsoServiceImpl;
 
-public abstract class AbstractHandler extends PetUtil implements RequestHandler {
+public abstract class AbstractHandler extends BaseController implements RequestHandler {
 	
 	protected SsoService ssoService = Bootstrap.getBean(SsoServiceImpl.class);
 	protected Gson gson = MyGson.getInstance();
