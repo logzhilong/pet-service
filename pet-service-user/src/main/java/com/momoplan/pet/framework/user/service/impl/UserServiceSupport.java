@@ -92,7 +92,7 @@ public class UserServiceSupport {
 	 */
 	protected JSONArray readNearPersionBuffer(int index,String userId) throws JSONException{
 		int pageSize = 20;
-		int pageNo = index-1;//从1开始
+		int pageNo = index;//从0开始
 		String bufferKey = UserService.LIST_USER_NEAR_BUFFER+userId;
 		List<String> list = storePool.lrange(bufferKey, pageNo*pageSize, (pageNo+1)*pageSize-1);
 		JSONArray jsonArray = new JSONArray();
