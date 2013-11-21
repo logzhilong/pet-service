@@ -59,7 +59,6 @@ public class GetNearPersonHandler extends AbstractHandler {
 			logger.debug(e.getMessage());
 			rtn = new Success(false,e.getMessage()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}
