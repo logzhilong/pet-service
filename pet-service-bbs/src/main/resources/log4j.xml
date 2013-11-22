@@ -28,11 +28,17 @@
 		</layout>
 	</appender>
 
+    <logger name="com.momoplan.pet.commons.domain.bbs.mapper">
+        <level value="INFO"/>
+        <appender-ref ref="FILE" />
+    </logger>
+
     <logger name="com.momoplan.pet">
         <level value="DEBUG"/>
         <appender-ref ref="FILE" />
         <appender-ref ref="CONSOLE" />
     </logger>
+    
 
 	<!-- ======================= -->
 	<!-- Setup the Root logger -->

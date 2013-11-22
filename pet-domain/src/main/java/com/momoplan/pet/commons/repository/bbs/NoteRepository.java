@@ -119,7 +119,7 @@ public class NoteRepository implements CacheKeysConstance{
 		//以上状态不显示
 		criteria.andStateNotIn(stateList);
 		criteria.andForumIdEqualTo(forumId);
-		int count = noteMapper.countByExample(noteCriteria);
+		int count = noteMapper.countByExample(noteCriteria)+1;
 		logger.debug("key="+key+" forumId="+forumId+ " 初始化 帖子总数 数据库取值 : "+count);
 		String[] array = new String[count];
 		for(int i=0;i<count;i++){
@@ -127,7 +127,7 @@ public class NoteRepository implements CacheKeysConstance{
 		}
 		if(array!=null&&array.length>0)
 			jedis.lpush(key, array);
-		return Long.valueOf(count);
+		return Long.valueOf(count-1);
 	}
 	
 	/**
@@ -140,10 +140,10 @@ public class NoteRepository implements CacheKeysConstance{
 		try{
 			jedis = storePool.getConn();
 			Long total = 0L;
-			try{
-				total = jedis.llen(key);
-			}catch(Exception e){}
-			if(jedis.exists(key) && total>0){
+			if(jedis.exists(key)){
+				try{
+					total = jedis.llen(key)-1;//初始化时，如果是0，则列表长度为1，所以取总数时，要减1
+				}catch(Exception e){}
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("帖子总数 缓存取值 : "+total);
 				return total;
@@ -174,14 +174,14 @@ public class NoteRepository implements CacheKeysConstance{
 		d = DateUtils.getDate(dd,DateUtils.DEFAULT_DATETIME_FORMAT);
 		criteria.andCtGreaterThan(d);//大于昨天，就是今天
 		
-		int count = noteMapper.countByExample(noteCriteria);
+		int count = noteMapper.countByExample(noteCriteria)+1;
 		logger.debug("初始化 今天 帖子总数 数据库取值 : "+count);
 		String[] array = new String[count];
 		for(int i=0;i<count;i++){
 			array[i] = "n";
 		}
 		jedis.lpush(key, array);
-		return Long.valueOf(count);
+		return Long.valueOf(count-1);
 	}
 	/**
 	 * 指定圈子 当天的帖子总数
@@ -194,10 +194,10 @@ public class NoteRepository implements CacheKeysConstance{
 		try{
 			jedis = storePool.getConn();
 			Long total = 0L;
-			try{
-				total = jedis.llen(key);
-			}catch(Exception e){}
-			if(jedis.exists(key) && total>0){
+			if(jedis.exists(key)){
+				try{
+					total = jedis.llen(key)-1;
+				}catch(Exception e){}
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("今天 帖子总数 缓存取值 : "+total);
 				return total;

@@ -254,7 +254,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 		if(noteIds.size()>0){
 			NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
 			noteSubCriteria.createCriteria().andNoteIdIn(noteIds);
-			count = noteSubMapper.countByExample(noteSubCriteria);
+			count = noteSubMapper.countByExample(noteSubCriteria)+1;
 			logger.debug("初始化 回帖总数 数据库取值 " + key + " : "+count);
 			String[] array = new String[count];
 			for(int i=0;i<count;i++){
@@ -263,7 +263,7 @@ public class NoteSubRepository implements CacheKeysConstance{
 			if(array!=null&&array.length>0)
 				jedis.lpush(key, array);
 		}
-		return Long.valueOf(count);
+		return Long.valueOf(count-1);
 	}
 	
 	/**
@@ -276,10 +276,10 @@ public class NoteSubRepository implements CacheKeysConstance{
 			jedis = storePool.getConn();
 			Long total = 0L;
 			String key = LIST_NOTE_SUB_TOTALCOUNT+forumId;
-			try{
-				total = jedis.llen(key);
-			}catch(Exception e){}
-			if(jedis.exists(key) && total>0){
+			if(jedis.exists(key)){
+				try{
+					total = jedis.llen(key)-1;
+				}catch(Exception e){}
 				//在缓存里取总数，如果有值，则直接返回，否则得进行初始化。
 				logger.debug("帖子总数 缓存取值 : "+total);
 				return total;

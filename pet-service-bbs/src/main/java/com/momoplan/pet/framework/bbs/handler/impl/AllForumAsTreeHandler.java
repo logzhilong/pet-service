@@ -1,5 +1,7 @@
 package com.momoplan.pet.framework.bbs.handler.impl;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.framework.bbs.handler.AbstractHandler;
+import com.momoplan.pet.framework.bbs.vo.ForumNode;
 
 /**
  * 获取圈子(父圈套子圈)集合
@@ -25,9 +28,10 @@ public class AllForumAsTreeHandler extends AbstractHandler {
 		String rtn = null;
 		try {
 			String userid = getUseridFParamSToken(clientRequest);
-			Object object = forumService.getAllForumAsTree(userid);
+			List<ForumNode> list = forumService.getAllForumAsTree(userid);
 			logger.debug("获取圈子(父圈套子圈)集合 body=" + gson.toJson(clientRequest));
-			rtn = new Success(true, object).toString();
+			rtn = new Success(true, list).toString();
+			
 		} catch (Exception e) {
 			logger.debug("获取圈子(父圈套子圈)集合 body=" + gson.toJson(clientRequest));
 			logger.error("getAllForumAsTree : ", e);

@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumConditionMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
@@ -109,6 +108,21 @@ public class ForumServiceImpl implements ForumService {
 		return tree;
 	}
 
+	public Map<String, String> getUserForumMap(String userId){
+		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
+		userForumRelCriteria.createCriteria().andUserIdEqualTo(userId);
+		List<UserForumRel> userForumRelList = userForumRelMapper.selectByExample(userForumRelCriteria);
+		logger.debug("转换成 hash 结构，当作字典用");
+		Map<String, String> userForumRelMap = new HashMap<String, String>();
+		if (userForumRelList != null && userForumRelList.size() > 0){
+			for (UserForumRel userForumRel : userForumRelList) {
+				userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
+			}
+			return userForumRelMap;
+		}
+		return null;
+	}
+	
 	/**
 	 * add by liangc 获取所有栏目，以树的集合形式
 	 */
@@ -117,16 +131,9 @@ public class ForumServiceImpl implements ForumService {
 		forumCriteria.setOrderByClause("seq asc");
 		logger.debug(" 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新");
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
+		
 		logger.debug("我关注的圈子");
-		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
-		userForumRelCriteria.createCriteria().andUserIdEqualTo(userId);
-		List<UserForumRel> userForumRelList = userForumRelMapper.selectByExample(userForumRelCriteria);
-		logger.debug("转换成 hash 结构，当作字典用");
-		Map<String, String> userForumRelMap = new HashMap<String, String>();
-		if (userForumRelList != null && userForumRelList.size() > 0)
-			for (UserForumRel userForumRel : userForumRelList) {
-				userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
-			}
+		Map<String, String> userForumRelMap = getUserForumMap(userId); 
 		// 1、获取所有树根节点
 		// else
 		// 2、以父节点为索引，分组所有节点
@@ -146,8 +153,7 @@ public class ForumServiceImpl implements ForumService {
 				pMap.put(forum.getPid(), group);
 			}
 		}
-		//logger.debug("ROOT: " + MyGson.getInstance().toJson(rootList));
-		//logger.debug("GROUP : " + MyGson.getInstance().toJson(pMap));
+		
 		List<ForumNode> treeList = new ArrayList<ForumNode>();
 		logger.debug("//把我关注的圈子，放在最前面的一个元素里");
 		ForumNode node0 = getAtteForum(forumlist, userForumRelMap);
