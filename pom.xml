@@ -10,11 +10,9 @@
 
 	<modules>
 		<module>pet-parent</module>
-		<module>pet</module>
 		<module>pet-hub</module>
 		<module>pet-commons</module>
 		<module>pet-domain</module>
-		<module>pet-statistic</module>
 		<module>pet-wordfilter</module>
 		<module>pet-file-server</module>
 		<module>pet-sso-server</module>
