@@ -108,19 +108,19 @@ public class TokenInterceptor implements HandlerInterceptor {
 		boolean sendXcode = "service.uri.pet_sso".equals(service)&&"getVerificationCode".equals(method);
 		logger.debug("service="+service+" ; method="+method+ " ; 验证码判断="+sendXcode+" ; rtn="+rtn);
 		if(sendXcode){
-			Success success = gson.fromJson(rtn, Success.class);
-			if(success.isSuccess()){
+			JSONObject success = new JSONObject(rtn);
+			if(success.getBoolean("success")){
 				String phoneNumber = PetUtil.getParameter(clientRequest, "phoneNum");
-				Object xcode = success.getEntity();
+				String xcode = success.getString("entity");
 				String userId = commonConfig.get("sms.username");
 				String password = commonConfig.get("sms.password");
 				String url = commonConfig.get("sms.path");
 				String smsChannel = commonConfig.get("sms.channel");//通道，www.ruyicai.com 金软通道，www.lx198.com 乐信
 				String smsSign = commonConfig.get("sms.sign","宠物圈");//签名
 				if("www.lx198.com".equalsIgnoreCase(smsChannel)){
-					sendSms_lx198(url,userId,password,phoneNumber,xcode.toString(),smsSign);
+					sendSms_lx198(url,userId,password,phoneNumber,xcode,smsSign);
 				}else{
-					sendSms_ruyicai(url,userId,password,phoneNumber,xcode.toString(),smsSign);
+					sendSms_ruyicai(url,userId,password,phoneNumber,xcode,smsSign);
 				}
 			}
 		}
@@ -141,9 +141,13 @@ public class TokenInterceptor implements HandlerInterceptor {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String url = "http://www.lx198.com/sdk/send";
+		//String url = "http://www.lx198.com/sdk/send";
 		//账户hnaywss@126.com   密码： wss666666 
-		sendSms_lx198(url,"hnaywss@126.com","wss666666","18612013831","8888","【博雅彩】");
+		//sendSms_lx198(url,"hnaywss@126.com","wss666666","18612013831","8888","【博雅彩】");
+		String j = "{\"sn\":\"\",\"success\":true,\"entity\":\"1068\"}";
+		JSONObject success = new JSONObject(j);
+		System.out.println(success.getBoolean("success"));
+		System.out.println(success.get("entity"));
 	}
 	
 	private static void sendSms_lx198(String url,String userId,String password,String phoneNumber,String msg,String smsSign) throws Exception{
