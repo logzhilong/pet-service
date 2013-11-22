@@ -36,7 +36,7 @@ public class GetNoteByIdHandler extends AbstractHandler {
 			logger.error("getNoteById : ",e);
 			rtn = new Success(false,e.toString()).toString();
 		}finally{
-			logger.debug(rtn);
+			//logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}
