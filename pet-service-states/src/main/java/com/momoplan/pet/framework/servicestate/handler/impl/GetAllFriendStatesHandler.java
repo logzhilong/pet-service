@@ -31,8 +31,7 @@ public class GetAllFriendStatesHandler extends AbstractHandler {
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try {
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String userid = authenticationToken.getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			String pageSize = PetUtil.getParameter(clientRequest, "pageSize");
 			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");
 			List<StatesUserStatesVo> list = stateService.getAllFriendStates(userid,Integer.parseInt(pageSize),Integer.parseInt(pageNo));
