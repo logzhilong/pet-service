@@ -1,5 +1,8 @@
 package com.momoplan.pet.framework.hub.web.interceptor;
 
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +36,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 	
 	private CommonConfig commonConfig = null;
 	private MapFactoryBean passMethodMap = null;
-	private Gson gson = MyGson.getInstance();
+	private static Gson gson = MyGson.getInstance();
 	private Map<String,Boolean> memCache = new HashMap<String,Boolean>(512);
 	
 	@Autowired
@@ -92,8 +95,9 @@ public class TokenInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 		//logger.debug("afterCompletion...异常拦截器");
 	}
+	
 	/**
-	 * 发送手机短信
+	 * 发送手机短信【乐信通道】
 	 * @param clientRequest
 	 * @throws Exception 
 	 */
@@ -111,20 +115,51 @@ public class TokenInterceptor implements HandlerInterceptor {
 				String userId = commonConfig.get("sms.username");
 				String password = commonConfig.get("sms.password");
 				String url = commonConfig.get("sms.path");
-				String[] params = new String[]{
-						"userId",userId,
-						"password",password,
-						"pszMobis",phoneNumber,
-						"pszMsg","验证码:"+xcode.toString(),
-						"iMobiCount","1",
-						"pszSubPort","***********"
-				};
-				String res = PostRequest.postText(url, params);
-				logger.debug("发送短信 input="+gson.toJson(params));
-				logger.debug("发送短信 output="+res);
+				String smsChannel = commonConfig.get("sms.channel");//通道，www.ruyicai.com 金软通道，www.lx198.com 乐信
+				if("www.lx198.com".equalsIgnoreCase(smsChannel)){
+					sendSms_lx198(url,userId,password,phoneNumber,xcode.toString());
+				}else{
+					sendSms_ruyicai(url,userId,password,phoneNumber,xcode.toString());
+				}
 			}
 		}
 	}
+	
+	private void sendSms_ruyicai(String url,String userId,String password,String phoneNumber,String msg) throws Exception{
+		String[] params = new String[]{
+				"userId",userId,
+				"password",password,
+				"pszMobis",phoneNumber,
+				"pszMsg","验证码:"+msg,
+				"iMobiCount","1",
+				"pszSubPort","***********"
+		};
+		String res = PostRequest.postText(url, params);
+		logger.debug("【www.ruyicai.com】发送短信 input="+gson.toJson(params));
+		logger.debug("【www.ruyicai.com】发送短信 output="+res);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String url = "http://www.lx198.com/sdk/send";
+//		597627614@qq.com 密码：yanrandy9
+//		String res = new SendSms().sendSms(server,"597627614@qq.com", "yanrandy9", "18612013831", "1234");
+		sendSms_lx198(url,"cc14514@icloud.com","abc!@#123","18612013831","8888【宠物圈】");
+	}
+	
+	private static void sendSms_lx198(String url,String userId,String password,String phoneNumber,String msg) throws Exception{
+		String[] params = new String[]{
+				"accName",userId,
+				"accPwd",MD5.getMd5String(password),
+				"aimcodes",phoneNumber,
+				"content","验证码:"+msg,
+				"bizId",BizNumberUtil.createBizId(),
+				"dataType","string"
+		};
+		String res = PostRequest.postText(url, params);
+		logger.debug("【www.lx198.com】发送短信 input="+gson.toJson(params));
+		logger.debug("【www.lx198.com】发送短信 output="+res);
+	}
+
 	/**
 	 * TOKEN 是否有效
 	 * @param token
@@ -158,4 +193,49 @@ public class TokenInterceptor implements HandlerInterceptor {
 		}
 		return false;
 	}
+	
+	
+	static class BizNumberUtil {
+		public static  int curttNo;
+		private final static String dataFormatString="yyMMddHHmmss";
+		public  synchronized static final String createBizId(){
+			if(curttNo<999) {
+				curttNo++;
+			}else{
+				curttNo=1;
+			}
+			String curttNoStr=String.valueOf(curttNo);
+			while(curttNoStr.length()<3){;
+				curttNoStr="0"+curttNoStr;
+			}
+			return new SimpleDateFormat(dataFormatString).format(new Date())+curttNoStr;
+		}
+	}
+	static class MD5 {
+		private final static char[] hexDigits = { '0', '1', '2', '3', '4', '5','6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+		private static String bytes2hex(byte[] bytes) {
+			StringBuffer sb = new StringBuffer();
+			int t;
+			for (int i = 0; i < 16; i++) {// 16 == bytes.length;
+				t = bytes[i];
+				if (t < 0)
+					t += 256;
+				sb.append(hexDigits[(t >>> 4)]);
+				sb.append(hexDigits[(t % 16)]);
+			}
+			return sb.toString();
+		}
+		public static String getMd5String(String strSrc) {
+			try {
+				// 确定计算方法
+				MessageDigest md5 = MessageDigest.getInstance("MD5");
+				// 加密后的字符串
+				return bytes2hex(md5.digest(strSrc.getBytes()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
 }
+
