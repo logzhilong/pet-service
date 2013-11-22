@@ -118,9 +118,8 @@ public class ForumServiceImpl implements ForumService {
 			for (UserForumRel userForumRel : userForumRelList) {
 				userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
 			}
-			return userForumRelMap;
 		}
-		return null;
+		return userForumRelMap;
 	}
 	
 	/**

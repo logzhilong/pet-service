@@ -116,21 +116,22 @@ public class TokenInterceptor implements HandlerInterceptor {
 				String password = commonConfig.get("sms.password");
 				String url = commonConfig.get("sms.path");
 				String smsChannel = commonConfig.get("sms.channel");//通道，www.ruyicai.com 金软通道，www.lx198.com 乐信
+				String smsSign = commonConfig.get("sms.sign","宠物圈");//签名
 				if("www.lx198.com".equalsIgnoreCase(smsChannel)){
-					sendSms_lx198(url,userId,password,phoneNumber,xcode.toString());
+					sendSms_lx198(url,userId,password,phoneNumber,xcode.toString(),smsSign);
 				}else{
-					sendSms_ruyicai(url,userId,password,phoneNumber,xcode.toString());
+					sendSms_ruyicai(url,userId,password,phoneNumber,xcode.toString(),smsSign);
 				}
 			}
 		}
 	}
 	
-	private void sendSms_ruyicai(String url,String userId,String password,String phoneNumber,String msg) throws Exception{
+	private void sendSms_ruyicai(String url,String userId,String password,String phoneNumber,String msg,String smsSign) throws Exception{
 		String[] params = new String[]{
 				"userId",userId,
 				"password",password,
 				"pszMobis",phoneNumber,
-				"pszMsg","验证码:"+msg,
+				"pszMsg","验证码:"+msg+"【"+smsSign+"】",
 				"iMobiCount","1",
 				"pszSubPort","***********"
 		};
@@ -141,17 +142,16 @@ public class TokenInterceptor implements HandlerInterceptor {
 	
 	public static void main(String[] args) throws Exception {
 		String url = "http://www.lx198.com/sdk/send";
-//		597627614@qq.com 密码：yanrandy9
-//		String res = new SendSms().sendSms(server,"597627614@qq.com", "yanrandy9", "18612013831", "1234");
-		sendSms_lx198(url,"cc14514@icloud.com","abc!@#123","18612013831","8888【宠物圈】");
+		//账户hnaywss@126.com   密码： wss666666 
+		sendSms_lx198(url,"hnaywss@126.com","wss666666","18612013831","8888","【博雅彩】");
 	}
 	
-	private static void sendSms_lx198(String url,String userId,String password,String phoneNumber,String msg) throws Exception{
+	private static void sendSms_lx198(String url,String userId,String password,String phoneNumber,String msg,String smsSign) throws Exception{
 		String[] params = new String[]{
 				"accName",userId,
 				"accPwd",MD5.getMd5String(password),
 				"aimcodes",phoneNumber,
-				"content","验证码:"+msg,
+				"content","验证码:"+msg+"【"+smsSign+"】",
 				"bizId",BizNumberUtil.createBizId(),
 				"dataType","string"
 		};
