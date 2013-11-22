@@ -51,7 +51,7 @@ public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstan
 		}
 	}
 
-	private void saveXcode(String phoneNumber,String xcode){
+	private void saveXcode(String phoneNumber,String xcode)throws Exception{
 		ShardedJedis jedis = null;
 		String key = CF_XCODE+phoneNumber;
 		try{
@@ -60,6 +60,7 @@ public class GetXcodeHandler extends AbstractHandler implements CacheKeysConstan
 			logger.debug(key+" = "+xcode);
 		}catch(Exception e){
 			logger.error("",e);
+			throw e;
 		}finally{
 			redisPool.closeConn(jedis);
 		}
