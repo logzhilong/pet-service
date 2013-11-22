@@ -16,7 +16,6 @@ import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.cache.pool.RedisPool;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStates;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.common.Constants;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.service.StateService;
@@ -35,15 +34,14 @@ public class AddReportStatesHandler extends AbstractHandler{
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try{
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String userid = authenticationToken.getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			report(userid,stateid);
 			logger.debug("举报 成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("举报 失败 body="+gson.toJson(clientRequest));
-			logger.error("reportContent : ",e);
+			logger.error("addReport : ",e);
 			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);

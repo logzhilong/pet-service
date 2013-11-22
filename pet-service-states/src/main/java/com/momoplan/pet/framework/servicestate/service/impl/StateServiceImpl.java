@@ -58,9 +58,8 @@ public class StateServiceImpl extends StateServiceSupport implements StateServic
 	private static Logger logger = LoggerFactory.getLogger(StateServiceImpl.class);
 	
 	@Override
-	public String addUserState(ClientRequest clientRequest, SsoAuthenticationToken authenticationToken) throws Exception {
+	public String addUserState(ClientRequest clientRequest, String userid) throws Exception {
 		StatesUserStates userState = new StatesUserStates();
-		String userid = authenticationToken.getUserid();
 		userState.setId(IDCreater.uuid());
 		userState.setUserid(userid);
 		userState.setMsg(PetUtil.getParameter(clientRequest, "msg"));

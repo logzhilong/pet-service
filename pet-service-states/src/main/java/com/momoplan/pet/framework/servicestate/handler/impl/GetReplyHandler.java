@@ -25,8 +25,7 @@ public class GetReplyHandler extends AbstractHandler{
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try{
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String userid = authenticationToken.getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			String pageSize = PetUtil.getParameter(clientRequest, "pageSize");
 			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");
@@ -35,10 +34,9 @@ public class GetReplyHandler extends AbstractHandler{
 			logger.debug("获取回复 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("获取回复 失败 body="+gson.toJson(clientRequest));
-			logger.error("addReply : ",e);
+			logger.error("getReply : ",e);
 			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}

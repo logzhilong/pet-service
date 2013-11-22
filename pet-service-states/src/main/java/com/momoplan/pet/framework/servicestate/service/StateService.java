@@ -49,7 +49,7 @@ public interface StateService extends CacheKeysConstance{
 	 * @return
 	 * @throws Exception
 	 */
-	public String addUserState(ClientRequest clientRequest,SsoAuthenticationToken authenticationToken) throws Exception;
+	public String addUserState(ClientRequest clientRequest,String userid) throws Exception;
 	/**
 	 * 获取用户动态，isSelf==true 获取自己的动态，isSelf==false 则非自己的动态
 	 * @param userid

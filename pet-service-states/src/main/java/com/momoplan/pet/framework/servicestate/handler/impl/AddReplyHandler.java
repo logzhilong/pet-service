@@ -13,7 +13,6 @@ import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.domain.states.po.StatesUserStatesReply;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 
 @Component("addReply")
@@ -25,10 +24,8 @@ public class AddReplyHandler extends AbstractHandler{
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try{
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			StatesUserStatesReply reply = new StatesUserStatesReply();
-			
-			String userid = authenticationToken.getUserid();
+			String userid = getUseridFParamSToken(clientRequest);
 			reply.setId(IDCreater.uuid());
 			reply.setCt(new Date());
 			reply.setMsg(PetUtil.getParameter(clientRequest, "msg"));

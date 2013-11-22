@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
@@ -29,8 +28,7 @@ public class GetUserStateListHandler extends AbstractHandler {
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try {
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			String currentUser = authenticationToken.getUserid();// 当前登录人
+			String currentUser = getToken(clientRequest.getToken()).getString("userid");;// 当前登录人
 			String targetUser = PetUtil.getParameter(clientRequest, "userid");// 目标获取人
 			String pageSize = PetUtil.getParameter(clientRequest, "pageSize");
 			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.servicestate.handler.AbstractHandler;
 import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 
@@ -42,7 +41,6 @@ public class GetAllFriendStatesHandler extends AbstractHandler {
 			logger.error("getAllFriendStates : ", e);
 			rtn = new Success(sn,false, e.getMessage()).toString();
 		} finally {
-			logger.debug(rtn);
 			writeStringToResponse(rtn, response);
 		}
 	}
