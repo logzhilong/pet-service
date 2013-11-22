@@ -53,8 +53,10 @@ public class HubController {
 		long start = System.currentTimeMillis();
 		String service = null;
 		String method = null;
+		String sn = null;
 		try{
 			ClientRequest clientRequest = PetUtil.reviceClientRequest(body);
+			sn = clientRequest.getSn();
 			service = clientRequest.getService();
 			method = clientRequest.getMethod();
 			String serviceUri = commonConfig.get(service,null);
@@ -62,7 +64,7 @@ public class HubController {
 			rtn = PostRequest.postText(serviceUri, "body",body);
 		}catch(Exception e){
 			logger.error("pet-hub error",e);
-	        rtn = new Success(false,e.getMessage()).toString();
+	        rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug("[OUTPUT]:rtn="+rtn);
 			publishEvent(body,rtn);

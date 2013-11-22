@@ -52,7 +52,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		ClientRequest clientRequest = PetUtil.reviceClientRequest(body);
 		String service = clientRequest.getService();
 		String method = clientRequest.getMethod();
-		
+		String sn = clientRequest.getSn();
 		if(service!=null&&service.equals(passMethodMap.getObject().get(method))){
 			logger.debug("跳过TOKEN校验 : service="+service+" ; method="+method);
 			return true;
@@ -65,7 +65,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		String token = clientRequest.getToken();
 		if(!checkToken(token)){
 			logger.debug("TOKEN 校验未通过");
-			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
+			PetUtil.writeStringToResponse(new Success(sn,false,"Faild Token.").toString(), response);
 			return false;
 		}
 		logger.debug(token+" TOKEN 校验通过");

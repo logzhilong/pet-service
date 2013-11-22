@@ -28,18 +28,19 @@ public class SearchUserHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userid = getUseridFParamSToken(clientRequest);
 			String condition = getParameter(clientRequest, "condition");
 			String conditionType = getParameter(clientRequest, "conditionType");
 			List<UserVo> list = userService.searchUser(userid,condition,conditionType);
-			rtn = new Success(true,list).toString();
+			rtn = new Success(sn,true,list).toString();
 			logger.debug("搜索用户 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("搜索用户 失败 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

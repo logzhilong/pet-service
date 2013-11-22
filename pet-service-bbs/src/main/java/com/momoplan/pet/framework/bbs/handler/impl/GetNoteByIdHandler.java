@@ -24,17 +24,18 @@ public class GetNoteByIdHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String noteId=PetUtil.getParameter(clientRequest, "noteId");
 			//TODO更新帖子点击数   暂时这样写,
 			noteService.updateClickCount(noteId);
 			NoteVo vo = noteService.getNoteById(noteId);
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,vo).toString();
+			rtn = new Success(sn,true,vo).toString();
 		}catch(Exception e){
 			logger.debug("根据id获取帖子详情 body="+gson.toJson(clientRequest));
 			logger.error("getNoteById : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			//logger.debug(rtn);
 			writeStringToResponse(rtn,response);

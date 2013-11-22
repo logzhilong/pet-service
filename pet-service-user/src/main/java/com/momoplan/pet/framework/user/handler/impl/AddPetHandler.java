@@ -41,6 +41,7 @@ public class AddPetHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userid = getUseridFParamSToken(clientRequest);
 			PetInfo petInfo = revicePetInfo(clientRequest);
@@ -48,11 +49,11 @@ public class AddPetHandler extends AbstractHandler {
 			logger.debug(petInfo.toString());
 			String id = userService.savePetInfo(petInfo);
 			logger.debug("添加宠物 成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,id).toString();
+			rtn = new Success(sn,true,id).toString();
 		}catch(Exception e){
 			logger.debug("添加宠物 失败 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

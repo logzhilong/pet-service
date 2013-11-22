@@ -66,7 +66,7 @@ public class PwdInterceptor implements HandlerInterceptor {
 		logger.debug("preHandle.....PATH : "+request.getContextPath());
 		logger.debug("preHandle.....TOKEN : "+token);
 		if(isWrongPwd(token)){
-			PetUtil.writeStringToResponse(new Success(false,"Faild Token.").toString(), response);
+			PetUtil.writeStringToResponse(new Success(null,false,"Faild Token.").toString(), response);
 		}else{
 			logger.debug(token);
 			return true;

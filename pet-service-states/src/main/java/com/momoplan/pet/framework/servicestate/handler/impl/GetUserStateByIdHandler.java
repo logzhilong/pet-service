@@ -23,16 +23,17 @@ public class GetUserStateByIdHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userid = getUseridFParamSToken(clientRequest);
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			StatesUserStatesVo vo = stateService.findOneState(userid,stateid);
-			rtn = new Success(true,vo).toString();
+			rtn = new Success(sn,true,vo).toString();
 			logger.debug("获取一条动态 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("获取一条动态 失败 body="+gson.toJson(clientRequest));
 			logger.error("getUserStateById : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

@@ -24,6 +24,7 @@ public class IsUsernameInuseHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String username = PetUtil.getParameter(clientRequest, "username");
 			SsoUser user = ssoService.getSsoUserByName(username);
@@ -31,11 +32,11 @@ public class IsUsernameInuseHandler extends AbstractHandler {
 			Boolean hasUser = true;
 			if(user==null)
 				hasUser=false;
-			rtn = new Success(true,hasUser).toString();
+			rtn = new Success(sn,true,hasUser).toString();
 		}catch(Exception e){
 			logger.debug("用户名重复判断 失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

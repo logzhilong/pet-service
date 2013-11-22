@@ -50,17 +50,18 @@ public class UpdateUserHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoUser user = reviceSsoUser(clientRequest);
 			user.setId(getUseridFParamSToken(clientRequest));
 			userService.updateUser(user);
 			logger.debug("修改用户信息成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("修改用户信息失败 body="+gson.toJson(clientRequest));
-			logger.error("",e);
-			rtn = new Success(false,"修改用户信息失败:"+e.getMessage()).toString();
+			logger.error("updateUser",e);
+			rtn = new Success(sn,false,"修改用户信息失败:"+e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

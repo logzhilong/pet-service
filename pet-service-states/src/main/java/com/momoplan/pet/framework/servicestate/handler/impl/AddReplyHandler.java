@@ -23,6 +23,7 @@ public class AddReplyHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			StatesUserStatesReply reply = new StatesUserStatesReply();
@@ -37,11 +38,11 @@ public class AddReplyHandler extends AbstractHandler{
 			reply.setStateid(PetUtil.getParameter(clientRequest, "stateid"));
 			
 			String replyid = stateService.addReply(reply);
-			rtn = new Success(true,replyid).toString();
+			rtn = new Success(sn,true,replyid).toString();
 		}catch(Exception e){
 			logger.debug("回复失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

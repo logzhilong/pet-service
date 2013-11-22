@@ -22,6 +22,7 @@ public class SendNoteHandler extends AbstractHandler {
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try{
 			Note note=new Note();
@@ -31,11 +32,11 @@ public class SendNoteHandler extends AbstractHandler {
 			note.setContent(PetUtil.getParameter(clientRequest, "content"));
 			String id=noteService.sendNote(note);
 			logger.debug("发帖成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,id).toString();
+			rtn = new Success(sn,true,id).toString();
 		}catch(Exception e){
 			logger.debug("发帖失败 body="+gson.toJson(clientRequest));
 			logger.error("sendNote : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

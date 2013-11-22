@@ -18,7 +18,6 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 /**
  * 获取用户动态信息
  * @author liangc
- *
  */
 @Component("getUserState")
 public class GetUserStateListHandler extends AbstractHandler {
@@ -28,6 +27,7 @@ public class GetUserStateListHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try {
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			String currentUser = authenticationToken.getUserid();// 当前登录人
@@ -36,12 +36,12 @@ public class GetUserStateListHandler extends AbstractHandler {
 			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");
 			boolean isSelf = currentUser.equals(targetUser) ? true : false;// 是否取我自己的
 			List<StatesUserStatesVo> list = stateService.getUserStates(targetUser, Integer.parseInt(pageSize), Integer.parseInt(pageNo), isSelf);
-			rtn = new Success(true, list).toString();
+			rtn = new Success(sn,true, list).toString();
 			logger.debug("获取[好友/个人]动态 成功 body=" + gson.toJson(clientRequest));
 		} catch (Exception e) {
 			logger.debug("获取[好友/个人]动态 失败 body=" + gson.toJson(clientRequest));
 			logger.error("获取动态列表 : ", e);
-			rtn = new Success(false, e.getMessage()).toString();
+			rtn = new Success(sn,false, e.getMessage()).toString();
 		} finally {
 			writeStringToResponse(rtn, response);
 		}

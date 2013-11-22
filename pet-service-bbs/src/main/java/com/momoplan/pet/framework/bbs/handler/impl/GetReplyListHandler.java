@@ -25,6 +25,7 @@ public class GetReplyListHandler extends AbstractHandler {
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try {
 			int pageNo = PetUtil.getParameterInteger(clientRequest, "pageNo");
@@ -45,12 +46,13 @@ public class GetReplyListHandler extends AbstractHandler {
 				entity.put("data", new JSONArray(jsonArr));
 			}
 			success.put("entity", entity);
+			success.put("sn", sn);
 			logger.debug("根据帖子id获取所有回复成功 body=" + gson.toJson(clientRequest));
 			rtn = success.toString();
 		} catch (Exception e) {
 			logger.debug("根据帖子id获取所有回复失败 body=" + gson.toJson(clientRequest));
 			logger.error("getReplyList : ", e);
-			rtn = new Success(false, e.toString()).toString();
+			rtn = new Success(sn,false, e.toString()).toString();
 		} finally {
 			writeStringToResponse(rtn, response);
 		}

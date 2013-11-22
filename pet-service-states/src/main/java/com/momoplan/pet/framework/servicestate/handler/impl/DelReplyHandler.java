@@ -17,14 +17,15 @@ public class DelReplyHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String replyid = PetUtil.getParameter(clientRequest, "replyid");
 			stateService.delReply(replyid);
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("删除失败  body="+gson.toJson(clientRequest));
 			logger.error("delReply : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

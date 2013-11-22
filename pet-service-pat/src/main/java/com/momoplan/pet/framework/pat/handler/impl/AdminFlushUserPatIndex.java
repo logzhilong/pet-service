@@ -47,6 +47,7 @@ public class AdminFlushUserPatIndex extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String _pwd = getParameter(clientRequest, "pwd");
 			if(!PWD.equals(_pwd)){
@@ -69,12 +70,12 @@ public class AdminFlushUserPatIndex extends AbstractHandler {
 				storePool.set(k, v);
 				logger.debug("赞索引[更新]:key="+k+" ; value="+v);
 			}
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 			logger.debug("刷新索引 成功 ");
 		}catch(Exception e){
 			logger.debug("刷新索引 失败 ");
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

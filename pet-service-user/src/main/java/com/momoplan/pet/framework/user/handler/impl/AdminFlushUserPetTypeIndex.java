@@ -38,6 +38,7 @@ public class AdminFlushUserPetTypeIndex extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String _uid = getParameter(clientRequest, "uid");
 			String _pwd = getParameter(clientRequest, "pwd");
@@ -70,12 +71,12 @@ public class AdminFlushUserPetTypeIndex extends AbstractHandler {
 				logger.debug("人与宠物类型索引[更新]:key="+indexKey+" ; value="+indexValue);
 			}
 			
-			rtn = new Success(true,petInfoList.size()).toString();
+			rtn = new Success(sn,true,petInfoList.size()).toString();
 			logger.debug("刷新索引 成功 ");
 		}catch(Exception e){
 			logger.debug("刷新索引 失败 ");
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

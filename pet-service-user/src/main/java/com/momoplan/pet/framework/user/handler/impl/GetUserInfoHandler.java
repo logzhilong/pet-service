@@ -6,11 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.user.handler.AbstractHandler;
 import com.momoplan.pet.framework.user.vo.UserVo;
 /*
@@ -52,11 +49,11 @@ OUTPUT:
 public class GetUserInfoHandler extends AbstractHandler {
 	
 	private static Logger logger = LoggerFactory.getLogger(GetUserInfoHandler.class);
-	private Gson gson = MyGson.getInstance();
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userid = null;
 			String username = null;
@@ -69,12 +66,12 @@ public class GetUserInfoHandler extends AbstractHandler {
 			}
 			UserVo vo = userService.getUser(userid,username);
 			logger.debug("获取用户信息成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,vo).toString();
+			rtn = new Success(sn,true,vo).toString();
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("获取用户信息失败 body="+gson.toJson(clientRequest));
-			logger.debug(e.getMessage());
-			rtn = new Success(false,e.getMessage()).toString();
+			logger.error("getUserInfo",e.getMessage());
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

@@ -23,6 +23,7 @@ public class ReplyNoteHandler extends AbstractHandler {
 
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try {
 			NoteSub noteSub = new NoteSub();
@@ -32,11 +33,11 @@ public class ReplyNoteHandler extends AbstractHandler {
 			noteSub.setPid(PetUtil.getParameter(clientRequest, "pid"));
 			String id = noteSubService.replyNote(noteSub);
 			logger.debug("回帖成功 body=" + gson.toJson(clientRequest));
-			rtn = new Success(true, id).toString();
+			rtn = new Success(sn,true, id).toString();
 		} catch (Exception e) {
 			logger.debug("回帖失败 body=" + gson.toJson(clientRequest));
 			logger.error("replyNote : ", e);
-			rtn = new Success(false, e.toString()).toString();
+			rtn = new Success(sn,false, e.toString()).toString();
 		} finally {
 			logger.debug(rtn);
 			writeStringToResponse(rtn, response);

@@ -50,6 +50,7 @@ public class GetPetHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userid = null;
 			if(clientRequest.getParams()!=null){
@@ -61,14 +62,13 @@ public class GetPetHandler extends AbstractHandler {
 				logger.debug("根据token 获取用户信息 token="+token);
 			}
 			List<PetInfo> list = userService.getPetInfo(userid);
-			rtn = new Success(true,list).toString();
+			rtn = new Success(sn,true,list).toString();
 			logger.debug("获取宠物信息 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("获取宠物信息 失败 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}

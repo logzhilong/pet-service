@@ -31,6 +31,7 @@ public class OpenHandler extends AbstractHandler {
 		String rtn = null;
 		String verifyCode = commonConfig.get("verify.code", "enable");//验证码功能，默认开启
 		logger.info("是否需要验证码：verifyCode="+verifyCode);
+		String sn = clientRequest.getSn();
 		try{
 			String phoneType = clientRequest.getImei();
 			if(!"iphone".equalsIgnoreCase(phoneType)){
@@ -41,11 +42,11 @@ public class OpenHandler extends AbstractHandler {
 			LoginResponse loginResponse = new LoginResponse(version,firstImage);
 			logger.debug("open ok: body="+gson.toJson(clientRequest));
 			loginResponse.setVerifyCode(verifyCode);
-			rtn = new Success(true,loginResponse).toString();
+			rtn = new Success(sn,true,loginResponse).toString();
 		}catch(Exception e){
 			logger.debug("open error: body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

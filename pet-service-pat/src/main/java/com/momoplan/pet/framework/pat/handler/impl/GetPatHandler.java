@@ -59,16 +59,17 @@ public class GetPatHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String srcid = PetUtil.getParameter(clientRequest, "srcid");
 			List<SsoUser> list = patService.getPat(srcid);
 			logger.debug("获取赞成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,list).toString();
+			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.debug("获取赞失败 body="+gson.toJson(clientRequest));
 			logger.debug(e.getMessage());
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

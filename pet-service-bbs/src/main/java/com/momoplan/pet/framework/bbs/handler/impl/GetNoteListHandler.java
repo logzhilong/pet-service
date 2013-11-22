@@ -36,6 +36,7 @@ public class GetNoteListHandler extends AbstractHandler {
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try{
 			String fid=PetUtil.getParameter(clientRequest, "forumId");
@@ -49,11 +50,11 @@ public class GetNoteListHandler extends AbstractHandler {
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
 			List<NoteVo> list = noteService.getNoteList(fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),withTop,pageNo,pageSize);
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,list).toString();
+			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){
 			logger.debug("某圈子最新帖子失败 body="+gson.toJson(clientRequest));
 			logger.error("getNoteList : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			writeStringToResponse(rtn,response);
 		}

@@ -33,17 +33,18 @@ public class AddReportStatesHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			String userid = authenticationToken.getUserid();
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			report(userid,stateid);
 			logger.debug("举报 成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("举报 失败 body="+gson.toJson(clientRequest));
 			logger.error("reportContent : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

@@ -26,6 +26,7 @@ public class TokenHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String _token = clientRequest.getToken();
 			Map<String,Object> params = clientRequest.getParams();
@@ -42,11 +43,11 @@ public class TokenHandler extends AbstractHandler {
 				loginResponse.setFirstImage(firstImage);
 			}
 			logger.debug("token有效 body="+_token);
-			rtn = new Success(true,loginResponse).toString();
+			rtn = new Success(sn,true,loginResponse).toString();
 		}catch(Exception e){
 			logger.debug("token无效 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

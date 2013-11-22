@@ -34,16 +34,17 @@ public class GetFriendListHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			//现在 params 里找 userid ，如果没有则根据 token 获取
 			String userid = getUseridFParamSToken(clientRequest);
 			List<UserVo> userList = userService.getFirendList(userid);
-			rtn = new Success(true,userList).toString();
+			rtn = new Success(sn,true,userList).toString();
 			logger.debug(logTitle+" 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug(logTitle+" 失败 body="+gson.toJson(clientRequest));
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

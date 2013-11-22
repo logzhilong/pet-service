@@ -174,10 +174,13 @@ $(function(){
 								</ul>
 							</li>
 							<li>
-								<a>配置管理</a>
+								<a>系统配置</a>
 								<ul>
 									<li>
 										<a title="公共配置管理" href="${ctx }/manager/configmanager/commanageList.html" target="navTab" rel="commanage0001">公共配置管理</a>								
+									</li>
+									<li>
+										<a title="软件版本管理" href="${ctx }/petservice/version/main.html" target="navTab" rel="versionMain">软件版本管理</a>								
 									</li>
 									<li>
 										<a title="索引管理" href="${ctx }/manager/indexmg/indexmamagerlist.html" target="navTab" rel="commanage0002">索引管理</a>								

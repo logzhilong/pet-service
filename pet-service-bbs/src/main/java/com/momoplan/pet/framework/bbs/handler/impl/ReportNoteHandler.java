@@ -40,6 +40,7 @@ public class ReportNoteHandler extends AbstractHandler {
 
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try{
 			String userid=getUseridFParamSToken(clientRequest);
@@ -48,11 +49,11 @@ public class ReportNoteHandler extends AbstractHandler {
 			reportNote(userid,noteId);
 			reportReply(userid,replyId);
 			logger.debug("举报帖子成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("举报帖子失败 body="+gson.toJson(clientRequest));
 			logger.error("reportNote : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

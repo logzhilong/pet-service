@@ -59,10 +59,10 @@ public class FileServiceController {
 	        form.setFormat(format);
 	        form.setFileStream(file.getInputStream());
 	        String fileId = fileServer.put(form);
-	        rtn = new Success(true,fileId).toString();
+	        rtn = new Success(null,true,fileId).toString();
 		}catch(Exception e){
 			logger.error("上传异常",e);
-	        rtn = new Success(false,e.getMessage()).toString();
+	        rtn = new Success(null,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			PetUtil.writeStringToResponse(rtn, response);
@@ -95,10 +95,10 @@ public class FileServiceController {
 		String rtn = null;
 		try{
 			fileServer.delete(fileId);
-			rtn = new Success(true,fileId).toString();
+			rtn = new Success(null,true,fileId).toString();
 		}catch(Exception e){
 			logger.error("删除异常",e);
-			rtn = new Success(false,fileId).toString();
+			rtn = new Success(null,false,fileId).toString();
 		}
 		logger.debug(rtn);
         response.getWriter().write(rtn);

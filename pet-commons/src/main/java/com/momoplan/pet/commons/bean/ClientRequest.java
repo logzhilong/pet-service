@@ -6,7 +6,7 @@ import com.momoplan.pet.commons.PetRequest;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ClientRequest extends PetRequest{
-	
+	String sn;
 	String token;
 	String service;
 	String method;
@@ -15,6 +15,12 @@ public class ClientRequest extends PetRequest{
 	String channel;
 	String version;
 
+	public String getSn() {
+		return sn;
+	}
+	public void setSn(String sn) {
+		this.sn = sn;
+	}
 	public String getService() {
 		return service;
 	}

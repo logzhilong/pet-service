@@ -25,6 +25,7 @@ public class LoginHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String username = PetUtil.getParameter(clientRequest, "username");
 			String password = PetUtil.getParameter(clientRequest, "password");
@@ -35,13 +36,12 @@ public class LoginHandler extends AbstractHandler {
 			user.setDeviceToken(deviceToken);
 			LoginResponse loginResponse = ssoService.login(user);
 			logger.debug("登录成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,loginResponse).toString();
+			rtn = new Success(sn,true,loginResponse).toString();
 		}catch(Exception e){
 			logger.debug("登录失败 body="+gson.toJson(clientRequest));
 			logger.error("login : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}

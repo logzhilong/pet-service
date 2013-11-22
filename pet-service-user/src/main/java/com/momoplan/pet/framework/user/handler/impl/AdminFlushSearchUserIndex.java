@@ -38,6 +38,7 @@ public class AdminFlushSearchUserIndex extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String _uid = getParameter(clientRequest, "uid");
 			String _pwd = getParameter(clientRequest, "pwd");
@@ -67,12 +68,12 @@ public class AdminFlushSearchUserIndex extends AbstractHandler {
 				storePool.set(indexKey, uid);
 				logger.debug("创建用户索引: key="+indexKey+" ; value="+uid);
 			}
-			rtn = new Success(true,list.size()).toString();
+			rtn = new Success(sn,true,list.size()).toString();
 			logger.debug("刷新索引 成功 ");
 		}catch(Exception e){
 			logger.debug("刷新索引 失败 ");
 			logger.error(e.getMessage(),e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

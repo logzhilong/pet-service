@@ -24,15 +24,16 @@ public class RegisterHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoUser user = reviceSsoUser(clientRequest);
 			SsoAuthenticationToken token = ssoService.register(user);
 			logger.debug("注册成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,token).toString();
+			rtn = new Success(sn,true,token).toString();
 		}catch(Exception e){
 			logger.debug("注册失败 body="+gson.toJson(clientRequest));
 			logger.error("register : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

@@ -26,6 +26,7 @@ public class GetTotalReplyHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			int total = 0;
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
@@ -34,12 +35,12 @@ public class GetTotalReplyHandler extends AbstractHandler{
 			List<StatesUserStatesReplyVo> voList = stateService.getReplyByStateid(userid, stateid, Integer.MAX_VALUE,0);
 			if(voList!=null&&voList.size()>0)
 				total = voList.size();
-			rtn = new Success(true,total).toString();
+			rtn = new Success(sn,true,total).toString();
 			logger.debug("总回复数 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("总回复数 失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

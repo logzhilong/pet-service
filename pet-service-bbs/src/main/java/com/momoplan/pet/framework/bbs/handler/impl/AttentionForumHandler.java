@@ -24,17 +24,18 @@ public class AttentionForumHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			UserForumRel userForumRel=new UserForumRel();
 			userForumRel.setUserId(getUseridFParamSToken(clientRequest));
 			userForumRel.setForumId(PetUtil.getParameter(clientRequest, "forumId"));
 			userForumRelService.attentionForum(userForumRel);
 			logger.debug("关注圈子成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("关注圈子失败 body="+gson.toJson(clientRequest));
 			logger.error("attentionForum : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

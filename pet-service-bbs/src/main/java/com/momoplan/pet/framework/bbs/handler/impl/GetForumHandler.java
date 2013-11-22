@@ -23,15 +23,16 @@ public class GetForumHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try {
 			String petType = PetUtil.getParameter(clientRequest, "petType");
 			logger.debug("根据宠物类型获取圈子 成功 body=" + gson.toJson(clientRequest));
 			Forum po = forumService.getForum(petType);
-			rtn = new Success(true,po).toString();
+			rtn = new Success(sn,true,po).toString();
 		} catch (Exception e) {
 			logger.debug("根据宠物类型获取圈子 失败 body=" + gson.toJson(clientRequest));
 			logger.error("getForumByPetType : ", e);
-			rtn = new Success(false, e.toString()).toString();
+			rtn = new Success(sn,false, e.toString()).toString();
 		} finally {
 			writeStringToResponse(rtn, response);
 		}

@@ -17,15 +17,16 @@ public class DelUserStateHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String stateid = PetUtil.getParameter(clientRequest, "stateid");
 			stateService.delUserState(stateid);
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 			logger.debug("删除动态 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("删除动态 失败 body="+gson.toJson(clientRequest));
 			logger.error("delUserState : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

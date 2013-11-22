@@ -22,6 +22,7 @@ public class QuitForumHandler extends AbstractHandler {
 
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try {
 			UserForumRel userForumRel = new UserForumRel();
@@ -29,11 +30,11 @@ public class QuitForumHandler extends AbstractHandler {
 			userForumRel.setUserId(getUseridFParamSToken(clientRequest));
 			userForumRelService.quitForum(userForumRel);
 			logger.debug("退出圈子成功 body=" + gson.toJson(clientRequest));
-			rtn = new Success(true, "OK").toString();
+			rtn = new Success(sn,true, "OK").toString();
 		} catch (Exception e) {
 			logger.debug("退出圈子失败 body=" + gson.toJson(clientRequest));
 			logger.error("quitForum : ", e);
-			rtn = new Success(false, e.toString()).toString();
+			rtn = new Success(sn,false, e.toString()).toString();
 		} finally {
 			logger.debug(rtn);
 			writeStringToResponse(rtn, response);

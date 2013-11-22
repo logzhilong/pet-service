@@ -24,15 +24,16 @@ public class GetUserForumConditionHandler extends AbstractHandler {
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
+		String sn = clientRequest.getSn();
 		String rtn = null;
 		try{
 			List<UserForumCondition> list = forumService.getUserForumCondition();
 			logger.debug("获取被推荐的圈子列表 【成功】");
-			rtn = new Success(true,list).toString();
+			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){
 			logger.debug("获取被推荐的圈子列表 【失败】");
 			logger.error("getUserForumCondition : ",e);
-			rtn = new Success(false,e.toString()).toString();
+			rtn = new Success(sn,false,e.toString()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

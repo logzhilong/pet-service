@@ -18,15 +18,16 @@ public class AddUserStateHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			String stateid = stateService.addUserState(clientRequest,authenticationToken);
-			rtn = new Success(true,stateid).toString();
+			rtn = new Success(sn,true,stateid).toString();
 			logger.debug("发布状态成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("发布状态失败 body="+gson.toJson(clientRequest));
 			logger.error("addUserState : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

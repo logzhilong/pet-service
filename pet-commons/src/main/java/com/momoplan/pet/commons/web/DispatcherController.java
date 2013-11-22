@@ -26,16 +26,18 @@ public class DispatcherController extends PetUtil {
 	public void request(String body, HttpServletRequest request,HttpServletResponse response) throws Exception{
 		long start = System.currentTimeMillis();
 		String method = null;
+		String sn = null;
 		try{
 			ClientRequest clientRequest = reviceClientRequest(body);
 			method = clientRequest.getMethod();
+			sn = clientRequest.getSn();
 			RequestHandler handrel = (RequestHandler)Bootstrap.getBean(method);
 			handrel.process(clientRequest, response);
 		}catch(Exception e){
-			writeStringToResponse(new Success(false,e.getMessage()).toString(),response);
+			writeStringToResponse(new Success(sn,false,e.getMessage()).toString(),response);
 		}finally{
 			long end = System.currentTimeMillis();
-			logger.info("["+method+"]--"+(end-start)+"ms.");
+			logger.info("[TTL]--["+method+"]--"+sn+"--"+(end-start)+"ms.");
 		}
 	}
 	

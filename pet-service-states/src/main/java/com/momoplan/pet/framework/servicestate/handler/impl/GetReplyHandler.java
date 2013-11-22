@@ -23,6 +23,7 @@ public class GetReplyHandler extends AbstractHandler{
 	@Override
 	public void process(ClientRequest clientRequest,HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
 			String userid = authenticationToken.getUserid();
@@ -30,12 +31,12 @@ public class GetReplyHandler extends AbstractHandler{
 			String pageSize = PetUtil.getParameter(clientRequest, "pageSize");
 			String pageNo = PetUtil.getParameter(clientRequest, "pageNo");
 			List<StatesUserStatesReplyVo> voList = stateService.getReplyByStateid(userid, stateid, Integer.parseInt(pageSize), Integer.parseInt(pageNo));
-			rtn = new Success(true,voList).toString();
+			rtn = new Success(sn,true,voList).toString();
 			logger.debug("获取回复 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
 			logger.debug("获取回复 失败 body="+gson.toJson(clientRequest));
 			logger.error("addReply : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);

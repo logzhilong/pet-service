@@ -28,6 +28,7 @@ public class LogoutHandler extends AbstractHandler {
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
 		String rtn = null;
+		String sn = clientRequest.getSn();
 		try{
 			String userId = getUseridFParamSToken(clientRequest);
 			logger.debug("退出登录 : userId="+userId);
@@ -41,11 +42,11 @@ public class LogoutHandler extends AbstractHandler {
 			String token = clientRequest.getToken();
 			ssoService.logout(token);
 			logger.debug("logout成功 body="+gson.toJson(clientRequest));
-			rtn = new Success(true,"OK").toString();
+			rtn = new Success(sn,true,"OK").toString();
 		}catch(Exception e){
 			logger.debug("logout失败 body="+gson.toJson(clientRequest));
 			logger.error("logout : ",e);
-			rtn = new Success(false,e.getMessage()).toString();
+			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
 			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
