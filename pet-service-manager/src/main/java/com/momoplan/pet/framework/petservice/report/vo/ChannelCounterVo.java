@@ -17,14 +17,14 @@ public class ChannelCounterVo {
 //	\"channel\": \"Default\"
 	private String channel = null;
 	private String channelName = null;
-	private Integer new_user = null;
-	private Integer new_register = null;
-	private Float new_rate = null;
-	private Integer all_user = null;
-	private Integer all_register = null;
-	private Float all_rate = null;
-	private Integer new_pv = null;
-	private Integer all_pv = null;
+	private Integer new_user = 0;
+	private Integer new_register = 0;
+	private Float new_rate = 0F;
+	private Integer all_user = 0;
+	private Integer all_register = 0;
+	private Float all_rate = 0F;
+	private Integer new_pv = 0;
+	private Integer all_pv = 0;
 
 	public String getChannelName() {
 		return channelName;

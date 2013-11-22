@@ -30,34 +30,69 @@
 			<button type="button" onclick="alert('开发中...');" >查询</button>
 		</p>
 	</div>
-
 	<div>
 		<table width="100%" class="list" border="0" style="background-color: white;">
 			<thead>
 				<tr>
 					<th width="20" ></th>
 					<th>渠道(渠道号)</th>
-					<th>今日新增</th>
-					<th>今日注册</th>
-					<th>今日注册率</th>
-					<th>总用户数</th>
-					<th>总注册数</th>
-					<th>总注册率</th>
-					<th>今日PV</th>
-					<th>总PV</th>
+					<th>
+						<a href="#">
+							今日新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
+						</a>
+					</th>
+					<th>
+						<a href="#">
+							今日注册(&nbsp;<font color='red'>${all.new_register }</font>&nbsp;)
+						</a>				
+					</th>
+					<th>
+						<a href="#">
+							今日注册率(&nbsp;<font color='red'>${(all.new_register/all.new_user)*100}%</font>&nbsp;)
+						</a>					
+					</th>
+					<th>
+						<a href="#">
+							总用户数(&nbsp;<font color='red'>${all.all_user }</font>&nbsp;)
+						</a>					
+					</th>
+					<th>
+						<a href="#">
+							总注册数(&nbsp;<font color='red'>${all.all_register }</font>&nbsp;)
+						</a>					
+					</th>
+					<th>
+						<a href="#">
+							总注册率(&nbsp;<font color='red'><fmt:formatNumber pattern="##.##" value="${(all.all_register/all.all_user)*100 }" />%</font>&nbsp;)
+						</a>					
+					</th>
+					<th>
+						<a href="#">
+							今日PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
+						</a>					
+					</th>
+					<th>
+						<a href="#">
+							总PV(&nbsp;<font color='red'>${all.all_pv }</font>&nbsp;)
+						</a>					
+					</th>
 				</tr>
 			</thead>
 			<tbody>
 			<c:forEach items="${page.data }" var="itm" varStatus="idx">
 				<tr height="30" align="left" >
 					<td align="center">${idx.index+1 }</td>
-					<td>${itm.channel }(${itm.channelName })</td>
+					<td>${itm.channelName }(${itm.channel })</td>
 					<td>${itm.new_user }</td>
 					<td>${itm.new_register }</td>
-					<td>${itm.new_rate }</td>
+					<td>
+						<fmt:formatNumber pattern="##.##" value="${itm.new_rate*100 }" />%
+					</td>
 					<td>${itm.all_user }</td>
 					<td>${itm.all_register }</td>
-					<td>${itm.all_rate }</td>
+					<td>
+						<fmt:formatNumber pattern="##.##" value="${itm.all_rate*100 }" />%
+					</td>
 					<td>${itm.new_pv }</td>
 					<td>${itm.all_pv }</td>
 				</tr>

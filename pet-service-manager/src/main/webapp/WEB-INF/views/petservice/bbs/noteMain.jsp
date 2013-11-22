@@ -63,7 +63,7 @@
 			<tr height="35" align="left" target="id" rel="${itm.id }" >
 				<td>${idx.index+1 }</td>
 				<td>
-					<a href="${ctx }/petservice/bbs/noteAddOrEdit.html?id=${itm.id}&forumId=${forum.id}" target="dialog" mask="true" title="修改" width="650" height="650" >
+					<a href="${ctx }/petservice/bbs/noteView.html?id=${itm.id}" target="navTab" rel="noteViewTab" title="帖子内容">
 						${itm.name }
 					</a>
 				</td>

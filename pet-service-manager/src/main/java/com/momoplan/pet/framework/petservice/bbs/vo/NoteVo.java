@@ -10,6 +10,8 @@ public class NoteVo extends Note{
 	
 	private String nickname = null;
 	
+	private String icon = null;
+	
 	/*
 	 * 查询条件
 	 */
@@ -17,6 +19,14 @@ public class NoteVo extends Note{
 	private String condition_isTop = "ALL";
 	private String condition_isEute = "ALL";
 	
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
 	public String getCondition_state() {
 		return condition_state;
 	}

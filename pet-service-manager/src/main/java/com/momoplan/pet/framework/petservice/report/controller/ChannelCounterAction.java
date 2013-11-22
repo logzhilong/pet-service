@@ -60,6 +60,7 @@ public class ChannelCounterAction extends BaseAction{
 			}
 			List<String> list = storePool.lrange(report_channel_counter_key, 0, -1);
 			List<ChannelCounterVo> data = new ArrayList<ChannelCounterVo>();
+			ChannelCounterVo all = new ChannelCounterVo();
 			for(String j : list){
 				ChannelCounterVo vo = gson.fromJson(j, ChannelCounterVo.class);
 				data.add(vo);
@@ -67,9 +68,19 @@ public class ChannelCounterAction extends BaseAction{
 				if(StringUtils.isEmpty(channelName))
 					channelName = "未知渠道";
 				vo.setChannelName(channelName);
+				//累加得出总数
+				all.setNew_user(all.getNew_user()+vo.getNew_user());
+				all.setNew_register(all.getNew_register()+vo.getNew_register());
+				
+				all.setAll_user(all.getAll_user()+vo.getAll_user());
+				all.setAll_register(all.getAll_register()+vo.getAll_register());
+				
+				all.setNew_pv(all.getNew_pv()+vo.getNew_pv());
+				all.setAll_pv(all.getAll_pv()+vo.getAll_pv());
 			}
 			page.setData(data);
 			model.addAttribute("page", page);
+			model.addAttribute("all", all);
 		} catch (Exception e) {
 			logger.error("serviceCounter0",e);
 			throw e;
@@ -77,4 +88,6 @@ public class ChannelCounterAction extends BaseAction{
 		return "/petservice/report/channelCounter0";
 	}
 	
+	public static void main(String[] args) {
+	}
 }
