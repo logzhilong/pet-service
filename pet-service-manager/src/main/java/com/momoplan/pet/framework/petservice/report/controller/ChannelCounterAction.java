@@ -65,8 +65,10 @@ public class ChannelCounterAction extends BaseAction{
 				ChannelCounterVo vo = gson.fromJson(j, ChannelCounterVo.class);
 				data.add(vo);
 				String channelName = channelDict.get(vo.getChannel());
-				if(StringUtils.isEmpty(channelName))
-					channelName = "未知渠道";
+				if(StringUtils.isEmpty(channelName)){
+					channelName = "未注册此渠道";
+					vo.setReg(false);//未注册这个渠道，不能查看明细
+				}
 				vo.setChannelName(channelName);
 				//累加得出总数
 				all.setNew_user(all.getNew_user()+vo.getNew_user());

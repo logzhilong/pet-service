@@ -43,7 +43,7 @@ $( document ).ready(function() {
 </div>
 
 
-<div class="pageContent" selector="h1" layoutH="2">
+<div class="pageContent" selector="h1" layoutH="20">
 <div align="center">
 	
 	<div>
@@ -71,6 +71,13 @@ $( document ).ready(function() {
 				</c:forEach>
 				</tbody>
 			</table>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
+			<br>
 		</div>	
 	</div>
 

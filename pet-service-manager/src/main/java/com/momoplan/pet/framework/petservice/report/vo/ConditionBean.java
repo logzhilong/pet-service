@@ -6,8 +6,28 @@ public class ConditionBean {
 	
 	private String serviceMethod = null;
 	
+	private String channel = null;
+	
 	private String month = null;
 	
+	private String cd = null;
+	
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public String getCd() {
+		return cd;
+	}
+
+	public void setCd(String cd) {
+		this.cd = cd;
+	}
+
 	public String getMonth() {
 		return month;
 	}

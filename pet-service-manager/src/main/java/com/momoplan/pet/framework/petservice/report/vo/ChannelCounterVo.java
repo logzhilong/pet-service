@@ -25,7 +25,15 @@ public class ChannelCounterVo {
 	private Float all_rate = 0F;
 	private Integer new_pv = 0;
 	private Integer all_pv = 0;
-
+	
+	private boolean reg = true;
+	
+	public boolean isReg() {
+		return reg;
+	}
+	public void setReg(boolean reg) {
+		this.reg = reg;
+	}
 	public String getChannelName() {
 		return channelName;
 	}

@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.petservice.report.controller;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -106,12 +107,17 @@ public class ServiceCounterAction extends BaseAction{
 		String[] sm = myForm.getServiceMethod().split(ConditionBean.serviceMethodSplit);
 		String service = sm[0];
 		String method = sm[1];
+		String cd = myForm.getCd();
+		String title = null;
+		
 		try {
 			List<MgrChannelDict> channelDictList = channelDictService.getChannelDictList();
 			Map<String,String> channelDict = new HashMap<String,String>();
 
 			MgrServiceDict mgrServiceDict = serviceDictService.getMgrServiceDict(service, method);
 			String alias = mgrServiceDict.getAlias();
+			
+			title = "各渠道 "+alias+" 统计";
 			
 			StringBuffer sb = new StringBuffer();
 			sb.append(" select service,method,sum(counter) as totalCount ,channel ");
@@ -133,6 +139,12 @@ public class ServiceCounterAction extends BaseAction{
 			sb.append(" service='").append(service).append("' ");
 			sb.append(" and ");
 			sb.append(" method='").append(method).append("' ");
+
+			if(StringUtils.isNotEmpty(cd)){
+				sb.append(" and ");
+				sb.append(" cd='").append(cd).append("' ");
+				title = title+" ("+cd+")";
+			}
 			
 			sb.append(" group by service,method,channel "); 
 			sb.append(" order by totalCount desc ");
@@ -146,15 +158,15 @@ public class ServiceCounterAction extends BaseAction{
 			}
 			
 			Map<String,Object> root = new HashMap<String,Object>();
-			root.put("title", "各渠道 "+alias+" 统计");
+			root.put("title", title );
 			root.put("dataList", dataList);
 			String xmlData = new FreeMarkerUtils("/template/servicecounter/serviceCounter1.ftl",root).getText();
 			xmlData = xmlData.replaceAll("\r", "");
 			xmlData = xmlData.replaceAll("\n", "");
 			xmlData = xmlData.replaceAll("  ", " ");
 			logger.debug(xmlData);
+			model.addAttribute("danwei", "次");
 			model.addAttribute("xmlData", xmlData);
-			
 			model.addAttribute("serviceName", alias);
 			model.addAttribute("list", dataList);
 		} catch (Exception e) {
@@ -178,6 +190,8 @@ public class ServiceCounterAction extends BaseAction{
 				month = DateUtils.formatDate(new Date()).substring(0, 7);
 			}
 			MgrChannelDict mgrChannelDict =  channelDictService.getChannelDict(channel);
+			if(mgrChannelDict==null)
+				throw new Exception("channel ["+channel+"] Not define...");
 			MgrServiceDict mgrServiceDict = serviceDictService.getMgrServiceDict(service, method);
 			String alias = mgrServiceDict.getAlias();
 			
@@ -226,6 +240,156 @@ public class ServiceCounterAction extends BaseAction{
 	}
 
 	
+	/**
+	 * 今日注册率
+	 * @param myForm
+	 * @param model
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/petservice/report/register_rate.html")
+	public String registerRate(ConditionBean myForm,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		logger.debug("/petservice/report/register_rate.html");
+		logger.debug("input:"+gson.toJson(myForm));
+		String cd = myForm.getCd();
+		String title = null;
+		String alias = "注册率";
+		
+		Map<String,Object> root = new HashMap<String,Object>();
+		try {
+			List<MgrChannelDict> channelDictList = channelDictService.getChannelDictList();
+			Map<String,String> channelDict = new HashMap<String,String>();
+			for(MgrChannelDict m : channelDictList){
+				channelDict.put(m.getCode(), m.getAlias());
+			}
+			title = "各渠道 "+alias+" 统计";
+			root.put("cd", cd);
+			String sql = new FreeMarkerUtils("/template/report/register_rate.ftl",root).getText();
+			logger.debug("SQL--rate :::: "+sql);
+			
+			List<ServiceCounterVo> dataList = serviceCounterService.selectServiceCounterVo(sql,1);
+			for(ServiceCounterVo vo : dataList){
+				String totalCount = vo.getTotalCount();
+				if(StringUtils.isEmpty(totalCount)){
+					vo.setTotalCount("0");
+				}else{
+					Float f = Float.parseFloat(totalCount);
+					String t = new DecimalFormat(".##").format(f*100);
+					vo.setTotalCount(t);
+				}
+				vo.setAlias(alias);
+				vo.setChannelName(channelDict.get(vo.getChannel()));
+			}
+			root.clear();
+			root.put("title", title );
+			root.put("dataList", dataList);
+			String xmlData = new FreeMarkerUtils("/template/servicecounter/serviceCounter1.ftl",root).getText();
+			xmlData = xmlData.replaceAll("\r", "");
+			xmlData = xmlData.replaceAll("\n", "");
+			xmlData = xmlData.replaceAll("  ", " ");
+			logger.debug(xmlData);
+			model.addAttribute("danwei", "%");
+			model.addAttribute("xmlData", xmlData);
+			model.addAttribute("serviceName", alias);
+			model.addAttribute("list", dataList);
+		} catch (Exception e) {
+			logger.error("serviceCounter1",e);
+			throw e;
+		}
+		return "/petservice/report/serviceCounter1";
+	}
+	
+	@RequestMapping("/petservice/report/pv1.html")
+	public String pv(ConditionBean myForm,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		logger.debug("/petservice/report/pv1.html");
+		logger.debug("input:"+gson.toJson(myForm));
+		String cd = myForm.getCd();
+		String title = null;
+		String alias = "PV";
+		
+		Map<String,Object> root = new HashMap<String,Object>();
+		try {
+			List<MgrChannelDict> channelDictList = channelDictService.getChannelDictList();
+			Map<String,String> channelDict = new HashMap<String,String>();
+			for(MgrChannelDict m : channelDictList){
+				channelDict.put(m.getCode(), m.getAlias());
+			}
+			title = "各渠道 "+alias+" 统计";
+			root.put("cd", cd);
+			String sql = new FreeMarkerUtils("/template/report/pv1.ftl",root).getText();
+			logger.debug("SQL--pv :::: "+sql);
+			
+			List<ServiceCounterVo> dataList = serviceCounterService.selectServiceCounterVo(sql,1);
+			for(ServiceCounterVo vo : dataList){
+				vo.setAlias(alias);
+				vo.setChannelName(channelDict.get(vo.getChannel()));
+			}
+			root.clear();
+			root.put("title", title );
+			root.put("dataList", dataList);
+			String xmlData = new FreeMarkerUtils("/template/servicecounter/serviceCounter1.ftl",root).getText();
+			xmlData = xmlData.replaceAll("\r", "");
+			xmlData = xmlData.replaceAll("\n", "");
+			xmlData = xmlData.replaceAll("  ", " ");
+			logger.debug(xmlData);
+			model.addAttribute("danwei", "次");
+			model.addAttribute("xmlData", xmlData);
+			model.addAttribute("serviceName", alias);
+			model.addAttribute("list", dataList);
+		} catch (Exception e) {
+			logger.error("serviceCounter1",e);
+			throw e;
+		}
+		return "/petservice/report/serviceCounter1";
+	}
 	
 	
+	@RequestMapping("/petservice/report/pv2.html")
+	public String pv2(ConditionBean myForm,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		logger.debug("/petservice/report/serviceCounter1.html");
+		logger.debug("input:"+gson.toJson(myForm));
+		String month = myForm.getMonth();
+		String channel = myForm.getChannel();
+		try {
+			Map<String,Object> root = new HashMap<String,Object>();
+			if(StringUtils.isEmpty(month)){
+				month = DateUtils.formatDate(new Date()).substring(0, 7);
+			}
+			MgrChannelDict mgrChannelDict =  channelDictService.getChannelDict(channel);
+			if(mgrChannelDict==null)
+				throw new Exception("channel ["+channel+"] Not define...");
+			String alias = "PV";
+			root.put("cd", month);
+			root.put("channel", channel);
+			String sql = new FreeMarkerUtils("/template/report/pv2.ftl",root).getText();
+			logger.debug("SQL--2 :::: "+sql);
+			List<ServiceCounterVo> dataList = serviceCounterService.selectServiceCounterVo(sql,2);
+			
+			for(ServiceCounterVo vo : dataList){
+				vo.setAlias(alias);
+				vo.setChannelName(mgrChannelDict.getAlias());
+			}
+			
+			root.clear();
+			root.put("title", mgrChannelDict.getAlias()+" 渠道 "+alias+" 服务统计（"+month+")");
+			root.put("dataList", dataList);
+			String xmlData = new FreeMarkerUtils("/template/servicecounter/serviceCounter2.ftl",root).getText();
+			xmlData = xmlData.replaceAll("\r", "");
+			xmlData = xmlData.replaceAll("\n", "");
+			xmlData = xmlData.replaceAll("  ", " ");
+			logger.debug(xmlData);
+			model.addAttribute("xmlData", xmlData);
+			
+			model.addAttribute("serviceName", alias);
+			model.addAttribute("list", dataList);
+			model.addAttribute("myForm", myForm);
+		} catch (Exception e) {
+			logger.error("serviceCounter2",e);
+			throw e;
+		}
+		return "/petservice/report/serviceCounter2";
+	}
+
 }

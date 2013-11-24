@@ -41,7 +41,7 @@ $( document ).ready(function() {
 						<th width="20" ></th>
 						<th width="100" >渠道名称</th>
 						<th width="50" >渠道号</th>
-						<th width="90" >总数(次)</th>
+						<th width="90" >总数(${danwei })</th>
 						<th width="120" >服务名</th>
 					</tr>
 				</thead>
@@ -50,12 +50,19 @@ $( document ).ready(function() {
 					<tr height="30" align="left" >
 						<td align="center">${idx.index+1 }</td>
 						<td>
-							<a href="${ctx }/petservice/report/serviceCounter2.html?serviceMethod=${itm.service }__${itm.method }__${itm.channel}" title="${itm.channelName }-渠道统计" target="navTab" rel="serviceCounter2Tab_${itm.channel}">
-								${itm.channelName }
-							</a>
+							<c:choose>
+								<c:when test="${not empty itm.method }">
+									<a href="${ctx }/petservice/report/serviceCounter2.html?serviceMethod=${itm.service }__${itm.method }__${itm.channel}" title="${itm.channelName }-渠道统计" target="navTab" rel="serviceCounter2Tab_${itm.channel}">
+										${itm.channelName }
+									</a>
+								</c:when>
+								<c:otherwise>
+									${itm.channelName }
+								</c:otherwise>
+							</c:choose>
 						</td>
 						<td>${itm.channel }</td>
-						<td align="center">${itm.totalCount }</td>
+						<td align="center">${itm.totalCount }${danwei }</td>
 						<td>${itm.alias }</td>
 					</tr>
 				</c:forEach>
