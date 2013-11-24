@@ -1,22 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
 <%@page import="com.momoplan.pet.commons.DateUtils" %>
-<% 
-String cd = DateUtils.formatDate(DateUtils.minusDays(DateUtils.now(), 1));
-%>
+
 <div class="pageContent" selector="h1" layoutH="2">
 <div>
 
 	<div class="accountInfo">
 		<p>
-			按总数排序:
-			<select name="sort" >
-				<option value="desc">从大到小</option>
-				<option value="asc">从小到大</option>
-			</select>
-			-
-			<button type="button" onclick="alert('开发中...');" >查询</button>
+			<font color="red">
+				最近区间：${min } 至 ${max }
+			</font>
 		</p>
+		<br>
+		按总数排序:
+		<select name="sort" >
+			<option value="desc">从大到小</option>
+			<option value="asc">从小到大</option>
+		</select>
+		-
+		<button type="button" onclick="alert('开发中...');" >查询</button>
+		
 	</div>
 	<div>
 		<table width="100%" class="list" border="0" style="background-color: white;">
@@ -26,20 +29,20 @@ String cd = DateUtils.formatDate(DateUtils.minusDays(DateUtils.now(), 1));
 					<th>渠道(渠道号)</th>
 					
 					<th>
-						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__firstOpen&cd=<%=cd %>" title="今日新增-统计" target="navTab" rel="serviceCounter1Tab">
-							今日新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
+						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__firstOpen&cd=${min}__${max}" title="今日新增-统计" target="navTab" rel="serviceCounter1Tab">
+							最近新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
 						</a>
 					</th>
 					
 					<th>
-						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__register&cd=<%=cd %>" title="今日注册-统计" target="navTab" rel="serviceCounter1Tab">
-							今日注册(&nbsp;<font color='red'>${all.new_register }</font>&nbsp;)
+						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__register&cd=${min}__${max}" title="今日注册-统计" target="navTab" rel="serviceCounter1Tab">
+							最近注册(&nbsp;<font color='red'>${all.new_register }</font>&nbsp;)
 						</a>
 					</th>
 					
 					<th>
-						<a href="${ctx }/petservice/report/register_rate.html?cd=<%=cd %>" title="今日注册率-统计" target="navTab" rel="serviceCounter1Tab">
-							今日注册率
+						<a href="${ctx }/petservice/report/register_rate.html?cd=${min}__${max}" title="今日注册率-统计" target="navTab" rel="serviceCounter1Tab">
+							最近注册率
 							<%--
 							(&nbsp;<font color='red'>${(all.new_register/all.new_user)*100}%</font>&nbsp;)
 							--%>
@@ -66,8 +69,8 @@ String cd = DateUtils.formatDate(DateUtils.minusDays(DateUtils.now(), 1));
 						</a>					
 					</th>
 					<th>
-						<a href="${ctx }/petservice/report/pv1.html?cd=<%=cd %>" title="今日PV-统计" target="navTab" rel="serviceCounter1Tab">
-							今日PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
+						<a href="${ctx }/petservice/report/pv1.html?cd=${min}__${max}" title="今日PV-统计" target="navTab" rel="serviceCounter1Tab">
+							最近PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
 						</a>					
 					</th>
 					<th>
@@ -112,7 +115,7 @@ String cd = DateUtils.formatDate(DateUtils.minusDays(DateUtils.now(), 1));
 							</c:otherwise>
 						</c:choose>
 					</td>
-					<td title="今日注册率">
+					<td title="最近注册率">
 						<fmt:formatNumber pattern="##.##" value="${itm.new_rate*100 }" />%
 					</td>
 					<td>

@@ -140,10 +140,22 @@ public class ServiceCounterAction extends BaseAction{
 			sb.append(" and ");
 			sb.append(" method='").append(method).append("' ");
 
-			if(StringUtils.isNotEmpty(cd)){
+			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
 				sb.append(" and ");
 				sb.append(" cd='").append(cd).append("' ");
 				title = title+" ("+cd+")";
+			}
+			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
+				String min = scop[0];
+				String max = scop[1];
+				sb.append(" and ");
+				sb.append(" ( ");
+				sb.append(" 	cd>='").append(min).append("' ");
+				sb.append(" 	and ");
+				sb.append(" 	cd<='").append(max).append("' ");
+				sb.append(" ) ");
+				title = title+" ("+min+" ~ "+max+")";
 			}
 			
 			sb.append(" group by service,method,channel "); 
@@ -265,7 +277,15 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
-			root.put("cd", cd);
+			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
+				String min = scop[0];
+				String max = scop[1];
+				root.put("max", min);
+				root.put("max", max);
+			}else{
+				throw new Exception("time scop undifine ...");
+			}
 			String sql = new FreeMarkerUtils("/template/report/register_rate.ftl",root).getText();
 			logger.debug("SQL--rate :::: "+sql);
 			
@@ -317,7 +337,15 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
-			root.put("cd", cd);
+			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
+				String min = scop[0];
+				String max = scop[1];
+				root.put("max", min);
+				root.put("max", max);
+			}else{
+				throw new Exception("time scop undifine ...");
+			}
 			String sql = new FreeMarkerUtils("/template/report/pv1.ftl",root).getText();
 			logger.debug("SQL--pv :::: "+sql);
 			
