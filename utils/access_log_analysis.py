@@ -11,6 +11,48 @@ import mysql.connector
 import datetime
 import redis
 
+report_channel_counter_sql = """
+select  r.channel , 
+	r.new_user , 
+	r.new_register , 
+	r.all_register, 
+	r.all_user , 
+	r.new_pv , 
+	r.all_pv ,
+        (r.new_register/r.new_user) as new_rate/*今日注册率*/,
+        (all_register/all_user) as all_rate/*总注册率*/
+from  (
+ select
+    c0.channel/*渠道*/,
+    (select sum(c1.counter)
+      from biz_service_counter c1
+      where c1.channel=c0.channel
+	and c1.method='firstOpen'
+	and (c1.cd>='${min}' and c1.cd<='${max}') ) as new_user/*今日新增*/,
+    (select sum(c2.counter)
+      from biz_service_counter c2
+      where c2.channel=c0.channel
+	and c2.method='register'
+	and (c2.cd>='${min}' and c2.cd<='${max}') ) as new_register/*今日注册*/,
+    (select sum(c3.counter)
+      from biz_service_counter c3
+      where c3.channel=c0.channel
+	and c3.method='register' ) as all_register/*总注册数*/,
+    (select sum(c4.counter)
+      from biz_service_counter c4
+      where c4.channel=c0.channel
+	and c4.method='firstOpen' ) as all_user/*总用户数*/,
+    (select sum(c5.counter)
+      from biz_service_counter c5
+      where c5.channel=c0.channel
+	and (c5.cd>='${min}' and c5.cd<='${max}')  ) as new_pv/*今日PV*/,
+    (select sum(c6.counter)
+      from biz_service_counter c6
+      where c6.channel=c0.channel ) as all_pv/*总PV*/
+ from biz_service_counter c0
+ group by c0.channel
+)as r
+"""
 
 common_cfg = mod_conf.load('access_log_analysis.ini')
 LOG_LEVEL = lm.level['debug']
@@ -18,6 +60,7 @@ log = lm.LoggerFactory(common_cfg['common']['log_file'],'counter',LOG_LEVEL).get
 
 total = {}
 result = {}
+scop = {'min':'9999-99-99','max':'0000-00-00'}
 
 def visit(arg,dirname,names) :
 	log.debug( 'dirname=%s ; arg=%s' % (dirname,arg) )
@@ -35,6 +78,8 @@ def analysis(path) :
 			t = 0
 			while line:
 				(d,in_out) = line[1:11],line[25:]
+				if scop['min'] > d : scop['min'] = d
+				if scop['max'] < d : scop['max'] = d
 				map = json.loads(in_out)
 				service = map.get('input').get('service')	
 				method = map.get('input').get('method')	
@@ -43,7 +88,7 @@ def analysis(path) :
 					channel = 'Default'	
 				k = service,method,channel,d,map.get('output').get('success')
 				c = result.get(k)
-				if c is None:
+				if not c:
 					c = 1
 				else:
 					c+=1
@@ -127,12 +172,23 @@ def runner() :
 			log.debug( ("<<<<<<<<<<<<<< %s" % i) )
 	return 'success'
 
-def report_channel_counter():
-	d = datetime.date.today()+datetime.timedelta(-1)
-	cd = d.strftime('%Y-%m-%d')
-	query_param = {'cd':cd}	
+def report_channel_counter(cmd=False):
+	redisCli = redis.Redis( host=common_cfg['common']['store_host'],port=int(common_cfg['common']['store_port']),password=common_cfg['common']['store_password'] )
+	#如果是命令行执行，则只初始化昨天的数据,否则统计 scop.min ~ scop.max 区间的数据
+	if cmd :
+		d = datetime.date.today()+datetime.timedelta(-1)
+		cd = d.strftime('%Y-%m-%d')
+		scop['min'] = cd
+        	scop['max'] = cd
 	template = string.Template(report_channel_counter_sql)
-	sql = template.safe_substitute(query_param)
+	sql = template.safe_substitute(scop)
+	scop_json = json.dumps(scop)
+	log.debug('scop = %s' % scop_json)
+	#把范围放在缓存中，后台显示时取出即可
+	redisCli.set('report_scope',scop_json)
+	scop['min'] = '9999-99-99'
+        scop['max'] = '0000-00-00'
+	
 	#log.debug(sql)
 	host = common_cfg['common']['host']
 	user = common_cfg['common']['user']
@@ -142,7 +198,6 @@ def report_channel_counter():
 	cursor = conn.cursor()
 	log.debug('构建报表数据')
 	cursor.execute(sql)
-	redisCli = redis.Redis( host=common_cfg['common']['store_host'],port=int(common_cfg['common']['store_port']),password=common_cfg['common']['store_password'] )
 	report_key = common_cfg['common']['report_key']
 	log.debug( '清除历史报表 key=%s' % report_key )
 	redisCli.delete(report_key)
@@ -184,48 +239,5 @@ if __name__ == '__main__' :
 
 	while True:
 		runner()
-		time.sleep(60)
+		time.sleep(120)
 
-
-report_channel_counter_sql = """
-select  r.channel , 
-	r.new_user , 
-	r.new_register , 
-	r.all_register, 
-	r.all_user , 
-	r.new_pv , 
-	r.all_pv ,
-        (r.new_register/r.new_user) as new_rate/*今日注册率*/,
-        (all_register/all_user) as all_rate/*总注册率*/
-from  (
- select
-    c0.channel/*渠道*/,
-    (select sum(c1.counter)
-      from biz_service_counter c1
-      where c1.channel=c0.channel
-	and c1.method='firstOpen'
-	and c1.cd='${cd}' ) as new_user/*今日新增*/,
-    (select sum(c2.counter)
-      from biz_service_counter c2
-      where c2.channel=c0.channel
-	and c2.method='register'
-	and c2.cd='2013-11-16' ) as new_register/*今日注册*/,
-    (select sum(c3.counter)
-      from biz_service_counter c3
-      where c3.channel=c0.channel
-	and c3.method='register' ) as all_register/*总注册数*/,
-    (select sum(c3.counter)
-      from biz_service_counter c3
-      where c3.channel=c0.channel
-	and c3.method='firstOpen' ) as all_user/*总用户数*/,
-    (select sum(c2.counter)
-      from biz_service_counter c2
-      where c2.channel=c0.channel
-	and c2.cd='${cd}' ) as new_pv/*今日PV*/,
-    (select sum(c2.counter)
-      from biz_service_counter c2
-      where c2.channel=c0.channel ) as all_pv/*总PV*/
- from biz_service_counter c0
- group by c0.channel
-)as r
-"""
