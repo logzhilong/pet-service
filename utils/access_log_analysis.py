@@ -28,12 +28,12 @@ from  (
       from biz_service_counter c1
       where c1.channel=c0.channel
 	and c1.method='firstOpen'
-	and (c1.cd>='${min}' and c1.cd<='${max}') ) as new_user/*今日新增*/,
+	and c1.cd='${cd}' ) as new_user/*今日新增*/,
     (select sum(c2.counter)
       from biz_service_counter c2
       where c2.channel=c0.channel
 	and c2.method='register'
-	and (c2.cd>='${min}' and c2.cd<='${max}') ) as new_register/*今日注册*/,
+	and c2.cd='${cd}' ) as new_register/*今日注册*/,
     (select sum(c3.counter)
       from biz_service_counter c3
       where c3.channel=c0.channel
@@ -45,7 +45,7 @@ from  (
     (select sum(c5.counter)
       from biz_service_counter c5
       where c5.channel=c0.channel
-	and (c5.cd>='${min}' and c5.cd<='${max}')  ) as new_pv/*今日PV*/,
+	and c5.cd='${cd}' ) as new_pv/*今日PV*/,
     (select sum(c6.counter)
       from biz_service_counter c6
       where c6.channel=c0.channel ) as all_pv/*总PV*/
@@ -60,6 +60,7 @@ log = lm.LoggerFactory(common_cfg['common']['log_file'],'counter',LOG_LEVEL).get
 
 total = {}
 result = {}
+#131125:暂时没用，记录数据的提取时间范围
 scop = {'min':'9999-99-99','max':'0000-00-00'}
 
 def visit(arg,dirname,names) :
@@ -170,26 +171,25 @@ def runner() :
 			log.debug( (">>>>>>>>>>>>>> %s" % i) )
 			log.debug(error)
 			log.debug( ("<<<<<<<<<<<<<< %s" % i) )
+			time.sleep(2)
 	return 'success'
 
 def report_channel_counter(cmd=False):
 	redisCli = redis.Redis( host=common_cfg['common']['store_host'],port=int(common_cfg['common']['store_port']),password=common_cfg['common']['store_password'] )
 	#如果是命令行执行，则只初始化昨天的数据,否则统计 scop.min ~ scop.max 区间的数据
-	if cmd :
-		d = datetime.date.today()+datetime.timedelta(-1)
-		cd = d.strftime('%Y-%m-%d')
-		scop['min'] = cd
-        	scop['max'] = cd
+	d = datetime.date.today()+datetime.timedelta(-1)
+	cd = d.strftime('%Y-%m-%d')
+	param = {'cd':cd}
 	template = string.Template(report_channel_counter_sql)
-	sql = template.safe_substitute(scop)
-	scop_json = json.dumps(scop)
+	sql = template.safe_substitute(param)
+	scop_json = json.dumps(param)
 	log.debug('scop = %s' % scop_json)
 	#把范围放在缓存中，后台显示时取出即可
+	#131125:这里画蛇填足了，只取前一天的数据就可以了
 	redisCli.set('report_scope',scop_json)
-	scop['min'] = '9999-99-99'
-        scop['max'] = '0000-00-00'
-	
-	#log.debug(sql)
+	#scop['min'] = '9999-99-99'
+        #scop['max'] = '0000-00-00'
+	log.debug(sql)
 	host = common_cfg['common']['host']
 	user = common_cfg['common']['user']
 	pwd = common_cfg['common']['password']
