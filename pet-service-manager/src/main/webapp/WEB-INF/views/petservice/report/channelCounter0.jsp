@@ -8,7 +8,9 @@
 	<div class="accountInfo">
 		<p>
 			<font color="red">
-				最近区间：${min } 至 ${max }
+				当前日期：${cd }
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				统计日期：${cd }
 			</font>
 		</p>
 		<br>
@@ -28,21 +30,21 @@
 					<th width="20" ></th>
 					<th>渠道(渠道号)</th>
 					
-					<th>
-						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__firstOpen&cd=${min}__${max}" title="今日新增-统计" target="navTab" rel="serviceCounter1Tab">
-							最近新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
+					<th title="统计日期：${cd }">
+						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__firstOpen&cd=${cd}" title="今日新增-统计" target="navTab" rel="serviceCounter1Tab">
+							今日新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
 						</a>
 					</th>
 					
-					<th>
-						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__register&cd=${min}__${max}" title="今日注册-统计" target="navTab" rel="serviceCounter1Tab">
-							最近注册(&nbsp;<font color='red'>${all.new_register }</font>&nbsp;)
+					<th title="统计日期：${cd }">
+						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__register&cd=${cd}" title="今日注册-统计" target="navTab" rel="serviceCounter1Tab">
+							今日注册(&nbsp;<font color='red'>${all.new_register }</font>&nbsp;)
 						</a>
 					</th>
 					
-					<th>
-						<a href="${ctx }/petservice/report/register_rate.html?cd=${min}__${max}" title="今日注册率-统计" target="navTab" rel="serviceCounter1Tab">
-							最近注册率
+					<th title="统计日期：${cd }">
+						<a href="${ctx }/petservice/report/register_rate.html?cd=${cd}" title="今日注册率-统计" target="navTab" rel="serviceCounter1Tab">
+							今日注册率
 							<%--
 							(&nbsp;<font color='red'>${(all.new_register/all.new_user)*100}%</font>&nbsp;)
 							--%>
@@ -68,10 +70,10 @@
 							--%>
 						</a>					
 					</th>
-					<th>
-						<a href="${ctx }/petservice/report/pv1.html?cd=${min}__${max}" title="今日PV-统计" target="navTab" rel="serviceCounter1Tab">
-							最近PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
-						</a>					
+					<th title="统计日期：${cd }">
+						<a href="${ctx }/petservice/report/pv1.html?cd=${cd}" title="今日PV-统计" target="navTab" rel="serviceCounter1Tab">
+							今日PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
+						</a>			
 					</th>
 					<th>
 						<a href="${ctx }/petservice/report/pv1.html" title="总PV-统计" target="navTab" rel="serviceCounter1Tab">
@@ -115,7 +117,7 @@
 							</c:otherwise>
 						</c:choose>
 					</td>
-					<td title="最近注册率">
+					<td title="统计日期：${cd }">
 						<fmt:formatNumber pattern="##.##" value="${itm.new_rate*100 }" />%
 					</td>
 					<td>

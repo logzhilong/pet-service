@@ -62,19 +62,17 @@ public class ChannelCounterAction extends BaseAction{
 				channelDict.put(c.getCode(), c.getAlias());
 			}
 			List<String> list = storePool.lrange(report_channel_counter_key, 0, -1);
-			String scop_json = storePool.get("report_scope");//获取报表的最近取值范围
+			String scop_json = storePool.get("report_scope");//获取报表的最近取值范围,是一个日期，固定值
 			logger.debug("scop_json="+scop_json);
 			JSONObject scop_obj = null;
 			if(StringUtils.isEmpty(scop_json)){
 				scop_obj = new JSONObject();
-				scop_obj.put("min", cd);
-				scop_obj.put("max", cd);
+				scop_obj.put("cd", cd);
 			}else{
 				scop_obj = new JSONObject(scop_json);
 			}
 			//报表的 “最近” 取值范围
-			model.addAttribute("min", scop_obj.get("min"));
-			model.addAttribute("max", scop_obj.get("max"));
+			model.addAttribute("cd", scop_obj.get("cd"));
 			
 			List<ChannelCounterVo> data = new ArrayList<ChannelCounterVo>();
 			ChannelCounterVo all = new ChannelCounterVo();

@@ -145,6 +145,8 @@ public class ServiceCounterAction extends BaseAction{
 				sb.append(" cd='").append(cd).append("' ");
 				title = title+" ("+cd+")";
 			}
+			//131125:这个逻辑恐怕不会再被调用了
+			/*
 			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
@@ -157,7 +159,7 @@ public class ServiceCounterAction extends BaseAction{
 				sb.append(" ) ");
 				title = title+" ("+min+" ~ "+max+")";
 			}
-			
+			*/
 			sb.append(" group by service,method,channel "); 
 			sb.append(" order by totalCount desc ");
 			String sql = sb.toString();
@@ -277,6 +279,7 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
+			/*
 			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
@@ -284,6 +287,8 @@ public class ServiceCounterAction extends BaseAction{
 				root.put("min", min);
 				root.put("max", max);
 			}
+			*/
+			root.put("cd", cd);
 			String sql = new FreeMarkerUtils("/template/report/register_rate.ftl",root).getText();
 			logger.debug("SQL--rate :::: "+sql);
 			
@@ -335,6 +340,7 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
+			/*
 			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
@@ -342,6 +348,8 @@ public class ServiceCounterAction extends BaseAction{
 				root.put("min", min);
 				root.put("max", max);
 			}
+			*/
+			root.put("cd", cd);
 			String sql = new FreeMarkerUtils("/template/report/pv1.ftl",root).getText();
 			logger.debug("SQL--pv :::: "+sql);
 			
