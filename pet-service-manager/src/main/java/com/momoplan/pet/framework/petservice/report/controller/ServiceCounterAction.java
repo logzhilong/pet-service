@@ -281,7 +281,7 @@ public class ServiceCounterAction extends BaseAction{
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
 				String max = scop[1];
-				root.put("max", min);
+				root.put("min", min);
 				root.put("max", max);
 			}
 			String sql = new FreeMarkerUtils("/template/report/register_rate.ftl",root).getText();
@@ -339,7 +339,7 @@ public class ServiceCounterAction extends BaseAction{
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
 				String max = scop[1];
-				root.put("max", min);
+				root.put("min", min);
 				root.put("max", max);
 			}else{
 				throw new Exception("time scop undifine ...");
