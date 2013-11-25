@@ -145,7 +145,7 @@ public class ServiceCounterAction extends BaseAction{
 				sb.append(" cd='").append(cd).append("' ");
 				title = title+" ("+cd+")";
 			}
-			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
 				String max = scop[1];
@@ -277,7 +277,7 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
-			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
 				String max = scop[1];
@@ -337,7 +337,7 @@ public class ServiceCounterAction extends BaseAction{
 				channelDict.put(m.getCode(), m.getAlias());
 			}
 			title = "各渠道 "+alias+" 统计";
-			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
 				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
 				String min = scop[0];
 				String max = scop[1];
