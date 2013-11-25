@@ -341,8 +341,6 @@ public class ServiceCounterAction extends BaseAction{
 				String max = scop[1];
 				root.put("min", min);
 				root.put("max", max);
-			}else{
-				throw new Exception("time scop undifine ...");
 			}
 			String sql = new FreeMarkerUtils("/template/report/pv1.ftl",root).getText();
 			logger.debug("SQL--pv :::: "+sql);
