@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.manager.po.MgrChannelDict;
@@ -116,6 +118,22 @@ public class ChannelCounterAction extends BaseAction{
 		logger.debug("排序字段 field="+field);
 		logger.debug("排序类型 "+desc);
 		Collections.sort(data,new Comparator<ChannelCounterVo>(){
+			private int compare(Integer o1, Integer o2) {
+				if(o1>o2){
+					return 1;
+				}else if(o1<o2){
+					return -1;
+				}
+				return 0;
+			}
+			private int compare(Float o1, Float o2) {
+				if(o1>o2){
+					return 1;
+				}else if(o1<o2){
+					return -1;
+				}
+				return 0;
+			}
 			@Override
 			public int compare(ChannelCounterVo o1, ChannelCounterVo o2) {
 				try {
@@ -136,9 +154,9 @@ public class ChannelCounterAction extends BaseAction{
 						c2 = v1;
 					}
 					if(v1 instanceof java.lang.Integer){
-						return java.lang.Integer.compare((java.lang.Integer)c1, (java.lang.Integer)c2);
-					}else if(v1 instanceof java.lang.Float){
-						return java.lang.Float.compare((java.lang.Float)c1, (java.lang.Float)c2);
+						return compare((Integer)c1, (Integer)c2);
+					}else if(v1 instanceof Float){
+						return compare((Float)c1, (Float)c2);
 					} 
 				} catch (NoSuchFieldException e) {
 					e.printStackTrace();
@@ -152,25 +170,6 @@ public class ChannelCounterAction extends BaseAction{
 				return 0;
 			}
 		});
-		
-	}
-	
-	public static void main(String[] args) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		ChannelCounterVo o1 = new ChannelCounterVo();
-		o1.setNew_pv(100);
-		Field f1 = o1.getClass().getDeclaredField("new_pv");
-		f1.setAccessible(true);
-		Object v1 = f1.get(o1);
-		System.out.println(v1);
-		System.out.println(f1.getType());
-		
-		ChannelCounterVo o2 = new ChannelCounterVo();
-		o2.setNew_pv(200);
-		Field f2 = o1.getClass().getDeclaredField("new_pv");
-		f2.setAccessible(true);
-		Object v2 = f1.get(o2);
-		System.out.println(v2 instanceof Integer);
-		System.out.println(Integer.compare((Integer)v2, (Integer)v1));
 	}
 	
 }
