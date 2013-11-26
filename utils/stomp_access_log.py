@@ -26,10 +26,10 @@ class Main :
 		conn.disconnect()
 
 if(__name__=='__main__'):
-	common_cfg = mod_conf.load('stomp.ini')
-	self_cfg = mod_conf.load(sys.argv[1])
+	global common_cfg = mod_conf.load('stomp.ini')
+	global self_cfg = mod_conf.load(sys.argv[1])
 	LOG_LEVEL = lm.level[self_cfg['self']['log_level']]
-	log = lm.LoggerFactory(self_cfg['self']['log_file'],'access_log',LOG_LEVEL).getLog()
+	global log = lm.LoggerFactory(self_cfg['self']['log_file'],'access_log',LOG_LEVEL,self_cfg['self']['log_split_h']).getLog()
 
 	print common_cfg
 	print self_cfg

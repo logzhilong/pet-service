@@ -12,15 +12,21 @@ log.debug('xxx')
 level={"info":logging.INFO,"debug":logging.DEBUG,"error":logging.ERROR}
 
 class LoggerFactory:
-	def __init__(self,fileName,title,level):
-		self.fileName = fileName
-		self.title = title
-		self.level = level
+
+        def __init__(self,fileName,title,level,h=24):
+                self.fileName = fileName
+                self.title = title
+                self.level = level
+                self.h = h
+                print "param fileName=%s" % fileName
+                print "param title=%s" % title
+                print "param level=%s" % level
+                print "param h=%s" % h
 	def getLog(self):
 		logging.basicConfig()
 		logger = logging.getLogger(self.title)
 		logger.setLevel(self.level)
-		filehandler = logging.handlers.TimedRotatingFileHandler(self.fileName, 'D', 1, 0)
+		filehandler = logging.handlers.TimedRotatingFileHandler(self.fileName, 'H', self.h, 0)
 		filehandler.suffix = "%Y%m%d-%H%M.log"
 		logger.addHandler(filehandler)
 		return Log(logger)
