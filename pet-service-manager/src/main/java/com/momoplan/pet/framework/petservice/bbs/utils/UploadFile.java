@@ -41,7 +41,7 @@ public class UploadFile {
 		String addTopImage = "OK";
 		String compressImage = "OK";
 	
-		new UploadFile().upload(bos.toByteArray(), src.getName(),"image/png", addTopImage, compressImage);
+		new UploadFile().upload(bos.toByteArray(), src.getName(),"image/png", addTopImage, compressImage,null);
 		is.close();
 	}
 	
@@ -51,11 +51,14 @@ public class UploadFile {
 	 * @param compressImage
 	 * @return
 	 */
-	private String getUploadUrl(String addTopImage,String compressImage){
+	private String getUploadUrl(String addTopImage,String compressImage,String imageWidth){
 		String base_url = commonConfig.get("service.uri.pet_file_server");
 		String service = "/put?compressImage=#compressImage#&addTopImage=#addTopImage#";
 		service = service.replaceAll("#compressImage#", compressImage);
 		service = service.replaceAll("#addTopImage#", addTopImage);
+		if(StringUtils.isNotEmpty(imageWidth)){
+			service = service+"&imageWidth="+imageWidth;
+		}
 		String url = base_url+service;
 		logger.debug("upload_url = "+url);
 		return url;
@@ -85,9 +88,9 @@ public class UploadFile {
 	 * @return
 	 * @throws Exception
 	 */
-	public String upload(byte[] obj,String fileName,String contentType,String addTopImage,String compressImage) throws Exception{
-		logger.debug("upload_input : fileName="+fileName+";contentType="+contentType+";addTopImage="+addTopImage+";compressImage="+compressImage);
-		PostMethod post = new PostMethod(getUploadUrl(addTopImage,compressImage));
+	public String upload(byte[] obj,String fileName,String contentType,String addTopImage,String compressImage,String imageWidth) throws Exception{
+		logger.debug("upload_input : fileName="+fileName+";contentType="+contentType+";addTopImage="+addTopImage+";compressImage="+compressImage+";imageWidth="+imageWidth);
+		PostMethod post = new PostMethod(getUploadUrl(addTopImage,compressImage,imageWidth));
 		try {
 			PartSource part = new ByteArrayPartSource(fileName,obj);
 			FilePart filePart = new FilePart("file",part);

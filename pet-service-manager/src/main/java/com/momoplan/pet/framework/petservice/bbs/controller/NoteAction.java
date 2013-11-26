@@ -151,7 +151,7 @@ public class NoteAction extends BaseAction {
 				logger.debug("contentType : "+file.getContentType());
 				logger.debug("originalFilename : "+file.getOriginalFilename());
 				logger.debug("-----------------------------------");
-				String uploadResponse = uploadFile.upload(file.getBytes(), fileName, file.getContentType(), "OK", "OK");
+				String uploadResponse = uploadFile.upload(file.getBytes(), fileName, file.getContentType(), "OK", "OK",null);
 				JSONObject success = new JSONObject(uploadResponse);
 				String entity = success.getString("entity");
 				if(success.getBoolean("success")){

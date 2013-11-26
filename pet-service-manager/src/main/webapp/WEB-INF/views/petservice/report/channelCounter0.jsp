@@ -2,19 +2,28 @@
 <%@ include file="/commons/taglibs.jsp" %>
 <%@page import="com.momoplan.pet.commons.DateUtils" %>
 
+<form id="pagerForm" method="post" action="#rel#" >
+	<input type="hidden" name="orderField" value="${myForm.orderField}" />
+	<input type="hidden" name="orderDirection" value="${myForm.orderDirection}" />
+</form>
+
+<form rel="pagerForm" onsubmit="return navTabSearch(this);" action="${ctx }/petservice/report/channelCounter0.html" method="post">
+
+</form>
+
 <div class="pageContent" selector="h1" layoutH="2">
 <div>
 
 	<div class="accountInfo">
 		<p>
 			<font color="red">
-				当前日期：${cd }
+				当前日期：<%=DateUtils.formatDate(DateUtils.now()) %>
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				统计日期：${cd }
 			</font>
 		</p>
 		<br>
-		按总数排序:
+		排序:
 		<select name="sort" >
 			<option value="desc">从大到小</option>
 			<option value="asc">从小到大</option>
@@ -30,7 +39,7 @@
 					<th width="20" ></th>
 					<th>渠道(渠道号)</th>
 					
-					<th title="统计日期：${cd }">
+					<th title="统计日期：${cd }" >
 						<a href="${ctx }/petservice/report/serviceCounter1.html?serviceMethod=service.uri.pet_sso__firstOpen&cd=${cd}" title="今日新增-统计" target="navTab" rel="serviceCounter1Tab">
 							今日新增(&nbsp;<font color='red'>${all.new_user }</font>&nbsp;)
 						</a>

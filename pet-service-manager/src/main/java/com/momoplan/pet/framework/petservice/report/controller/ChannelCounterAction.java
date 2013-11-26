@@ -1,6 +1,9 @@
 package com.momoplan.pet.framework.petservice.report.controller;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +79,7 @@ public class ChannelCounterAction extends BaseAction{
 			
 			List<ChannelCounterVo> data = new ArrayList<ChannelCounterVo>();
 			ChannelCounterVo all = new ChannelCounterVo();
+			
 			for(String j : list){
 				ChannelCounterVo vo = gson.fromJson(j, ChannelCounterVo.class);
 				data.add(vo);
@@ -95,9 +99,11 @@ public class ChannelCounterAction extends BaseAction{
 				all.setNew_pv(all.getNew_pv()+vo.getNew_pv());
 				all.setAll_pv(all.getAll_pv()+vo.getAll_pv());
 			}
+			sortList(data,myForm);//排序
 			page.setData(data);
 			model.addAttribute("page", page);
 			model.addAttribute("all", all);
+			model.addAttribute("myForm", myForm);
 		} catch (Exception e) {
 			logger.error("serviceCounter0",e);
 			throw e;
@@ -105,6 +111,67 @@ public class ChannelCounterAction extends BaseAction{
 		return "/petservice/report/channelCounter0";
 	}
 	
-	public static void main(String[] args) {
+	private void sortList(List<ChannelCounterVo> data ,ConditionBean myForm){
+		final String field = myForm.getOrderField();
+		final String desc = myForm.getOrderDirection();
+		logger.debug("排序字段 field="+field);
+		logger.debug("排序类型 "+desc);
+		Collections.sort(data,new Comparator<ChannelCounterVo>(){
+			@Override
+			public int compare(ChannelCounterVo o1, ChannelCounterVo o2) {
+				try {
+					Field f1 = o1.getClass().getDeclaredField(field);
+					f1.setAccessible(true);
+					Object v1 = f1.get(o1);
+					Field f2 = o2.getClass().getDeclaredField(field);
+					f2.setAccessible(true);
+					Object v2 = f2.get(o2);
+
+					Object c1 = null;
+					Object c2 = null;
+					if("asc".equalsIgnoreCase(desc)){
+						c1 = v1;
+						c2 = v2;
+					}else{
+						c1 = v2;
+						c2 = v1;
+					}
+					if(v1 instanceof Integer){
+						return Integer.compare((Integer)c1, (Integer)c2);
+					}else if(v1 instanceof Float){
+						return Float.compare((Float)c1, (Float)c2);
+					} 
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				return 0;
+			}
+		});
+		
 	}
+	
+	public static void main(String[] args) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		ChannelCounterVo o1 = new ChannelCounterVo();
+		o1.setNew_pv(100);
+		Field f1 = o1.getClass().getDeclaredField("new_pv");
+		f1.setAccessible(true);
+		Object v1 = f1.get(o1);
+		System.out.println(v1);
+		System.out.println(f1.getType());
+		
+		ChannelCounterVo o2 = new ChannelCounterVo();
+		o2.setNew_pv(200);
+		Field f2 = o1.getClass().getDeclaredField("new_pv");
+		f2.setAccessible(true);
+		Object v2 = f1.get(o2);
+		System.out.println(v2 instanceof Integer);
+		System.out.println(Integer.compare((Integer)v2, (Integer)v1));
+	}
+	
 }

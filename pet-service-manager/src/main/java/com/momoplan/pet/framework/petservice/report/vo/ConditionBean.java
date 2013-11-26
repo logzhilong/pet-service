@@ -11,7 +11,31 @@ public class ConditionBean {
 	private String month = null;
 	
 	private String cd = null;
+	/**
+	 * 排序字段，默认按照 new_user 排序
+	 */
+	private String orderField = "new_user";
+	/**
+	 * asc / desc
+	 */
+	private String orderDirection = "desc";
 	
+	public String getOrderField() {
+		return orderField;
+	}
+
+	public void setOrderField(String orderField) {
+		this.orderField = orderField;
+	}
+
+	public String getOrderDirection() {
+		return orderDirection;
+	}
+
+	public void setOrderDirection(String orderDirection) {
+		this.orderDirection = orderDirection;
+	}
+
 	public String getChannel() {
 		return channel;
 	}

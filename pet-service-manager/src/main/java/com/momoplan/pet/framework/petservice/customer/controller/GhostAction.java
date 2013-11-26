@@ -141,7 +141,7 @@ public class GhostAction extends BaseAction{
 					logger.debug("TTTTTTT : "+e.getMessage());
 					type = "image/jpg";
 				}
-				String uploadResponse = uploadFile.upload(file.getBytes(), fileName, type, "NO", "OK");
+				String uploadResponse = uploadFile.upload(file.getBytes(), fileName, type, "NO", "OK","100");
 				JSONObject success = new JSONObject(uploadResponse);
 				String entity = success.getString("entity");
 				if(success.getBoolean("success")){
