@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.cache.pool.StorePool;
 import com.momoplan.pet.commons.domain.manager.po.MgrChannelDict;
@@ -136,10 +135,10 @@ public class ChannelCounterAction extends BaseAction{
 						c1 = v2;
 						c2 = v1;
 					}
-					if(v1 instanceof Integer){
-						return Integer.compare((Integer)c1, (Integer)c2);
-					}else if(v1 instanceof Float){
-						return Float.compare((Float)c1, (Float)c2);
+					if(v1 instanceof java.lang.Integer){
+						return java.lang.Integer.compare((java.lang.Integer)c1, (java.lang.Integer)c2);
+					}else if(v1 instanceof java.lang.Float){
+						return java.lang.Float.compare((java.lang.Float)c1, (java.lang.Float)c2);
 					} 
 				} catch (NoSuchFieldException e) {
 					e.printStackTrace();
