@@ -206,6 +206,12 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	@Override
 	public void pushMsgApn(String fromname, String toname, String msg) throws Exception {
 		String pwd = commonConfig.get("ios.push.pwd","110110");
+		String test = commonConfig.get("iphone.push");
+		boolean t = false;
+		if("test".equalsIgnoreCase(test)){
+			logger.debug("测试证书");
+			t = true;
+		}
 		SsoUser from = ssoUserRepository.getSsoUserByName(fromname);
 		SsoUser to = ssoUserRepository.getSsoUserByName(toname);
 		String deviceToken = to.getDeviceToken();
@@ -215,7 +221,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			if(StringUtils.isEmpty(name)){
 				name = fromname;
 			}
-			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, false);
+			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, t);
 		}
 	}
 	
