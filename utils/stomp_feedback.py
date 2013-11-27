@@ -22,13 +22,24 @@ class Main :
 		conn.connect(wait=True)
 		conn.subscribe( destination=('/queue/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
 		while True:
-			time.sleep(2)
+			if not conn.is_connected():	
+				log.info('connect to stomp server ...')
+				conn.start()
+				conn.connect(wait=True)
+				conn.subscribe( destination=('/queue/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
+				log.info('connect success...')
+			time.sleep(30)
 			log.info('heart beat.')
 		conn.disconnect()
 
 if(__name__=='__main__'):
 	common_cfg = mod_conf.load('stomp.ini')
-	self_cfg = mod_conf.load(sys.argv[1])
+	
+	self_cfg_path = 'stomp_feedback.ini'
+	if len(sys.argv) > 1 :
+		self_cfg_path = sys.argv[1]
+	pring 'config path : %s' % self_cfg_path
+	self_cfg = mod_conf.load(self_cfg_path)
 	LOG_LEVEL = lm.level[self_cfg['self']['log_level']]
 	log = lm.LoggerFactory(self_cfg['self']['log_file'],'access_log',LOG_LEVEL).getLog()
 
