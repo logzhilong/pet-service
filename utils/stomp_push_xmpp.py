@@ -66,6 +66,7 @@ class Main :
 				conn.connect(wait=True)
 				conn.subscribe( destination=('/queue/%s' % self_cfg['self']['mq_destination']), id=1, ack='auto' )
 				log.info('connect success...')
+			log.info('heart beat...')
 			time.sleep(30)
 		conn.disconnect()
 
