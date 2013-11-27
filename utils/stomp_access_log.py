@@ -36,7 +36,7 @@ if(__name__=='__main__'):
 	self_cfg_path = 'stomp_access_log.ini'
 	if len(sys.argv) > 1 :
 		self_cfg_path = sys.argv[1]
-	pring 'config path : %s' % self_cfg_path
+	print 'config path : %s' % self_cfg_path
 
 	self_cfg = mod_conf.load(self_cfg_path)
 	LOG_LEVEL = lm.level[self_cfg['self']['log_level']]
