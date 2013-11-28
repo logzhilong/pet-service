@@ -1,5 +1,8 @@
 package com.momoplan.pet.commons;
 
+import java.net.URLDecoder;
+import java.util.Map;
+
 import javapns.Push;
 import javapns.devices.Device;
 import javapns.devices.implementations.basic.BasicDevice;
@@ -21,14 +24,20 @@ public class PushApn {
 	 * @param msg 
 	 * @param pwd 密码 110110
 	 */
-	public static void sendMsgApn(String deviceToken,String msg,String pwd,boolean debug) throws Exception {
+	public static void sendMsgApn(String deviceToken,String msg,String pwd,boolean debug,Map<String,String> params) throws Exception {
 		try {
 			String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
 			logger.debug("cert="+cert);
-			logger.debug("deviceToken="+deviceToken+" ; pwd="+pwd+" ; debug="+debug+" ; msg="+msg); 
+			logger.debug("deviceToken="+deviceToken+" ; pwd="+pwd+" ; debug="+debug+" ; msg="+msg+" ; params="+params); 
 			PushNotificationPayload payLoad = new PushNotificationPayload();
 			payLoad.addSound("default"); // 铃音 默认
 			payLoad.addAlert(msg);
+			if(params!=null){
+				for(String k : params.keySet()){
+					String v = params.get(k);
+					payLoad.addCustomDictionary(k, v);
+				}
+			}
 			Device device = new BasicDevice();
 			device.setToken(deviceToken);
 			Push.payload(payLoad, cert, pwd , !debug , device);
@@ -36,11 +45,19 @@ public class PushApn {
 			throw e;
 		}
 	}
+
+	public static void sendMsgApn(String deviceToken,String msg,String pwd,boolean debug) throws Exception {
+		sendMsgApn( deviceToken, msg, pwd, debug , null);
+	}
+
 	
 	public static void main(String[] args) throws Exception {
-		String token = "c2d3da17bcfdeb134768c462dbe3ff36b6a54e57214b732b74780d6dfb04c1ed";
-		sendMsgApn(token,"XXXXXXXXXXXX测试-TRUE","110110",false);
-		System.out.println("OK...");
+//		long s = System.currentTimeMillis();
+//		String token = "263584ada5adcceba50c74b5802103c8cf36c481944cf4a5a2a49a858bb8bec8";
+//		sendMsgApn(token,"OOOOOOOOOOOOOOOO测试-TRUE","110110",true);
+//		System.out.println("OK...");
+//		long e = System.currentTimeMillis();
+//		System.out.println(e-s);
 	}
 	
 }

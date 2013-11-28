@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.momoplan.pet.commons.domain.albums.mapper.AlbumsMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.albums.po.Albums" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="userid" property="userid" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="descript" property="descript" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="ct" property="ct" jdbcType="TIMESTAMP" />
+    <result column="et" property="et" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, userid, title, descript, state, ct, et
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.albums.po.AlbumsCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from albums
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="mysqlOffset != null and mysqlLength != null" >
+      <![CDATA[ limit #{mysqlOffset} , #{mysqlLength} ]]>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from albums
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from albums
+    where id = #{id}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.albums.po.AlbumsCriteria" >
+    delete from albums
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.albums.po.Albums" >
+    insert into albums (id, userid, title, descript, state, ct, et)
+    values (#{id}, #{userid}, #{title}, #{descript}, #{state}, #{ct}, #{et})
+  </insert>
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.albums.po.Albums" >
+    insert into albums
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="descript != null" >
+        descript,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="ct != null" >
+        ct,
+      </if>
+      <if test="et != null" >
+        et,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="userid != null" >
+        #{userid},
+      </if>
+      <if test="title != null" >
+        #{title},
+      </if>
+      <if test="descript != null" >
+        #{descript},
+      </if>
+      <if test="state != null" >
+        #{state},
+      </if>
+      <if test="ct != null" >
+        #{ct},
+      </if>
+      <if test="et != null" >
+        #{et},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.albums.po.AlbumsCriteria" resultType="java.lang.Integer" >
+    select count(*) from albums
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update albums
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id},
+      </if>
+      <if test="record.userid != null" >
+        userid = #{record.userid},
+      </if>
+      <if test="record.title != null" >
+        title = #{record.title},
+      </if>
+      <if test="record.descript != null" >
+        descript = #{record.descript},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state},
+      </if>
+      <if test="record.ct != null" >
+        ct = #{record.ct},
+      </if>
+      <if test="record.et != null" >
+        et = #{record.et},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update albums
+    set id = #{record.id},
+      userid = #{record.userid},
+      title = #{record.title},
+      descript = #{record.descript},
+      state = #{record.state},
+      ct = #{record.ct},
+      et = #{record.et}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.albums.po.Albums" >
+    update albums
+    <set >
+      <if test="userid != null" >
+        userid = #{userid},
+      </if>
+      <if test="title != null" >
+        title = #{title},
+      </if>
+      <if test="descript != null" >
+        descript = #{descript},
+      </if>
+      <if test="state != null" >
+        state = #{state},
+      </if>
+      <if test="ct != null" >
+        ct = #{ct},
+      </if>
+      <if test="et != null" >
+        et = #{et},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.albums.po.Albums" >
+    update albums
+    set userid = #{userid},
+      title = #{title},
+      descript = #{descript},
+      state = #{state},
+      ct = #{ct},
+      et = #{et}
+    where id = #{id}
+  </update>
+</mapper>
