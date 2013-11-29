@@ -1,4 +1,5 @@
 package com.momoplan.pet.framework.fileserver.service;
+import java.io.File;
 import java.io.InputStream;
 
 import com.momoplan.pet.framework.fileserver.vo.FileBean;
@@ -25,4 +26,7 @@ public interface FileServer {
 	 * @throws Exception
 	 */
 	public InputStream getFileAsStream(String id) throws Exception ;
+	
+	public InputStream getFileAsStream(String id,Integer width,File img) throws Exception ;
+	
 }

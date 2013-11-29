@@ -1,5 +1,7 @@
 package com.momoplan.pet.framework.fileserver.web.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -89,6 +91,57 @@ public class FileServiceController {
 			}catch(Exception e){}
 		}
 	}
+	/**
+	 * 获取一个小图
+	 * @param fileId
+	 * @param width
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/get/{fileId}/{width}")
+	public void getSmallImage(@PathVariable("fileId") String fileId,@PathVariable("width") String width,HttpServletResponse response) throws Exception{
+		logger.debug("getSmallFile : fileId="+fileId+" ; width="+width);
+		File tmpBaseDir = new File("/tmp/pet-file-server/small");
+		if(!tmpBaseDir.exists()){
+			tmpBaseDir.mkdirs();
+			logger.info("初始化缓存图片目录");
+		}
+		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response);
+	}
+	public void getSmallImageInTmp(String tmpBasePath,String fileId,Integer width, HttpServletResponse response)throws Exception {
+		OutputStream os = null;
+		InputStream is = null;
+		File imgDir = new File(tmpBasePath,fileId);
+		if(!imgDir.exists()||!imgDir.isDirectory()){
+			logger.debug("创建目录:"+imgDir.getPath());
+			imgDir.mkdirs();
+		}
+		File img = new File(imgDir.getPath(),width+"");
+		if(img.exists()){
+			logger.debug("在缓存目录获取图片:"+img.getPath());
+			is = new FileInputStream(img);
+		}else{
+			logger.debug("图片不在缓存中");
+			is = fileServer.getFileAsStream(fileId,width,img);
+		}
+		try{
+			os = response.getOutputStream();
+			byte[] buff = new byte[1024];
+			int t = 0;
+			while((t=is.read(buff))!=-1){
+				os.write(buff,0,t);
+			}
+			os.flush();
+		}catch(Exception e){
+			logger.error("get_small_img",e);
+		}finally{
+			if(is!=null)
+				is.close();
+			if(os!=null)
+				os.close();
+		}
+	}
+	
 	@RequestMapping("/delete/{fileId}")
 	public void deleteFile(@PathVariable("fileId") String fileId,HttpServletResponse response) throws IOException{
 		logger.debug("getFile : fileId="+fileId);

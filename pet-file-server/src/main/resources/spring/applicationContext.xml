@@ -13,6 +13,7 @@
   		<constructor-arg>
 		   	<list>
 				<value>classpath:properties/application-db.properties</value>
+				<value>classpath:properties/img-format.properties</value>
 				<value>classpath:properties/zoo.properties</value>
 				<value>classpath:properties/cache.properties</value>
 			</list>
@@ -39,6 +40,10 @@
     </bean>
 	<bean id="cacheServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${cache.server}" />
+    </bean>
+	
+	<bean id="imgFormatDict" class="java.lang.String" >
+    	<constructor-arg index="0" value="${img.format.dict}" />
     </bean>
 	
 	<import resource="classpath:spring/applicationContext-mybatis-transaction.xml"/>

@@ -1,12 +1,16 @@
 package com.momoplan.pet.framework.fileserver.service.impl;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageInputStream;
@@ -30,18 +34,22 @@ import com.momoplan.pet.framework.fileserver.vo.FileBean;
 @Service
 public class FileServerImpl implements FileServer{
 
-	private Logger logger = LoggerFactory.getLogger(FileServerImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(FileServerImpl.class);
 
 	private CommonConfig commonConfig = null;
 	private MapperOnCache mapperOnCache = null;
-
+	private String imgFormatDict = null;
+	private Map<String,String> formatDict = new HashMap<String,String>();
+	
 	@Autowired
-	public FileServerImpl(CommonConfig commonConfig, MapperOnCache mapperOnCache) {
+	public FileServerImpl(CommonConfig commonConfig,
+			MapperOnCache mapperOnCache, String imgFormatDict) {
 		super();
 		this.commonConfig = commonConfig;
 		this.mapperOnCache = mapperOnCache;
+		this.imgFormatDict = imgFormatDict;
 	}
-
+	
 	private String buildFilePath(String id){
 		String basePath = commonConfig.get("uploadPath","/home/appusr/static");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
@@ -187,5 +195,67 @@ public class FileServerImpl implements FileServer{
 		InputStream is = new FileInputStream(realPath);
 		return is;
 	}
+
+	@Override
+	public InputStream getFileAsStream(String id, Integer width,File img)throws Exception {
+		InputStream is = getFileAsStream(id);
+		BufferedImage bi = ImageIO.read(is);
+		int w = bi.getWidth();
+		int h = bi.getHeight();
+		double bili = (double)w/(double)h;
+		int height = (int) (width / bili);
+		bi = ImageTools.getResizePicture(bi, width, height);
+		logger.debug("图片尺寸：width="+width+" ; height="+height);
+		String format = getFormat(id);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ImageIO.write(bi, format, bos);
+		logger.debug("小图写入内存输出流");
+		ImageIO.write(bi, format, img);
+		logger.debug("小图写入缓存目录"+img.getPath());
+		ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+		logger.debug("小图转为输入流");
+		is.close();
+		return bis;
+	}
 	
+	private static String bytesToHexString(byte[] src) {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (src == null || src.length <= 0) {
+			return null;
+		}
+		for (int i = 0; i < src.length; i++) {
+			int v = src[i] & 0xFF;
+			String hv = Integer.toHexString(v);
+			if (hv.length() < 2) {
+				stringBuilder.append(0);
+			}
+			stringBuilder.append(hv);
+		}
+		return stringBuilder.toString();
+	}
+	
+	private String getFormat(String id) throws Exception{
+		InputStream is = getFileAsStream(id);
+		byte[] bt = new byte[2];
+		is.read(bt);
+		String code = bytesToHexString(bt);
+		is.close();
+		String format = "png";
+		if(formatDict.size()<=0){
+			String[] arr0 = imgFormatDict.split(",");
+			for(String s1 : arr0){
+				String[] arr1 = s1.split(":");
+				String k = arr1[1];
+				String v = arr1[0];
+				formatDict.put(k, v);
+			}
+			logger.debug("初始化图片类型字典 "+imgFormatDict);
+		}
+		logger.debug("图片特征码：code="+code);
+		if(formatDict.get(code)!=null){
+			format = formatDict.get(code);
+			logger.debug("获取类型 format="+format);
+		}
+		return format;
+	}
 }
