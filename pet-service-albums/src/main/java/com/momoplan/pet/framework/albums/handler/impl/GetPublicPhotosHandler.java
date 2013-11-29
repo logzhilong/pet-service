@@ -20,8 +20,8 @@ import com.momoplan.pet.framework.albums.service.PhotoService;
  * @author liangc
  */
 @Component("getPublicPhotos")
-public class GetPhotosHandler extends AbstractHandler {
-	private static Logger logger = LoggerFactory.getLogger(GetPhotosHandler.class);
+public class GetPublicPhotosHandler extends AbstractHandler {
+	private static Logger logger = LoggerFactory.getLogger(GetPublicPhotosHandler.class);
 	@Autowired
 	private PhotoService photoService = null;
 	
