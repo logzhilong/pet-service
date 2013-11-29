@@ -1,6 +1,8 @@
 package com.momoplan.pet.framework.albums.handler.impl;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,10 @@ import com.momoplan.pet.commons.domain.albums.po.Photos;
 import com.momoplan.pet.framework.albums.handler.AbstractHandler;
 import com.momoplan.pet.framework.albums.service.PhotoService;
 /**
- * 获取图片
+ * 获取公共相册图片
  * @author liangc
  */
-@Component("getPhotos")
+@Component("getPublicPhotos")
 public class GetPhotosHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(GetPhotosHandler.class);
 	@Autowired
@@ -35,9 +37,25 @@ public class GetPhotosHandler extends AbstractHandler {
 			pages.setPageNo(pageNo);
 			pages.setPageSize(pageSize);
 			pages = photoService.getPublicPhotos(pages);
-			rtn = new Success(sn,true,pages).toString();
+			
+			String jsonArr = null;
+			if(pages.getData()!=null&&pages.getData().size()>0)
+				jsonArr = gson.toJson(pages.getData());
+			JSONObject success = new JSONObject();
+			success.put("success", true);
+			JSONObject entity = new JSONObject();
+			entity.put("pageSize", pageSize);
+			entity.put("pageNo", pageNo);
+			entity.put("totalCount", pages.getTotalCount());
+			if(jsonArr!=null){
+				entity.put("data", new JSONArray(jsonArr));
+			}
+			success.put("entity", entity);
+			success.put("sn", sn);
+			logger.debug("getPhotos 成功 body=" + gson.toJson(clientRequest));
+			rtn = success.toString();
 		}catch(Exception e){
-			logger.debug("getPhotos body="+gson.toJson(clientRequest));
+			logger.debug("getPhotos 失败 body=" + gson.toJson(clientRequest));
 			logger.error(e.getMessage());
 			rtn = new Success(sn,false,e.getMessage()).toString();
 		}finally{
