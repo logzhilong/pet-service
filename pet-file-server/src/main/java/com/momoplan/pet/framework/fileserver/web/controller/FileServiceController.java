@@ -118,7 +118,7 @@ public class FileServiceController {
 	 */
 	@RequestMapping("/update/{fileId}/pet.apk")
 	public void updateAPK(@PathVariable("fileId") String fileId,HttpServletResponse response) throws Exception{
-		logger.debug("updateAPK : fileId="+fileId);
+		logger.info("update_apk -- fileId="+fileId);
 		getFile(fileId,response);
 	}
 	
