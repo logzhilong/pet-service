@@ -108,6 +108,20 @@ public class FileServiceController {
 		}
 		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response);
 	}
+	
+	/**
+	 * 获取更新包
+	 * @param fileId
+	 * @param width
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/update/{fileId}/pet.apk")
+	public void updateAPK(@PathVariable("fileId") String fileId,HttpServletResponse response) throws Exception{
+		logger.debug("updateAPK : fileId="+fileId);
+		getFile(fileId,response);
+	}
+	
 	public void getSmallImageInTmp(String tmpBasePath,String fileId,Integer width, HttpServletResponse response)throws Exception {
 		OutputStream os = null;
 		InputStream is = null;

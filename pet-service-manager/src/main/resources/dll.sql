@@ -66,3 +66,12 @@ CREATE TABLE `mgr_channel_dict` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `mgr_published_apk` (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `file_id` varchar(500) DEFAULT NULL COMMENT '文件ID',
+  `version` varchar(500) DEFAULT NULL COMMENT '版本',
+  `channel` varchar(500) DEFAULT NULL COMMENT '渠道号',
+  `ct` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',  
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -68,6 +68,14 @@ public class FileServerImpl implements FileServer{
 	@Override
 	public String put(FileBean fileBean) throws Exception {
 		String id = IDCreater.uuid();
+		if(StringUtils.isNotEmpty(fileBean.getId())){
+			id = fileBean.getId();
+			logger.debug("自定义文件ID ： id="+id);
+			FileIndex fi = mapperOnCache.selectByPrimaryKey(FileIndex.class, id);
+			if(fi!=null){
+				throw new Exception("ID："+id+" 已存在");
+			}
+		}
 		String realPath = buildFilePath(id);
 		InputStream is = fileBean.getFileStream();
 		int ss = is.available();
@@ -84,12 +92,6 @@ public class FileServerImpl implements FileServer{
 				}catch(Exception e){
 					logger.debug("getFormat error:"+e.getMessage());
 				}
-//			Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
-//			while(it.hasNext()){
-//				ImageReader r = it.next();
-//				format = r.getFormatName();
-//				logger.debug(format);
-//			}
 			
 			int sw = bi.getWidth();
 			int sh = bi.getHeight();
@@ -136,7 +138,7 @@ public class FileServerImpl implements FileServer{
 			long rs = output.length();
 			logger.debug("ss="+ss+";rs="+rs);
 		}else{
-			logger.debug("//不需要压缩");
+			logger.debug("//不是图片，不需要压缩");
 			FileUtils.copyInputStreamToFile(is, new File(realPath));
 		}
         logger.debug("成功上传");

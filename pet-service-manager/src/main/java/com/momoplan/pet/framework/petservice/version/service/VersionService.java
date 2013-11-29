@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.domain.manager.mapper.MgrPublishedApkMapper;
+import com.momoplan.pet.commons.domain.manager.po.MgrPublishedApk;
+import com.momoplan.pet.commons.domain.manager.po.MgrPublishedApkCriteria;
 import com.momoplan.pet.commons.domain.user.mapper.SsoVersionMapper;
 import com.momoplan.pet.commons.domain.user.po.SsoVersion;
 import com.momoplan.pet.commons.domain.user.po.SsoVersionCriteria;
@@ -25,6 +28,9 @@ public class VersionService {
 	@Autowired
 	private SsoVersionMapper ssoVersionMapper = null;
 	@Autowired
+	private MgrPublishedApkMapper mgrPublishedApkMapper = null;
+	
+	@Autowired
 	private MapperOnCache mapperOnCache = null;
 	
 	public List<SsoVersion> getSsoVersionList()throws Exception {
@@ -33,6 +39,14 @@ public class VersionService {
 		return list;
 	}
 
+	public List<MgrPublishedApk> getMgrPublishedApkList()throws Exception {
+		MgrPublishedApkCriteria mgrPublishedApkCriteria = new MgrPublishedApkCriteria();
+		mgrPublishedApkCriteria.setOrderByClause("ct desc");
+		List<MgrPublishedApk> list = mgrPublishedApkMapper.selectByExample(mgrPublishedApkCriteria);
+		return list;
+	}
+
+	
 	public void update(SsoVersion vo)throws Exception {
 		logger.debug("addOrEdit input : "+gson.toJson(vo));
 		String id = vo.getId();
