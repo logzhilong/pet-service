@@ -30,7 +30,11 @@ public class ClickPublicPhotosHandler extends AbstractHandler {
 			logger.debug("clickPublicPhotos body="+gson.toJson(clientRequest));
 			String id = PetUtil.getParameter(clientRequest, "id");
 			Photos p = mapperOnCache.selectByPrimaryKey(Photos.class, id);
-			int totalClick = p.getTotalClick()+3;
+			Integer totalClick = p.getTotalClick();
+			if(totalClick==null)
+				totalClick = 3;
+			else
+				totalClick +=3;
 			p.setTotalClick(totalClick);
 			mapperOnCache.updateByPrimaryKeySelective(p, id);
 			rtn = new Success(sn,true,"OK").toString();
