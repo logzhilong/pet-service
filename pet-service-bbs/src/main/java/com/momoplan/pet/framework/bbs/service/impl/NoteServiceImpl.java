@@ -163,10 +163,13 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 				List<String> values = new ArrayList<String>();
 				values.addAll(set);
 				criteria.andForumIdIn(values);
+				noteCriteria.setOrderByClause("et desc");
+				logger.debug("我关注的-最新帖子...");
+			}else{
+				noteCriteria.setOrderByClause("rt desc");
+				criteria.andRtGreaterThan(DateUtils.getDate("2013-01-01"));//default DateUtils.getDate("2013-01-01")
+				logger.debug("最新回复...");
 			}
-			noteCriteria.setOrderByClause("rt desc");
-			criteria.andRtGreaterThan(DateUtils.getDate("2013-01-01"));//default DateUtils.getDate("2013-01-01")
-			logger.debug("我关注的-最新回复...");
 		}else if(Action.NEW_CT.equals(action)){//最新发布
 			noteCriteria.setOrderByClause("ct desc");
 			logger.debug("最新发布...");
