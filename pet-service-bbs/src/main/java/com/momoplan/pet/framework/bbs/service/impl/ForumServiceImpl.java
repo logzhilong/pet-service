@@ -13,36 +13,31 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.UserForumConditionMapper;
-import com.momoplan.pet.commons.domain.bbs.mapper.UserForumRelMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumCondition;
 import com.momoplan.pet.commons.domain.bbs.po.UserForumConditionCriteria;
-import com.momoplan.pet.commons.domain.bbs.po.UserForumRel;
-import com.momoplan.pet.commons.domain.bbs.po.UserForumRelCriteria;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
+import com.momoplan.pet.framework.bbs.service.BaseService;
 import com.momoplan.pet.framework.bbs.service.ForumService;
 import com.momoplan.pet.framework.bbs.vo.ForumNode;
 
 @Service
-public class ForumServiceImpl implements ForumService {
+public class ForumServiceImpl extends BaseService implements ForumService {
 
 	private static Logger logger = LoggerFactory.getLogger(ForumServiceImpl.class);
 
-	private UserForumRelMapper userForumRelMapper = null;
 	private ForumMapper forumMapper = null;
 	private NoteRepository noteRepository = null;
 	private NoteSubRepository noteSubRepository = null;
 	private UserForumConditionMapper userForumConditionMapper = null;
 	
 	@Autowired
-	public ForumServiceImpl(UserForumRelMapper userForumRelMapper,
-			ForumMapper forumMapper, NoteRepository noteRepository,
+	public ForumServiceImpl(ForumMapper forumMapper, NoteRepository noteRepository,
 			NoteSubRepository noteSubRepository,
 			UserForumConditionMapper userForumConditionMapper) {
 		super();
-		this.userForumRelMapper = userForumRelMapper;
 		this.forumMapper = forumMapper;
 		this.noteRepository = noteRepository;
 		this.noteSubRepository = noteSubRepository;
@@ -108,27 +103,13 @@ public class ForumServiceImpl implements ForumService {
 		return tree;
 	}
 
-	public Map<String, String> getUserForumMap(String userId){
-		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
-		userForumRelCriteria.createCriteria().andUserIdEqualTo(userId);
-		List<UserForumRel> userForumRelList = userForumRelMapper.selectByExample(userForumRelCriteria);
-		logger.debug("转换成 hash 结构，当作字典用");
-		Map<String, String> userForumRelMap = new HashMap<String, String>();
-		if (userForumRelList != null && userForumRelList.size() > 0){
-			for (UserForumRel userForumRel : userForumRelList) {
-				userForumRelMap.put(userForumRel.getForumId(), userForumRel.getUserId());
-			}
-		}
-		return userForumRelMap;
-	}
-	
 	/**
 	 * add by liangc 获取所有栏目，以树的集合形式
 	 */
 	public List<ForumNode> getAllForumAsTree(String userId) throws Exception{
 		ForumCriteria forumCriteria = new ForumCriteria();
 		forumCriteria.setOrderByClause("seq asc");
-		logger.debug(" 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新");
+		logger.debug("TODO 所有的圈子，因为圈子不会经常被创建，所以这些圈子可以放入缓存，并随着创建和删除圈子，进行更新");
 		List<Forum> forumlist = forumMapper.selectByExample(forumCriteria);
 		
 		logger.debug("我关注的圈子");
@@ -209,20 +190,6 @@ public class ForumServiceImpl implements ForumService {
 		return node0;
 	}
 	
-	/**
-	 * 获取被关注总数
-	 * @param forumId
-	 * @return
-	 */
-	private Long getTotalAtte(String forumId){
-		//TODO 稍后挪到缓存中实现
-		UserForumRelCriteria userForumRelCriteria = new UserForumRelCriteria();
-		userForumRelCriteria.createCriteria().andForumIdEqualTo(forumId);
-		int count = userForumRelMapper.countByExample(userForumRelCriteria);
-		logger.debug(forumId+" 被关注数 : "+count);
-		return Long.valueOf(count);
-	}
-
 	@Override
 	public List<UserForumCondition> getUserForumCondition() throws Exception {
 		UserForumConditionCriteria userForumConditionCriteria = new UserForumConditionCriteria();

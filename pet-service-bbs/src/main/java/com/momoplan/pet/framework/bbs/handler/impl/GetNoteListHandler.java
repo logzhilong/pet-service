@@ -39,6 +39,7 @@ public class GetNoteListHandler extends AbstractHandler {
 		String sn = clientRequest.getSn();
 		String rtn = null;
 		try{
+			String userid = getUseridFParamSToken(clientRequest);
 			String fid=PetUtil.getParameter(clientRequest, "forumId");
 			boolean withTop=Boolean.valueOf(PetUtil.getParameter(clientRequest, "withTop"));
 			String action=PetUtil.getParameter(clientRequest, "action");
@@ -48,7 +49,7 @@ public class GetNoteListHandler extends AbstractHandler {
 				conditionType = ConditionType.NOTE_NAME.getCode();
 			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
-			List<NoteVo> list = noteService.getNoteList(fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),withTop,pageNo,pageSize);
+			List<NoteVo> list = noteService.getNoteList(userid,fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),withTop,pageNo,pageSize);
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){

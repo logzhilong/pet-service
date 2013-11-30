@@ -3,6 +3,8 @@ package com.momoplan.pet.framework.bbs.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -30,13 +32,14 @@ import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
 import com.momoplan.pet.commons.repository.bbs.NoteState;
 import com.momoplan.pet.commons.repository.bbs.NoteSubRepository;
+import com.momoplan.pet.framework.bbs.service.BaseService;
 import com.momoplan.pet.framework.bbs.service.NoteService;
 import com.momoplan.pet.framework.bbs.vo.Action;
 import com.momoplan.pet.framework.bbs.vo.ConditionType;
 import com.momoplan.pet.framework.bbs.vo.NoteVo;
 
 @Service
-public class NoteServiceImpl implements NoteService {
+public class NoteServiceImpl extends BaseService implements NoteService {
 
 	private NoteMapper noteMapper = null;
 	private NoteSubMapper noteSubMapper = null;
@@ -130,7 +133,7 @@ public class NoteServiceImpl implements NoteService {
 	 * 获取帖子列表
 	 */
 	@Override
-	public List<NoteVo> getNoteList(String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageNo,int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
@@ -147,9 +150,19 @@ public class NoteServiceImpl implements NoteService {
 			criteria.andIsEuteEqualTo(true);
 			logger.debug("精华...");
 		}else if(Action.NEW_ET.equals(action)){//最新回复
+			logger.debug("131130:此处只取我关注的最新的帖子");
+			Map<String,String> um = super.getUserForumMap(userid);
+			if(um==null||um.size()==0){
+				logger.debug("没有关注的圈子，返回空结果");
+				return null;
+			}
+			Set<String> set = um.keySet();
+			List<String> values = new ArrayList<String>();
+			values.addAll(set);
+			criteria.andForumIdIn(values);
 			noteCriteria.setOrderByClause("rt desc");
 			criteria.andRtGreaterThan(DateUtils.getDate("2013-01-01"));//default DateUtils.getDate("2013-01-01")
-			logger.debug("最新回复...");
+			logger.debug("我关注的-最新回复...");
 		}else if(Action.NEW_CT.equals(action)){//最新发布
 			noteCriteria.setOrderByClause("ct desc");
 			logger.debug("最新发布...");
