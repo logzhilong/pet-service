@@ -11,6 +11,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -139,7 +140,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
 		
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		if (!"0".equals(forumid)) {
+		if (StringUtils.isNotEmpty(forumid)&&!"0".equals(forumid)) {
 			criteria.andForumIdEqualTo(forumid);
 		}
 		if(Action.ALL.equals(action)){//全部
@@ -150,16 +151,19 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 			criteria.andIsEuteEqualTo(true);
 			logger.debug("精华...");
 		}else if(Action.NEW_ET.equals(action)){//最新回复
-			logger.debug("131130:此处只取我关注的最新的帖子");
-			Map<String,String> um = super.getUserForumMap(userid);
-			if(um==null||um.size()==0){
-				logger.debug("没有关注的圈子，返回空结果");
-				return null;
+			logger.debug("//全部的最新，只返回我关注的圈子的最新即可");
+			if(StringUtils.isEmpty(forumid)||"0".equals(forumid)){
+				logger.debug("131130:此处只取我关注的最新的帖子");
+				Map<String,String> um = super.getUserForumMap(userid);
+				if(um==null||um.size()==0){
+					logger.debug("没有关注的圈子，返回空结果");
+					return null;
+				}
+				Set<String> set = um.keySet();
+				List<String> values = new ArrayList<String>();
+				values.addAll(set);
+				criteria.andForumIdIn(values);
 			}
-			Set<String> set = um.keySet();
-			List<String> values = new ArrayList<String>();
-			values.addAll(set);
-			criteria.andForumIdIn(values);
 			noteCriteria.setOrderByClause("rt desc");
 			criteria.andRtGreaterThan(DateUtils.getDate("2013-01-01"));//default DateUtils.getDate("2013-01-01")
 			logger.debug("我关注的-最新回复...");
