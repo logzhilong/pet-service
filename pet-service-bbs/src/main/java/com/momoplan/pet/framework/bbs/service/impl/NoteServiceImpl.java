@@ -134,7 +134,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	 * 获取帖子列表
 	 */
 	@Override
-	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageNo,int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope ,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
@@ -171,6 +171,31 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 			noteCriteria.setOrderByClause("ct desc");
 			logger.debug("最新发布...");
 		}else if(Action.SEARCH.equals(action)){//查询
+			/*
+			2013-11-30 : 
+        	增加搜索范围参数conditionScope，当forumId传空，或者 forumId=0 时此参数生效，
+    		如果conditionScope传空，默认范围是我关注的圈子，conditionScope=EUTE时，表示范围在精华帖里。
+			*/
+			if(StringUtils.isEmpty(forumid)||"0".equals(forumid)){
+				logger.debug("conditionScope = "+conditionScope);
+				if("EUTE".equalsIgnoreCase(conditionScope)){
+					logger.debug("131130 SEARCH : 此处只取精华帖范围");
+					criteria.andIsEuteEqualTo(true);
+				}else{
+					logger.debug("131130 SEARCH : 此处只取我关注的最新的帖子");
+					Map<String,String> um = super.getUserForumMap(userid);
+					if(um==null||um.size()==0){
+						logger.debug("没有关注的圈子，返回空结果");
+						return null;
+					}
+					Set<String> set = um.keySet();
+					List<String> values = new ArrayList<String>();
+					values.addAll(set);
+					criteria.andForumIdIn(values);
+				}
+				
+			}
+			
 			noteCriteria.setOrderByClause("et desc");
 			if(ConditionType.NOTE_NAME.equals(conditionType)){
 				criteria.andNameLike("%"+condition+"%");

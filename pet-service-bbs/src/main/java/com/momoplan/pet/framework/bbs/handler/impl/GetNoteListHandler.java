@@ -45,11 +45,12 @@ public class GetNoteListHandler extends AbstractHandler {
 			String action=PetUtil.getParameter(clientRequest, "action");
 			String condition=PetUtil.getParameter(clientRequest, "condition");
 			String conditionType=PetUtil.getParameter(clientRequest, "conditionType");
+			String conditionScope = PetUtil.getParameter(clientRequest, "conditionScope");
 			if(StringUtils.isEmpty(conditionType))
 				conditionType = ConditionType.NOTE_NAME.getCode();
 			int pageNo=PetUtil.getParameterInteger(clientRequest, "pageNo");
 			int pageSize=PetUtil.getParameterInteger(clientRequest, "pageSize");
-			List<NoteVo> list = noteService.getNoteList(userid,fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),withTop,pageNo,pageSize);
+			List<NoteVo> list = noteService.getNoteList(userid,fid,Action.valueOf(action),condition,ConditionType.valueOf(conditionType),conditionScope,withTop,pageNo,pageSize);
 			logger.debug("某圈子最新帖子成功 body="+gson.toJson(clientRequest));
 			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){

@@ -37,13 +37,14 @@ public interface NoteService {
 	 * @param forumid 圈子ID
 	 * @param action 动作 "action":"ALL 全部；EUTE 精华；NEW_ET 最新回复；NEW_CT 最新发布；SEARCH 查询"
 	 * @param condition 查询条件
+	 * @param conditionScope 搜索范围 null 我关注的范围，EUTE 精华帖范围
 	 * @param withTop 是否带置顶
 	 * @param pageno 
 	 * @param pagesize
 	 * @return
 	 * @throws Exception
 	 */
-	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,boolean withTop,int pageno,int pagesize) throws Exception;
+	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope,boolean withTop,int pageno,int pagesize) throws Exception;
 
 	/**
 	 * 发送帖子
