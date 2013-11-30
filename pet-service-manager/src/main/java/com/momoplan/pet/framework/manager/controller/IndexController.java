@@ -70,16 +70,19 @@ public class IndexController {
 		TreeBean statistic = new TreeBean("03","0","统计报表");
 		TreeBean statisticUser = new TreeBean("0301","03","渠道统计","/petservice/report/channelCounter0.html");
 		TreeBean statisticMethod = new TreeBean("0302","03","服务统计","/petservice/report/serviceCounter0.html");
-
-		TreeBean albums = new TreeBean("04","0","相册管理");
-		TreeBean publicAlbums = new TreeBean("0401","04","公共相册（美图）","/petservice/albums/publicAlbumsMain.html");
-		tree.add(albums);
-		tree.add(publicAlbums);
-		
-		//将数据统计add到tree中
 		tree.add(statistic);
 		tree.add(statisticUser);
 		tree.add(statisticMethod);
+
+		TreeBean albums = new TreeBean("04","0","发现-管理");
+		TreeBean publicAlbums = new TreeBean("0401","04","宠物美图","/petservice/albums/publicAlbumsMain.html");
+		TreeBean ency = new TreeBean("0402","04","宠物百科","/petservice/ency/encyMain.html");
+		TreeBean exper = new TreeBean("0403","04","养宠经验","/petservice/exper/experMain.html");
+		tree.add(albums);
+		tree.add(publicAlbums);
+		tree.add(ency);
+		tree.add(exper);
+		
 		Gson g = MyGson.getInstance();
 		String json = g.toJson(tree);
 		logger.debug(json);

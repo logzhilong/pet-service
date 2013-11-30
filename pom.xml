@@ -22,6 +22,8 @@
 		<module>pet-service-pat</module>
 		<module>pet-service-feedback</module>
 		<module>pet-service-albums</module>
+		<module>pet-service-ency</module>
+		<module>pet-service-exper</module>
 		<module>pet-service-manager</module>
 	</modules>
 
