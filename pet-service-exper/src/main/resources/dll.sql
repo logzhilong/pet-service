@@ -1,26 +1,15 @@
-create database pet_albums;
+create database pet_exper;
 
-CREATE TABLE `albums` (
+CREATE TABLE `exper` (
   `id` varchar(64) NOT NULL,
-  `userid` varchar(200) DEFAULT NULL,
-  `title` varchar(1000) DEFAULT NULL,
-  `descript` varchar(2000) DEFAULT NULL,
-  `state` varchar(200) DEFAULT NULL,
+  `name` varchar(500) DEFAULT NULL,
+  `pid` varchar(64) DEFAULT NULL,
+  `pname` varchar(500) DEFAULT NULL,
+  `info` text DEFAULT NULL,
+  `seq` int,
   `ct` datetime,
+  `cb` varchar(500) DEFAULT NULL,
   `et` datetime,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `photos` (
-  `id` varchar(64) NOT NULL,
-  `userid` varchar(200) DEFAULT NULL,
-  `album_id` varchar(200) DEFAULT NULL,
-  `title` varchar(1000) DEFAULT NULL,
-  `descript` varchar(2000) DEFAULT NULL,
-  `state` varchar(200) DEFAULT NULL,
-  `total_click` int ,
-  `width` int ,
-  `height` int ,
-  `ct` datetime,
+  `eb` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

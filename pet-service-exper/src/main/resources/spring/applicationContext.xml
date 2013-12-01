@@ -53,5 +53,5 @@
 	<import resource="applicationContext-jms.xml"/>
 
 	<!-- 一个数据库一个配置文件~ -->
-	<import resource="classpath:spring/applicationContext-mybatis-albums.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-exper.xml"/>
 </beans>
