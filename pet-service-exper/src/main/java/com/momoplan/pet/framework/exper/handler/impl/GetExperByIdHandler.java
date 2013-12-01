@@ -27,7 +27,7 @@ public class GetExperByIdHandler extends AbstractHandler {
 			String id = PetUtil.getParameter(clientRequest, "id");
 			Exper exper = mapperOnCache.selectByPrimaryKey(Exper.class, id);
 			logger.debug("getExperById 成功 body=" + gson.toJson(clientRequest));
-			rtn = new Success(sn,false,exper).toString();
+			rtn = new Success(sn,true,exper).toString();
 		}catch(Exception e){
 			logger.debug("getExperById 失败 body=" + gson.toJson(clientRequest));
 			logger.error(e.getMessage());
