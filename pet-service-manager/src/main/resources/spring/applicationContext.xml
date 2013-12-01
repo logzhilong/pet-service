@@ -53,6 +53,7 @@
 	<import resource="classpath:spring/applicationContext-mybatis-user.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-albums.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-ency.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-exper.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-manager.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-statistic.xml"/>
 	<import resource="classpath:spring/applicationContext-mybatis-fileserver.xml"/>
