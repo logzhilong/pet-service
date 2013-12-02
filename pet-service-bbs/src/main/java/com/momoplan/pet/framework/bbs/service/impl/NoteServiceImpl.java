@@ -184,7 +184,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 				if("EUTE".equalsIgnoreCase(conditionScope)){
 					logger.debug("131130 SEARCH : 此处只取精华帖范围");
 					criteria.andIsEuteEqualTo(true);
-				}if("ALL".equalsIgnoreCase(conditionScope)){
+				} else if("ALL".equalsIgnoreCase(conditionScope)){
 					logger.debug("131130 SEARCH : 此处搜索全部");
 				} else {
 					logger.debug("131130 SEARCH : 此处只取我关注的最新的帖子");

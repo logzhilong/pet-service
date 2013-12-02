@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
 import com.momoplan.pet.framework.feedback.handler.AbstractHandler;
 
 @Component("feedback")
@@ -22,8 +22,11 @@ public class FeedbackHandler extends AbstractHandler {
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try{
-			SsoAuthenticationToken authenticationToken = verifyToken(clientRequest);
-			feedbackService.feedback(clientRequest,authenticationToken);
+			String userid = getUseridFParamSToken(clientRequest);
+			String feedback = PetUtil.getParameter(clientRequest, "feedback");
+			String email = PetUtil.getParameter(clientRequest, "email");
+
+			feedbackService.feedback(feedback,email,userid);
 			rtn = new Success(sn,true,"OK").toString();
 			logger.debug("反馈成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){
