@@ -15,6 +15,11 @@
 				</li>
 				<li class="line">line</li>
 				<li><a class="edit" href="${ctx }/petservice/exper/experAddOrEdit.html?id={id}&pid=${pf.id}" target="dialog" warn="请选择" width="600" height="600" ><span>修改</span></a></li>
+				<li>
+					<a class="add" href="${ctx }/petservice/push/pushSave.html?id={id}&src=exper&navTabId=panel0403" target="ajaxTodo" title="确定要推送吗？" warn="请选择"><span>推送</span></a>
+				</li>
+				<li class="line">line</li>
+				
 				<c:if test="${pf!=null}">
 					<li class="line">line</li>
 					<li>

@@ -1,6 +1,6 @@
 package com.momoplan.pet.commons;
 
-import java.net.URLDecoder;
+import java.util.List;
 import java.util.Map;
 
 import javapns.Push;
@@ -50,6 +50,19 @@ public class PushApn {
 		sendMsgApn( deviceToken, msg, pwd, debug , null);
 	}
 
+	public static void sendMsgApn(String msg,String pwd,boolean debug,Map<String,String> params, int threads, List<Device> devices ) throws Exception{
+		String cert = System.getProperty("user.home")+"/.ssh/pushCert.p12";
+		PushNotificationPayload payLoad = new PushNotificationPayload();
+		payLoad.addSound("default"); // 铃音 默认
+		payLoad.addAlert(msg);
+		if(params!=null){
+			for(String k : params.keySet()){
+				String v = params.get(k);
+				payLoad.addCustomDictionary(k, v);
+			}
+		}
+		Push.payload(payLoad, cert , pwd, !debug, threads,devices);
+	}
 	
 	public static void main(String[] args) throws Exception {
 //		long s = System.currentTimeMillis();

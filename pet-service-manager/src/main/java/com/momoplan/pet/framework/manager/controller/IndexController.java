@@ -53,7 +53,7 @@ public class IndexController {
 //		TreeBean common = new TreeBean("01","0","公共数据");
 //		TreeBean commonAreaCode = new TreeBean("0101","01","地域信息","/manager/commons/areaCodeList.html");
 		
-		TreeBean bbsRoot = new TreeBean("02","0","圈子管理 (新)");
+		TreeBean bbsRoot = new TreeBean("02","0","圈子管理");
 		TreeBean forum = new TreeBean("0201","02","圈子管理","/petservice/bbs/forumMain.html");
 		TreeBean condotion = new TreeBean("0202","02","默认关注","/manager/userforumcondition/userforumlist.html");
 		tree.add(bbsRoot);
@@ -66,13 +66,6 @@ public class IndexController {
 //		tree.add(common);
 //		tree.add(commonAreaCode);
 //		tree.add(trustList);
-		//数据统计页面
-		TreeBean statistic = new TreeBean("03","0","统计报表");
-		TreeBean statisticUser = new TreeBean("0301","03","渠道统计","/petservice/report/channelCounter0.html");
-		TreeBean statisticMethod = new TreeBean("0302","03","服务统计","/petservice/report/serviceCounter0.html");
-		tree.add(statistic);
-		tree.add(statisticUser);
-		tree.add(statisticMethod);
 
 		TreeBean albums = new TreeBean("04","0","发现-管理");
 		TreeBean publicAlbums = new TreeBean("0401","04","宠物美图","/petservice/albums/publicAlbumsMain.html");
@@ -82,6 +75,24 @@ public class IndexController {
 		tree.add(publicAlbums);
 		tree.add(ency);
 		tree.add(exper);
+
+		TreeBean notice = new TreeBean("05","0","通知-管理");
+		TreeBean sysNotice = new TreeBean("0501","05","系统通知","/petservice/notice/noticeMain.html");
+		tree.add(notice);
+		tree.add(sysNotice);
+
+		TreeBean push = new TreeBean("06","0","推送-管理");
+		TreeBean pushMsg = new TreeBean("0601","06","推荐","/petservice/push/pushMain.html");
+		tree.add(push);
+		tree.add(pushMsg);
+
+		//数据统计页面
+		TreeBean statistic = new TreeBean("03","0","统计报表");
+		TreeBean statisticUser = new TreeBean("0301","03","渠道统计","/petservice/report/channelCounter0.html");
+		TreeBean statisticMethod = new TreeBean("0302","03","服务统计","/petservice/report/serviceCounter0.html");
+		tree.add(statistic);
+		tree.add(statisticUser);
+		tree.add(statisticMethod);
 		
 		Gson g = MyGson.getInstance();
 		String json = g.toJson(tree);

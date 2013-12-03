@@ -75,3 +75,18 @@ CREATE TABLE `mgr_published_apk` (
   `cb` varchar(200) DEFAULT NULL COMMENT 'create by',  
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `mgr_push` (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `name` varchar(2000) DEFAULT NULL COMMENT '标题',
+  `src` varchar(500) DEFAULT NULL COMMENT '类型：帖子、百科、经验',
+  `state` varchar(500) DEFAULT NULL COMMENT '状态：未推送、已推送',
+  `ct` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `et` datetime,
+  `eb` varchar(200) DEFAULT NULL,    
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

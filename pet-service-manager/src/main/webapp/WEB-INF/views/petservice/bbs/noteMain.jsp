@@ -43,6 +43,10 @@
 				<a class="edit" href="${ctx }/petservice/bbs/noteAddOrEdit.html?id={id}&forumId=${forum.id}" target="dialog" warn="请选择一个帖子" width="650" height="700" ><span>修改</span></a>
 			</li>
 			<li class="line">line</li>
+			<li>
+				<a class="add" href="${ctx }/petservice/push/pushSave.html?id={id}&src=bbs_note&navTabId=noteMainTab" target="ajaxTodo" title="确定要推送吗？" warn="请选择一个帖子"><span>推送</span></a>
+			</li>
+			<li class="line">line</li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="115">

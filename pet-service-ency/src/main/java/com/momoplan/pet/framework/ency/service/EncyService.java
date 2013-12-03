@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
-import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.ency.mapper.EncyMapper;
@@ -21,7 +19,6 @@ import com.momoplan.pet.commons.spring.CommonConfig;
 @Service
 public class EncyService {
 	private static Logger logger = LoggerFactory.getLogger(EncyService.class);
-	private static Gson gson = MyGson.getInstance();
 	@Autowired
 	private MapperOnCache mapperOnCache = null;
 	@Autowired
