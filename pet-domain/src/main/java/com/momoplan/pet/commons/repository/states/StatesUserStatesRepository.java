@@ -169,12 +169,12 @@ public class StatesUserStatesRepository implements CacheKeysConstance{
 					return null;
 				if(end>reslist.size())
 					end = reslist.size();
-				reslist.subList(start,end);
+				reslist = reslist.subList(start,end);
+				logger.debug("start="+start+" ; end="+end+" ; size="+reslist.size()); 
 			}
 			return reslist;
 		}catch(Exception e){
-			//TODO 这种异常很严重啊，要发邮件通知啊
-			logger.error("insertSelective",e);
+			logger.error("getStatesUserStatesListByUserid",e);
 		}finally{
 			storePool.closeConn(jedis);
 		}
