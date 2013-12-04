@@ -89,8 +89,8 @@ class PushXmpp :
 		log.debug("revice param = %s" % self.param)
 		template = string.Template(self.msg_tmp)
 		self.msg = template.safe_substitute(p)
+		log.info("build msg => %s" % self.msg)
 	def push(self):
-		log.info("push=> %s" % self.msg)
 		settings = XMPPSettings({
                     u"password": self.from_pwd,
                     u"starttls": True,
@@ -98,7 +98,8 @@ class PushXmpp :
                     u'server':self.xmpp_server,
                     u'c2s_port':int(self.xmpp_port),
                })
-		client = Client(JID(self.from_jid), [MyHandler(self.msg)], settings)
+		xml = self.msg
+		client = Client(JID(self.from_jid), [MyHandler(xml.encode('utf-8'))], settings)
 		client.connect()
 		client.run()
 

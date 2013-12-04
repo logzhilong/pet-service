@@ -1,21 +1,30 @@
 #!/usr/bin/env python
 #coding=utf-8
-import os,stomp,sys,time,json,string,urllib,urllib2,traceback
+import stomp,sys,time,Queue,thread
 import mod_conf
 import mod_log as lm
+
+buf = Queue.Queue()
 
 log={}
 common_cfg={}
 self_cfg={}
 
+def writeLog():
+	while True:
+		message = buf.get()
+		log.info(message)
+
 class MyListener(object):
 	def on_error(self,headers,message):
 		log.info("error : %s" % message)
 	def on_message(self,headers,message):
-		log.info(message)
+		buf.put(message)
 
 class Main :
 	def start_link(self):
+		thread.start_new_thread(writeLog(),())
+		print 'start write log thread ...'
 		conn = stomp.Connection([(common_cfg['common']['mq_host'],int(common_cfg['common']['mq_port']))])
 		conn.set_listener('',MyListener())
 		while True:
