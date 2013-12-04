@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #coding=utf-8
-import stomp,sys,time,Queue,thread
+import stomp,sys,time,Queue,threading
 import mod_conf
 import mod_log as lm
 
@@ -10,10 +10,14 @@ log={}
 common_cfg={}
 self_cfg={}
 
-def writeLog():
-	while True:
-		message = buf.get()
-		log.info(message)
+class WriteLogTask(threading.Thread):
+	def __init__(self):
+		print '<<<<<<<<<<<<<< start write log thread >>>>>>>>>>>>>>'
+		threading.Thread.__init__(self)
+	def run(self):
+		while True:
+			message = buf.get()
+			log.info(message)
 
 class MyListener(object):
 	def on_error(self,headers,message):
@@ -23,8 +27,7 @@ class MyListener(object):
 
 class Main :
 	def start_link(self):
-		thread.start_new_thread(writeLog(),())
-		print 'start write log thread ...'
+		print '<<<<<<<<<<<<<< start revice log thread >>>>>>>>>>>>>>'
 		conn = stomp.Connection([(common_cfg['common']['mq_host'],int(common_cfg['common']['mq_port']))])
 		conn.set_listener('',MyListener())
 		while True:
@@ -37,9 +40,6 @@ class Main :
 		conn.disconnect()
 
 if(__name__=='__main__'):
-	global common_cfg 
-	global self_cfg 
-	global log 
 	common_cfg = mod_conf.load('stomp.ini')
 
 	self_cfg_path = 'stomp_access_log.ini'
@@ -56,5 +56,8 @@ if(__name__=='__main__'):
 
 	from SimpleXMLRPCServer import SimpleXMLRPCServer
 	server = SimpleXMLRPCServer(('127.0.0.1',int(self_cfg['self']['daemon_port'])) , logRequests=True )
+	
+	wt = WriteLogTask()
+	wt.start()
+	
 	Main().start_link()
-
