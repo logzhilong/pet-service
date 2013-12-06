@@ -80,7 +80,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		po.setIsEute(false);
 		po.setIsTop(false);
 		po.setState(NoteState.AUDIT.getCode());
-		if(po.getContent().contains("</img>")){
+		if(po.getContent().contains("<img")){
 			logger.debug("包含图片的帖子");
 			po.setType("img");
 		}else{
@@ -262,7 +262,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		if(StringUtils.isEmpty(t)||"0".equals(t)){
 			Note p = mapperOnCache.selectByPrimaryKey(Note.class, vo.getId());
 			String c = p.getContent();
-			if(c!=null&&c.contains("</img>")){
+			if(c!=null&&c.contains("<img")){
 				vo.setType("img");
 			}else{
 				vo.setType("text");
