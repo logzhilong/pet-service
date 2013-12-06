@@ -249,7 +249,6 @@ public class NoteRepository implements CacheKeysConstance{
 				}
 				criteria1.andIsTopEqualTo(true);
 				criteria1.andIsDelEqualTo(false);
-				criteria1.andTypeEqualTo("0");//0 帖子
 				List<Note> notelist = noteMapper.selectByExample(noteCriteria1);
 				for(int i=(notelist.size()-1);i>-1;i--){
 					Note n = notelist.get(i);

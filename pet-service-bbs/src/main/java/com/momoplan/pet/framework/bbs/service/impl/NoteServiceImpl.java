@@ -80,7 +80,13 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		po.setIsEute(false);
 		po.setIsTop(false);
 		po.setState(NoteState.AUDIT.getCode());
-		po.setType("0");
+		if(po.getContent().contains("</img>")){
+			logger.debug("包含图片的帖子");
+			po.setType("img");
+		}else{
+			logger.debug("不包含图片的帖子");
+			po.setType("text");
+		}
 		logger.debug("发帖子 ：" + po.toString());
 		noteRepository.insertOrUpdateSelective(po,NoteState.AUDIT);
 		sendJMS(po);
@@ -215,7 +221,6 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		}
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
-		criteria.andTypeEqualTo("0");
 		
 		List<String> stateList = new ArrayList<String>();
 		stateList.add(NoteState.REJECT.getCode());//审核拒绝
@@ -246,7 +251,25 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
 		for (Note note : notelist) {
 			NoteVo vo = createNoteVo(note);
+			//add by liangc 131206 : 校验返回的数据中，是不是包含图片呢，type=0的，都得判断一下，然后更新结果
+			updateNoteTypeForOldData(vo);
 			noteVoList.add(vo);
+		}
+	}
+	
+	private void updateNoteTypeForOldData(NoteVo vo) throws Exception{
+		String t = vo.getType();
+		if(StringUtils.isEmpty(t)||"0".equals(t)){
+			Note p = mapperOnCache.selectByPrimaryKey(Note.class, vo.getId());
+			String c = p.getContent();
+			if(c!=null&&c.contains("</img>")){
+				vo.setType("img");
+			}else{
+				vo.setType("text");
+			}
+			p.setType(vo.getType());
+			mapperOnCache.updateByPrimaryKeySelective(p, vo.getId());
+			logger.debug("NOTE_ID="+vo.getId()+" 需要更新 TYPE="+vo.getType());
 		}
 	}
 	
