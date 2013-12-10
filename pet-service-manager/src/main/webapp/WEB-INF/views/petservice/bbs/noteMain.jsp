@@ -1,10 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/commons/taglibs.jsp" %>
-
 <div class="pageHeader" >
 	<div class="searchBar">
-		<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/bbs/noteMain.html" method="post">
+		<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/bbs/noteMain.html" method="post" id="noteMainForm" >
+			<%--
+			<input type="text" id="pageNo" name="pageNo" /> 
+			<input type="text" id="pageSize" name="pageSize" /> 
+			--%>
 			<input type="hidden" name="forumId" value="${myForm.forumId }" /> 
+			
 			状态:
 			<select name="condition_state" >
 				<option value="ALL" <c:if test="${ myForm.condition_state eq 'ALL' }">selected="selected"</c:if>>全部</option>
@@ -26,7 +30,7 @@
 				<option value="true" <c:if test="${ myForm.condition_isEute eq 'true' }">selected="selected"</c:if> >是</option>
 				<option value="false" <c:if test="${ myForm.condition_isEute eq 'false' }">selected="selected"</c:if> >否</option>
 			</select>
-			<button type="submit">查询</button>
+			<button type="button" onclick="cccc();">查询</button>
 			<button type="button" class="close">关闭</button>
 		</form>
 	</div>
@@ -104,14 +108,17 @@
 		</tbody>
 		
 	</table>
-	
+
+	<pet:page form="noteMainForm" pageBean="${page }" pageSize="${page.pageSize }" />
+
+<%--
 	<div class="panelBar">
 		<div class="pages">
 			<span>显示</span>
 			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
 				<option value="${page.pageSize }">${page.pageSize }</option>
 			</select>
-			<span>条，共[${page.totalCount}]条,当前第[${page.pageNo }]页</span>
+			<span>条，共[${page.totalCount}]条,当前第[${page.pageNo+1 }]页</span>
 		</div>
 		<div style="float: right;">
 			<ul>
@@ -122,11 +129,13 @@
 					<input type="button" value="尾页" style="font-size: 7pt;background-color: #D1EEEE;" />
 				</li>
 				<li>
-					<input type="text" size="2" value="1">
+					<input type="text" id="gotoNo" size="2" value="1">
 					<input type="button" value=">" style="font-size: 7pt;background-color: #D1EEEE;" >
 				</li>
 			</ul>
 		</div>
 		
 	</div>
+--%>
+
 </div>

@@ -35,16 +35,10 @@
 			</c:if>
 		</c:forEach>
 	</table>
-	<div class="panelBar">
-		<div class="pages">
-			<span>显示</span>
-			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
-				<option value="${page.pageSize }">${page.pageSize }</option>
-			</select>
-			<span>条，共[${page.totalCount}]条,当前第[${page.pageNo }]页</span>
-		</div>
-		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="1"></div>
-	</div>
+	
+	<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/albums/publicAlbumsMain.html" method="post" id="albumsForm" ></form>
+	<pet:page form="albumsForm" pageBean="${page }" pageSize="${page.pageSize }" />
+	
 </div>
 <%-- "albumsList" --%>
 

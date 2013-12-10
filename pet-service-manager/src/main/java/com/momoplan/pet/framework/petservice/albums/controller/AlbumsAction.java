@@ -23,9 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.domain.albums.po.Photos;
 import com.momoplan.pet.framework.base.controller.BaseAction;
+import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.petservice.albums.service.AlbumsService;
 import com.momoplan.pet.framework.petservice.albums.vo.PhotosVo;
 import com.momoplan.pet.framework.petservice.customer.controller.GhostAction;
@@ -46,7 +46,6 @@ public class AlbumsAction extends BaseAction {
 	public String main(Page<Photos> page,Model model,HttpServletRequest request,HttpServletResponse response){
 		logger.debug("/petservice/albums/publicAlbumsMain.html");
 		try {
-			page.setPageSize(400);
 			page = albumsService.getPublicPhotos(page);
 			model.addAttribute("page", page);
 			model.addAttribute("pet_file_server", commonConfig.get("pet_file_server"));

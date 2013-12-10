@@ -97,8 +97,8 @@ public class NoteService {
 			criteria.andIsEuteEqualTo(Boolean.valueOf(vo.getCondition_isEute()));
 		}
 		int totalCount = noteMapper.countByExample(noteCriteria);
-		noteCriteria.setMysqlOffset(page.getPageNo());
-		noteCriteria.setMysqlLength((page.getPageNo()+1)*page.getPageSize());
+		noteCriteria.setMysqlOffset( (page.getPageNo()-1)*page.getPageSize() );
+		noteCriteria.setMysqlLength( page.getPageSize() );
 		noteCriteria.setOrderByClause("et desc");
 		List<Note> list = noteMapper.selectByExample(noteCriteria);
 		List<NoteVo> vol = new ArrayList<NoteVo>();

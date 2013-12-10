@@ -35,7 +35,7 @@ public class PhotoService {
 		int totalCount = photosMapper.countByExample(photosCriteria);
 		photosCriteria.setOrderByClause("ct desc");
 		photosCriteria.setMysqlOffset(pageNo * pageSize);
-		photosCriteria.setMysqlLength((pageNo+1)*pageSize);
+		photosCriteria.setMysqlLength(pageSize);
 		List<Photos> data = photosMapper.selectByExample(photosCriteria);
 		pages.setData(data);
 		pages.setTotalCount(totalCount);

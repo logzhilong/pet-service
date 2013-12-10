@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.domain.albums.mapper.PhotosMapper;
 import com.momoplan.pet.commons.domain.albums.po.Photos;
 import com.momoplan.pet.commons.domain.albums.po.PhotosCriteria;
+import com.momoplan.pet.framework.base.vo.Page;
 
 @Service
 public class AlbumsService {
@@ -28,8 +28,8 @@ public class AlbumsService {
 		criteria.andAlbumIdEqualTo("public");//公共相册
 		int totalCount = photosMapper.countByExample(photosCriteria);
 		photosCriteria.setOrderByClause("ct desc");
-		photosCriteria.setMysqlOffset(pageNo * pageSize);
-		photosCriteria.setMysqlLength((pageNo+1)*pageSize);
+		photosCriteria.setMysqlOffset( (pageNo-1) * pageSize );
+		photosCriteria.setMysqlLength( pageSize );
 		List<Photos> data = photosMapper.selectByExample(photosCriteria);
 		pages.setData(data);
 		pages.setTotalCount(totalCount);

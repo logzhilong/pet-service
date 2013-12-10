@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Page<T> {
-	private int pageSize = 40;// 每页显示条数
-	private int pageNo = 0; // 当前页
+	private int pageSize = 20;// 每页显示条数
+	private int pageNo = 1; // 当前页
 	private int totalCount = 0;
 	private List<T> data = new ArrayList<T>();
 

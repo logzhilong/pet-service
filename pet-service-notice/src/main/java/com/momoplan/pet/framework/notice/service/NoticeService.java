@@ -40,7 +40,7 @@ public class NoticeService {
 		}
 		int totalCount = noticeMapper.countByExample(noticeCriteria);
 		noticeCriteria.setMysqlOffset(pageNo * pageSize);
-		noticeCriteria.setMysqlLength((pageNo+1)*pageSize);
+		noticeCriteria.setMysqlLength(pageSize);
 		List<Notice> data = noticeMapper.selectByExample(noticeCriteria);
 		pages.setTotalCount(totalCount);
 		pages.setData(data);

@@ -40,7 +40,7 @@ public class ExperService {
 		}
 		int totalCount = experMapper.countByExample(experCriteria);
 		experCriteria.setMysqlOffset(pageNo * pageSize);
-		experCriteria.setMysqlLength((pageNo+1)*pageSize);
+		experCriteria.setMysqlLength(pageSize);
 		List<Exper> data = experMapper.selectByExample(experCriteria);
 		pages.setTotalCount(totalCount);
 		pages.setData(data);

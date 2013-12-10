@@ -39,7 +39,7 @@ public class EncyService {
 		}
 		int totalCount = encyMapper.countByExample(encyCriteria);
 		encyCriteria.setMysqlOffset(pageNo * pageSize);
-		encyCriteria.setMysqlLength((pageNo+1)*pageSize);
+		encyCriteria.setMysqlLength(pageSize);
 		List<Ency> data = encyMapper.selectByExample(encyCriteria);
 		pages.setTotalCount(totalCount);
 		pages.setData(data);

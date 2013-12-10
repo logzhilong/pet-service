@@ -144,7 +144,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope ,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset(pageNo * pageSize);
-		noteCriteria.setMysqlLength((pageNo+1)*pageSize);
+		noteCriteria.setMysqlLength(pageSize);
 		
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
 		if (StringUtils.isNotEmpty(forumid)&&!"0".equals(forumid)) {

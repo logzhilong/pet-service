@@ -50,7 +50,6 @@ public class NoteAction extends BaseAction {
 		logger.debug("/petservice/bbs/noteMain.html");
 		logger.debug("input:"+gson.toJson(myForm));
 		try {
-			page.setPageSize(400);
 			page = noteService.getNoteList(page, myForm);
 			Forum f = mapperOnCache.selectByPrimaryKey(Forum.class, myForm.getForumId());
 			model.addAttribute("forum", f);

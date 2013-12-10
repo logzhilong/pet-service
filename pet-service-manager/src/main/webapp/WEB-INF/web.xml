@@ -61,7 +61,13 @@
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
-
+	
+	<jsp-config>
+		<taglib>
+			<taglib-uri>http://www.52pet.net/pet</taglib-uri>
+			<taglib-location>/WEB-INF/taglibs/pet.tld</taglib-location>
+		</taglib>
+	</jsp-config>
 	
 	<welcome-file-list>
 		<welcome-file>login.shtml</welcome-file>

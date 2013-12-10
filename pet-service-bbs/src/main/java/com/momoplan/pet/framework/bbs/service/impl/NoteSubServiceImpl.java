@@ -173,7 +173,7 @@ public class NoteSubServiceImpl implements NoteSubService {
 			totalCount = noteSubMapper.countByExample(noteSubCriteria);
 			
 			noteSubCriteria.setMysqlOffset(pageNo*pageSize);
-			noteSubCriteria.setMysqlLength((pageNo+1)*pageSize);
+			noteSubCriteria.setMysqlLength(pageSize);
 			noteSubCriteria.setOrderByClause("seq asc");
 			
 			list = noteSubMapper.selectByExample(noteSubCriteria);
