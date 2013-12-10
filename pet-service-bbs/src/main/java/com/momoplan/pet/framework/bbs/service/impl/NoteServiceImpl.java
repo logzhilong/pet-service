@@ -219,6 +219,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 			}
 			logger.debug("查询..."+conditionType.getName());
 		}
+		
 		criteria.andIsTopEqualTo(false);
 		criteria.andIsDelEqualTo(false);
 		
@@ -241,7 +242,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 			list.addAll(notelist);
 		if(list==null||list.size()==0)
 			return null;
-		// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树
+		logger.debug("// add by liangc 131018 : 增加 发帖人昵称、发帖人头像、帖子回复树");
 		List<NoteVo> noteVoList = new ArrayList<NoteVo>(notelist.size());
 		buildNoteVoList(list,noteVoList);
 		return noteVoList;
@@ -251,7 +252,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
 		for (Note note : notelist) {
 			NoteVo vo = createNoteVo(note);
-			//add by liangc 131206 : 校验返回的数据中，是不是包含图片呢，type=0的，都得判断一下，然后更新结果
+			logger.debug("//add by liangc 131206 : 校验返回的数据中，是不是包含图片呢，type=0的，都得判断一下，然后更新结果");
 			updateNoteTypeForOldData(vo);
 			noteVoList.add(vo);
 		}

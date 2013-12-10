@@ -113,6 +113,20 @@
 			</select>
 			<span>条，共[${page.totalCount}]条,当前第[${page.pageNo }]页</span>
 		</div>
-		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="1"></div>
+		<div style="float: right;">
+			<ul>
+				<li>
+					<input type="button" value="首页" style="font-size: 7pt;background-color: #D1EEEE;" />
+					<input type="button" value="上页" style="font-size: 7pt;background-color: #D1EEEE;" />
+					<input type="button" value="下页" style="font-size: 7pt;background-color: #D1EEEE;" />
+					<input type="button" value="尾页" style="font-size: 7pt;background-color: #D1EEEE;" />
+				</li>
+				<li>
+					<input type="text" size="2" value="1">
+					<input type="button" value=">" style="font-size: 7pt;background-color: #D1EEEE;" >
+				</li>
+			</ul>
+		</div>
+		
 	</div>
 </div>

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,13 +123,13 @@ public class NoteService {
 	}
 
 	public void saveNote(Note vo) throws Exception {
+		filterTopNote(vo);
 		if(vo.getId()!=null&&!"".equals(vo.getId())){
 			logger.debug("更新帖子 "+gson.toJson(vo));
 			Date now = new Date();
 			vo.setEt(now);
 			if(vo.getIsTop()){
-				logger.debug("更新为置顶帖,修改创建日期:"+now);
-				vo.setCt(now);
+				logger.debug(vo.getName()+"--更新为置顶帖,修改日期:"+now);
 			}
 			logger.debug("//TODO 更新时要清空总数的缓存，否则总数对不上呢");
 			String forumId = vo.getForumId();
@@ -161,31 +162,37 @@ public class NoteService {
 				throw new Exception(success.getString("entity"));
 			}
 		}
-		filterTopNote(vo);
 	}
 	
 	private void filterTopNote(Note vo) throws Exception{
-		if(vo.getIsTop()){
+		String id = vo.getId();
+		Note n = null;
+		if(StringUtils.isNotEmpty(id)){
+			n = mapperOnCache.selectByPrimaryKey(Note.class,id );
+			logger.debug("旧帖子 n="+n);
+		}
+		if(vo.getIsTop()||(n!=null&&n.getIsTop())){
 			logger.debug("刷新置顶缓存");
 			noteResponse.flushTopNoteByFid(vo.getForumId());
 		}
-		logger.debug("过滤置顶帖子");
-		NoteCriteria noteCriteria = new NoteCriteria();
-		noteCriteria.createCriteria()
-			.andForumIdEqualTo(vo.getForumId())
-			.andIsTopEqualTo(true)
-			.andIsDelEqualTo(false);
-		noteCriteria.setOrderByClause("ct asc");
-		List<Note> list = noteMapper.selectByExample(noteCriteria);
-		if(list!=null&&list.size()>5){
-			Note n = list.get(0);
-			n.setIsTop(false);
-			mapperOnCache.updateByPrimaryKeySelective(n, n.getId());
-			logger.debug("置顶总数："+list.size()+" ; 过滤 id="+n.getId()); 
-			filterTopNote(vo);
-		}else{
-			logger.debug("结束过滤");
-		}
+// 	modify by liangc 131210 : 过滤置顶的任务交给前台运营人员吧暂时
+//		logger.debug("过滤置顶帖子");
+//		NoteCriteria noteCriteria = new NoteCriteria();
+//		noteCriteria.createCriteria()
+//			.andForumIdEqualTo(vo.getForumId())
+//			.andIsTopEqualTo(true)
+//			.andIsDelEqualTo(false);
+//		noteCriteria.setOrderByClause("ct asc");
+//		List<Note> list = noteMapper.selectByExample(noteCriteria);
+//		if(list!=null&&list.size()>5){
+//			Note n = list.get(0);
+//			n.setIsTop(false);
+//			mapperOnCache.updateByPrimaryKeySelective(n, n.getId());
+//			logger.debug("置顶总数："+list.size()+" ; 过滤 id="+n.getId()); 
+//			filterTopNote(vo);
+//		}else{
+//			logger.debug("结束过滤");
+//		}
 	}
 	
 }
