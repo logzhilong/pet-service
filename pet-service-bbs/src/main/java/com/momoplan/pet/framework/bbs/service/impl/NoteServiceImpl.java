@@ -26,6 +26,7 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
+import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
@@ -292,6 +293,10 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		}
 		Long totalReply = noteSubRepository.totalReply(nid);
 		vo.setTotalReply(totalReply);
+		note.getForumId();
+		Forum forum = mapperOnCache.selectByPrimaryKey(Forum.class, note.getForumId());
+		logger.debug("131210:圈子名称:::"+forum.getName());
+		vo.setForumName(forum.getName());
 		return vo;
 	}
 
