@@ -8,6 +8,12 @@ public class NoteVo extends Note{
 	 * 昵称
 	 */
 	private String nickname = null;
+	
+	/**
+	 * 131210 : 圈子名称
+	 */
+	private String forumName = null;
+	
 	/**
 	 * 头像
 	 */
@@ -51,6 +57,14 @@ public class NoteVo extends Note{
 
 	public void setTotalReply(Long totalReply) {
 		this.totalReply = totalReply;
+	}
+
+	public String getForumName() {
+		return forumName;
+	}
+
+	public void setForumName(String forumName) {
+		this.forumName = forumName;
 	}
 
 }
