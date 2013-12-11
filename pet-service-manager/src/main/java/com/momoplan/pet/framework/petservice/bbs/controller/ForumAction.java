@@ -46,6 +46,7 @@ public class ForumAction extends BaseAction{
 		} catch (Exception e) {
 			logger.error("圈子列表异常",e);
 		}
+		model.addAttribute("pet_file_server", commonConfig.get("pet_file_server"));
 		return "/petservice/bbs/forumMain";
 	}
 
@@ -73,6 +74,7 @@ public class ForumAction extends BaseAction{
 		} catch (Exception e) {
 			logger.error("add or edit error",e);
 		}
+		model.addAttribute("pet_file_server", commonConfig.get("pet_file_server"));
 		return "/petservice/bbs/forumAddOrEdit";
 	}
 	
@@ -84,8 +86,8 @@ public class ForumAction extends BaseAction{
 		JSONObject json = new JSONObject();
 		json.put("confirmMsg","");
 		json.put("message","操作成功");			
-		json.put("statusCode","200");			
-		json.put("callbackType","closeCurrent");	
+		json.put("statusCode","200");
+		json.put("callbackType","closeCurrent");
 		json.put("navTabId","panel0201");
 		json.put("forwardUrl",ctx+"/petservice/bbs/forumMain.html?pid="+myForm.getPid());	
 		String res = null;

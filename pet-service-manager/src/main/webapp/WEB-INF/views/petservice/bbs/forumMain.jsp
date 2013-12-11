@@ -12,10 +12,10 @@
 			<ul class="toolBar">
 			
 				<li>
-					<a class="add" href="${ctx }/petservice/bbs/forumAddOrEdit.html?pid=${pf.id}" target="dialog" mask="true" title="添加圈子" width="420" height="240" ><span>添加圈子</span></a>				
+					<a class="add" href="${ctx }/petservice/bbs/forumAddOrEdit.html?pid=${pf.id}" target="dialog" mask="true" title="添加圈子" width="440" height="380" ><span>添加圈子</span></a>				
 				</li>
 				<li class="line">line</li>
-				<li><a class="edit" href="${ctx }/petservice/bbs/forumAddOrEdit.html?id={id}&pid=${pf.id}" target="dialog" warn="请选择一个圈子"><span>修改</span></a></li>
+				<li><a class="edit" href="${ctx }/petservice/bbs/forumAddOrEdit.html?id={id}&pid=${pf.id}" target="dialog" warn="请选择一个圈子" width="440" height="380"><span>修改</span></a></li>
 				<c:if test="${pf!=null}">
 					<li class="line">line</li>
 					<li>
@@ -31,6 +31,7 @@
 				<thead>
 					<tr>
 						<th width="50">序号</th>
+						<th width="100">logo</th>
 						<th>名称</th>
 						<th>创建人</th>
 						<th width="100" >类型</th>
@@ -41,6 +42,11 @@
 				<c:forEach items="${list }" var="itm" varStatus="idx">
 					<tr height="30" align="left" target="id" rel="${itm.id }" >
 						<td>${itm.seq }</td>
+						<td>
+							<c:if test="${not empty itm.logoImg }">
+								<img alt="" src="${pet_file_server }/get/${itm.logoImg }" width="100" >
+							</c:if>
+						</td>
 						<td>
 							<c:choose>
 								<c:when test="${ itm.pid==null }">
