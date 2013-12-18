@@ -36,8 +36,8 @@
 		</c:forEach>
 	</table>
 	
-	<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/albums/publicAlbumsMain.html" method="post" id="albumsForm" ></form>
-	<pet:page form="albumsForm" pageBean="${page }" pageSize="${page.pageSize }" />
+	<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/albums/publicAlbumsMain.html" method="post" id="albumsMainForm" ></form>
+	<pet:page form="albumsMainForm" pageBean="${page }" pageSize="${page.pageSize }" />
 	
 </div>
 <%-- "albumsList" --%>

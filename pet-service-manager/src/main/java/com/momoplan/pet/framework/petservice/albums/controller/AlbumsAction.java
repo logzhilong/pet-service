@@ -28,12 +28,11 @@ import com.momoplan.pet.framework.base.controller.BaseAction;
 import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.petservice.albums.service.AlbumsService;
 import com.momoplan.pet.framework.petservice.albums.vo.PhotosVo;
-import com.momoplan.pet.framework.petservice.customer.controller.GhostAction;
 
 @Controller
 public class AlbumsAction extends BaseAction {
 
-	private static Logger logger = LoggerFactory.getLogger(GhostAction.class);
+	private static Logger logger = LoggerFactory.getLogger(AlbumsAction.class);
 	
 	@Autowired
 	private AlbumsService albumsService = null;
