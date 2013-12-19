@@ -13,7 +13,6 @@
   		<constructor-arg>
 		   	<list>
 				<value>classpath:properties/application-db.properties</value>
-				<value>classpath:properties/img-format.properties</value>
 				<value>classpath:properties/zoo.properties</value>
 				<value>classpath:properties/cache.properties</value>
 			</list>
@@ -38,15 +37,19 @@
     <bean id="zooServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${zoo.server}" />
     </bean>
-	<bean id="cacheServer" class="java.lang.String" >
+    <bean id="cacheServer" class="java.lang.String" >
     	<constructor-arg index="0" value="${cache.server}" />
     </bean>
-	
-	<bean id="imgFormatDict" class="java.lang.String" >
-    	<constructor-arg index="0" value="${img.format.dict}" />
-    </bean>
-	
+	<!-- 单节点存储 -->
+	<bean class="com.momoplan.pet.commons.cache.pool.StorePool">
+		<property name="storeServer" value="${store.server}" />
+	</bean>
+
 	<!-- 一个数据库一个配置文件~ -->
-	<import resource="classpath:spring/applicationContext-mybatis-fileserver.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-bbs.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-albums.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-ency.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-exper.xml"/>
+	<import resource="classpath:spring/applicationContext-mybatis-notice.xml"/>
 
 </beans>
