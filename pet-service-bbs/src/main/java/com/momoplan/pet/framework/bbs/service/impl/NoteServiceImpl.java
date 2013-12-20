@@ -80,7 +80,6 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		po.setIsDel(false);
 		po.setIsEute(false);
 		po.setIsTop(false);
-		po.setState(NoteState.AUDIT.getCode());
 		if(po.getContent().contains("<img")){
 			logger.debug("包含图片的帖子");
 			po.setType("img");
@@ -101,24 +100,26 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	 * @param biz
 	 */
 	private void sendJMS(Note po) {
-		TextMessage tm = new ActiveMQTextMessage();
-		try {
-			JSONObject json = new JSONObject();
-			json.put("biz", "bbs_note");
-			json.put("bid", po.getId());
-			json.put("content", po.getContent());
-			String msg = json.toString();
-			logger.debug(msg);
-			tm.setText(msg);
-			ActiveMQQueue queue = new ActiveMQQueue();
-			queue.setPhysicalName("pet_wordfilter");
-			apprequestTemplate.convertAndSend(queue, tm);
-		} catch (JMSException e) {
-			logger.debug("sendJMS error :" + e);
-			e.printStackTrace();
-		} catch (JSONException e) {
-			logger.debug("sendJMS error :" + e);
-			e.printStackTrace();
+		if(NoteState.AUDIT.getCode().equals(po.getState())){
+			TextMessage tm = new ActiveMQTextMessage();
+			try {
+				JSONObject json = new JSONObject();
+				json.put("biz", "bbs_note");
+				json.put("bid", po.getId());
+				json.put("content", po.getContent());
+				String msg = json.toString();
+				logger.debug(msg);
+				tm.setText(msg);
+				ActiveMQQueue queue = new ActiveMQQueue();
+				queue.setPhysicalName("pet_wordfilter");
+				apprequestTemplate.convertAndSend(queue, tm);
+			} catch (JMSException e) {
+				logger.debug("sendJMS error :" + e);
+				e.printStackTrace();
+			} catch (JSONException e) {
+				logger.debug("sendJMS error :" + e);
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -225,12 +226,18 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		criteria.andIsDelEqualTo(false);
 		
 		List<String> stateList = new ArrayList<String>();
-		stateList.add(NoteState.REJECT.getCode());//审核拒绝
-		stateList.add(NoteState.AUDIT.getCode());//审核中
-		stateList.add(NoteState.REPORT.getCode());//被举报
-		stateList.add(NoteState.DELETE.getCode());//被删除
+//		stateList.add(NoteState.REJECT.getCode());//审核拒绝
+//		stateList.add(NoteState.AUDIT.getCode());//审核中
+//		stateList.add(NoteState.REPORT.getCode());//被举报
+//		stateList.add(NoteState.DELETE.getCode());//被删除
 		//以上状态不显示
-		criteria.andStateNotIn(stateList);
+		//criteria.andStateNotIn(stateList);
+		
+		stateList.add(NoteState.ACTIVE.getCode());//正常
+		stateList.add(NoteState.PASS.getCode());//通过
+		//只显示这几个状态
+		criteria.andStateIn(stateList);
+		
 		List<Note> notelist = noteMapper.selectByExample(noteCriteria);
 		// 获取置顶帖子
 		List<Note> list = new ArrayList<Note>();

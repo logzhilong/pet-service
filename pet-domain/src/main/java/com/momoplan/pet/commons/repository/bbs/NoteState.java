@@ -12,7 +12,8 @@ public enum NoteState {
 	PASS("审核通过","PASS"),
 	REJECT("审核拒绝","REJECT"),
 	DELETE("删除","DELETE"),
-	REPORT("被举报","REPORT");
+	REPORT("被举报","REPORT"),
+	LAZZY("延迟执行","LAZZY");
 
     private NoteState(String name, String code) {
         this.name = name;  
