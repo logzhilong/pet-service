@@ -25,9 +25,17 @@ public class SsoAuthenticationToken implements Serializable {
 
     private String userid;
 
-    private Integer version;
+    private String username;
+    
+    public String getUsername() {
+		return username;
+	}
 
-    public String getToken() {
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getToken() {
         return token;
     }
 
@@ -59,14 +67,6 @@ public class SsoAuthenticationToken implements Serializable {
 		this.userid = userid;
 	}
 
-	public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -82,8 +82,7 @@ public class SsoAuthenticationToken implements Serializable {
         return (this.getToken() == null ? other.getToken() == null : this.getToken().equals(other.getToken()))
             && (this.getCreateDate() == null ? other.getCreateDate() == null : this.getCreateDate().equals(other.getCreateDate()))
             && (this.getExpire() == null ? other.getExpire() == null : this.getExpire().equals(other.getExpire()))
-            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()));
     }
 
     @Override
@@ -94,7 +93,6 @@ public class SsoAuthenticationToken implements Serializable {
         result = prime * result + ((getCreateDate() == null) ? 0 : getCreateDate().hashCode());
         result = prime * result + ((getExpire() == null) ? 0 : getExpire().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
 

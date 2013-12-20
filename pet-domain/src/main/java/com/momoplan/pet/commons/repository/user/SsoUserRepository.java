@@ -76,21 +76,25 @@ public class SsoUserRepository implements CacheKeysConstance {
 	 * TODO 每个 TOKEN 都是临时的，要找到一个对策来清理过期不用的 TOKEN，等解耦以后再处理
 	 * @param userId
 	 * @return
+	 * @throws Exception 
 	 */
-	public SsoAuthenticationToken createToken(String userId) {
-		SsoAuthenticationToken authenticationToken = new SsoAuthenticationToken();
-		authenticationToken.setExpire(-1L);
-		authenticationToken.setToken(IDCreater.uuid());
-		authenticationToken.setUserid(userId);
-		authenticationToken.setCreateDate(new Date());
-		String json = gson.toJson(authenticationToken);
+	public SsoAuthenticationToken createToken(String userId)throws Exception {
 		Jedis jedis = null;
+		SsoAuthenticationToken authenticationToken = new SsoAuthenticationToken();
 		try{
+			SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class, userId);
+			authenticationToken.setExpire(-1L);
+			authenticationToken.setToken(IDCreater.uuid());
+			authenticationToken.setUserid(userId);
+			authenticationToken.setCreateDate(new Date());
+			authenticationToken.setUsername(user.getUsername());
+			String json = gson.toJson(authenticationToken);
 			jedis = storePool.getConn();
 			jedis.hset(CF_TOKEN, authenticationToken.getToken(), json);
 			logger.debug("createToken 成功 : "+json);
 		}catch(Exception e){
 			logger.error("createToken 异常",e);
+			throw e;
 		}finally{
 			storePool.closeConn(jedis);
 		}
