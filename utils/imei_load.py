@@ -29,26 +29,25 @@ def analysis(path) :
 	try:
 		with open(path) as f :
 			line = f.readline()
-			t = 0
 			while line:
-				(d,in_out) = line[1:11],line[25:]
-				map = json.loads(in_out)
-				channel = map.get('input').get('channel')
-				imei = map.get('input').get('imei')
-				mac = map.get('input').get('mac')
-				if channel is None:
-					channel = 'Default'
-				# imei 是统计激活用户用的，要排除重复的；
-				# 本次统计重复用字典排除，全局的重复通过数据库主键排除
-				if imei == "iphone" :
-					if mac :
-						imei_map[mac] = {'id':mac,'channel':channel,'cd':d}
-				elif imei:
-					imei_map[imei] = {'id':imei,'channel':channel,'cd':d}
+				try:
+					(d,in_out) = line[1:11],line[25:]
+					map = json.loads(in_out)
+					channel = map.get('input').get('channel')
+					imei = map.get('input').get('imei')
+					mac = map.get('input').get('mac')
+					if channel is None:
+						channel = 'Default'
+					# imei 是统计激活用户用的，要排除重复的；
+					# 本次统计重复用字典排除，全局的重复通过数据库主键排除
+					if imei == "iphone" :
+						if mac :
+							imei_map[mac] = {'id':mac,'channel':channel,'cd':d}
+					elif imei:
+						imei_map[imei] = {'id':imei,'channel':channel,'cd':d}
+				except Exception,err:
+					pass			
 				line = f.readline()
-				t+=1
-			fileName = os.path.split(path)[1]
-			total[fileName]=t
 	except Exception,err:
 		fp = StringIO.StringIO()
 		traceback.print_exc(file=fp)
@@ -88,9 +87,6 @@ def push_imei(host,user,pwd,db):
 
 def runner() :
 	os.path.walk(common_cfg['common']['data_dir'],visit,'pet_access')
-	if len(total) <= 0 :
-		log.debug('heart beat ... << Nothing todo >>')
-		return 'Nothing todo'
 
 	host = common_cfg['common']['host']
 	user = common_cfg['common']['user']
