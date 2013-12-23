@@ -24,11 +24,7 @@ select  r.channel ,
 from  (
  select
     c0.channel/*渠道*/,
-    (select sum(c1.counter)
-      from biz_service_counter c1
-      where c1.channel=c0.channel
-	and c1.method='firstOpen'
-	and c1.cd='${cd}' ) as new_user/*今日新增*/,
+    (select count(id) from biz_imei c1 where c1.channel=c0.channel and c1.cd='${cd}' group by c1.channel) as new_user/*今日新增*/,
     (select sum(c2.counter)
       from biz_service_counter c2
       where c2.channel=c0.channel
@@ -60,6 +56,7 @@ log = lm.LoggerFactory(common_cfg['common']['log_file'],'counter',LOG_LEVEL).get
 
 total = {}
 result = {}
+imei_map = {}
 #131125:暂时没用，记录数据的提取时间范围
 scop = {'min':'9999-99-99','max':'0000-00-00'}
 
@@ -82,11 +79,21 @@ def analysis(path) :
 				if scop['min'] > d : scop['min'] = d
 				if scop['max'] < d : scop['max'] = d
 				map = json.loads(in_out)
-				service = map.get('input').get('service')	
-				method = map.get('input').get('method')	
+				service = map.get('input').get('service')
+				method = map.get('input').get('method')
 				channel = map.get('input').get('channel')
+				imei = map.get('input').get('imei')
+				mac = map.get('input').get('mac')
 				if channel is None:
-					channel = 'Default'	
+					channel = 'Default'
+				# imei 是统计激活用户用的，要排除重复的；
+				# 本次统计重复用字典排除，全局的重复通过数据库主键排除
+				if imei == "iphone" :
+					if mac :
+						imei_map[mac] = {'id':mac,'channel':channel,'cd':d}
+				elif imei:
+					imei_map[imei] = {'id':imei,'channel':channel,'cd':d}
+					
 				k = service,method,channel,d,map.get('output').get('success')
 				c = result.get(k)
 				if not c:
@@ -116,8 +123,25 @@ class Datasource:
 	def getConnection(self):
 		return mysql.connector.connect(user=self.user,password=self.pwd,host=self.host,database=self.db)
 
-		
-
+biz_imei_template = "insert into biz_imei (id,cd,channel)values('${id}','${cd}','${channel}')"
+def push_imei(host,user,pwd,db):
+	log.debug('imei ------->')
+	conn = Datasource(host,user,pwd,db).getConnection()
+	conn.set_autocommit(True)
+	cursor = conn.cursor()
+	for (k,v) in imei_map.items() :
+		try:
+			template = string.Template(biz_imei_template)
+			sql = template.safe_substitute(v)
+			print sql
+			cursor.execute(sql)	
+		except Exception,err:
+			pass
+	cursor.close()
+	conn.close()		
+	log.debug('today imei count : %s' % len(imei_map))
+	imei_map.clear()
+	log.debug('imei <-------')
 
 def runner() :
 	os.path.walk(common_cfg['common']['data_dir'],visit,'pet_access')
@@ -133,6 +157,9 @@ def runner() :
 	user = common_cfg['common']['user']
 	pwd = common_cfg['common']['password']
 	db = common_cfg['common']['database']
+	
+	push_imei(host,user,pwd,db)
+
 	conn = Datasource(host,user,pwd,db).getConnection()
 	cursor = conn.cursor()
 

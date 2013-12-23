@@ -3,6 +3,7 @@
 import stomp,sys,time,Queue,threading
 import mod_conf
 import mod_log as lm
+import mysql.connector
 
 buf = Queue.Queue()
 
@@ -10,7 +11,17 @@ log={}
 common_cfg={}
 self_cfg={}
 
+class Datasource:
+	def __init__(self,host,user,pwd,db):
+		self.host = host
+		self.user = user
+		self.pwd = pwd
+		self.db = db
+	def getConnection(self):
+		return mysql.connector.connect(user=self.user,password=self.pwd,host=self.host,database=self.db)
+
 class WriteLogTask(threading.Thread):
+	
 	def __init__(self):
 		print '<<<<<<<<<<<<<< start write log thread >>>>>>>>>>>>>>'
 		threading.Thread.__init__(self)
