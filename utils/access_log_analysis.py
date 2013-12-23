@@ -34,10 +34,7 @@ from  (
       from biz_service_counter c3
       where c3.channel=c0.channel
 	and c3.method='register' ) as all_register/*总注册数*/,
-    (select sum(c4.counter)
-      from biz_service_counter c4
-      where c4.channel=c0.channel
-	and c4.method='firstOpen' ) as all_user/*总用户数*/,
+    (select count(0) from biz_imei ) as all_user/*总用户数*/,
     (select sum(c5.counter)
       from biz_service_counter c5
       where c5.channel=c0.channel
