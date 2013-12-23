@@ -81,7 +81,7 @@ CREATE TABLE `mgr_push` (
   `id` varchar(64) NOT NULL COMMENT '主键',
   `name` varchar(2000) DEFAULT NULL COMMENT '标题',
   `src` varchar(500) DEFAULT NULL COMMENT '类型：帖子、百科、经验',
-  `state` varchar(500) DEFAULT NULL COMMENT '状态：未推送、已推送',
+  `state` varchar(500) DEFAULT NULL COMMENT '状态：未推送、已推送、等待',
   `ct` datetime,
   `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
   `et` datetime,
@@ -90,3 +90,15 @@ CREATE TABLE `mgr_push` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE `mgr_timer_task` (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `name` varchar(2000) DEFAULT NULL COMMENT '标题',
+  `src` varchar(500) DEFAULT NULL COMMENT '类型：帖子、推送',
+  `state` varchar(500) DEFAULT NULL COMMENT '状态：新增、完成、取消',
+  `at` datetime,
+  `ct` datetime,
+  `et` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `eb` varchar(200) DEFAULT NULL,    
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

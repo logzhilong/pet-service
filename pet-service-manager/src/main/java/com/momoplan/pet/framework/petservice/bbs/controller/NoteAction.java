@@ -124,7 +124,7 @@ public class NoteAction extends BaseAction {
 			myForm.setContent(content);
 			logger.debug("content:\r\n"+content);
 			BeanUtils.copyProperties(myForm, vo);
-			noteService.saveNote(vo);
+			noteService.saveNote(vo,myForm.getAt_str(),SessionManager.getCurrentUser(request).getUsername());
 		} catch (Exception e) {
 			logger.error("save note error",e);
 			json.put("message","操作失败："+e.getMessage());
@@ -132,7 +132,7 @@ public class NoteAction extends BaseAction {
 		res = json.toString();
 		logger.debug("save_output : "+res);
 		PetUtil.writeStringToResponse(res, response);
-	}	
+	}
 	
 	@RequestMapping("/petservice/bbs/uploadFile.html")
 	public void uploadFile(Model model,HttpServletRequest request,HttpServletResponse response)throws Exception {

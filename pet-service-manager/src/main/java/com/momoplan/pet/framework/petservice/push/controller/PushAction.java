@@ -1,16 +1,12 @@
 package com.momoplan.pet.framework.petservice.push.controller;
 
-import javax.jms.TextMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +17,7 @@ import com.momoplan.pet.commons.domain.manager.po.MgrPush;
 import com.momoplan.pet.framework.base.controller.BaseAction;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.vo.WebUser;
-import com.momoplan.pet.framework.petservice.push.service.IphonePushTask;
 import com.momoplan.pet.framework.petservice.push.service.PushService;
-import com.momoplan.pet.framework.petservice.push.vo.PushState;
 
 @Controller
 public class PushAction extends BaseAction{
@@ -31,8 +25,6 @@ public class PushAction extends BaseAction{
 	private static Logger logger = LoggerFactory.getLogger(PushAction.class);
 	@Autowired
 	private PushService pushService = null;
-	@Autowired
-	private JmsTemplate apprequestTemplate = null;
 
 	@RequestMapping("/petservice/push/pushMain.html")
 	public String main(MgrPush myForm,Page<MgrPush> pages,Model model,HttpServletRequest request,HttpServletResponse response){
@@ -66,16 +58,7 @@ public class PushAction extends BaseAction{
 		try {
 			WebUser user = SessionManager.getCurrentUser(request);
 			myForm.setEb(user.getName());
-			logger.debug("//TODO 把消息推出去 根据 push = OK");
-			if("OK".equalsIgnoreCase(push)){
-				//其实，应该时 pending 状态，由异步线程负责更新状态
-				myForm.setState(PushState.PUSHED.getCode());
-				logger.debug("添加一个IOS推送任务");
-				MgrPush task = mapperOnCache.selectByPrimaryKey(MgrPush.class, myForm.getId());
-				push2mq(task);
-				IphonePushTask.queue.put(task);
-			}
-			pushService.save(myForm);
+			pushService.save(myForm,push);
 		} catch (Exception e) {
 			logger.error("save MgrPush error",e);
 			json.put("message","失败:"+e.getMessage());	
@@ -85,19 +68,42 @@ public class PushAction extends BaseAction{
 		PetUtil.writeStringToResponse(res, response);
 	}
 	
-	private void push2mq(MgrPush vo) {
+	
+	@RequestMapping("/petservice/push/timerAdd.html")
+	public String timerAdd(String id,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
+		response.setCharacterEncoding("utf-8");
 		try{
-			String dest = "pet_push_xmpp_pubsub";
-			ActiveMQQueue queue = new ActiveMQQueue();
-			queue.setPhysicalName(dest);
-			TextMessage tm = new ActiveMQTextMessage();
-			String msg = gson.toJson(vo);
-			tm.setText(msg);
-			apprequestTemplate.convertAndSend(queue, tm);
-			logger.debug("dest=pet_push_xmpp_pubsub ; msg="+msg);
+			MgrPush p = mapperOnCache.selectByPrimaryKey(MgrPush.class, id);
+			model.addAttribute("myForm", p);
 		}catch(Exception e){
-			logger.debug("推送消息异常不能中断程序");
-			logger.error("send message",e);
+			logger.error("timerAddOrEdit error",e);
+			model.addAttribute("errorMsg", e.getMessage());
 		}
+		return "/petservice/push/timerAdd";
 	}
+	
+
+	@RequestMapping("/petservice/push/timerSave.html")
+	public void timerSave(MgrPush myForm,String at_str,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+		String ctx = request.getContextPath();
+		JSONObject json = new JSONObject();
+		json.put("confirmMsg","");
+		json.put("message","操作成功");
+		json.put("statusCode","200");
+		json.put("navTabId","panel0601");
+		json.put("callbackType","closeCurrent");
+		json.put("forwardUrl",ctx+"/petservice/push/pushMain.html");
+		String res = null;
+		try {
+			WebUser user = SessionManager.getCurrentUser(request);
+			pushService.saveTimer(myForm, at_str, user.getUsername());
+		} catch (Exception e) {
+			logger.error("timerSave error",e);
+			json.put("message","失败:"+e.getMessage());	
+		}
+		res = json.toString();
+		logger.debug("save_output : "+res);
+		PetUtil.writeStringToResponse(res, response);
+	}
+	
 }

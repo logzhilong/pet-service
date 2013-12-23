@@ -14,6 +14,10 @@
 					<a class="add" href="${ctx }/petservice/push/pushSave.html?id={id}&navTabId=panel0601&push=OK" target="ajaxTodo" title="确定要推送吗？" warn="请选择一个"><span>推送</span></a>
 				</li>
 				<li class="line">line</li>
+				<li>
+					<a class="add" href="${ctx }/petservice/push/timerAdd.html?id={id}" target="dialog" warn="请选择" width="550" height="200" ><span>计划推送</span></a>
+				</li>
+				<li class="line">line</li>
 			</ul>
 		</div>
 		<div>
@@ -22,6 +26,7 @@
 					<tr>
 						<th width="50"></th>
 						<th>标题</th>
+						<th>来源</th>
 						<th>状态</th>
 						<th>创建日期</th>
 						<th>修改日期</th>
@@ -34,6 +39,7 @@
 					<tr height="30" align="left" target="id" rel="${itm.id }" >
 						<td>${idx.index+1 }</td>
 						<td>${itm.name }</td>
+						<td>${itm.src }</td>
 						<td>${itm.state }</td>
 						<td align="center">
 							<fmt:formatDate value="${itm.ct }" type="both" />

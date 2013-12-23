@@ -3,10 +3,15 @@ package com.momoplan.pet.framework.petservice.push.service;
 import java.util.Date;
 import java.util.List;
 
+import javax.jms.TextMessage;
+
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.google.gson.Gson;
@@ -21,10 +26,11 @@ import com.momoplan.pet.commons.domain.manager.mapper.MgrPushMapper;
 import com.momoplan.pet.commons.domain.manager.po.MgrPush;
 import com.momoplan.pet.commons.domain.manager.po.MgrPushCriteria;
 import com.momoplan.pet.commons.domain.notice.po.Notice;
+import com.momoplan.pet.framework.base.service.BaseService;
 import com.momoplan.pet.framework.petservice.push.vo.PushState;
 
 @Controller
-public class PushService {
+public class PushService extends BaseService {
 	
 	static Gson gson = MyGson.getInstance();
 	private static Logger logger = LoggerFactory.getLogger(PushService.class);
@@ -32,7 +38,9 @@ public class PushService {
 	private MgrPushMapper mgrPushMapper = null;
 	@Autowired
 	private MapperOnCache mapperOnCache = null;
-	
+	@Autowired
+	private JmsTemplate apprequestTemplate = null;
+
 	public Page<MgrPush> getMgrPushList(Page<MgrPush> pages,MgrPush vo)throws Exception{
 		int pageSize = pages.getPageSize();
 		int pageNo = pages.getPageNo();
@@ -47,16 +55,22 @@ public class PushService {
 		return pages;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(PushState.PUSHED.equals(PushState.valueOf("PUSHED")));
-	}
-	
-	public void save(MgrPush vo) throws Exception{
+	public void save(MgrPush vo,String push) throws Exception{
 		logger.debug("save : "+vo.toString());
 		Date now = new Date();
 		String id = vo.getId();
 		String src = vo.getSrc();
+		
 		MgrPush p = mapperOnCache.selectByPrimaryKey(MgrPush.class, id);
+		if("OK".equalsIgnoreCase(push)){
+			logger.debug("//TODO 把消息推出去 根据 push = OK");
+			//其实，应该时 pending 状态，由异步线程负责更新状态
+			vo.setState(PushState.PUSHED.getCode());
+			logger.debug("添加一个IOS推送任务");
+			push2mq(p);
+			IphonePushTask.queue.put(p);
+		}
+		
 		if(p!=null){
 			logger.debug("更新 "+gson.toJson(vo));
 			if(StringUtils.isNotEmpty(vo.getSrc())){
@@ -86,6 +100,22 @@ public class PushService {
 		}
 	}
 	
+	private void push2mq(MgrPush vo) {
+		try{
+			String dest = "pet_push_xmpp_pubsub";
+			ActiveMQQueue queue = new ActiveMQQueue();
+			queue.setPhysicalName(dest);
+			TextMessage tm = new ActiveMQTextMessage();
+			String msg = gson.toJson(vo);
+			tm.setText(msg);
+			apprequestTemplate.convertAndSend(queue, tm);
+			logger.debug("dest=pet_push_xmpp_pubsub ; msg="+msg);
+		}catch(Exception e){
+			logger.debug("推送消息异常不能中断程序");
+			logger.error("send message",e);
+		}
+	}
+	
 	private String getNameBySrc(String src,String id) throws Exception{
 		String name = null;
 		if("bbs_note".equalsIgnoreCase(src)){
@@ -102,6 +132,17 @@ public class PushService {
 			logger.debug("通知 : "+name);
 		}
 		return name;
+	}
+	
+	public void saveTimer(MgrPush myForm,String at_str,String currentUser)throws Exception{
+		Date now = new Date();
+		myForm.setEb(currentUser);
+		myForm.setEt(now);
+		myForm.setState(PushState.LAZZY.getCode());
+		mapperOnCache.updateByPrimaryKeySelective(myForm, myForm.getId());
+		logger.info("修正推送状态 LAZZY："+myForm.getId());
+		super.addTimerTask(at_str, myForm.getId(), "mgr_push", myForm.getName(), currentUser);
+		logger.info("增加到定时任务："+myForm.getId());
 	}
 	
 }

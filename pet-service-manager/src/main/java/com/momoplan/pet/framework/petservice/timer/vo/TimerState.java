@@ -1,16 +1,16 @@
-package com.momoplan.pet.framework.petservice.push.vo;
+package com.momoplan.pet.framework.petservice.timer.vo;
 /**
  * @author liangc
  */
-public enum PushState {
+public enum TimerState {
 	//=============================================
 	//== 枚举值 
 	//=============================================
-	NEW("未发送","NEW"),
-	PUSHED("已经发送","PUSHED"),
-	LAZZY("延迟发送","LAZZY"),
-	PENDING("发送中","PENDING");
-    private PushState(String name, String code) {
+	NEW("新增","NEW"),
+	FINISHED("完成","FINISHED"),
+	CANCEL("取消","CANCEL");
+	
+    private TimerState(String name, String code) {
         this.name = name;  
         this.code = code;  
     }
@@ -21,7 +21,7 @@ public enum PushState {
     private String code;
     
     public static String getName(String code) {  
-        for (PushState st : PushState.values()) {  
+        for (TimerState st : TimerState.values()) {  
             if (code.equals(st.getCode())) {
                 return st.getName();
             }  

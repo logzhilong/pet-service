@@ -82,9 +82,14 @@ public class IndexController {
 		tree.add(sysNotice);
 
 		TreeBean push = new TreeBean("06","0","推送-管理");
-		TreeBean pushMsg = new TreeBean("0601","06","推荐","/petservice/push/pushMain.html");
+		TreeBean pushMsg = new TreeBean("0601","06","推送","/petservice/push/pushMain.html");
 		tree.add(push);
 		tree.add(pushMsg);
+
+		TreeBean timer = new TreeBean("07","0","计划任务-管理");
+		TreeBean timerMgr = new TreeBean("0701","07","计划任务","/petservice/timer/timerMain.html");
+		tree.add(timer);
+		tree.add(timerMgr);
 
 		//数据统计页面
 		TreeBean statistic = new TreeBean("03","0","统计报表");

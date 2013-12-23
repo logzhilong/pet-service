@@ -29,14 +29,16 @@ import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.repository.CacheKeysConstance;
 import com.momoplan.pet.commons.repository.bbs.NoteRepository;
+import com.momoplan.pet.commons.repository.bbs.NoteState;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.framework.base.service.BaseService;
 import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.petservice.bbs.controller.NoteAction;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
 
 @Service
-public class NoteService {
+public class NoteService extends BaseService {
 
 	private static Logger logger = LoggerFactory.getLogger(NoteAction.class);
 	
@@ -122,7 +124,7 @@ public class NoteService {
 		
 	}
 
-	public void saveNote(Note vo) throws Exception {
+	public void saveNote(Note vo,String at_str,String currentUser) throws Exception {
 		filterTopNote(vo);
 		if(vo.getId()!=null&&!"".equals(vo.getId())){
 			logger.debug("更新帖子 "+gson.toJson(vo));
@@ -151,6 +153,10 @@ public class NoteService {
 			params.put("forumId", vo.getForumId());
 			params.put("name", vo.getName());
 			params.put("content", vo.getContent());
+			//add by liangc 131220 : 计划任务
+			if(StringUtils.isNotEmpty(at_str)){
+				params.put("state", NoteState.LAZZY.getCode());
+			}
 			request.setParams(params);
 			String body = gson.toJson(request);
 			logger.debug("url="+url);
@@ -158,11 +164,20 @@ public class NoteService {
 			String res = PostRequest.postText(url, "body", body);
 			logger.debug("response="+res);
 			JSONObject success = new JSONObject(res);
+			String entity = success.getString("entity");
 			if(!success.getBoolean("success")){
-				throw new Exception(success.getString("entity"));
+				throw new Exception(entity);
+			}
+			//add by liangc 131220 : 计划任务
+			if(StringUtils.isNotEmpty(at_str)){
+				logger.info("计划任务ID-->"+vo.getId());
+				logger.info("计划任务名字-->"+vo.getName());
+				logger.info("计划任务执行时间-->"+at_str);
+				addTimerTask(at_str,entity,"bbs_note",vo.getName(),currentUser);
 			}
 		}
 	}
+	
 	
 	private void filterTopNote(Note vo) throws Exception{
 		String id = vo.getId();

@@ -12,13 +12,23 @@ public class NoteVo extends Note{
 	
 	private String icon = null;
 	
+	private String at_str = null;//计划执行时间
+	
 	/*
 	 * 查询条件
 	 */
 	private String condition_state = "ALL";
 	private String condition_isTop = "ALL";
 	private String condition_isEute = "ALL";
-	
+
+	public String getAt_str() {
+		return at_str;
+	}
+
+	public void setAt_str(String at_str) {
+		this.at_str = at_str;
+	}
+
 	public String getIcon() {
 		return icon;
 	}

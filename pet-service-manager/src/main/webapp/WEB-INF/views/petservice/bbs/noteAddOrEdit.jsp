@@ -36,13 +36,21 @@
 			<c:if test="${not empty myForm.id }">
 				<div class="unit">
 					<label>状态：</label>
-					<select name="state" class="required" >
-						<option value="ACTIVE" <c:if test="${ myForm.state eq 'ACTIVE' }">selected="selected"</c:if> >ACTIVE--正常</option>
-						<option value="AUDIT" <c:if test="${ myForm.state eq 'AUDIT' }">selected="selected"</c:if> >AUDIT--审核中</option>
-						<option value="PASS" <c:if test="${ myForm.state eq 'PASS' }">selected="selected"</c:if> >PASS--审核通过</option>
-						<option value="REJECT" <c:if test="${ myForm.state eq 'REJECT' }">selected="selected"</c:if> >REJECT--审核拒绝</option>
-						<option value="REPORT" <c:if test="${ myForm.state eq 'REPORT' }">selected="selected"</c:if> >REPORT--被举报</option>
-					</select>
+					<c:choose>
+						<c:when test="${ myForm.state eq 'LAZZY' }">
+							<input type="text" name="state" value="LAZZY" readonly="readonly"/>计划任务					
+						</c:when>
+						<c:otherwise>
+							<select name="state" class="required" >
+								<option value="ACTIVE" <c:if test="${ myForm.state eq 'ACTIVE' }">selected="selected"</c:if> >ACTIVE--正常</option>
+								<option value="AUDIT" <c:if test="${ myForm.state eq 'AUDIT' }">selected="selected"</c:if> >AUDIT--审核中</option>
+								<option value="PASS" <c:if test="${ myForm.state eq 'PASS' }">selected="selected"</c:if> >PASS--审核通过</option>
+								<option value="REJECT" <c:if test="${ myForm.state eq 'REJECT' }">selected="selected"</c:if> >REJECT--审核拒绝</option>
+								<option value="REPORT" <c:if test="${ myForm.state eq 'REPORT' }">selected="selected"</c:if> >REPORT--被举报</option>
+							</select>
+						</c:otherwise>
+					</c:choose>
+					
 				</div>
 			</c:if>
 			
@@ -66,7 +74,6 @@
 				<label>标题：</label>
 				<input type="text" name="name" size="80" value="${myForm.name }" class="required"/>
 			</div>
-			
 			<div class="unit">
 				<label>内容：</label>
 				<textarea class="editor required" name="content" rows="25" cols="60"
@@ -76,6 +83,14 @@
 					${myForm.content }
 				</textarea>
 			</div>
+			
+			<c:if test="${empty myForm.id }">
+				<div class="unit">
+					<label title="选择一个日期，作为计划执行时间；如果不选择，则立即执行。">计划执行：</label>
+					<input type="text" name="at_str" class="date textInput readonly valid" value="" datefmt="yyyy-MM-dd HH:mm:ss" readonly="true">
+					<a class="inputDateButton" href="javascript:;">选择</a>
+				</div>
+			</c:if>
 			
 		</div>
 		<div class="formBar">
