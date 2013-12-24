@@ -72,9 +72,10 @@ public interface UserService extends CacheKeysConstance{
 	 * @param fromname
 	 * @param toname
 	 * @param msg
+	 * @param type : img\audio\text|null
 	 * @throws Exception
 	 */
-	public void pushMsgApn(String fromname,String toname,String msg) throws Exception;
+	public void pushMsgApn(String fromname,String toname,String msg,String type) throws Exception;
 	/**
 	 * 获取好友列表
 	 * @param userid

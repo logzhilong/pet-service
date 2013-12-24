@@ -14,31 +14,29 @@ $( document ).ready(function() {
 });
 </script>
 
-
 <div class="pageHeader" >
 	<div class="searchBar">
+		<form onsubmit="return navTabSearch(this);" method="post">
 			日期:
 			<select name="year" >
-				<option value="2013">2013</option>
-				<option value="2013">2012</option>
+				<c:forEach begin="2012" end="2018" var="itm">
+					<option value="${itm }" <c:if test="${year==itm}">selected="selected"</c:if>>
+						${itm }
+					</option>
+				</c:forEach>
 			</select>
 			-
 			<select name="month" >
-				<option value="01">01</option>
-				<option value="02">02</option>
-				<option value="02">02</option>
-				<option value="04">04</option>
-				<option value="05">05</option>
-				<option value="06">06</option>
-				<option value="07">07</option>
-				<option value="08">08</option>
-				<option value="09">09</option>
-				<option value="10">10</option>
-				<option value="11">11</option>
-				<option value="12">12</option>
+				<c:forEach begin="1" end="12" var="itm">
+					<fmt:formatNumber value="${itm }" type="currency" pattern="00" var="fitm"/>
+					<option value="${fitm }" <c:if test="${month==fitm}">selected="selected"</c:if>>
+						${fitm }
+					</option>
+				</c:forEach>
 			</select>
-			<button type="button" onclick="alert('开发中...');" >查询</button>
+			<button type="submit" >查询</button>
 			<button type="button" class="close">关闭</button>
+		</form>
 	</div>
 </div>
 

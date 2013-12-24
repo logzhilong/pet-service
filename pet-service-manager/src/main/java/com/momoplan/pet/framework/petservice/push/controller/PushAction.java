@@ -12,9 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.momoplan.pet.commons.PetUtil;
-import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.domain.manager.po.MgrPush;
 import com.momoplan.pet.framework.base.controller.BaseAction;
+import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.manager.security.SessionManager;
 import com.momoplan.pet.framework.manager.vo.WebUser;
 import com.momoplan.pet.framework.petservice.push.service.PushService;
@@ -31,9 +31,9 @@ public class PushAction extends BaseAction{
 		logger.debug("/petservice/push/pushMain.html");
 		logger.debug("input:"+gson.toJson(myForm));
 		try {
-			pages.setPageSize(400);
 			Page<MgrPush> page = pushService.getMgrPushList(pages,myForm);
 			model.addAttribute("page", page);
+			model.addAttribute("myForm", myForm);
 		} catch (Exception e) {
 			logger.error("MgrPush error",e);
 		}

@@ -8,9 +8,20 @@ public class ConditionBean {
 	
 	private String channel = null;
 	
-	private String month = null;
+	private String year = "";
+	
+	private String month = "";
 	
 	private String cd = null;
+	
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
 	/**
 	 * 排序字段，默认按照 new_user 排序
 	 */

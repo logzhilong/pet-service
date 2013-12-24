@@ -60,4 +60,28 @@ public class ServiceCounterService {
 		return counter;
 	}
 	
+	
+	public List<ServiceCounterVo> selectServiceCounterVoByImei(String sql,final int level)throws Exception{
+		List<ServiceCounterVo> counter = jdbcTemplate.query(sql, new RowMapper<ServiceCounterVo>(){
+			@Override
+			public ServiceCounterVo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				ServiceCounterVo vo = new ServiceCounterVo();
+				String totalCount = rs.getString("totalCount");
+				vo.setTotalCount(totalCount);
+				if(level==1){
+					String channel = rs.getString("channel");
+					vo.setChannel(channel);
+				}
+				if(level==2){
+					String channel = rs.getString("channel");
+					vo.setChannel(channel);
+					String cd = rs.getString("cd");
+					vo.setCd(cd);
+				}
+				logger.debug(gson.toJson(vo));
+				return vo;
+			}
+		});
+		return counter;
+	}
 }

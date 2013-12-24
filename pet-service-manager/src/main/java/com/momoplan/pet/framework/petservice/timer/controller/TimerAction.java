@@ -35,9 +35,9 @@ public class TimerAction extends BaseAction{
 		logger.debug("/petservice/timer/timerMain.html");
 		logger.debug("input:"+gson.toJson(myForm));
 		try {
-			pages.setPageSize(400);
 			Page<MgrTimerTask> page = timerService.getMgrTimerTaskList(pages,myForm);
 			model.addAttribute("page", page);
+			model.addAttribute("myForm", myForm);
 		} catch (Exception e) {
 			logger.error("timerMain error",e);
 		}

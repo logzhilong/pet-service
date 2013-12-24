@@ -204,7 +204,7 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 	}
 
 	@Override
-	public void pushMsgApn(String fromname, String toname, String msg) throws Exception {
+	public void pushMsgApn(String fromname, String toname, String msg,String type) throws Exception {
 		String pwd = commonConfig.get("ios.push.pwd","110110");
 		String test = commonConfig.get("iphone.push");
 		boolean t = false;
@@ -221,7 +221,19 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			if(StringUtils.isEmpty(name)){
 				name = fromname;
 			}
-			PushApn.sendMsgApn(deviceToken, name+":"+msg, pwd, t);
+			/*
+			 img:发的消息是，用户名：发来一张图片
+			 audio:用户名：发来一段语音 
+			 text:或没有（因为早期版本没有fileType字段）就是以前的格式，用户名：消息内容
+			 */
+			String pushMsg = name+":"+msg;
+			if("img".equalsIgnoreCase(type)){
+				pushMsg = "发来一张图片";
+			}else if("audio".equalsIgnoreCase(type)){
+				pushMsg = "发来一段语音";
+			}
+			logger.debug("type="+type+" ; "+pushMsg);
+			PushApn.sendMsgApn(deviceToken, pushMsg, pwd, t);
 		}
 	}
 	

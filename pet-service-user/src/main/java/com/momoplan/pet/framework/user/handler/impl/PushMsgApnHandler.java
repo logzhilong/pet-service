@@ -38,7 +38,14 @@ public class PushMsgApnHandler extends AbstractHandler {
 			String f = getParameter(clientRequest, "fromname");
 			String t = getParameter(clientRequest, "toname");
 			String m = getParameter(clientRequest, "msg");
-			userService.pushMsgApn(f,t,m);
+			/*
+			 img:发的消息是，用户名：发来一张图片
+			 audio:用户名：发来一段语音 
+			 text:或没有（因为早期版本没有fileType字段）就是以前的格式，用户名：消息内容
+			 */
+			String type = getParameter(clientRequest, "type");
+			
+			userService.pushMsgApn(f,t,m,type);
 			rtn = new Success(sn,true,"OK").toString();
 			logger.debug("推送IOS消息 成功 body="+gson.toJson(clientRequest));
 		}catch(Exception e){

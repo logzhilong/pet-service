@@ -109,11 +109,15 @@ public class ServiceCounterAction extends BaseAction{
 		String method = sm[1];
 		String cd = myForm.getCd();
 		String title = null;
-		
 		try {
+			//service.uri.pet_sso__firstOpen
+			if("firstOpen".equals(method)){
+				logger.debug("//modify by liangc 131224 : 激活调整为用 IMEI 统计，废弃 firstOpen 方法");
+				return serviceCounter1ByImei(myForm, model,1,null);
+			}
 			List<MgrChannelDict> channelDictList = channelDictService.getChannelDictList();
 			Map<String,String> channelDict = new HashMap<String,String>();
-
+			
 			MgrServiceDict mgrServiceDict = serviceDictService.getMgrServiceDict(service, method);
 			String alias = mgrServiceDict.getAlias();
 			
@@ -145,22 +149,7 @@ public class ServiceCounterAction extends BaseAction{
 				sb.append(" cd='").append(cd).append("' ");
 				title = title+" ("+cd+")";
 			}
-			//131125:这个逻辑恐怕不会再被调用了
-			/*
-			if(StringUtils.isNotEmpty(cd)&&cd.contains("__")){
-				String[] scop = cd.split(ConditionBean.serviceMethodSplit);
-				String min = scop[0];
-				String max = scop[1];
-				sb.append(" and ");
-				sb.append(" ( ");
-				sb.append(" 	cd>='").append(min).append("' ");
-				sb.append(" 	and ");
-				sb.append(" 	cd<='").append(max).append("' ");
-				sb.append(" ) ");
-				title = title+" ("+min+" ~ "+max+")";
-			}
-			*/
-			sb.append(" group by service,method,channel "); 
+			sb.append(" group by service,method,channel ");
 			sb.append(" order by totalCount desc ");
 			String sql = sb.toString();
 			logger.debug("SQL--1 :::: "+sql);
@@ -178,6 +167,7 @@ public class ServiceCounterAction extends BaseAction{
 			xmlData = xmlData.replaceAll("\r", "");
 			xmlData = xmlData.replaceAll("\n", "");
 			xmlData = xmlData.replaceAll("  ", " ");
+			
 			logger.debug(xmlData);
 			model.addAttribute("danwei", "次");
 			model.addAttribute("xmlData", xmlData);
@@ -189,7 +179,94 @@ public class ServiceCounterAction extends BaseAction{
 		}
 		return "/petservice/report/serviceCounter1";
 	}
+	
+	public String serviceCounter1ByImei(ConditionBean myForm,Model model,int live,String channel)throws Exception{
+		String cd = myForm.getCd();
+		String year = myForm.getYear();
+		String month = myForm.getMonth();
+		String title = null;
+		String template = "/template/servicecounter/serviceCounter1.ftl";
+		String success = "/petservice/report/serviceCounter1";
+		try {
+			if(StringUtils.isEmpty(month)){
+				String ym = DateUtils.formatDate(new Date()).substring(0, 7);
+				String[] ymArr = ym.split("-");
+				year = ymArr[0];
+				month = ymArr[1];
+			}
+			//modify by liangc 131224 : 激活调整为用 IMEI 统计，废弃 firstOpen 方法
+			//service.uri.pet_sso__firstOpen
+			List<MgrChannelDict> channelDictList = channelDictService.getChannelDictList();
+			Map<String,String> channelDict = new HashMap<String,String>();
+			for(MgrChannelDict m : channelDictList){
+				channelDict.put(m.getCode(), m.getAlias());
+			}
+			
+			String alias = "新增用户";
+			title = "各渠道 "+alias+" 统计";
+			
+			StringBuffer sb = new StringBuffer();
+			sb.append(" select count(0) as totalCount ,channel ");
+			 if(live==2){
+					sb.append(" ,cd ");
+			}
+			sb.append(" from biz_imei ");
+			sb.append(" where ");
+			if(StringUtils.isNotEmpty(channel)){
+				sb.append(" channel='").append(channel).append("' ");
+			} else {
+				sb.append(" 1=1 ");
+			}
+			if(StringUtils.isNotEmpty(cd)&&!cd.contains("__")){
+				sb.append(" and cd='").append(cd).append("' ");
+				title = title+" ("+cd+")";
+			}
+			if(live==1){
+				sb.append(" group by channel ");
+				sb.append(" order by totalCount desc ");
+			}else if(live==2){
+				sb.append(" and cd like '").append(year+"-"+month).append("%' ");
+				sb.append(" group by channel,cd ");
+				sb.append(" order by cd desc ");
+				
+				template = "/template/servicecounter/serviceCounter2.ftl";
+				success = "/petservice/report/serviceCounter2";
+			}
+			
+			String sql = sb.toString();
+			logger.debug("SQL--imei--1 :::: "+sql);
+			List<ServiceCounterVo> dataList = serviceCounterService.selectServiceCounterVoByImei(sql, live);
 
+			for(ServiceCounterVo vo : dataList){
+				vo.setAlias(alias);
+				vo.setChannelName(channelDict.get(vo.getChannel()));
+			}
+			
+			Map<String,Object> root = new HashMap<String,Object>();
+			root.put("title", title );
+			root.put("dataList", dataList);
+			String xmlData = new FreeMarkerUtils(template,root).getText();
+				
+			xmlData = xmlData.replaceAll("\r", "");
+			xmlData = xmlData.replaceAll("\n", "");
+			xmlData = xmlData.replaceAll("  ", " ");
+			
+			logger.debug(xmlData);
+			model.addAttribute("danwei", "次");
+			model.addAttribute("xmlData", xmlData);
+			model.addAttribute("serviceName", alias);
+			model.addAttribute("list", dataList);
+			model.addAttribute("year", year);
+			model.addAttribute("month", month);
+		} catch (Exception e) {
+			logger.error("serviceCounter1ByImei",e);
+			throw e;
+		}
+		
+		return success;
+	}
+	
+	
 	@RequestMapping("/petservice/report/serviceCounter2.html")
 	public String serviceCounter2(ConditionBean myForm,Model model,HttpServletRequest request,HttpServletResponse response)throws Exception{
 		logger.debug("/petservice/report/serviceCounter1.html");
@@ -198,10 +275,19 @@ public class ServiceCounterAction extends BaseAction{
 		String service = sm[0];
 		String method = sm[1];
 		String channel = sm[2];
+		String year = myForm.getYear();
 		String month = myForm.getMonth();
 		try {
+			//service.uri.pet_sso__firstOpen
+			if("firstOpen".equals(method)){
+				logger.debug("//modify by liangc 131224 : 激活调整为用 IMEI 统计，废弃 firstOpen 方法");
+				return serviceCounter1ByImei(myForm, model,2,channel);
+			}
 			if(StringUtils.isEmpty(month)){
-				month = DateUtils.formatDate(new Date()).substring(0, 7);
+				String ym = DateUtils.formatDate(new Date()).substring(0, 7);
+				String[] ymArr = ym.split("-");
+				year = ymArr[0];
+				month = ymArr[1];
 			}
 			MgrChannelDict mgrChannelDict =  channelDictService.getChannelDict(channel);
 			if(mgrChannelDict==null)
@@ -214,7 +300,7 @@ public class ServiceCounterAction extends BaseAction{
 			sb.append(" from biz_service_counter ");
 			sb.append(" where ");
 			
-			sb.append(" cd like '").append(month).append("%' ");
+			sb.append(" cd like '").append(year+"-"+month).append("%' ");
 			sb.append(" and ");
 			sb.append(" service='").append(service).append("' ");
 			sb.append(" and ");
@@ -246,6 +332,8 @@ public class ServiceCounterAction extends BaseAction{
 			model.addAttribute("serviceName", alias);
 			model.addAttribute("list", dataList);
 			model.addAttribute("myForm", myForm);
+			model.addAttribute("year", year);
+			model.addAttribute("month", month);
 		} catch (Exception e) {
 			logger.error("serviceCounter2",e);
 			throw e;

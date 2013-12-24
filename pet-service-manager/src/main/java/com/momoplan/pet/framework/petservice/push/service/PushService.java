@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.MyGson;
-import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.ency.po.Ency;
@@ -27,6 +26,7 @@ import com.momoplan.pet.commons.domain.manager.po.MgrPush;
 import com.momoplan.pet.commons.domain.manager.po.MgrPushCriteria;
 import com.momoplan.pet.commons.domain.notice.po.Notice;
 import com.momoplan.pet.framework.base.service.BaseService;
+import com.momoplan.pet.framework.base.vo.Page;
 import com.momoplan.pet.framework.petservice.push.vo.PushState;
 
 @Controller
@@ -45,10 +45,13 @@ public class PushService extends BaseService {
 		int pageSize = pages.getPageSize();
 		int pageNo = pages.getPageNo();
 		MgrPushCriteria mgrPushCriteria = new MgrPushCriteria();
+		if(vo!=null&&StringUtils.isNotEmpty(vo.getState())){
+			mgrPushCriteria.createCriteria().andStateEqualTo(vo.getState());
+		}
 		mgrPushCriteria.setOrderByClause("et desc");
 		int totalCount = mgrPushMapper.countByExample(mgrPushCriteria);
-		mgrPushCriteria.setMysqlOffset(pageNo * pageSize);
-		mgrPushCriteria.setMysqlLength((pageNo+1)*pageSize);
+		mgrPushCriteria.setMysqlOffset((pageNo-1) * pageSize);
+		mgrPushCriteria.setMysqlLength(pageSize);
 		List<MgrPush> data = mgrPushMapper.selectByExample(mgrPushCriteria);
 		pages.setTotalCount(totalCount);
 		pages.setData(data);
