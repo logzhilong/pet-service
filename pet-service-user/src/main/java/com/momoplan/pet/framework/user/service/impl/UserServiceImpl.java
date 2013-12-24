@@ -228,9 +228,9 @@ public class UserServiceImpl extends UserServiceSupport implements UserService {
 			 */
 			String pushMsg = name+":"+msg;
 			if("img".equalsIgnoreCase(type)){
-				pushMsg = "发来一张图片";
+				pushMsg = name+":"+"发来一张图片";
 			}else if("audio".equalsIgnoreCase(type)){
-				pushMsg = "发来一段语音";
+				pushMsg = name+":"+"发来一段语音";
 			}
 			logger.debug("type="+type+" ; "+pushMsg);
 			PushApn.sendMsgApn(deviceToken, pushMsg, pwd, t);
