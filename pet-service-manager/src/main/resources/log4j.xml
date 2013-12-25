@@ -18,7 +18,7 @@
 
 	<!--  Provides File Logging  -->
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/appusr/logs/pet-service-manager.log" />
+		<param name="File" value="./pet-service-manager.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 
@@ -28,7 +28,7 @@
 	</appender>
 
 	<appender name="FILE_PUSH_TASK" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/appusr/logs/pet-service-manager_push_task.log" />
+		<param name="File" value="./pet-service-manager_push_task.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 		<layout class="org.apache.log4j.PatternLayout">

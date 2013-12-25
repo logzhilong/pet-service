@@ -18,7 +18,7 @@
 
 	<!--  Provides File Logging  -->
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/appusr/logs/pet-hub.log" />
+		<param name="File" value="./pet-hub.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 
@@ -28,7 +28,7 @@
 	</appender>
 
     <logger name="com.momoplan.pet.framework.hub">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="FILE" />
 		<appender-ref ref="CONSOLE" />
     </logger>
