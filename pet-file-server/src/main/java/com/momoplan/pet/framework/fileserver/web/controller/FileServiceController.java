@@ -118,8 +118,10 @@ public class FileServiceController {
 	 */
 	@RequestMapping("/update/{fileId}/pet.apk")
 	public void updateAPK(@PathVariable("fileId") String fileId,HttpServletResponse response) throws Exception{
+		String fid = fileId.split("-")[0];
 		logger.info("update_apk -- fileId="+fileId);
-		getFile(fileId,response);
+		logger.info("update_apk -- fid="+fid);
+		getFile(fid,response);
 	}
 	
 	public void getSmallImageInTmp(String tmpBasePath,String fileId,Integer width, HttpServletResponse response)throws Exception {

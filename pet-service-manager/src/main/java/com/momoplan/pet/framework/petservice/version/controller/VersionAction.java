@@ -134,7 +134,7 @@ public class VersionAction extends BaseAction {
 		json.put("forwardUrl",ctx+"/petservice/version/main.html");
 		String res = null;
 		try {
-			String fid = myForm.getVersion()+"-"+myForm.getChannel();
+			String fid = myForm.getVersion();//+"-"+myForm.getChannel();
 			fid = fid.replaceAll("\\.", "_");
 			logger.debug("input : "+gson.toJson(myForm));
 			logger.debug("fid : "+fid);
