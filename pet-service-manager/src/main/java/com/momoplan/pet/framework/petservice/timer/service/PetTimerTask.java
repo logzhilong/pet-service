@@ -64,6 +64,7 @@ public class PetTimerTask extends TimerTask {
 				logger.info("发帖定时任务 ID="+task.getId()+" ; NAME="+task.getName()); 
 				Note p = mapperOnCache.selectByPrimaryKey(Note.class, id);
 				p.setState(NoteState.PASS.getCode());
+				p.setCt(task.getAt());
 				noteService.saveNote(p, null,null);
 			}
 			task.setEt(DateUtils.now());
