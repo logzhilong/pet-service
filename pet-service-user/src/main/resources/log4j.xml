@@ -19,7 +19,7 @@
 
 	<!--  Provides File Logging  -->
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="/home/appusr/logs/pet-service-user.log" />
+		<param name="File" value="./pet-service-user.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd" />
 

@@ -105,6 +105,14 @@ public class PetUtil {
         return Long.valueOf(obj+"");
 	}
 	
+	public static void main(String[] args) {
+		double latitude1 = 39.980782, longitude1 = 116.311073;
+		double latitude2 = 39.990674, longitude2 = 116.318913;
+		
+		double r = getDistance(latitude1,longitude1,latitude2,longitude2);
+		System.out.println(r);
+	}
+	
 	public static double getDistance(double wd1, double jd1, double wd2,double jd2) {
 		double x, y, out;
 		double PI = 3.14159265;
