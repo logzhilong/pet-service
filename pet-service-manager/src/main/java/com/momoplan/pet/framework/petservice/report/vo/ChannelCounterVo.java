@@ -23,11 +23,28 @@ public class ChannelCounterVo {
 	private Integer all_user = 0;
 	private Integer all_register = 0;
 	private Float all_rate = 0F;
+	
+	private Integer new_online = 0;
+	private Integer all_online = 0;
+	
 	private Integer new_pv = 0;
 	private Integer all_pv = 0;
 	
 	private boolean reg = true;
 	
+	
+	public Integer getNew_online() {
+		return new_online;
+	}
+	public void setNew_online(Integer new_online) {
+		this.new_online = new_online;
+	}
+	public Integer getAll_online() {
+		return all_online;
+	}
+	public void setAll_online(Integer all_online) {
+		this.all_online = all_online;
+	}
 	public boolean isReg() {
 		return reg;
 	}

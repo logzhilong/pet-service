@@ -51,13 +51,11 @@
 						</a>
 					</th>
 					
-					<th title="统计日期：${cd }">
+					<th title="今日注册率-统计(${cd })" >
+						<%--
 						<a href="${ctx }/petservice/report/register_rate.html?cd=${cd}" title="今日注册率-统计" target="navTab" rel="serviceCounter1Tab">
-							今日注册率
-							<%--
-							(&nbsp;<font color='red'>${(all.new_register/all.new_user)*100}%</font>&nbsp;)
-							--%>
-						</a>					
+						--%>
+						今日注册率
 					</th>
 					
 					<th>
@@ -71,24 +69,35 @@
 							总注册数(&nbsp;<font color='red'>${all.all_register }</font>&nbsp;)
 						</a>
 					</th>
-					<th>
+					<th title="总注册率-统计(${cd })" >
+						<%--
 						<a href="${ctx }/petservice/report/register_rate.html" title="总注册率-统计" target="navTab" rel="serviceCounter1Tab">
-							总注册率
-							<%--
-							(&nbsp;<font color='red'><fmt:formatNumber pattern="##.##" value="${(all.all_register/all.all_user)*100 }" />%</font>&nbsp;)
-							--%>
-						</a>					
+						--%>
+						总注册率
 					</th>
+					
+					<th title="统计日期：${cd }">
+						<a href="${ctx }/petservice/report/online1.html?cd=${cd}" title="今日在线-统计" target="navTab" rel="serviceCounter1Tab">
+							今日在线(&nbsp;<font color='red'>${all.new_online }</font>&nbsp;)
+						</a>
+					</th>
+					<th>
+						<a href="${ctx }/petservice/report/online1.html" title="总在线-统计" target="navTab" rel="serviceCounter1Tab">
+							总在线(&nbsp;<font color='red'>${all.all_online }</font>&nbsp;)
+						</a>
+					</th>
+					
 					<th title="统计日期：${cd }">
 						<a href="${ctx }/petservice/report/pv1.html?cd=${cd}" title="今日PV-统计" target="navTab" rel="serviceCounter1Tab">
 							今日PV(&nbsp;<font color='red'>${all.new_pv }</font>&nbsp;)
-						</a>			
+						</a>
 					</th>
 					<th>
 						<a href="${ctx }/petservice/report/pv1.html" title="总PV-统计" target="navTab" rel="serviceCounter1Tab">
 							总PV(&nbsp;<font color='red'>${all.all_pv }</font>&nbsp;)
-						</a>					
+						</a>
 					</th>
+					
 				</tr>
 			</thead>
 			<tbody>
@@ -161,6 +170,37 @@
 					<td title="总注册率">
 						<fmt:formatNumber pattern="##.##" value="${itm.all_rate*100 }" />%
 					</td>
+					
+					<td>
+						<c:choose>
+							<c:when test="${itm.reg }">
+								<a href="${ctx }/petservice/report/online2.html?channel=${itm.channel}" title="${itm.channelName }渠道-在线" target="navTab" rel="serviceCounter2Tab_${itm.channel}">						
+								<img alt="" src="${ctx }/static/images/4.0/icons/search.png" width="15" >
+								<font color="#000000">
+									${itm.new_online }
+								</font></a>
+							</c:when>
+							<c:otherwise>
+								${itm.new_online }
+							</c:otherwise>
+						</c:choose>
+
+					</td>
+					<td>
+						<c:choose>
+							<c:when test="${itm.reg }">
+								<a href="${ctx }/petservice/report/online2.html?channel=${itm.channel}" title="${itm.channelName }渠道-在线" target="navTab" rel="serviceCounter2Tab_${itm.channel}">
+								<img alt="" src="${ctx }/static/images/4.0/icons/search.png" width="15" >
+								<font color="#000000">
+									${itm.all_online }
+								</font></a>
+							</c:when>
+							<c:otherwise>
+								${itm.all_online }
+							</c:otherwise>
+						</c:choose>
+					</td>
+					
 					<td>
 						<c:choose>
 							<c:when test="${itm.reg }">

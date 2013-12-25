@@ -71,7 +71,9 @@
 						<th width="20" ></th>
 						<th >文件ID</th>
 						<th width="150" >版本号</th>
+						<%--
 						<th width="150" >渠道号</th>
+						--%>
 						<th >发布日期</th>
 						<th >发布人</th>
 					</tr>
@@ -82,7 +84,9 @@
 						<td align="center">${idx.index+1 }</td>
 						<td>${itm.fileId }</td>
 						<td>${itm.version }</td>
+						<%--
 						<td>${itm.channel }</td>
+						--%>
 						<td><fmt:formatDate value="${itm.ct }" type="both" /></td>
 						<td>${itm.cb }</td>
 					</tr>

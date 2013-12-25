@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -83,6 +82,16 @@ public class ChannelCounterAction extends BaseAction{
 			
 			for(String j : list){
 				ChannelCounterVo vo = gson.fromJson(j, ChannelCounterVo.class);
+				String c = vo.getChannel();
+				try{
+					if( Integer.parseInt(c.trim())<100 && Integer.parseInt(c.trim())!=1 ){
+						logger.debug("排除 channel="+c);
+						continue;
+					}
+				}catch(Exception e){
+					logger.debug("排除 channel="+c);
+					continue;
+				}
 				data.add(vo);
 				String channelName = channelDict.get(vo.getChannel());
 				if(StringUtils.isEmpty(channelName)){
@@ -97,8 +106,12 @@ public class ChannelCounterAction extends BaseAction{
 				all.setAll_user(all.getAll_user()+vo.getAll_user());
 				all.setAll_register(all.getAll_register()+vo.getAll_register());
 				
+				all.setNew_online(all.getNew_online()+vo.getNew_online());
+				all.setAll_online(all.getAll_online()+vo.getAll_online());
+				
 				all.setNew_pv(all.getNew_pv()+vo.getNew_pv());
 				all.setAll_pv(all.getAll_pv()+vo.getAll_pv());
+				
 			}
 			sortList(data,myForm);//排序
 			page.setData(data);

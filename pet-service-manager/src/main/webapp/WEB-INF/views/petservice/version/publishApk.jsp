@@ -13,10 +13,12 @@
 				<label>版本号：</label>
 				<input type="text" name="version" size="30" value="" class="required"/>
 			</div>
+			<%--
 			<div class="unit">
 				<label>渠道号：</label>
 				<input type="text" name="channel" size="30" value="" class="required"/>
 			</div>
+			--%>
 			<div class="unit">
 				<label>上传状态：</label>
 				<input type="text" id="msg" size="30" value="待上传" readonly="readonly" class="required" />

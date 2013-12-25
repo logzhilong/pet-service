@@ -1,17 +1,13 @@
 package com.momoplan.pet.framework.hub.web.controller;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.activemq.command.ActiveMQTextMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +17,7 @@ import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
 import com.momoplan.pet.commons.http.PostRequest;
 import com.momoplan.pet.commons.spring.CommonConfig;
+import com.momoplan.pet.framework.hub.web.EventQueue;
 /**
  * 转发服务
  * @author liangc
@@ -31,13 +28,13 @@ import com.momoplan.pet.commons.spring.CommonConfig;
 public class HubController {
 	private static Logger logger = LoggerFactory.getLogger(HubController.class);
 	private CommonConfig commonConfig = null;
-	private JmsTemplate apprequestTemplate;
+	private EventQueue eventQueue = null;
 	
 	@Autowired
-	public HubController(CommonConfig commonConfig, JmsTemplate apprequestTemplate) {
+	public HubController(CommonConfig commonConfig, EventQueue eventQueue) {
 		super();
 		this.commonConfig = commonConfig;
-		this.apprequestTemplate = apprequestTemplate;
+		this.eventQueue = eventQueue;
 	}
 
 	/**
@@ -92,11 +89,10 @@ public class HubController {
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("input", inputJson);
 			jsonObj.put("output", outputJson);
-			TextMessage tm = new ActiveMQTextMessage();
-			tm.setText(jsonObj.toString());
-			apprequestTemplate.convertAndSend(tm);
-		} catch (JMSException e) {
-			logger.error("JMSException error",e);		
+			String event = jsonObj.toString();
+			if(!eventQueue.push(event)){
+				logger.error("消息服务器异常了么？？？");
+			}
 		} catch (JSONException e) {
 			logger.error("JSONException error",e);		
 		}
