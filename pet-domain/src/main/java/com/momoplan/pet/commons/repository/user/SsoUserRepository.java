@@ -60,6 +60,8 @@ public class SsoUserRepository implements CacheKeysConstance {
 				if(ssoUserList!=null&&ssoUserList.size()>0){
 					SsoUser user = ssoUserList.get(0);
 					updateUserIndex(user);
+					userid = user.getId();
+					logger.debug("初始化用户名索引--完成 userid="+userid);
 				}
 			}
 			return mapperOnCache.selectByPrimaryKey(SsoUser.class, userid);
