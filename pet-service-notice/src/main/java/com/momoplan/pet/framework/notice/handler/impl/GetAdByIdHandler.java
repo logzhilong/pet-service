@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
-import com.momoplan.pet.commons.domain.notice.po.Notice;
+import com.momoplan.pet.commons.domain.notice.po.Ads;
 import com.momoplan.pet.framework.notice.handler.AbstractHandler;
 /**
- * 获取系统通知
+ * 根据广告ID获取广告
  * @author liangc
  */
-@Component("getNoticeById")
-public class GetNoticeByIdHandler extends AbstractHandler {
+@Component("getAdById")
+public class GetAdByIdHandler extends AbstractHandler {
 	
-	private static Logger logger = LoggerFactory.getLogger(GetNoticeByIdHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(GetAdByIdHandler.class);
 	
 	@Override
 	public void process(ClientRequest clientRequest, HttpServletResponse response) throws Exception {
@@ -25,13 +25,13 @@ public class GetNoticeByIdHandler extends AbstractHandler {
 		String sn = clientRequest.getSn();
 		try{
 			String id = PetUtil.getParameter(clientRequest, "id");
-			Notice notice = mapperOnCache.selectByPrimaryKey(Notice.class, id);
-			logger.debug("getNoticeById 成功 body=" + gson.toJson(clientRequest));
-			rtn = new Success(sn,true,notice).toString();
+			Ads ads = mapperOnCache.selectByPrimaryKey(Ads.class, id);
+			logger.debug("getAdById 成功 body=" + gson.toJson(clientRequest));
+			rtn = new Success(sn,true,ads).toString();
 		}catch(Exception e){
-			logger.debug("getNoticeById 失败 body=" + gson.toJson(clientRequest));
-			logger.error("getNoticeById 失败",e);
-			rtn = new Success(sn,false,"getNoticeById 失败 err="+e.getMessage()).toString();
+			logger.debug("getAdById 失败 body=" + gson.toJson(clientRequest));
+			logger.error("getAdById 失败",e);
+			rtn = new Success(sn,false,"getAdById 失败 err="+e.getMessage()).toString();
 		}finally{
 			writeStringToResponse(rtn,response);
 		}

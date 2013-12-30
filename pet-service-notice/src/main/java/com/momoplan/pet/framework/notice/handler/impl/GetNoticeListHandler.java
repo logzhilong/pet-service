@@ -58,10 +58,9 @@ public class GetNoticeListHandler extends AbstractHandler {
 			rtn = success.toString();
 		}catch(Exception e){
 			logger.debug("getNoticeList 失败 body=" + gson.toJson(clientRequest));
-			logger.error(e.getMessage());
-			rtn = new Success(sn,false,e.getMessage()).toString();
+			logger.error("getNoticeList 失败",e);
+			rtn = new Success(sn,false,"getNoticeList 失败 err="+e.getMessage()).toString();
 		}finally{
-			logger.debug(rtn);
 			writeStringToResponse(rtn,response);
 		}
 	}
