@@ -1,4 +1,4 @@
-package com.momoplan.pet.framework.petservice.notice.service;
+package com.momoplan.pet.framework.petservice.ads.service;
 
 import java.util.Date;
 import java.util.List;
@@ -11,40 +11,38 @@ import org.springframework.stereotype.Controller;
 import com.google.gson.Gson;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
-import com.momoplan.pet.commons.bean.Page;
 import com.momoplan.pet.commons.cache.MapperOnCache;
-import com.momoplan.pet.commons.domain.notice.mapper.NoticeMapper;
-import com.momoplan.pet.commons.domain.notice.po.Notice;
-import com.momoplan.pet.commons.domain.notice.po.NoticeCriteria;
+import com.momoplan.pet.commons.domain.notice.mapper.AdsMapper;
+import com.momoplan.pet.commons.domain.notice.po.Ads;
+import com.momoplan.pet.commons.domain.notice.po.AdsCriteria;
+import com.momoplan.pet.framework.base.vo.Page;
 
 @Controller
-public class NoticeService {
+public class AdsService {
 	
 	static Gson gson = MyGson.getInstance();
-	private static Logger logger = LoggerFactory.getLogger(NoticeService.class);
+	private static Logger logger = LoggerFactory.getLogger(AdsService.class);
 	@Autowired
-	private NoticeMapper NoticeMapper = null;
+	private AdsMapper adsMapper = null;
 	@Autowired
 	private MapperOnCache mapperOnCache = null;
 	
-	public Page<Notice> getNoticeList(Page<Notice> pages,Notice vo)throws Exception{
+	public Page<Ads> getAdsList(Page<Ads> pages,Ads vo)throws Exception{
 		int pageSize = pages.getPageSize();
 		int pageNo = pages.getPageNo();
-		NoticeCriteria NoticeCriteria = new NoticeCriteria();
-		NoticeCriteria.setOrderByClause("et desc");
-		int totalCount = NoticeMapper.countByExample(NoticeCriteria);
-		NoticeCriteria.setMysqlOffset((pageNo-1) * pageSize);
-		NoticeCriteria.setMysqlLength(pageSize);
-		List<Notice> data = NoticeMapper.selectByExample(NoticeCriteria);
+		AdsCriteria adsCriteria = new AdsCriteria();
+		adsCriteria.setOrderByClause("et desc");
+		int totalCount = adsMapper.countByExample(adsCriteria);
+		adsCriteria.setMysqlOffset((pageNo-1) * pageSize);
+		adsCriteria.setMysqlLength(pageSize);
+		List<Ads> data = adsMapper.selectByExample(adsCriteria);
 		pages.setTotalCount(totalCount);
 		pages.setData(data);
 		return pages;
 	}
 	
-	public void save(Notice vo) throws Exception{
+	public void save(Ads vo) throws Exception{
 		Date now = new Date();
-		if("".equals(vo.getPid()))
-			vo.setPid(null);
 		if(vo.getId()!=null&&!"".equals(vo.getId())){
 			logger.debug("更新 "+gson.toJson(vo));
 			vo.setEt(now);
@@ -54,6 +52,7 @@ public class NoticeService {
 			vo.setCt(now);
 			vo.setCb(vo.getEb());
 			vo.setEt(now);
+			vo.setState("active");
 			logger.debug("新增 "+gson.toJson(vo));
 			mapperOnCache.insertSelective(vo, vo.getId());
 		}

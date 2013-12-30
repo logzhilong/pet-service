@@ -78,8 +78,10 @@ public class IndexController {
 
 		TreeBean notice = new TreeBean("05","0","通知-管理");
 		TreeBean sysNotice = new TreeBean("0501","05","系统通知","/petservice/notice/noticeMain.html");
+		TreeBean sysAds = new TreeBean("0502","05","广告","/petservice/ads/adsMain.html");
 		tree.add(notice);
 		tree.add(sysNotice);
+		tree.add(sysAds);
 
 		TreeBean push = new TreeBean("06","0","推送-管理");
 		TreeBean pushMsg = new TreeBean("0601","06","推送","/petservice/push/pushMain.html");
