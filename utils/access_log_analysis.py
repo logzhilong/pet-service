@@ -138,7 +138,7 @@ def push_imei(host,user,pwd,db):
 	imei_map.clear()
 	log.debug('imei <-------')
 
-biz_token_template = "insert into biz_token (id,token,cd,channel)values('${id}',${token},'${cd}','${channel}')"
+biz_token_template = "insert into biz_token (id,token,cd,channel)values('${id}','${token}','${cd}','${channel}')"
 def push_token(host,user,pwd,db):
 	log.debug('token ------->')
 	conn = Datasource(host,user,pwd,db).getConnection()
