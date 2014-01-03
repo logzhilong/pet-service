@@ -1,10 +1,15 @@
 #/usr/bin/env python
 #coding=utf-8
 import string,datetime,traceback,os.path,re,tornado.httpserver,tornado.ioloop,tornado.options,tornado.web,unicodedata,mysql.connector,json,uuid 
+import mod_log as lm
 
-conf = ('192.168.99.51','pet_statistic','pet','123456')
+LOG_LEVEL = lm.level['info']
+log = lm.LoggerFactory('/tmp/http_yijifen.log','yijifen',LOG_LEVEL).getLog()
 
+#host = '192.168.99.51'
+host = '123.178.27.74'
 
+conf = (host,'pet_statistic','pet','123456')
 biz_yijifen_template =  "insert into biz_yijifen (id,cd,ct,callback)values('${id}','${cd}','${ct}','${callback}')"
 
 class MainHandler(tornado.web.RequestHandler):
@@ -25,16 +30,16 @@ class MainHandler(tornado.web.RequestHandler):
                 	try:
                         	template = string.Template(biz_yijifen_template)
                         	sql = template.safe_substitute(param)
-                        	print sql
+                        	log.info( sql )
                         	cursor.execute(sql)        
                 	except Exception,err:
-                        	print err
+                        	log.info( err )
         		cursor.close()			
 			res = dict(success=True)		
 		except:
 			eid =  uuid.uuid4().hex
 			err = traceback.format_exc()
-			print "id=%s ; err=%s" % (eid,err)
+			log.info( "id=%s ; err=%s" % (eid,err) )
 			res = dict(success=False,message=eid)		
 		finally:
 			j = json.dumps(res)
