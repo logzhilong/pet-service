@@ -14,6 +14,16 @@
 		<property name="connectionFactory" ref="jmsFactory" />
 	</bean>
 
+	<bean id="myTopic" class="org.apache.activemq.command.ActiveMQTopic">  
+        <constructor-arg index="0" value="pet-events"/>
+    </bean>
+
+    <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">  
+        <property name="connectionFactory" ref="connectionFactory"/>  
+        <property name="destination" ref="myTopic"/>
+        <property name="messageListener" ref="petEventsListener"/>  
+    </bean>
+
 	<bean id="apprequestTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="connectionFactory" />
 		<property name="pubSubDomain" value="true" />

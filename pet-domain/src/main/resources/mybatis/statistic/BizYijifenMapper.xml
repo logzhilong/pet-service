@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.momoplan.pet.commons.domain.statistic.mapper.BizDailyLiveMapper" >
-  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.statistic.po.BizDailyLive" >
+<mapper namespace="com.momoplan.pet.commons.domain.statistic.mapper.BizYijifenMapper" >
+  <resultMap id="BaseResultMap" type="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
     <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="biz_date" property="bizDate" jdbcType="VARCHAR" />
-    <result column="channel" property="channel" jdbcType="VARCHAR" />
-    <result column="totally_user" property="totallyUser" jdbcType="VARCHAR" />
+    <result column="cd" property="cd" jdbcType="VARCHAR" />
+    <result column="ct" property="ct" jdbcType="VARCHAR" />
+    <result column="callback" property="callback" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,15 +66,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, biz_date, channel, totally_user
+    id, cd, ct, callback
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLiveCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifenCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from biz_daily_live
+    from biz_yijifen
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,74 +88,74 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from biz_daily_live
+    from biz_yijifen
     where id = #{id}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
-    delete from biz_daily_live
+    delete from biz_yijifen
     where id = #{id}
   </delete>
-  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLiveCriteria" >
-    delete from biz_daily_live
+  <delete id="deleteByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifenCriteria" >
+    delete from biz_yijifen
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLive" >
-    insert into biz_daily_live (id, biz_date, channel, totally_user)
-    values (#{id}, #{bizDate}, #{channel}, #{totallyUser})
+  <insert id="insert" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
+    insert into biz_yijifen (id, cd, ct, callback)
+    values (#{id}, #{cd}, #{ct}, #{callback})
   </insert>
-  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLive" >
-    insert into biz_daily_live
+  <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
+    insert into biz_yijifen
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="bizDate != null" >
-        biz_date,
+      <if test="cd != null" >
+        cd,
       </if>
-      <if test="channel != null" >
-        channel,
+      <if test="ct != null" >
+        ct,
       </if>
-      <if test="totallyUser != null" >
-        totally_user,
+      <if test="callback != null" >
+        callback,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id},
       </if>
-      <if test="bizDate != null" >
-        #{bizDate},
+      <if test="cd != null" >
+        #{cd},
       </if>
-      <if test="channel != null" >
-        #{channel},
+      <if test="ct != null" >
+        #{ct},
       </if>
-      <if test="totallyUser != null" >
-        #{totallyUser},
+      <if test="callback != null" >
+        #{callback},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLiveCriteria" resultType="java.lang.Integer" >
-    select count(*) from biz_daily_live
+  <select id="countByExample" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifenCriteria" resultType="java.lang.Integer" >
+    select count(*) from biz_yijifen
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update biz_daily_live
+    update biz_yijifen
     <set >
       <if test="record.id != null" >
         id = #{record.id},
       </if>
-      <if test="record.bizDate != null" >
-        biz_date = #{record.bizDate},
+      <if test="record.cd != null" >
+        cd = #{record.cd},
       </if>
-      <if test="record.channel != null" >
-        channel = #{record.channel},
+      <if test="record.ct != null" >
+        ct = #{record.ct},
       </if>
-      <if test="record.totallyUser != null" >
-        totally_user = #{record.totallyUser},
+      <if test="record.callback != null" >
+        callback = #{record.callback},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -163,35 +163,35 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update biz_daily_live
+    update biz_yijifen
     set id = #{record.id},
-      biz_date = #{record.bizDate},
-      channel = #{record.channel},
-      totally_user = #{record.totallyUser}
+      cd = #{record.cd},
+      ct = #{record.ct},
+      callback = #{record.callback}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLive" >
-    update biz_daily_live
+  <update id="updateByPrimaryKeySelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
+    update biz_yijifen
     <set >
-      <if test="bizDate != null" >
-        biz_date = #{bizDate},
+      <if test="cd != null" >
+        cd = #{cd},
       </if>
-      <if test="channel != null" >
-        channel = #{channel},
+      <if test="ct != null" >
+        ct = #{ct},
       </if>
-      <if test="totallyUser != null" >
-        totally_user = #{totallyUser},
+      <if test="callback != null" >
+        callback = #{callback},
       </if>
     </set>
     where id = #{id}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizDailyLive" >
-    update biz_daily_live
-    set biz_date = #{bizDate},
-      channel = #{channel},
-      totally_user = #{totallyUser}
+  <update id="updateByPrimaryKey" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
+    update biz_yijifen
+    set cd = #{cd},
+      ct = #{ct},
+      callback = #{callback}
     where id = #{id}
   </update>
 </mapper>

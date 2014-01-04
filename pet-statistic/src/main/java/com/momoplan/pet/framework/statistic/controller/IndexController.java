@@ -1,10 +1,7 @@
-package com.momoplan.pet.framework.manager.controller;
+package com.momoplan.pet.framework.statistic.controller;
 
 import java.net.URLDecoder;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.Date;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,22 +15,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.PetUtil;
+import com.momoplan.pet.commons.domain.statistic.mapper.BizYijifenMapper;
+import com.momoplan.pet.commons.domain.statistic.po.BizYijifen;
+import com.momoplan.pet.framework.statistic.jms.PetEventsListener;
 
 @Controller
 public class IndexController {
 	
-	Logger logger = LoggerFactory.getLogger(IndexController.class);
+	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 	
 	@Autowired
-	private ComboPooledDataSource statisticDataSource = null;
+	private BizYijifenMapper bizYijifenMapper = null;
 	
 	@RequestMapping("/yijifen.html")
 	public void index(Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		JSONObject success = new JSONObject();
 		success.put("success", true);
-		Connection conn = null;
 		try{
 			logger.debug("wlcome to pet manager index......");
 			String ct = request.getParameter("eventtime") ;
@@ -41,30 +40,23 @@ public class IndexController {
 			String cd = DateUtils.formatDate(new Date());
 			String callback = request.getParameter("callback_url");
 			callback = URLDecoder.decode(callback, "UTF-8");
-			
-			conn = statisticDataSource.getConnection();
-			conn.setAutoCommit(true);
-			Statement stat = conn.createStatement();
-
-			StringBuffer sb = new StringBuffer("insert into biz_yijifen ");
-			sb.append("(id,cd,ct,callback)values(");
-			sb.append("'"+mac+"','"+cd+"','"+ct+"','"+callback+"'");
-			sb.append(")");
-			String sql = sb.toString();
-			logger.debug(sql);
+			BizYijifen bizYijifen = new BizYijifen();
+			bizYijifen.setId(mac);
+			bizYijifen.setCd(cd);
+			bizYijifen.setCt(ct);
+			bizYijifen.setCallback(callback);
 			try{
-				stat.execute(sql);
+				bizYijifenMapper.insertSelective(bizYijifen);
+				PetEventsListener.memCache.put(bizYijifen.getId(), bizYijifen.getCd());
 			}catch(Exception e){
-				logger.debug(e.getMessage());
+				logger.info(cd+";"+"重复:"+mac);
 			}
-			stat.close();
+			success.put("message", mac);
 		}catch(Exception e){
-			String id = UUID.randomUUID().toString();
+			String id = IDCreater.uuid();
 			success.put("success", false);
 			success.put("message", "id="+id+";err="+e.getMessage());
 		}finally{
-			if(conn!=null)
-				conn.close();
 			PetUtil.writeStringToResponse(success.toString(),response);
 		}
 	}
