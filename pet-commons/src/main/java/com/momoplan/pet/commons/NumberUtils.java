@@ -112,6 +112,13 @@ public class NumberUtils {
 		return res;
 	}
 	
+	public static int random(int f,int t){
+		double d = Math.random();
+		int s = t-f;
+		s = (int)(s*d)+f;
+		return s;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		int x = new Random().nextInt();
 		x = x<0?x*-1:x;
@@ -122,6 +129,16 @@ public class NumberUtils {
 		System.out.println("num39:"+num39);
 		String num10 = numNTo10(num39);
 		System.out.println("num10:"+num10);
+		
+		System.out.println("=========================");
+		
+		
+		double d = Math.random();
+		int f = 2000 , t = 5000;
+		int s = t-f;
+		s = (int)(s*d)+f;
+		System.out.println(d);
+		System.out.println(s);
 	}
 	
 }

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
+import com.momoplan.pet.commons.NumberUtils;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
@@ -89,6 +90,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		}
 		logger.debug("发帖子 ：" + po.toString());
 		noteRepository.insertOrUpdateSelective(po,NoteState.AUDIT);
+		noteRepository.updateClickCount(po.getId(), (long) NumberUtils.random(2000, 7000));
 		sendJMS(po);
 		return po.getId();
 	}
@@ -123,20 +125,19 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		}
 	}
 	
-	static long min = 100;
 	/**
 	 * 更新帖子点击数
 	 */
 	@Override
 	public void updateClickCount(String noteId) throws Exception {
-		noteRepository.updateClickCount(noteId, min);
+		noteRepository.updateClickCount(noteId, (long) NumberUtils.random(2000, 8000));
 	}
 	/**
 	 * 获取点击次数
 	 */
 	@Override
 	public Long getClientCount(String noteId) throws Exception {
-		return noteRepository.getClickCount(noteId, min);
+		return noteRepository.getClickCount(noteId, (long) NumberUtils.random(2000, 8000));
 	}
 	/**
 	 * 获取帖子列表

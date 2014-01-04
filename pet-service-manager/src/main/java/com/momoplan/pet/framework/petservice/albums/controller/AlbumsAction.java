@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.momoplan.pet.commons.NumberUtils;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.domain.albums.po.Photos;
 import com.momoplan.pet.framework.base.controller.BaseAction;
@@ -86,6 +87,7 @@ public class AlbumsAction extends BaseAction {
 		try {
 			logger.debug(myForm.toString());
 			Photos po = new Photos();
+			po.setTotalClick(NumberUtils.random(2000, 10000));
 			BeanUtils.copyProperties(myForm, po);
 			if("ADD".equals(myForm.getAction())){
 				po.setCt(new Date());
