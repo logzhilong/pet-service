@@ -15,6 +15,7 @@
 		<module>pet-domain</module>
 		<module>pet-share</module>
 		<module>pet-wordfilter</module>
+		<module>pet-statistic</module>
 		<module>pet-file-server</module>
 		<module>pet-sso-server</module>
 		<module>pet-service-bbs</module>
