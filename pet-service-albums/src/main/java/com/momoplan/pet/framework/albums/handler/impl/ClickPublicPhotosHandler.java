@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.NumberUtils;
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.bean.Success;
@@ -31,8 +32,8 @@ public class ClickPublicPhotosHandler extends AbstractHandler {
 			String id = PetUtil.getParameter(clientRequest, "id");
 			Photos p = mapperOnCache.selectByPrimaryKey(Photos.class, id);
 			Integer totalClick = p.getTotalClick();
-			if(totalClick==null)
-				totalClick = 3;
+			if(totalClick==null || totalClick < 1)
+				totalClick = NumberUtils.random(2000, 5000);
 			else
 				totalClick +=3;
 			p.setTotalClick(totalClick);
