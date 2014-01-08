@@ -103,7 +103,7 @@ public class PushService extends BaseService {
 			vo.setState(PushState.NEW.getCode());
 			mapperOnCache.insertSelective(vo, vo.getId());
 		}
-		push2mq4state(vo);
+		push2mq4state(mapperOnCache.selectByPrimaryKey(MgrPush.class, vo.getId()));
 	}
 	
 	private void push2mq4xmpp(MgrPush vo) {
