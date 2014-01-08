@@ -34,13 +34,12 @@ import com.momoplan.pet.commons.spring.CommonConfig;
 import com.momoplan.pet.framework.base.service.BaseService;
 import com.momoplan.pet.framework.base.vo.MgrTrustUserVo;
 import com.momoplan.pet.framework.base.vo.Page;
-import com.momoplan.pet.framework.petservice.bbs.controller.NoteAction;
 import com.momoplan.pet.framework.petservice.bbs.vo.NoteVo;
 
 @Service
 public class NoteService extends BaseService {
 
-	private static Logger logger = LoggerFactory.getLogger(NoteAction.class);
+	private static Logger logger = LoggerFactory.getLogger(NoteService.class);
 	
 	private static Gson gson = MyGson.getInstance();
 
@@ -81,10 +80,13 @@ public class NoteService extends BaseService {
 	
 	public Page<NoteVo> getNoteList(Page<NoteVo> page,NoteVo vo) throws Exception {
 		logger.debug("getNoteList: "+gson.toJson(vo));
-		
+		String forumId = vo.getForumId();
 		NoteCriteria noteCriteria = new NoteCriteria();
 		NoteCriteria.Criteria criteria = noteCriteria.createCriteria();
-		criteria.andForumIdEqualTo(vo.getForumId());
+
+		if(StringUtils.isNotEmpty(forumId)){
+			criteria.andForumIdEqualTo(forumId);
+		}
 		criteria.andIsDelEqualTo(false);
 		if(!"ALL".equalsIgnoreCase(vo.getCondition_state())){
 			logger.debug("条件-状态："+vo.getCondition_state());
@@ -124,9 +126,10 @@ public class NoteService extends BaseService {
 		
 	}
 
-	public void saveNote(Note vo,String at_str,String currentUser) throws Exception {
+	public String saveNote(Note vo,String at_str,String currentUser) throws Exception {
+		String id = vo.getId();
 		filterTopNote(vo);
-		if(vo.getId()!=null&&!"".equals(vo.getId())){
+		if(id!=null&&!"".equals(id)){
 			logger.debug("更新帖子 "+gson.toJson(vo));
 			Date now = new Date();
 			vo.setEt(now);
@@ -168,14 +171,16 @@ public class NoteService extends BaseService {
 			if(!success.getBoolean("success")){
 				throw new Exception(entity);
 			}
+			id = entity;
 			//add by liangc 131220 : 计划任务
 			if(StringUtils.isNotEmpty(at_str)){
-				logger.info("计划任务ID-->"+vo.getId());
+				logger.info("计划任务ID-->"+entity);
 				logger.info("计划任务名字-->"+vo.getName());
 				logger.info("计划任务执行时间-->"+at_str);
 				addTimerTask(at_str,entity,"bbs_note",vo.getName(),currentUser);
 			}
 		}
+		return id;
 	}
 	
 	

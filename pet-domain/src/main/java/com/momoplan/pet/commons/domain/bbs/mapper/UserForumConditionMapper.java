@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-11-12 14:11:25
+* @date 2014-01-06 12:06:10
 */
 public interface UserForumConditionMapper {
     /**

@@ -7,6 +7,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.bbs.po.SpecialSubject;
 import com.momoplan.pet.commons.domain.ency.po.Ency;
 import com.momoplan.pet.commons.domain.exper.po.Exper;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrPushMapper;
@@ -70,7 +72,7 @@ public class PushService extends BaseService {
 			//其实，应该时 pending 状态，由异步线程负责更新状态
 			vo.setState(PushState.PUSHED.getCode());
 			logger.debug("添加一个IOS推送任务");
-			push2mq(p);
+			push2mq4xmpp(p);
 			IphonePushTask.queue.put(p);
 		}
 		
@@ -101,9 +103,10 @@ public class PushService extends BaseService {
 			vo.setState(PushState.NEW.getCode());
 			mapperOnCache.insertSelective(vo, vo.getId());
 		}
+		push2mq4state(vo);
 	}
 	
-	private void push2mq(MgrPush vo) {
+	private void push2mq4xmpp(MgrPush vo) {
 		try{
 			String dest = "pet_push_xmpp_pubsub";
 			ActiveMQQueue queue = new ActiveMQQueue();
@@ -113,6 +116,21 @@ public class PushService extends BaseService {
 			tm.setText(msg);
 			apprequestTemplate.convertAndSend(queue, tm);
 			logger.debug("dest=pet_push_xmpp_pubsub ; msg="+msg);
+		}catch(Exception e){
+			logger.debug("推送消息异常不能中断程序");
+			logger.error("send message",e);
+		}
+	}
+	private void push2mq4state(MgrPush vo) {
+		try{
+			String dest = "pet_push_state";
+			ActiveMQTopic topic = new ActiveMQTopic();
+			topic.setPhysicalName(dest);
+			TextMessage tm = new ActiveMQTextMessage();
+			String msg = gson.toJson(vo);
+			tm.setText(msg);
+			apprequestTemplate.convertAndSend(topic, tm);
+			logger.debug("dest="+dest+" ; msg="+msg);
 		}catch(Exception e){
 			logger.debug("推送消息异常不能中断程序");
 			logger.error("send message",e);
@@ -133,6 +151,9 @@ public class PushService extends BaseService {
 		}else if("notice".equalsIgnoreCase(src)){
 			name = mapperOnCache.selectByPrimaryKey(Notice.class, id).getName();
 			logger.debug("通知 : "+name);
+		}else if("bbs_special_subject".equalsIgnoreCase(src)){
+			name = mapperOnCache.selectByPrimaryKey(SpecialSubject.class, id).getName();
+			logger.debug("专题 : "+name);
 		}
 		return name;
 	}

@@ -32,7 +32,7 @@ public class ForumAction extends BaseAction{
 	private ForumService forumService = null;
 	
 	@RequestMapping("/petservice/bbs/forumMain.html")
-	public String main(ForumVo myForm,Model model,HttpServletRequest request,HttpServletResponse response){
+	public String main(ForumVo myForm,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		logger.debug("/petservice/bbs/forumMain");
 		logger.debug("input:"+gson.toJson(myForm));
 		String pid = myForm.getPid();
@@ -43,6 +43,17 @@ public class ForumAction extends BaseAction{
 			}
 			List<Forum> list = forumService.getForumList(myForm);
 			model.addAttribute("list", list);
+			if(!"page".equalsIgnoreCase(myForm.getRtnType())){
+				StringBuffer sb = new StringBuffer("[[\"\",\"--请选择--\"]");
+				for(Forum f : list){
+					sb.append(",[\""+f.getId()+"\",\""+f.getName()+"\"]");
+				}
+				sb.append("]");
+				String s = sb.toString();
+				logger.debug(s);
+				PetUtil.writeStringToResponse(s, response);
+				return null;
+			}
 		} catch (Exception e) {
 			logger.error("圈子列表异常",e);
 		}

@@ -102,3 +102,40 @@ CREATE TABLE `mgr_timer_task` (
   `eb` varchar(200) DEFAULT NULL,    
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| ID           | varchar(64)   | NO   | PRI |         |       |
+| FORUM_ID     | varchar(64)   | YES  |     | NULL    |       |
+| USER_ID      | varchar(64)   | YES  |     | NULL    |       |
+| NAME         | varchar(1000) | YES  |     | NULL    |       |
+| CONTENT      | text          | YES  |     | NULL    |       |
+| CLIENT_COUNT | bigint(20)    | YES  |     | NULL    |       |
+| IS_EUTE      | tinyint(1)    | YES  |     | NULL    |       |
+| IS_TOP       | tinyint(1)    | YES  |     | NULL    |       |
+| IS_DEL       | tinyint(1)    | YES  |     | NULL    |       |
+| STATE        | varchar(200)  | YES  |     | NULL    |       |
+| TYPE         | varchar(200)  | YES  |     | NULL    |       |
+| CT           | datetime      | NO   |     | NULL    |       |
+| ET           | datetime      | NO   |     | NULL    |       |
+| RT           | datetime      | NO   |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+CREATE TABLE `bbs_special_subject` (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `gid` varchar(64) NOT NULL COMMENT '组主键',
+  `seq` int COMMENT '顺序',
+  `name` varchar(2000) DEFAULT NULL COMMENT '标题',
+  `summary` varchar(3000) DEFAULT NULL COMMENT '摘要',
+  `img` varchar(1000) DEFAULT NULL COMMENT '图片',
+  `type` varchar(1000) DEFAULT NULL COMMENT '类型：单个、多个',
+  `note_id` varchar(64) DEFAULT NULL COMMENT '帖子ID',
+  `state` varchar(64) DEFAULT NULL COMMENT '状态：草稿、完成、已推送、作废',
+  `ct` datetime,
+  `et` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `eb` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

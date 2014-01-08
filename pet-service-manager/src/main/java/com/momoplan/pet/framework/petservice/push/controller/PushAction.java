@@ -52,8 +52,6 @@ public class PushAction extends BaseAction{
 		json.put("message","操作成功");
 		json.put("statusCode","200");
 		json.put("navTabId",navTabId);//panel0501
-		//json.put("callbackType","closeCurrent");
-		//json.put("forwardUrl",ctx+"/petservice/push/pushMain.html");
 		String res = null;
 		try {
 			WebUser user = SessionManager.getCurrentUser(request);

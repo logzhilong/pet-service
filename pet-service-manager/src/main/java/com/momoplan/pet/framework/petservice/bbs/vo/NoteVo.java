@@ -14,12 +14,23 @@ public class NoteVo extends Note{
 	
 	private String at_str = null;//计划执行时间
 	
+	private String forumName = null;
+	
 	/*
 	 * 查询条件
 	 */
 	private String condition_state = "ALL";
 	private String condition_isTop = "ALL";
 	private String condition_isEute = "ALL";
+
+	
+	public String getForumName() {
+		return forumName;
+	}
+
+	public void setForumName(String forumName) {
+		this.forumName = forumName;
+	}
 
 	public String getAt_str() {
 		return at_str;

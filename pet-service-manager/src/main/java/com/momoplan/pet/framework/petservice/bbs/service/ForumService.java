@@ -1,7 +1,9 @@
 package com.momoplan.pet.framework.petservice.bbs.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +31,16 @@ public class ForumService {
 	@Autowired
 	private MapperOnCache mapperOnCache = null;
 
+	public Map<String,Forum> getForumMap()throws Exception{
+		List<Forum> list = forumMapper.selectByExample(new ForumCriteria());
+		Map<String,Forum> m = new HashMap<String,Forum>();
+		for(Forum f : list){
+			m.put(f.getId(), f);
+		}
+		return m;
+	}
+
+	
 	public List<Forum> getForumList(ForumVo vo)throws Exception{
 		logger.debug("查询圈子 "+gson.toJson(vo));
 		String pid = vo.getPid();

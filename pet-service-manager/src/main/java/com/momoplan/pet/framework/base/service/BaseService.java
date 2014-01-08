@@ -24,6 +24,11 @@ public class BaseService {
 		task.setState(TimerState.NEW.getCode());
 		task.setCt(now);
 		task.setEt(now);
-		mapperOnCache.insertSelective(task, id);
+		MgrTimerTask t = mapperOnCache.selectByPrimaryKey(MgrTimerTask.class, id);
+		if(t==null){
+			mapperOnCache.insertSelective(task, id);
+		}else{
+			mapperOnCache.updateByPrimaryKeySelective(task, id);
+		}
 	}
 }
