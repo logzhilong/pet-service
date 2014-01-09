@@ -133,7 +133,7 @@ public class NoteService extends BaseService {
 			logger.debug("更新帖子 "+gson.toJson(vo));
 			Date now = new Date();
 			vo.setEt(now);
-			if(vo.getIsTop()){
+			if(vo.getIsTop()!=null&&vo.getIsTop()){
 				logger.debug(vo.getName()+"--更新为置顶帖,修改日期:"+now);
 			}
 			logger.debug("//TODO 更新时要清空总数的缓存，否则总数对不上呢");
@@ -191,7 +191,7 @@ public class NoteService extends BaseService {
 			n = mapperOnCache.selectByPrimaryKey(Note.class,id );
 			logger.debug("旧帖子 n="+n);
 		}
-		if(vo.getIsTop()||(n!=null&&n.getIsTop())){
+		if((vo.getIsTop()!=null&&vo.getIsTop())||(n!=null&&n.getIsTop())){
 			logger.debug("刷新置顶缓存");
 			noteResponse.flushTopNoteByFid(vo.getForumId());
 		}
