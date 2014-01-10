@@ -33,7 +33,7 @@ public class NoticeService {
 		NoticeCriteria NoticeCriteria = new NoticeCriteria();
 		NoticeCriteria.setOrderByClause("et desc");
 		int totalCount = NoticeMapper.countByExample(NoticeCriteria);
-		NoticeCriteria.setMysqlOffset((pageNo-1) * pageSize);
+		NoticeCriteria.setMysqlOffset(pageNo * pageSize);
 		NoticeCriteria.setMysqlLength(pageSize);
 		List<Notice> data = NoticeMapper.selectByExample(NoticeCriteria);
 		pages.setTotalCount(totalCount);
