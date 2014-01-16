@@ -1,0 +1,13 @@
+15-01-2014 19:25:38,422 CST ERROR [main] [com.momoplan.pet.commons.cache.pool.RedisPool@79] cache 初始化成功
+15-01-2014 19:25:38,492 CST ERROR [main] [com.momoplan.pet.commons.cache.pool.StorePool@57] cache 初始化成功
+15-01-2014 19:25:38,775 CST INFO  [main] [com.momoplan.pet.commons.spring.DispatcherServlet@444] FrameworkServlet 'dispatcher': initialization started
+15-01-2014 19:25:40,271 CST INFO  [main] [com.momoplan.pet.commons.spring.DispatcherServlet@463] FrameworkServlet 'dispatcher': initialization completed in 1495 ms
+15-01-2014 19:29:15,378 CST INFO  [qtp1967745410-46] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:30:00,341 CST INFO  [qtp1967745410-43] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:30:44,719 CST INFO  [qtp1967745410-46] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:30:49,780 CST INFO  [qtp1967745410-45] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:30:51,136 CST INFO  [qtp1967745410-39] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:30:56,110 CST INFO  [qtp1967745410-44] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:31:13,686 CST INFO  [qtp1967745410-46] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:31:57,726 CST INFO  [qtp1967745410-41] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test
+15-01-2014 19:32:25,088 CST INFO  [qtp1967745410-46] [com.momoplan.pet.framework.manager.controller.ShareController@35] pet_bbs_id=test

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import com.momoplan.pet.commons.PetUtil;
 import com.momoplan.pet.commons.bean.ClientRequest;
+import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.domain.user.po.PetCard;
 import com.momoplan.pet.commons.domain.user.po.PetInfo;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.handler.RequestHandler;
@@ -22,6 +24,8 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 	private Logger logger = LoggerFactory.getLogger(AbstractHandler.class);
 	
 	protected UserService userService = Bootstrap.getBean(UserService.class);
+	
+	protected MapperOnCache mapperOnCache = Bootstrap.getBean(MapperOnCache.class);
 	
 	protected SsoUser reviceSsoUser(ClientRequest clientRequest){
 		String nickname = PetUtil.getParameter(clientRequest, "nickname");
@@ -46,7 +50,7 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 		return petUser;
 	}
 	
-	protected PetInfo revicePetInfo(ClientRequest clientRequest){
+protected PetInfo revicePetInfo(ClientRequest clientRequest){
 		
 		String nickname = PetUtil.getParameter(clientRequest, "nickname");
 		String type = PetUtil.getParameter(clientRequest, "type");
@@ -66,6 +70,29 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 		petInfo.setId(id);
 		
 		return petInfo;
+	}
+
+
+
+	protected PetCard revicePetCard(ClientRequest clientRequest){
+		String id = PetUtil.getParameter(clientRequest, "id");
+		String petType = PetUtil.getParameter(clientRequest, "petType");
+		String petNickname = PetUtil.getParameter(clientRequest, "petNickname");
+		String petOwner = PetUtil.getParameter(clientRequest, "petOwner");
+		String petOwnerTel = PetUtil.getParameter(clientRequest, "petOwnerTel");
+		String petOwnerMsg = PetUtil.getParameter(clientRequest, "petOwnerMsg");
+		String petImg = PetUtil.getParameter(clientRequest, "petImg");
+		
+		PetCard petCard = new PetCard();
+		petCard.setId(id);
+		petCard.setPetType(petType);
+		petCard.setPetNickname(petNickname);
+		petCard.setPetOwner(petOwner);
+		petCard.setPetOwnerTel(petOwnerTel);
+		petCard.setPetOwnerMsg(petOwnerMsg);
+		petCard.setPetImg(petImg);
+		
+		return petCard;
 	}
 	
 }

@@ -95,6 +95,11 @@ public class IndexController {
 		tree.add(timer);
 		tree.add(timerMgr);
 
+		TreeBean petcard = new TreeBean("08","0","宠物名片-管理");
+		TreeBean petcardMgr = new TreeBean("0801","08","二维码","/petservice/petcard/petcardMain.html");
+		tree.add(petcard);
+		tree.add(petcardMgr);
+		
 		//数据统计页面
 		TreeBean statistic = new TreeBean("03","0","统计报表");
 		TreeBean statisticUser = new TreeBean("0301","03","渠道统计","/petservice/report/channelCounter0.html");

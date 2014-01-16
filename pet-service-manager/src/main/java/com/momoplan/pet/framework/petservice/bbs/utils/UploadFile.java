@@ -90,7 +90,17 @@ public class UploadFile {
 	 */
 	public String upload(byte[] obj,String fileName,String contentType,String addTopImage,String compressImage,String imageWidth) throws Exception{
 		logger.debug("upload_input : fileName="+fileName+";contentType="+contentType+";addTopImage="+addTopImage+";compressImage="+compressImage+";imageWidth="+imageWidth);
-		PostMethod post = new PostMethod(getUploadUrl(addTopImage,compressImage,imageWidth));
+		String u = getUploadUrl(addTopImage,compressImage,imageWidth);
+		return upload(obj,fileName,contentType,u);
+	}
+
+	public String upload(byte[] obj,String fileName,String contentType,String addTopImage,String compressImage,String imageWidth,String id) throws Exception{
+		String u = getUploadUrl(addTopImage,compressImage,imageWidth)+"&id="+id;
+		return upload(obj,fileName,contentType,u);
+	}
+	
+	public String upload(byte[] obj,String fileName,String contentType,String u) throws Exception{
+		PostMethod post = new PostMethod(u);
 		try {
 			PartSource part = new ByteArrayPartSource(fileName,obj);
 			FilePart filePart = new FilePart("file",part);
@@ -117,4 +127,5 @@ public class UploadFile {
 		}
 	}
 
+	
 }

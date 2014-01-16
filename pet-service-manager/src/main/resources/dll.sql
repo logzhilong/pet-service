@@ -123,7 +123,7 @@ CREATE TABLE `mgr_timer_task` (
 | ET           | datetime      | NO   |     | NULL    |       |
 | RT           | datetime      | NO   |     | NULL    |       |
 +--------------+---------------+------+-----+---------+-------+
-CREATE TABLE `bbs_special_subject` (
+CREATE TABLE pet_bbs.bbs_special_subject (
   `id` varchar(64) NOT NULL COMMENT '主键',
   `gid` varchar(64) NOT NULL COMMENT '组主键',
   `seq` int COMMENT '顺序',
@@ -133,6 +133,27 @@ CREATE TABLE `bbs_special_subject` (
   `type` varchar(1000) DEFAULT NULL COMMENT '类型：单个、多个',
   `note_id` varchar(64) DEFAULT NULL COMMENT '帖子ID',
   `state` varchar(64) DEFAULT NULL COMMENT '状态：草稿、完成、已推送、作废',
+  `ct` datetime,
+  `et` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `eb` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+
+宠物品种，宠物昵称，宠物主人，主人电话，主人寄语
+CREATE TABLE pet_user.pet_card (
+  `id` varchar(64) NOT NULL COMMENT '主键-编号',
+  `user_id` varchar(200) DEFAULT NULL COMMENT '宠物名片所有者',
+  `pet_type` varchar(3000) DEFAULT NULL COMMENT '宠物类型',
+  `pet_nickname` varchar(1000) DEFAULT NULL COMMENT '宠物昵称',
+  `pet_owner` varchar(1000) DEFAULT NULL COMMENT '宠物主人',
+  `pet_owner_tel` varchar(64) DEFAULT NULL COMMENT '主人电话',
+  `pet_owner_msg` varchar(64) DEFAULT NULL COMMENT '寄语',
+  `pet_img` varchar(3000) DEFAULT NULL COMMENT '宠物图片',
   `ct` datetime,
   `et` datetime,
   `cb` varchar(200) DEFAULT NULL COMMENT 'create by',

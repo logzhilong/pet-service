@@ -7,8 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
+import com.momoplan.pet.commons.domain.user.po.PetCard;
 import com.momoplan.pet.commons.web.BaseController;
 
 @Controller
@@ -27,6 +29,16 @@ public class ShareController extends BaseController{
 		model.addAttribute("content", content);
 		return "share";
 	}
+
+	@RequestMapping("/{id}/p.html")
+	public String petCard(@PathVariable("id") String id,Model model) throws Exception{
+		logger.info("pet_bbs_id="+id);
+		setHeadAndBottom(model);
+		PetCard p = mapperOnCache.selectByPrimaryKey(PetCard.class, id);
+		model.addAttribute("p", p);
+		return "petCard";
+	}
+
 	private void setHeadAndBottom(Model model){
 		String head = commonConfig.get("share.head", "宠物圈");
 		String head_link = commonConfig.get("share.head.link", "http://www.52pet.net");

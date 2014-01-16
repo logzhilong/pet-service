@@ -6,8 +6,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.ZooKeeper;
 import org.springframework.stereotype.Component;
 
+import com.momoplan.pet.commons.keyutils.KeyUtils;
 import com.momoplan.pet.commons.zoo.config.Config;
 import com.momoplan.pet.commons.zoo.config.ConfigWatcher;
 
@@ -39,6 +41,10 @@ public class CommonConfig {
 		}
 	}
 	
+	public String generateShortId(){
+		ZooKeeper zk = Bootstrap.configWatcher.getStore().zk;
+		return KeyUtils.generateShortId(zk);
+    }
 	public String get(String key,String defaultValue){
     	return Bootstrap.configWatcher.getProperty(key, defaultValue);
     }

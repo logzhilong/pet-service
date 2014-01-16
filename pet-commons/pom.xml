@@ -14,6 +14,11 @@
 	<name>pet-commons</name>
 
 	<dependencies>
+		<dependency>
+		  <groupId>com.swetake</groupId>
+		  <artifactId>qrcode</artifactId>
+		  <version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
