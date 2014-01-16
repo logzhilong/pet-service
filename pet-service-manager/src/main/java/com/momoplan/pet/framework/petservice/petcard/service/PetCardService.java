@@ -68,7 +68,8 @@ public class PetCardService extends BaseAction{
 	}
 	
 	private void createQrcode(String shortId){
-		String qrcodeInfo = "http://52pet.net/share/"+shortId+"/p.html";
+		String prefix = commonConfig.get("petcard.qrcode.info.prefix", "http://52pet.net");
+		String qrcodeInfo = prefix+"/share/"+shortId+"/p.html";
 		ByteArrayOutputStream bos = null;
 		try {
 			logger.info("qrcodeInfo:::> "+qrcodeInfo);
