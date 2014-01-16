@@ -36,4 +36,21 @@
     </attribute>
   </tag>
 
+
+  <tag>
+    <name>output</name>
+    <tag-class>com.momoplan.pet.framework.base.taglibs.Output</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+        <name>value</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+        <name>len</name>
+        <required>false</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
 </taglib>

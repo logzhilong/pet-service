@@ -17,6 +17,10 @@ import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.MyGson;
 import com.momoplan.pet.commons.bean.ClientRequest;
 import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
+import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
+import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
+import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
 import com.momoplan.pet.commons.domain.manager.mapper.MgrTrustUserMapper;
 import com.momoplan.pet.commons.domain.manager.po.MgrTrustUser;
 import com.momoplan.pet.commons.domain.manager.po.MgrTrustUserCriteria;
@@ -36,7 +40,11 @@ public class GhostService {
 	private MapperOnCache mapperOnCache = null;
 	@Autowired
 	private CommonConfig commonConfig = null;
-
+	@Autowired
+	private NoteMapper noteMapper = null;
+	@Autowired
+	private NoteSubMapper noteSubMapper = null;
+	
 	/**
 	 * 我的幽灵用户列表
 	 * 
@@ -58,6 +66,8 @@ public class GhostService {
 		for (MgrTrustUser m : list) {
 			MgrTrustUserVo vo = new MgrTrustUserVo();
 			BeanUtils.copyProperties(m, vo);
+			vo.setTotalNote(getTotalNote(m.getUserId()));
+			vo.setTotalReply(getTotalReply(m.getUserId()));
 			String uid = m.getUserId();
 			if (StringUtils.isNotEmpty(uid)) {
 				SsoUser user = mapperOnCache.selectByPrimaryKey(SsoUser.class,uid);
@@ -74,6 +84,19 @@ public class GhostService {
 			vl.add(vo);
 		}
 		return vl;
+	}
+	
+	private Integer getTotalNote(String userid){
+		NoteCriteria noteCriteria = new NoteCriteria();
+		noteCriteria.createCriteria().andUserIdEqualTo(userid);
+		int count = noteMapper.countByExample(noteCriteria);
+		return count;
+	}
+	private Integer getTotalReply(String userid){
+		NoteSubCriteria noteSubCriteria = new NoteSubCriteria();
+		noteSubCriteria.createCriteria().andUserIdEqualTo(userid);
+		int count = noteSubMapper.countByExample(noteSubCriteria);
+		return count;
 	}
 
 	public void saveGhost(String currentUser, SsoUser user) throws Exception {

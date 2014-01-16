@@ -30,6 +30,8 @@
 						<th width="150" >用户名</th>
 						<th>昵称</th>
 						<th width="150" >创建日期</th>
+						<th width="150" >发帖量</th>
+						<th width="150" >回帖量</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -52,6 +54,17 @@
 						<td align="center">
 							<fmt:formatDate value="${itm.ct }" type="both" />
 						</td>
+						<td align="center">
+							<font color="blue">
+								${itm.totalNote }
+							</font>
+						</td>
+						<td align="center">
+							<font color="green">
+								${itm.totalReply }
+							</font>
+						</td>
+						
 					</tr>
 				</c:forEach>
 				</tbody>

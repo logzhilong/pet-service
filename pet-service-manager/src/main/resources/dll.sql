@@ -82,6 +82,7 @@ CREATE TABLE `mgr_push` (
   `name` varchar(2000) DEFAULT NULL COMMENT '标题',
   `src` varchar(500) DEFAULT NULL COMMENT '类型：帖子、百科、经验',
   `state` varchar(500) DEFAULT NULL COMMENT '状态：未推送、已推送、等待',
+  `expir` varchar(200) DEFAULT NULL COMMENT '到期时间，时间戳',
   `ct` datetime,
   `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
   `et` datetime,

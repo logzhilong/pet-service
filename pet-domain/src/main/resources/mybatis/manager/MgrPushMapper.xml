@@ -10,6 +10,7 @@
     <result column="cb" property="cb" jdbcType="VARCHAR" />
     <result column="et" property="et" jdbcType="TIMESTAMP" />
     <result column="eb" property="eb" jdbcType="VARCHAR" />
+    <result column="expir" property="expir" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, src, state, ct, cb, et, eb
+    id, name, src, state, ct, cb, et, eb, expir
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrPushCriteria" >
     select
@@ -106,8 +107,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrPush" >
-    insert into mgr_push (id, name, src, state, ct, cb, et, eb)
-    values (#{id}, #{name}, #{src}, #{state}, #{ct}, #{cb}, #{et}, #{eb})
+    insert into mgr_push (id, name, src, state, ct, cb, et, eb, expir)
+    values (#{id}, #{name}, #{src}, #{state}, #{ct}, #{cb}, #{et}, #{eb}, #{expir})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.manager.po.MgrPush" >
     insert into mgr_push
@@ -136,6 +137,9 @@
       <if test="eb != null" >
         eb,
       </if>
+      <if test="expir != null" >
+        expir,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -161,6 +165,9 @@
       </if>
       <if test="eb != null" >
         #{eb},
+      </if>
+      <if test="expir != null" >
+        #{expir},
       </if>
     </trim>
   </insert>
@@ -197,6 +204,9 @@
       <if test="record.eb != null" >
         eb = #{record.eb},
       </if>
+      <if test="record.expir != null" >
+        expir = #{record.expir},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -211,7 +221,8 @@
       ct = #{record.ct},
       cb = #{record.cb},
       et = #{record.et},
-      eb = #{record.eb}
+      eb = #{record.eb},
+      expir = #{record.expir}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -240,6 +251,9 @@
       <if test="eb != null" >
         eb = #{eb},
       </if>
+      <if test="expir != null" >
+        expir = #{expir},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -251,7 +265,8 @@
       ct = #{ct},
       cb = #{cb},
       et = #{et},
-      eb = #{eb}
+      eb = #{eb},
+      expir = #{expir}
     where id = #{id}
   </update>
 </mapper>

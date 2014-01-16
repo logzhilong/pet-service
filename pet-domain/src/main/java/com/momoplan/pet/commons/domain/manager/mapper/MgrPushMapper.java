@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-12-03 11:16:57
+* @date 2014-01-16 15:54:18
 */
 public interface MgrPushMapper {
     /**

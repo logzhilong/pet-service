@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-12-03 11:16:57
+* @date 2014-01-16 15:54:18
 */
 public class MgrPush implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -47,6 +47,8 @@ public class MgrPush implements Serializable {
     private Date et;
 
     private String eb;
+
+    private String expir;
 
     /**
      * @return 主键
@@ -147,6 +149,14 @@ public class MgrPush implements Serializable {
         this.eb = eb;
     }
 
+    public String getExpir() {
+        return expir;
+    }
+
+    public void setExpir(String expir) {
+        this.expir = expir;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -166,7 +176,8 @@ public class MgrPush implements Serializable {
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getCb() == null ? other.getCb() == null : this.getCb().equals(other.getCb()))
             && (this.getEt() == null ? other.getEt() == null : this.getEt().equals(other.getEt()))
-            && (this.getEb() == null ? other.getEb() == null : this.getEb().equals(other.getEb()));
+            && (this.getEb() == null ? other.getEb() == null : this.getEb().equals(other.getEb()))
+            && (this.getExpir() == null ? other.getExpir() == null : this.getExpir().equals(other.getExpir()));
     }
 
     @Override
@@ -181,6 +192,7 @@ public class MgrPush implements Serializable {
         result = prime * result + ((getCb() == null) ? 0 : getCb().hashCode());
         result = prime * result + ((getEt() == null) ? 0 : getEt().hashCode());
         result = prime * result + ((getEb() == null) ? 0 : getEb().hashCode());
+        result = prime * result + ((getExpir() == null) ? 0 : getExpir().hashCode());
         return result;
     }
 

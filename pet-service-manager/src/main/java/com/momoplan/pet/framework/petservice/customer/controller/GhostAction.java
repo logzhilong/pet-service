@@ -41,6 +41,8 @@ public class GhostAction extends BaseAction{
 		try {
 			WebUser cuser = SessionManager.getCurrentUser(request);
 			List<MgrTrustUserVo> list = ghostService.getGhostList(cuser.getId());
+			
+			
 			model.addAttribute("list", list);
 			model.addAttribute("cuser", cuser);
 		} catch (Exception e) {

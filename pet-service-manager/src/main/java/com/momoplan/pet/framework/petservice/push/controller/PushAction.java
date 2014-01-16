@@ -82,7 +82,7 @@ public class PushAction extends BaseAction{
 	
 
 	@RequestMapping("/petservice/push/timerSave.html")
-	public void timerSave(MgrPush myForm,String at_str,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
+	public void timerSave(MgrPush myForm,String expir_str,String at_str,Model model,HttpServletRequest request,HttpServletResponse response) throws Exception{
 		String ctx = request.getContextPath();
 		JSONObject json = new JSONObject();
 		json.put("confirmMsg","");
@@ -94,7 +94,7 @@ public class PushAction extends BaseAction{
 		String res = null;
 		try {
 			WebUser user = SessionManager.getCurrentUser(request);
-			pushService.saveTimer(myForm, at_str, user.getUsername());
+			pushService.saveTimer(myForm, expir_str,at_str, user.getUsername());
 		} catch (Exception e) {
 			logger.error("timerSave error",e);
 			json.put("message","失败:"+e.getMessage());	

@@ -16,6 +16,26 @@ public class MgrTrustUserVo extends MgrTrustUser {
 	
 	private Date ct = null;
 	
+	private Integer totalNote = 0 ;
+	
+	private Integer totalReply = 0 ;
+	
+	public Integer getTotalNote() {
+		return totalNote;
+	}
+
+	public void setTotalNote(Integer totalNote) {
+		this.totalNote = totalNote;
+	}
+
+	public Integer getTotalReply() {
+		return totalReply;
+	}
+
+	public void setTotalReply(Integer totalReply) {
+		this.totalReply = totalReply;
+	}
+
 	public String getImg() {
 		return img;
 	}

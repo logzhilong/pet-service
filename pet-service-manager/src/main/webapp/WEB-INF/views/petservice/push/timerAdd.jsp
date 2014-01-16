@@ -21,6 +21,11 @@
 				<input type="text" name="at_str" class="date textInput readonly valid" value="" datefmt="yyyy-MM-dd HH:mm:ss" readonly="true">
 				<a class="inputDateButton" href="javascript:;">选择</a>
 			</div>
+			<div class="unit">
+				<label>有效期至：</label>
+				<input type="text" name="expir_str" class="date textInput readonly valid" value="" datefmt="yyyy-MM-dd HH:mm:ss" readonly="true">
+				<a class="inputDateButton" href="javascript:;">选择</a>
+			</div>
 			
 		</div>
 		<div class="formBar">

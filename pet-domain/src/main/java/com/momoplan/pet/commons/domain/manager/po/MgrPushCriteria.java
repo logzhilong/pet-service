@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-12-03 11:16:57
+* @date 2014-01-16 15:54:18
 */
 public class MgrPushCriteria {
     protected String orderByClause;
@@ -690,6 +690,76 @@ public class MgrPushCriteria {
 
         public Criteria andEbNotBetween(String value1, String value2) {
             addCriterion("eb not between", value1, value2, "eb");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirIsNull() {
+            addCriterion("expir is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirIsNotNull() {
+            addCriterion("expir is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirEqualTo(String value) {
+            addCriterion("expir =", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirNotEqualTo(String value) {
+            addCriterion("expir <>", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirGreaterThan(String value) {
+            addCriterion("expir >", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirGreaterThanOrEqualTo(String value) {
+            addCriterion("expir >=", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirLessThan(String value) {
+            addCriterion("expir <", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirLessThanOrEqualTo(String value) {
+            addCriterion("expir <=", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirLike(String value) {
+            addCriterion("expir like", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirNotLike(String value) {
+            addCriterion("expir not like", value, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirIn(List<String> values) {
+            addCriterion("expir in", values, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirNotIn(List<String> values) {
+            addCriterion("expir not in", values, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirBetween(String value1, String value2) {
+            addCriterion("expir between", value1, value2, "expir");
+            return (Criteria) this;
+        }
+
+        public Criteria andExpirNotBetween(String value1, String value2) {
+            addCriterion("expir not between", value1, value2, "expir");
             return (Criteria) this;
         }
     }

@@ -64,18 +64,16 @@ public class PushService extends BaseService {
 		logger.debug("save : "+vo.toString());
 		Date now = new Date();
 		String id = vo.getId();
-		String src = vo.getSrc();
-		
 		MgrPush p = mapperOnCache.selectByPrimaryKey(MgrPush.class, id);
 		if("OK".equalsIgnoreCase(push)){
 			logger.debug("//TODO 把消息推出去 根据 push = OK");
 			//其实，应该时 pending 状态，由异步线程负责更新状态
 			vo.setState(PushState.PUSHED.getCode());
 			logger.debug("添加一个IOS推送任务");
+			p.setExpir(vo.getExpir());
 			push2mq4xmpp(p);
 			IphonePushTask.queue.put(p);
 		}
-		
 		if(p!=null){
 			logger.debug("更新 "+gson.toJson(vo));
 			if(StringUtils.isNotEmpty(vo.getSrc())){
@@ -94,6 +92,7 @@ public class PushService extends BaseService {
 			vo.setEt(now);
 			mapperOnCache.updateByPrimaryKeySelective(vo, vo.getId());
 		}else{
+			String src = vo.getSrc();
 			String name = getNameBySrc(src,id);
 			logger.debug("新增 "+gson.toJson(vo));
 			vo.setName(name);
@@ -112,6 +111,15 @@ public class PushService extends BaseService {
 			ActiveMQQueue queue = new ActiveMQQueue();
 			queue.setPhysicalName(dest);
 			TextMessage tm = new ActiveMQTextMessage();
+			String expir_str = vo.getExpir();
+			if(expir_str!=null&&!"".equals(expir_str)){
+				String expir = ""+DateUtils.getDate(expir_str, DateUtils.DEFAULT_DATETIME_FORMAT).getTime();
+				logger.debug("expir_str="+expir_str+" ; expir="+expir);
+				vo.setExpir(expir);
+			}else{
+				logger.debug("没有设置过期 expir="+Long.MAX_VALUE);
+				vo.setExpir(Long.MAX_VALUE+"");
+			}
 			String msg = gson.toJson(vo);
 			tm.setText(msg);
 			apprequestTemplate.convertAndSend(queue, tm);
@@ -158,15 +166,20 @@ public class PushService extends BaseService {
 		return name;
 	}
 	
-	public void saveTimer(MgrPush myForm,String at_str,String currentUser)throws Exception{
+	public void saveTimer(MgrPush myForm,String expir_str,String at_str,String currentUser)throws Exception{
 		Date now = new Date();
 		myForm.setEb(currentUser);
 		myForm.setEt(now);
-		myForm.setState(PushState.LAZZY.getCode());
-		mapperOnCache.updateByPrimaryKeySelective(myForm, myForm.getId());
-		logger.info("修正推送状态 LAZZY："+myForm.getId());
-		super.addTimerTask(at_str, myForm.getId(), "mgr_push", myForm.getName(), currentUser);
-		logger.info("增加到定时任务："+myForm.getId());
+		myForm.setExpir(expir_str);
+		if(at_str==null||"".equals(at_str)){
+			save(myForm, "OK");
+		}else{
+			myForm.setState(PushState.LAZZY.getCode());
+			mapperOnCache.updateByPrimaryKeySelective(myForm, myForm.getId());
+			logger.info("修正推送状态 LAZZY："+myForm.getId());
+			super.addTimerTask(at_str, myForm.getId(), "mgr_push", myForm.getName(), currentUser);
+			logger.info("增加到定时任务："+myForm.getId());
+		}
 	}
 	
 }
