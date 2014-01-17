@@ -153,7 +153,7 @@ CREATE TABLE pet_user.pet_card (
   `pet_nickname` varchar(1000) DEFAULT NULL COMMENT '宠物昵称',
   `pet_owner` varchar(1000) DEFAULT NULL COMMENT '宠物主人',
   `pet_owner_tel` varchar(64) DEFAULT NULL COMMENT '主人电话',
-  `pet_owner_msg` varchar(64) DEFAULT NULL COMMENT '寄语',
+  `pet_owner_msg` varchar(2000) DEFAULT NULL COMMENT '寄语',
   `pet_img` varchar(3000) DEFAULT NULL COMMENT '宠物图片',
   `ct` datetime,
   `et` datetime,
