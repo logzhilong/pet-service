@@ -65,6 +65,7 @@ class PushXmpp :
 		            <entry xmlns='http://www.w3.org/2005/Atom'>
 		                <id>${id}</id>
 		                <type>${src}</type>
+		                <expir>${expir}</expir>
 		                <body><![CDATA[${name}]]></body>
 		            </entry>
 		        </item>
