@@ -1,6 +1,7 @@
 package com.momoplan.pet.framework.ssoserver.service;
 
 import com.momoplan.pet.commons.domain.user.dto.SsoAuthenticationToken;
+import com.momoplan.pet.commons.domain.user.po.SsoChatServer;
 import com.momoplan.pet.commons.domain.user.po.SsoUser;
 import com.momoplan.pet.commons.domain.user.po.SsoVersion;
 import com.momoplan.pet.framework.ssoserver.CacheKeysConstance;
@@ -12,6 +13,13 @@ import com.momoplan.pet.framework.ssoserver.vo.LoginResponse;
  */
 public interface SsoService extends CacheKeysConstance{
 	
+	/**
+	 * 获取聊天服务器
+	 * TODO: 获取服务器集群中最空闲的一个
+	 * @return
+	 * @throws Exception
+	 */
+	public SsoChatServer getSsoChatServer()throws Exception;
 	/**
 	 * 新用户注册
 	 * @param clientRequest

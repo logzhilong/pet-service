@@ -153,7 +153,7 @@ public class SsoServiceImpl implements SsoService {
 		return list;
 	}
 	
-	private SsoChatServer getSsoChatServer(){
+	public SsoChatServer getSsoChatServer(){
 		String xmppDomain = commonConfig.get("xmpp.domain");
 		ShardedJedis jedis = null;
 		String key = "chatserver."+xmppDomain;

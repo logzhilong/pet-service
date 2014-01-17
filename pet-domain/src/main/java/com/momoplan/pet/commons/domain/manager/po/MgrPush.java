@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2014-01-16 15:54:18
+* @date 2014-01-17 11:06:40
 */
 public class MgrPush implements Serializable {
     private static final long serialVersionUID = 1L;

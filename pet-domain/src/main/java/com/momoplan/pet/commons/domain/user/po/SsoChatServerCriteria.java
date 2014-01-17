@@ -9,7 +9,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-23 15:26:24
+* @date 2014-01-17 11:06:40
 */
 public class SsoChatServerCriteria {
     protected String orderByClause;
@@ -419,6 +419,76 @@ public class SsoChatServerCriteria {
 
         public Criteria andVersionNotBetween(Integer value1, Integer value2) {
             addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIsNull() {
+            addCriterion("port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIsNotNull() {
+            addCriterion("port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortEqualTo(String value) {
+            addCriterion("port =", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotEqualTo(String value) {
+            addCriterion("port <>", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortGreaterThan(String value) {
+            addCriterion("port >", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortGreaterThanOrEqualTo(String value) {
+            addCriterion("port >=", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLessThan(String value) {
+            addCriterion("port <", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLessThanOrEqualTo(String value) {
+            addCriterion("port <=", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortLike(String value) {
+            addCriterion("port like", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotLike(String value) {
+            addCriterion("port not like", value, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortIn(List<String> values) {
+            addCriterion("port in", values, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotIn(List<String> values) {
+            addCriterion("port not in", values, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortBetween(String value1, String value2) {
+            addCriterion("port between", value1, value2, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andPortNotBetween(String value1, String value2) {
+            addCriterion("port not between", value1, value2, "port");
             return (Criteria) this;
         }
     }

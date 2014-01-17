@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-23 15:26:24
+* @date 2014-01-17 11:06:40
 */
 public class SsoChatServer implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,8 @@ public class SsoChatServer implements Serializable {
     private String name;
 
     private Integer version;
+
+    private String port;
 
     public String getId() {
         return id;
@@ -56,6 +58,14 @@ public class SsoChatServer implements Serializable {
         this.version = version;
     }
 
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -71,7 +81,8 @@ public class SsoChatServer implements Serializable {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getPort() == null ? other.getPort() == null : this.getPort().equals(other.getPort()));
     }
 
     @Override
@@ -82,6 +93,7 @@ public class SsoChatServer implements Serializable {
         result = prime * result + ((getAddress() == null) ? 0 : getAddress().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getPort() == null) ? 0 : getPort().hashCode());
         return result;
     }
 

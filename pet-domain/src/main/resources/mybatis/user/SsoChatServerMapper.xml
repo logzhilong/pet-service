@@ -6,6 +6,7 @@
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="port" property="port" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, address, name, version
+    id, address, name, version, port
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.user.po.SsoChatServerCriteria" >
     select
@@ -102,8 +103,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.user.po.SsoChatServer" >
-    insert into chat_server (id, address, name, version)
-    values (#{id}, #{address}, #{name}, #{version})
+    insert into chat_server (id, address, name, version, port)
+    values (#{id}, #{address}, #{name}, #{version}, #{port})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.user.po.SsoChatServer" >
     insert into chat_server
@@ -120,6 +121,9 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="port != null" >
+        port,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -133,6 +137,9 @@
       </if>
       <if test="version != null" >
         #{version},
+      </if>
+      <if test="port != null" >
+        #{port},
       </if>
     </trim>
   </insert>
@@ -157,6 +164,9 @@
       <if test="record.version != null" >
         version = #{record.version},
       </if>
+      <if test="record.port != null" >
+        port = #{record.port},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -167,7 +177,8 @@
     set id = #{record.id},
       address = #{record.address},
       name = #{record.name},
-      version = #{record.version}
+      version = #{record.version},
+      port = #{record.port}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -184,6 +195,9 @@
       <if test="version != null" >
         version = #{version},
       </if>
+      <if test="port != null" >
+        port = #{port},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -191,7 +205,8 @@
     update chat_server
     set address = #{address},
       name = #{name},
-      version = #{version}
+      version = #{version},
+      port = #{port}
     where id = #{id}
   </update>
 </mapper>
