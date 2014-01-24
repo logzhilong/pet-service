@@ -31,7 +31,10 @@ public class TokenHandler extends AbstractHandler {
 			String _token = clientRequest.getToken();
 			Map<String,Object> params = clientRequest.getParams();
 			LoginResponse loginResponse = ssoService.getToken(_token);
-			if(params!=null&&"open".equalsIgnoreCase(params.get("action").toString())){
+			Object action = null;
+			if(params!=null)
+				action = params.get("action");
+			if( action!=null && "open".equalsIgnoreCase(action.toString()) ){
 				logger.debug("action=open 需要获取开机图片和版本信息");
 				String phoneType = clientRequest.getImei();
 				if(!"iphone".equalsIgnoreCase(phoneType)){
