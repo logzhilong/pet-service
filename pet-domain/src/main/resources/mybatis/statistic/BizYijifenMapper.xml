@@ -6,6 +6,7 @@
     <result column="cd" property="cd" jdbcType="VARCHAR" />
     <result column="ct" property="ct" jdbcType="VARCHAR" />
     <result column="callback" property="callback" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, cd, ct, callback
+    id, cd, ct, callback, state
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifenCriteria" >
     select
@@ -102,8 +103,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
-    insert into biz_yijifen (id, cd, ct, callback)
-    values (#{id}, #{cd}, #{ct}, #{callback})
+    insert into biz_yijifen (id, cd, ct, callback, state)
+    values (#{id}, #{cd}, #{ct}, #{callback}, #{state})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.statistic.po.BizYijifen" >
     insert into biz_yijifen
@@ -120,6 +121,9 @@
       <if test="callback != null" >
         callback,
       </if>
+      <if test="state != null" >
+        state,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -133,6 +137,9 @@
       </if>
       <if test="callback != null" >
         #{callback},
+      </if>
+      <if test="state != null" >
+        #{state},
       </if>
     </trim>
   </insert>
@@ -157,6 +164,9 @@
       <if test="record.callback != null" >
         callback = #{record.callback},
       </if>
+      <if test="record.state != null" >
+        state = #{record.state},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -167,7 +177,8 @@
     set id = #{record.id},
       cd = #{record.cd},
       ct = #{record.ct},
-      callback = #{record.callback}
+      callback = #{record.callback},
+      state = #{record.state}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -184,6 +195,9 @@
       <if test="callback != null" >
         callback = #{callback},
       </if>
+      <if test="state != null" >
+        state = #{state},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -191,7 +205,8 @@
     update biz_yijifen
     set cd = #{cd},
       ct = #{ct},
-      callback = #{callback}
+      callback = #{callback},
+      state = #{state}
     where id = #{id}
   </update>
 </mapper>

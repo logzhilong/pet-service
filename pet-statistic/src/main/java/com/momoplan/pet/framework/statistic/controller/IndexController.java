@@ -45,6 +45,7 @@ public class IndexController {
 			bizYijifen.setCd(cd);
 			bizYijifen.setCt(ct);
 			bizYijifen.setCallback(callback);
+			bizYijifen.setState("NEW");
 			try{
 				bizYijifenMapper.insertSelective(bizYijifen);
 				PetEventsListener.memCache.put(bizYijifen.getId(), bizYijifen.getCd());

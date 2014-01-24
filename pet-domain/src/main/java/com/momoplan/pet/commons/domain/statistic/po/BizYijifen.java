@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2014-01-04 00:00:43
+* @date 2014-01-24 10:43:42
 */
 public class BizYijifen implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,6 +23,8 @@ public class BizYijifen implements Serializable {
     private String ct;
 
     private String callback;
+
+    private String state;
 
     public String getId() {
         return id;
@@ -56,6 +58,14 @@ public class BizYijifen implements Serializable {
         this.callback = callback;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -71,7 +81,8 @@ public class BizYijifen implements Serializable {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getCd() == null ? other.getCd() == null : this.getCd().equals(other.getCd()))
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
-            && (this.getCallback() == null ? other.getCallback() == null : this.getCallback().equals(other.getCallback()));
+            && (this.getCallback() == null ? other.getCallback() == null : this.getCallback().equals(other.getCallback()))
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()));
     }
 
     @Override
@@ -82,6 +93,7 @@ public class BizYijifen implements Serializable {
         result = prime * result + ((getCd() == null) ? 0 : getCd().hashCode());
         result = prime * result + ((getCt() == null) ? 0 : getCt().hashCode());
         result = prime * result + ((getCallback() == null) ? 0 : getCallback().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         return result;
     }
 

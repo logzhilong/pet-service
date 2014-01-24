@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2014-01-04 00:00:43
+* @date 2014-01-24 10:43:42
 */
 public interface BizYijifenMapper {
     /**
