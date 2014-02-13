@@ -4,6 +4,7 @@
 
 <div class="pageHeader" >
 	<div class="searchBar">
+		<%--
 		<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/petcard/petcardMain.html" method="post" id="petcardMainForm" >
 			状态:
 			<select name="state" >
@@ -13,6 +14,14 @@
 			</select>
 			<button type="button">查询</button>
 			<button type="button" class="close">关闭</button>
+		</form>
+		--%>
+		<form action="${ctx }/petservice/petcard/petcardDownload.html" method="post" >
+			start number:
+			<input type="text" name="start" size="15" value="" class="required number"/>
+			length:
+			<input type="text" name="length" size="5" value="" class="required number"/>
+			<button type="submit">download</button>
 		</form>
 	</div>
 </div>
@@ -49,7 +58,7 @@
 					<td height="100" >
 						<img src="${pet_file_server }/get/${itm.id }" width="100" />
 					</td>
-					<td>${itm.id }</td>
+					<td>${itm.num }&nbsp;(${itm.id })</td>
 					<td align="center">
 						<c:choose>
 							<c:when test="${ itm.userId == null }">

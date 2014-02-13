@@ -23,18 +23,62 @@ public class KeyUtilsSupport {
 	
 	private static void initNSMAP(){
 		
-		for(int i=10;i<37;i++){
-			_nsMap.put((char)(i+54)+"", i+"");
-			nsMap.put(i+"", (char)(i+54)+"");
-		}
+		_nsMap.put("_", "10");
+		nsMap.put("10", "_");
 		
-		_nsMap.put("@", "37");
-		_nsMap.put("*", "38");
-		_nsMap.put("_", "39");
+		nsMap.put("11","B");
+		nsMap.put("12","A");
+		nsMap.put("13","C");
+		nsMap.put("14","V");
+		nsMap.put("15","E");
+		nsMap.put("16","Q");
+		nsMap.put("17","X");
+		nsMap.put("18","O");
+		nsMap.put("19","@");
+		nsMap.put("20","J");
+		nsMap.put("21","K");
+		nsMap.put("22","L");
+		nsMap.put("23","M");
+		nsMap.put("24","W");
+		nsMap.put("25","H");
+		nsMap.put("26","P");
+		nsMap.put("27","F");
+		nsMap.put("28","R");
+		nsMap.put("29","S");
+		nsMap.put("30","T");
+		nsMap.put("31","U");
+		nsMap.put("32","D");
+		nsMap.put("33","N");
+		nsMap.put("34","G");
+		nsMap.put("35","Y");
+		nsMap.put("36","Z");
 
-		nsMap.put("37", "@");
-		nsMap.put("38", "*");
-		nsMap.put("39", "_");
+		_nsMap.put("B","11");
+		_nsMap.put("A","12");
+		_nsMap.put("C","13");
+		_nsMap.put("V","14");
+		_nsMap.put("E","15");
+		_nsMap.put("Q","16");
+		_nsMap.put("X","17");
+		_nsMap.put("O","18");
+		_nsMap.put("@","19");
+		_nsMap.put("J","20");
+		_nsMap.put("K","21");
+		_nsMap.put("L","22");
+		_nsMap.put("M","23");
+		_nsMap.put("W","24");
+		_nsMap.put("H","25");
+		_nsMap.put("P","26");
+		_nsMap.put("F","27");
+		_nsMap.put("R","28");
+		_nsMap.put("S","29");
+		_nsMap.put("T","30");
+		_nsMap.put("U","31");
+		_nsMap.put("D","32");
+		_nsMap.put("N","33");
+		_nsMap.put("G","34");
+		_nsMap.put("Y","35");
+		_nsMap.put("Z","36");
 		
 	}
 	

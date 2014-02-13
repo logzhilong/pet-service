@@ -14,6 +14,7 @@
     <result column="et" property="et" jdbcType="TIMESTAMP" />
     <result column="cb" property="cb" jdbcType="VARCHAR" />
     <result column="eb" property="eb" jdbcType="VARCHAR" />
+    <result column="num" property="num" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -75,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, user_id, pet_type, pet_nickname, pet_owner, pet_owner_tel, pet_owner_msg, pet_img, 
-    ct, et, cb, eb
+    ct, et, cb, eb, num
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.momoplan.pet.commons.domain.user.po.PetCardCriteria" >
     select
@@ -112,9 +113,9 @@
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.user.po.PetCard" >
     insert into pet_card (id, user_id, pet_type, pet_nickname, pet_owner, pet_owner_tel, 
-      pet_owner_msg, pet_img, ct, et, cb, eb)
+      pet_owner_msg, pet_img, ct, et, cb, eb, num)
     values (#{id}, #{userId}, #{petType}, #{petNickname}, #{petOwner}, #{petOwnerTel}, 
-      #{petOwnerMsg}, #{petImg}, #{ct}, #{et}, #{cb}, #{eb})
+      #{petOwnerMsg}, #{petImg}, #{ct}, #{et}, #{cb}, #{eb}, #{num})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.user.po.PetCard" >
     insert into pet_card
@@ -155,6 +156,9 @@
       <if test="eb != null" >
         eb,
       </if>
+      <if test="num != null" >
+        num,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -192,6 +196,9 @@
       </if>
       <if test="eb != null" >
         #{eb},
+      </if>
+      <if test="num != null" >
+        #{num},
       </if>
     </trim>
   </insert>
@@ -240,6 +247,9 @@
       <if test="record.eb != null" >
         eb = #{record.eb},
       </if>
+      <if test="record.num != null" >
+        num = #{record.num},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -258,7 +268,8 @@
       ct = #{record.ct},
       et = #{record.et},
       cb = #{record.cb},
-      eb = #{record.eb}
+      eb = #{record.eb},
+      num = #{record.num}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -299,6 +310,9 @@
       <if test="eb != null" >
         eb = #{eb},
       </if>
+      <if test="num != null" >
+        num = #{num},
+      </if>
     </set>
     where id = #{id}
   </update>
@@ -314,7 +328,8 @@
       ct = #{ct},
       et = #{et},
       cb = #{cb},
-      eb = #{eb}
+      eb = #{eb},
+      num = #{num}
     where id = #{id}
   </update>
 </mapper>

@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2014-01-15 18:02:20
+* @date 2014-02-13 14:16:41
 */
 public class PetCard implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -47,9 +47,6 @@ public class PetCard implements Serializable {
      */
     private String petOwnerTel;
 
-    /**
-     * 寄语
-     */
     private String petOwnerMsg;
 
     /**
@@ -67,6 +64,8 @@ public class PetCard implements Serializable {
     private String cb;
 
     private String eb;
+
+    private Integer num;
 
     /**
      * @return 主键-编号
@@ -158,17 +157,10 @@ public class PetCard implements Serializable {
         this.petOwnerTel = petOwnerTel;
     }
 
-    /**
-     * @return 寄语
-     */
     public String getPetOwnerMsg() {
         return petOwnerMsg;
     }
 
-    /**
-     * @param petOwnerMsg 
-	 *            寄语
-     */
     public void setPetOwnerMsg(String petOwnerMsg) {
         this.petOwnerMsg = petOwnerMsg;
     }
@@ -227,6 +219,14 @@ public class PetCard implements Serializable {
         this.eb = eb;
     }
 
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -250,7 +250,8 @@ public class PetCard implements Serializable {
             && (this.getCt() == null ? other.getCt() == null : this.getCt().equals(other.getCt()))
             && (this.getEt() == null ? other.getEt() == null : this.getEt().equals(other.getEt()))
             && (this.getCb() == null ? other.getCb() == null : this.getCb().equals(other.getCb()))
-            && (this.getEb() == null ? other.getEb() == null : this.getEb().equals(other.getEb()));
+            && (this.getEb() == null ? other.getEb() == null : this.getEb().equals(other.getEb()))
+            && (this.getNum() == null ? other.getNum() == null : this.getNum().equals(other.getNum()));
     }
 
     @Override
@@ -269,6 +270,7 @@ public class PetCard implements Serializable {
         result = prime * result + ((getEt() == null) ? 0 : getEt().hashCode());
         result = prime * result + ((getCb() == null) ? 0 : getCb().hashCode());
         result = prime * result + ((getEb() == null) ? 0 : getEb().hashCode());
+        result = prime * result + ((getNum() == null) ? 0 : getNum().hashCode());
         return result;
     }
 

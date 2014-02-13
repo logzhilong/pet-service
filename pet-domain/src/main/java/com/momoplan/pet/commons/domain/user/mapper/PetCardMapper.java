@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2014-01-15 18:02:20
+* @date 2014-02-13 14:16:41
 */
 public interface PetCardMapper {
     /**

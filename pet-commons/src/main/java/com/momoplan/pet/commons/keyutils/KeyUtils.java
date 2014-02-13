@@ -47,7 +47,7 @@ public class KeyUtils extends KeyUtilsSupport {
 	}
 	
 	//进制基数
-	private static String N = "39";
+	private static String N = "37";
 	/**
 	 * 10进制到39进制运算
 	 * @param num
@@ -134,10 +134,26 @@ public class KeyUtils extends KeyUtilsSupport {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String num39 = num10ToN("99999999999999999999999999999");
+		String num39 = num10ToN("100004");
 		System.out.println("num39:"+num39);
 		String num10 = numNTo10(num39);
 		System.out.println("num10:"+num10);
+		
+
+//		for(int i=11;i<37;i++){
+//			String k = i+"";
+//			String v = (char)(i+54)+"";
+//			System.out.println("nsMap.put(\""+k+"\",\""+v+"\");");
+//		}
+//		System.out.println("+++++");
+//		for(int i=11;i<37;i++){
+//			String k = i+"";
+//			String v = (char)(i+54)+"";
+//			System.out.println("_nsMap.put(\""+v+"\",\""+k+"\");");
+//		}
+//
+//		
+		
 	}
 	
 }
