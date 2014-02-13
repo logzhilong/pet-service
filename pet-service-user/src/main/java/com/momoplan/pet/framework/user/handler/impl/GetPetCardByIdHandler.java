@@ -30,12 +30,14 @@ public class GetPetCardByIdHandler extends AbstractHandler {
 		String rtn = null;
 		String sn = clientRequest.getSn();
 		try{
+			PetCardVo v = new PetCardVo();
 			String id = PetUtil.getParameter(clientRequest, "id");
 			PetCard p = mapperOnCache.selectByPrimaryKey(PetCard.class, id);
-			SsoUser u = mapperOnCache.selectByPrimaryKey(SsoUser.class, p.getUserId());
-			PetCardVo v = new PetCardVo();
 			BeanUtils.copyProperties(p, v);
-			v.setUsername(u.getUsername());
+			try{
+				SsoUser u = mapperOnCache.selectByPrimaryKey(SsoUser.class, p.getUserId());
+				v.setUsername(u.getUsername());
+			}catch(Exception e){}
 			rtn = new Success(sn,true,v).toString();
 		}catch(Exception e){
 			logger.debug("getPetCard 失败 body="+gson.toJson(clientRequest));
