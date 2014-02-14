@@ -47,7 +47,7 @@ public class RoundLineQRCodeUtils {
 	public static void main(String[] args) throws Exception {
 		String qrcodeInfo = "http://www.52pet.net/p/123456.html";
 		String outputFile = "/app/test00005.png";
-		BufferedImage ii = new RoundLineQRCodeUtils(4,3).createImg("123456789",qrcodeInfo, Color.BLACK, Color.WHITE);
+		BufferedImage ii = new RoundLineQRCodeUtils(4,3).createImg("123456",qrcodeInfo, Color.BLACK, Color.WHITE);
 //		ii = ImageTools.excludeColor(ii, Color.white);
 //		ii = ImageTools.getResizePicture(ii, 1500, 1500);
 		OutputStream os = new FileOutputStream(outputFile);
@@ -62,7 +62,24 @@ public class RoundLineQRCodeUtils {
 	public BufferedImage createImg(String num,String str,Color color,Color bgColor) throws Exception {
 		return createImg(num, str, color, bgColor,m);
 	}
+	
+	private BufferedImage getNumImg(String num,int width,int height,Color bgColor,int z)throws Exception{
+		BufferedImage bi = new BufferedImage(width+8, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = bi.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setBackground(Color.BLACK);// Color.WHITE
+		g.clearRect(0, 0, width+8, height);// (int)(size*0.8),
+		g.setBackground(bgColor);// Color.WHITE
+		g.clearRect(2, 2, width+4, height-4);// (int)(size*0.8),
 
+		int fs = z*4;
+		Font f = new Font("宋体", Font.BOLD, fs);
+		g.setFont(f);
+		g.setColor(Color.GREEN);
+		g.drawString(num, 4,height-(height)/4);
+		bi.flush();
+		return bi;
+	}
 	public BufferedImage createImg(String num,String str,Color color,Color bgColor,int mod) throws Exception {
 		int z = 2*t;// 2+(int)(Math.random()*10%2);
 
@@ -80,9 +97,9 @@ public class RoundLineQRCodeUtils {
 				int bs = b.length;
 				
 				size = bs*z+2*z;//(int) ((21 + mod * 4) * t * 1.88);
-				int height = size + size/8;
+				
 				if (d.length > 0) {
-					bi = new BufferedImage(size, height, BufferedImage.TYPE_INT_RGB);
+					bi = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
 					Graphics2D g = bi.createGraphics();
 					//抗锯齿
 					g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -90,15 +107,15 @@ public class RoundLineQRCodeUtils {
 					//如果不设置背景色，就用透明背景
 					if(bgColor==null){
 						bi = g.getDeviceConfiguration().createCompatibleImage(size, size, Transparency.TRANSLUCENT); 
-						g.dispose(); 
-						g = bi.createGraphics(); 
+						g.dispose();
+						g = bi.createGraphics();
 					}else{
 						g.setBackground(bgColor);// Color.WHITE
-						g.clearRect(0, 0, size, height);// (int)(size*0.8),
+						g.clearRect(0, 0, size, size);// (int)(size*0.8),
 					}
 					
 					g.setColor(color);//线条颜色
-
+					
 					for (int i = 0; i < b.length * t; i += t) {
 						Map<String , String> m = new HashMap<String,String>();
 						for (int j = 0; j < b.length * t; j+=t ) {
@@ -197,16 +214,22 @@ public class RoundLineQRCodeUtils {
 						}
 					}
 
-					//===============================================
+					//XXX 数字图
 					if(num!=null){
+//						int numHeight = size/8;
 						int fs = z*4;
 						Font f = new Font("宋体", Font.BOLD, fs);
 						g.setFont(f);
 						FontMetrics fm = g.getFontMetrics();
 						int numLength = fm.stringWidth(num);
-						g.setColor(Color.black);
-						g.drawString(num, (size-numLength)/2 ,size+z*3);
+						int numHeight = fm.getHeight();
+						BufferedImage numBiz = getNumImg(num,numLength,numHeight,bgColor,z);
+						g.drawImage(numBiz, (size-numBiz.getWidth())/2 , (size-numBiz.getHeight())/2, null);
+//						g.setColor(Color.black);
+//						g.drawString(num, (size-numLength)/2 ,size+z*3);
 					}
+					
+					//===============================================
 					bi.flush();
 				}
 				loop = false;
