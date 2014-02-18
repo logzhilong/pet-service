@@ -1,5 +1,6 @@
 package com.momoplan.pet.framework.manager.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,12 @@ public class ShareController extends BaseController{
 		setHeadAndBottom(model);
 		PetCard p = mapperOnCache.selectByPrimaryKey(PetCard.class, id);
 		model.addAttribute("p", p);
-		return "petCard";
+		String forward = "petCard";
+		if(p==null || StringUtils.isEmpty(p.getUserId())){
+			forward = "petCard_empty";
+		}
+		logger.info("forward="+forward+"\np="+p);
+		return forward;
 	}
 
 	private void setHeadAndBottom(Model model){

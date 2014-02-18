@@ -81,30 +81,29 @@ body {
 </script><style type="text/css"> * {MARGIN: 0px auto}</style>
 </head>
 <body>
-<c:set var="sp" value="&nbsp;&nbsp;&nbsp;&nbsp;" />
-<table width="600" style="font-size: 15pt;">
-	<tr>
-		<td align="center" valign="middle" style="background-color: #EE7600;font-size: 25pt;" colspan="2">
+	
+<table width="640">
+	
+	<tr><td align="center" valign="middle" style="background-color: #EE7600;font-size: 25pt;" >
 			<div style="margin-top: 20;margin-bottom: 30;color: white;">
 				二维码挂件信息
 			</div>
-		</td>
-	</tr>
-	<tr><td height="10px" colspan="2"></td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}宠物品种</td><td style="color: #838B8B;">${sp}${p.petType }</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}宠物昵称</td><td style="color: #838B8B;">${sp}${p.petType }</td></tr>
-	<tr><td height="10px" colspan="2"></td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}主人昵称</td><td style="color: #838B8B;">${sp}${p.petOwner }</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}主人电话</td><td style="color: #838B8B;">${sp}${p.petOwnerTel }</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" colspan="2">${sp}${sp}主人寄语</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" colspan="2" style="color: #838B8B;">${sp}${sp}${p.petOwnerMsg }</td></tr>
-	<tr><td height="10px" colspan="2"></td></tr>
-	<tr><td align="left" colspan="2">
-		<div style="margin-top:20;margin-bottom:10; font-size: 20pt;color: #EE4000;">
-			${sp }下载宠物圈:
+	</td></tr>
+
+	<tr><td align="center" valign="middle" style="background-color: white;font-size: 20pt;" >
+		<div style="height: 200px; margin-top: 50;color: #8B2252;">
+			<p style="margin-bottom: 20;">糟糕！</p>
+			<p style="margin-bottom: 20;">该二维码挂件尚未被绑定，</p>
+			<p style="margin-bottom: 20;">立即下载宠物圈，寻找宠物主人</p>
 		</div>
 	</td></tr>
-	<tr><td align="center" valign="middle" colspan="2">
+	
+	<tr><td align="left">
+		<div style="margin-top:20;margin-bottom:10; font-size: 15pt;">
+			下载宠物圈:
+		</div>
+	</td></tr>
+	<tr><td align="center" valign="middle">
 		<a href="https://itunes.apple.com/us/app/chong-wu-quan-ai-chong-wu/id686838840?ls=1&mt=8" >
 			<img alt="" src="${ctx }/static/images/iphone_down_normal.png" />
 		</a>
@@ -113,7 +112,72 @@ body {
 			<img alt="" src="${ctx }/static/images/android_down_normal.png" />
 		</a>
 	</td></tr>
-
+	<tr><td align="left">
+		<div style="margin-top:20;margin-bottom:10; font-size: 15pt;">
+			宠物圈防丢二维码挂件：
+		</div>		
+	</td></tr>
+	<tr><td style="font-size: 13pt;color: #7A7A7A">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		将主人和宠物信息转换为二维码，挂在宠物身上，好心人扫一扫，即可找到主人。爱它请挂上我，多一份关心，增添一份快乐
+	</td></tr>
+	<tr><td align="left" nowrap="nowrap">
+		<div style="margin-top: 20;font-size: 20pt;">
+			激活二维码很方便，一共就三步
+		</div>
+	</td></tr>
+	<tr><td align="left">
+		<table width="100%" style="margin-top: 30;">
+			<tr>
+				<td rowspan="2" width="100" align="center">
+					<img alt="" src="${ctx }/static/images/1.png" />
+				</td>
+				<td>
+					<div style="font-size: 15pt;color: #EE4000">
+						激活它
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="color: #838B8B;">下载注册宠物圈，用宠物圈扫描添加二维码</td>
+			</tr>
+		</table>
+		
+	</td></tr>
+	<tr><td>
+		<table width="100%" style="margin-top: 30;">
+			<tr>
+				<td rowspan="2" width="100" align="center">
+					<img alt="" src="${ctx }/static/images/2.png" />
+				</td>
+				<td>
+					<div style="font-size: 15pt;color: #FF7F00">
+						完善它
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="color: #838B8B;">完善您和爱宠信息</td>
+			</tr>
+		</table>
+	</td></tr>
+	<tr><td>
+		<table width="100%" style="margin-top: 30;">
+			<tr>
+				<td rowspan="2" width="100" align="center">
+					<img alt="" src="${ctx }/static/images/3.png" />
+				</td>
+				<td>
+					<div style="font-size: 15pt;color: #66CD00">
+						挂上它
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td style="color: #838B8B;">给爱宠带上激活的二维码，安心又快乐</td>
+			</tr>
+		</table>
+	</td></tr>
 </table>
-    
+	
 </body></html>
