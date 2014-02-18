@@ -2,6 +2,7 @@ package com.momoplan.pet.framework.ssoserver.handler;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -31,6 +32,8 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 	protected SsoUser reviceSsoUser(ClientRequest clientRequest){
 		String password = PetUtil.getParameter(clientRequest, "password");
 		String phoneNumber = PetUtil.getParameter(clientRequest, "phonenumber");
+		String username = PetUtil.getParameter(clientRequest, "username");
+		String src = PetUtil.getParameter(clientRequest, "src");
 		String nickname = PetUtil.getParameter(clientRequest, "nickname");
 		String birthdate = PetUtil.getParameter(clientRequest, "birthdate");
 		String gender = PetUtil.getParameter(clientRequest, "gender");
@@ -39,8 +42,11 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 		String img = PetUtil.getParameter(clientRequest, "img");
 		String hobby = PetUtil.getParameter(clientRequest, "hobby");
 		String deviceToken = PetUtil.getParameter(clientRequest, "deviceToken");
+		if(StringUtils.isEmpty(username)){
+			username = phoneNumber;
+		}
 		SsoUser petUser = new SsoUser();
-		petUser.setUsername(phoneNumber);// 将手机号作为用户名
+		petUser.setUsername(username);// 将手机号作为用户名
 		petUser.setSignature(signature);
 		// petUser.setEmail(email);
 		petUser.setBirthdate(birthdate);
@@ -50,6 +56,7 @@ public abstract class AbstractHandler extends BaseController implements RequestH
 		petUser.setPhoneNumber(phoneNumber);
 		petUser.setHobby(hobby);
 		petUser.setImg(img);
+		petUser.setSrc(src);
 		petUser.setIfFraudulent("0");
 		petUser.setDeviceToken(deviceToken);
 		petUser.setPassword(passwordEncoder.encodePassword(password,salt));

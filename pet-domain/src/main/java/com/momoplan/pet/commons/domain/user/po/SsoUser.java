@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-23 15:26:24
+* @date 2014-02-18 14:32:32
 */
 public class SsoUser implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -53,6 +53,8 @@ public class SsoUser implements Serializable {
     private String deviceToken;
 
     private String backgroundImg;
+
+    private String src;
 
     public String getId() {
         return id;
@@ -197,6 +199,14 @@ public class SsoUser implements Serializable {
         this.backgroundImg = backgroundImg;
     }
 
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -225,7 +235,8 @@ public class SsoUser implements Serializable {
             && (this.getCity() == null ? other.getCity() == null : this.getCity().equals(other.getCity()))
             && (this.getIfFraudulent() == null ? other.getIfFraudulent() == null : this.getIfFraudulent().equals(other.getIfFraudulent()))
             && (this.getDeviceToken() == null ? other.getDeviceToken() == null : this.getDeviceToken().equals(other.getDeviceToken()))
-            && (this.getBackgroundImg() == null ? other.getBackgroundImg() == null : this.getBackgroundImg().equals(other.getBackgroundImg()));
+            && (this.getBackgroundImg() == null ? other.getBackgroundImg() == null : this.getBackgroundImg().equals(other.getBackgroundImg()))
+            && (this.getSrc() == null ? other.getSrc() == null : this.getSrc().equals(other.getSrc()));
     }
 
     @Override
@@ -249,6 +260,7 @@ public class SsoUser implements Serializable {
         result = prime * result + ((getIfFraudulent() == null) ? 0 : getIfFraudulent().hashCode());
         result = prime * result + ((getDeviceToken() == null) ? 0 : getDeviceToken().hashCode());
         result = prime * result + ((getBackgroundImg() == null) ? 0 : getBackgroundImg().hashCode());
+        result = prime * result + ((getSrc() == null) ? 0 : getSrc().hashCode());
         return result;
     }
 

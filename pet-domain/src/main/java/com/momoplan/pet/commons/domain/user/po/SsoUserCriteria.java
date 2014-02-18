@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-10-23 15:26:24
+* @date 2014-02-18 14:32:32
 */
 public class SsoUserCriteria {
     protected String orderByClause;
@@ -1330,6 +1330,76 @@ public class SsoUserCriteria {
 
         public Criteria andBackgroundImgNotBetween(String value1, String value2) {
             addCriterion("background_img not between", value1, value2, "backgroundImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcIsNull() {
+            addCriterion("src is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcIsNotNull() {
+            addCriterion("src is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcEqualTo(String value) {
+            addCriterion("src =", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcNotEqualTo(String value) {
+            addCriterion("src <>", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcGreaterThan(String value) {
+            addCriterion("src >", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcGreaterThanOrEqualTo(String value) {
+            addCriterion("src >=", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcLessThan(String value) {
+            addCriterion("src <", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcLessThanOrEqualTo(String value) {
+            addCriterion("src <=", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcLike(String value) {
+            addCriterion("src like", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcNotLike(String value) {
+            addCriterion("src not like", value, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcIn(List<String> values) {
+            addCriterion("src in", values, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcNotIn(List<String> values) {
+            addCriterion("src not in", values, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcBetween(String value1, String value2) {
+            addCriterion("src between", value1, value2, "src");
+            return (Criteria) this;
+        }
+
+        public Criteria andSrcNotBetween(String value1, String value2) {
+            addCriterion("src not between", value1, value2, "src");
             return (Criteria) this;
         }
     }
