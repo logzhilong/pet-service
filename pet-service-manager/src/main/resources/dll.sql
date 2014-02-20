@@ -161,3 +161,30 @@ CREATE TABLE pet_user.pet_card (
   `eb` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+--帖子的分类
+CREATE TABLE pet_bbs.bbs_assort (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `name` varchar(200) DEFAULT NULL ,
+  `seq` varchar(200) DEFAULT NULL ,
+  `ct` datetime,
+  `et` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `eb` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+--分类与圈子的映射
+CREATE TABLE pet_bbs.bbs_forum_assort_rel (
+  `id` varchar(64) NOT NULL COMMENT '主键',
+  `forum_id` varchar(200) DEFAULT NULL ,
+  `assort_id` varchar(200) DEFAULT NULL ,
+  `ct` datetime,
+  `et` datetime,
+  `cb` varchar(200) DEFAULT NULL COMMENT 'create by',
+  `eb` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table BBS_NOTE add column assort_id varchar(200);

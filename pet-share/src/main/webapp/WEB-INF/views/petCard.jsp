@@ -96,8 +96,12 @@ body {
 	<tr><td height="10px" colspan="2"></td></tr>
 	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}主人昵称</td><td style="color: #838B8B;">${sp}${p.petOwner }</td></tr>
 	<tr style="background-color: white;height: 70px;"><td width="150" align="left" >${sp}${sp}主人电话</td><td style="color: #838B8B;">${sp}${p.petOwnerTel }</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" colspan="2">${sp}${sp}主人寄语</td></tr>
-	<tr style="background-color: white;height: 70px;"><td width="150" align="left" colspan="2" style="color: #838B8B;">${sp}${sp}${p.petOwnerMsg }</td></tr>
+	<tr style="background-color: white;height: 70px;"><td align="left" colspan="2">${sp}${sp}主人寄语</td></tr>
+	<tr style="background-color: white;height: 70px;">
+		<td align="left" colspan="2" style="color: #838B8B;">
+			${sp}${sp}${p.petOwnerMsg }
+		</td>
+	</tr>
 	<tr><td height="10px" colspan="2"></td></tr>
 	<tr><td align="left" colspan="2">
 		<div style="margin-top:20;margin-bottom:10; font-size: 20pt;color: #EE4000;">

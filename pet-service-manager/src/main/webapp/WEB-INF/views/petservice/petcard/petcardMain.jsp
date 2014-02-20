@@ -4,8 +4,8 @@
 
 <div class="pageHeader" >
 	<div class="searchBar">
-		<%--
 		<form onsubmit="return navTabSearch(this);" action="${ctx }/petservice/petcard/petcardMain.html" method="post" id="petcardMainForm" >
+		<%--
 			状态:
 			<select name="state" >
 				<option value="">全部</option>
@@ -14,8 +14,8 @@
 			</select>
 			<button type="button">查询</button>
 			<button type="button" class="close">关闭</button>
-		</form>
 		--%>
+		</form>
 		<form action="${ctx }/petservice/petcard/petcardDownload.html" method="post" >
 			start number:
 			<input type="text" name="start" size="15" value="" class="required number"/>

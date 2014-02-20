@@ -57,10 +57,15 @@ public class IndexController {
 		TreeBean forum = new TreeBean("0201","02","圈子管理","/petservice/bbs/forumMain.html");
 		TreeBean condotion = new TreeBean("0202","02","默认关注","/manager/userforumcondition/userforumlist.html");
 		TreeBean special = new TreeBean("0203","02","专题管理","/petservice/bbs/specialMain.html");
+		
+		TreeBean assort = new TreeBean("0204","02","帖子分类管理","/petservice/bbs/assortMain.html");
+		
+		
 		tree.add(bbsRoot);
 		tree.add(forum);
 		tree.add(condotion);
 		tree.add(special);
+		tree.add(assort);
 		
 		tree.add(bbs);
 //		tree.add(bbsMain);

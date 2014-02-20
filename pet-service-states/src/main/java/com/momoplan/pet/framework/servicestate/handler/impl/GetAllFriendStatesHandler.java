@@ -17,7 +17,7 @@ import com.momoplan.pet.framework.servicestate.vo.StatesUserStatesVo;
 /**
  * 获取所有好友的动态
  * 
- * @author SKS
+ * @author liangc
  * 
  */
 @Component("getAllFriendStates")

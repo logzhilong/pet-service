@@ -10,7 +10,7 @@ import java.util.List;
 * @author liangc [cc14514@icloud.com]
 * @version v1.0
 * @copy pet
-* @date 2013-11-04 12:25:53
+* @date 2014-02-20 10:44:25
 */
 public class NoteCriteria {
     protected String orderByClause;
@@ -990,6 +990,76 @@ public class NoteCriteria {
 
         public Criteria andRtNotBetween(Date value1, Date value2) {
             addCriterion("RT not between", value1, value2, "rt");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdIsNull() {
+            addCriterion("assort_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdIsNotNull() {
+            addCriterion("assort_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdEqualTo(String value) {
+            addCriterion("assort_id =", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdNotEqualTo(String value) {
+            addCriterion("assort_id <>", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdGreaterThan(String value) {
+            addCriterion("assort_id >", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdGreaterThanOrEqualTo(String value) {
+            addCriterion("assort_id >=", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdLessThan(String value) {
+            addCriterion("assort_id <", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdLessThanOrEqualTo(String value) {
+            addCriterion("assort_id <=", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdLike(String value) {
+            addCriterion("assort_id like", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdNotLike(String value) {
+            addCriterion("assort_id not like", value, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdIn(List<String> values) {
+            addCriterion("assort_id in", values, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdNotIn(List<String> values) {
+            addCriterion("assort_id not in", values, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdBetween(String value1, String value2) {
+            addCriterion("assort_id between", value1, value2, "assortId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssortIdNotBetween(String value1, String value2) {
+            addCriterion("assort_id not between", value1, value2, "assortId");
             return (Criteria) this;
         }
     }

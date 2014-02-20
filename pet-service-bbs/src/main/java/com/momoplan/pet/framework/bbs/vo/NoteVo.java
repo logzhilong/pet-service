@@ -1,5 +1,8 @@
 package com.momoplan.pet.framework.bbs.vo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 
 @SuppressWarnings("serial")
@@ -27,6 +30,16 @@ public class NoteVo extends Note{
 	 */
 	private Long totalReply = 0L;
 	
+	private List<String> images = new ArrayList<String>();
+	
+	public List<String> getImages() {
+		return images;
+	}
+
+	public void setImages(List<String> images) {
+		this.images = images;
+	}
+
 	public Long getcTotalReply() {
 		return cTotalReply;
 	}

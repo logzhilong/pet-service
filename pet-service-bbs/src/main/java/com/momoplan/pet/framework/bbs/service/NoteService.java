@@ -44,7 +44,7 @@ public interface NoteService {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope,boolean withTop,int pageno,int pagesize) throws Exception;
+	public List<NoteVo> getNoteList(String userid,String assortId,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope,boolean withTop,int pageno,int pagesize) throws Exception;
 
 	/**
 	 * 发送帖子

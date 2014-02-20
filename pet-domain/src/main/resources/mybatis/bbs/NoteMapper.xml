@@ -15,6 +15,7 @@
     <result column="CT" property="ct" jdbcType="TIMESTAMP" />
     <result column="ET" property="et" jdbcType="TIMESTAMP" />
     <result column="RT" property="rt" jdbcType="TIMESTAMP" />
+    <result column="assort_id" property="assortId" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.momoplan.pet.commons.domain.bbs.po.Note" extends="BaseResultMap" >
     <result column="CONTENT" property="content" jdbcType="LONGVARCHAR" />
@@ -79,7 +80,7 @@
   </sql>
   <sql id="Base_Column_List" >
     ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, IS_DEL, STATE, TYPE, 
-    CT, ET, RT
+    CT, ET, RT, assort_id
   </sql>
   <sql id="Blob_Column_List" >
     CONTENT
@@ -137,9 +138,9 @@
   </delete>
   <insert id="insert" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
     insert into BBS_NOTE (ID, FORUM_ID, USER_ID, NAME, CLIENT_COUNT, IS_EUTE, IS_TOP, 
-      IS_DEL, STATE, TYPE, CT, ET, RT, CONTENT)
+      IS_DEL, STATE, TYPE, CT, ET, RT, assort_id, CONTENT)
     values (#{id}, #{forumId}, #{userId}, #{name}, #{clientCount}, #{isEute}, #{isTop}, 
-      #{isDel}, #{state}, #{type}, #{ct}, #{et}, #{rt}, #{content})
+      #{isDel}, #{state}, #{type}, #{ct}, #{et}, #{rt}, #{assortId}, #{content})
   </insert>
   <insert id="insertSelective" parameterType="com.momoplan.pet.commons.domain.bbs.po.Note" >
     insert into BBS_NOTE
@@ -182,6 +183,9 @@
       </if>
       <if test="rt != null" >
         RT,
+      </if>
+      <if test="assortId != null" >
+        assort_id,
       </if>
       <if test="content != null" >
         CONTENT,
@@ -226,6 +230,9 @@
       </if>
       <if test="rt != null" >
         #{rt},
+      </if>
+      <if test="assortId != null" >
+        #{assortId},
       </if>
       <if test="content != null" >
         #{content},
@@ -280,6 +287,9 @@
       <if test="record.rt != null" >
         RT = #{record.rt},
       </if>
+      <if test="record.assortId != null" >
+        assort_id = #{record.assortId},
+      </if>
       <if test="record.content != null" >
         CONTENT = #{record.content},
       </if>
@@ -303,6 +313,7 @@
       CT = #{record.ct},
       ET = #{record.et},
       RT = #{record.rt},
+      assort_id = #{record.assortId},
       CONTENT = #{record.content}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -322,7 +333,8 @@
       TYPE = #{record.type},
       CT = #{record.ct},
       ET = #{record.et},
-      RT = #{record.rt}
+      RT = #{record.rt},
+      assort_id = #{record.assortId}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -366,6 +378,9 @@
       <if test="rt != null" >
         RT = #{rt},
       </if>
+      <if test="assortId != null" >
+        assort_id = #{assortId},
+      </if>
       <if test="content != null" >
         CONTENT = #{content},
       </if>
@@ -386,6 +401,7 @@
       CT = #{ct},
       ET = #{et},
       RT = #{rt},
+      assort_id = #{assortId},
       CONTENT = #{content}
     where ID = #{id}
   </update>
@@ -402,7 +418,8 @@
       TYPE = #{type},
       CT = #{ct},
       ET = #{et},
-      RT = #{rt}
+      RT = #{rt},
+      assort_id = #{assortId}
     where ID = #{id}
   </update>
 </mapper>

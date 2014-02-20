@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -143,7 +145,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	 * 获取帖子列表
 	 */
 	@Override
-	public List<NoteVo> getNoteList(String userid,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope ,boolean withTop,int pageNo,int pageSize) throws Exception {
+	public List<NoteVo> getNoteList(String userid,String assortId,String forumid,Action action,String condition,ConditionType conditionType,String conditionScope ,boolean withTop,int pageNo,int pageSize) throws Exception {
 		NoteCriteria noteCriteria = new NoteCriteria();
 		noteCriteria.setMysqlOffset(pageNo * pageSize);
 		noteCriteria.setMysqlLength(pageSize);
@@ -152,6 +154,13 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		if (StringUtils.isNotEmpty(forumid)&&!"0".equals(forumid)) {
 			criteria.andForumIdEqualTo(forumid);
 		}
+
+		//assortId 只取某个分类的
+		logger.debug("assortId="+assortId);
+		if(StringUtils.isNotEmpty(assortId) && !"all".equalsIgnoreCase(assortId)){
+			criteria.andAssortIdEqualTo(assortId);
+		}
+		
 		if(Action.ALL.equals(action)){//全部
 			noteCriteria.setOrderByClause("et desc");
 			logger.debug("全部...");
@@ -195,7 +204,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 					criteria.andIsEuteEqualTo(true);
 				} else if("ALL".equalsIgnoreCase(conditionScope)){
 					logger.debug("131130 SEARCH : 此处搜索全部");
-				} else {
+				} else if(StringUtils.isEmpty(assortId)||"0".equals(assortId)){
 					logger.debug("131130 SEARCH : 此处只取我关注的最新的帖子");
 					Map<String,String> um = super.getUserForumMap(userid);
 					if(um==null||um.size()==0){
@@ -208,7 +217,6 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 					criteria.andForumIdIn(values);
 				}
 			}
-			
 			noteCriteria.setOrderByClause("et desc");
 			if(ConditionType.NOTE_NAME.equals(conditionType)){
 				criteria.andNameLike("%"+condition+"%");
@@ -261,7 +269,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	private void buildNoteVoList(List<Note> notelist,List<NoteVo> noteVoList) throws Exception {
 		for (Note note : notelist) {
 			NoteVo vo = createNoteVo(note);
-			logger.debug("//add by liangc 131206 : 校验返回的数据中，是不是包含图片呢，type=0的，都得判断一下，然后更新结果");
+			//logger.debug("//add by liangc 131206 : 校验返回的数据中，是不是包含图片呢，type=0的，都得判断一下，然后更新结果");
 			updateNoteTypeForOldData(vo);
 			noteVoList.add(vo);
 		}
@@ -281,6 +289,21 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 			mapperOnCache.updateByPrimaryKeySelective(p, vo.getId());
 			logger.debug("NOTE_ID="+vo.getId()+" 需要更新 TYPE="+vo.getType());
 		}
+	}
+	private List<String> getImagesInText(String content){
+		List<String> images = new ArrayList<String>();
+		Matcher matcher = Pattern.compile("(<img.*?src=\")(.+?)(\".*?/>)").matcher(content);
+		while(matcher.find()){
+			String s2 = matcher.group(2);
+			String[] tt = s2.split("/get/");
+			if(tt!=null && tt.length>1){
+				String imageId = tt[1];
+				images.add(imageId);
+			}
+			if(images.size()>=3)
+				return images;
+		}
+		return images;
 	}
 	
 	private NoteVo createNoteVo(Note note) throws Exception{
@@ -305,6 +328,11 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		Forum forum = mapperOnCache.selectByPrimaryKey(Forum.class, note.getForumId());
 		logger.debug("131210:圈子名称:::"+forum.getName());
 		vo.setForumName(forum.getName());
+		
+		Note n = mapperOnCache.selectByPrimaryKey(Note.class, note.getId());
+		List<String> images = getImagesInText(n.getContent());
+		logger.debug("140220:截取帖子图片:::> images.size="+images.size());
+		vo.setImages(images);
 		return vo;
 	}
 
