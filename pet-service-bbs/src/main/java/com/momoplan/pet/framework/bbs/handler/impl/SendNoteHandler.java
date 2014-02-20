@@ -29,7 +29,8 @@ public class SendNoteHandler extends AbstractHandler {
 		try{
 			Note note=new Note();
 			note.setUserId(getUseridFParamSToken(clientRequest));
-			note.setForumId(PetUtil.getParameter(clientRequest,"forumId"));
+			note.setForumId(PetUtil.getParameter(clientRequest,"forumId"));//圈子
+			note.setAssortId(PetUtil.getParameter(clientRequest,"assortId"));//分类
 			note.setName(PetUtil.getParameter(clientRequest, "name"));
 			note.setContent(PetUtil.getParameter(clientRequest, "content"));
 			
