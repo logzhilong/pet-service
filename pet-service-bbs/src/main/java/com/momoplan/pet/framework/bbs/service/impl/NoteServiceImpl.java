@@ -315,7 +315,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	}
 	private List<String> getImagesInText(String content){
 		List<String> images = new ArrayList<String>();
-		Matcher matcher = Pattern.compile("(<img.*?src=\")(.+?)(\".*?/>)").matcher(content);
+		Matcher matcher = Pattern.compile("(<img.*?src=\")(.+?)(\".*?[/>|>])").matcher(content);
 		while(matcher.find()){
 			String s2 = matcher.group(2);
 			String[] tt = s2.split("/get/");
