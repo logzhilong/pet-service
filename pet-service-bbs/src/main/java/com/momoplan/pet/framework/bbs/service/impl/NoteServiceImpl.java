@@ -27,9 +27,12 @@ import com.momoplan.pet.commons.DateUtils;
 import com.momoplan.pet.commons.IDCreater;
 import com.momoplan.pet.commons.NumberUtils;
 import com.momoplan.pet.commons.cache.MapperOnCache;
+import com.momoplan.pet.commons.domain.bbs.mapper.ForumAssortRelMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
+import com.momoplan.pet.commons.domain.bbs.po.ForumAssortRel;
+import com.momoplan.pet.commons.domain.bbs.po.ForumAssortRelCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.Note;
 import com.momoplan.pet.commons.domain.bbs.po.NoteCriteria;
 import com.momoplan.pet.commons.domain.bbs.po.NoteSubCriteria;
@@ -53,6 +56,8 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	private MapperOnCache mapperOnCache = null;
 	private JmsTemplate apprequestTemplate = null;
 	
+	private ForumAssortRelMapper forumAssortRelMapper = null;
+	
 	@Autowired
 	public NoteServiceImpl(NoteMapper noteMapper, NoteSubMapper noteSubMapper,
 			NoteRepository noteRepository, NoteSubRepository noteSubRepository,
@@ -74,6 +79,24 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	 */
 	@Override
 	public String sendNote(Note po) throws Exception {
+		ForumAssortRelCriteria forumAssortRelCriteria = new ForumAssortRelCriteria();
+		if(StringUtils.isNotEmpty(po.getForumId())){
+			String forumId = po.getForumId();
+			forumAssortRelCriteria.createCriteria().andForumIdEqualTo(forumId);
+			List<ForumAssortRel> farl = forumAssortRelMapper.selectByExample(forumAssortRelCriteria);
+			if(farl!=null && farl.size()>0){
+				ForumAssortRel far = farl.get(0);
+				po.setAssortId(far.getAssortId());
+			}
+		}else{
+			String assortId = po.getAssortId();
+			forumAssortRelCriteria.createCriteria().andAssortIdEqualTo(assortId);
+			List<ForumAssortRel> farl = forumAssortRelMapper.selectByExample(forumAssortRelCriteria);
+			if(farl!=null && farl.size()>0){
+				ForumAssortRel far = farl.get(0);
+				po.setForumId(far.getForumId());
+			}
+		}
 		Date now = new Date();
 		po.setId(IDCreater.uuid());
 		po.setClientCount(1L);
