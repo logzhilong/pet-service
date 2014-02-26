@@ -33,7 +33,9 @@ public class GetAssortListHandler extends AbstractHandler {
 		String sn = clientRequest.getSn();
 		try{
 			logger.debug("获取全部分类 成功 body="+gson.toJson(clientRequest));
-			List<Assort> list =  assortMapper.selectByExample(new AssortCriteria());
+			AssortCriteria assortCriteria = new AssortCriteria();
+			assortCriteria.setOrderByClause("seq asc");
+			List<Assort> list =  assortMapper.selectByExample(assortCriteria);
 			rtn = new Success(sn,true,list).toString();
 		}catch(Exception e){
 			logger.debug("获取全部分类 失败 body="+gson.toJson(clientRequest));
