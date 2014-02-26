@@ -30,6 +30,7 @@ import com.momoplan.pet.commons.cache.MapperOnCache;
 import com.momoplan.pet.commons.domain.bbs.mapper.ForumAssortRelMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteMapper;
 import com.momoplan.pet.commons.domain.bbs.mapper.NoteSubMapper;
+import com.momoplan.pet.commons.domain.bbs.po.Assort;
 import com.momoplan.pet.commons.domain.bbs.po.Forum;
 import com.momoplan.pet.commons.domain.bbs.po.ForumAssortRel;
 import com.momoplan.pet.commons.domain.bbs.po.ForumAssortRelCriteria;
@@ -345,13 +346,17 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		}else{
 			logger.debug("不存在的用户 USER_ID="+uid);
 		}
+		if(StringUtils.isNotEmpty(note.getAssortId())){
+			//140226 : 如果有类型，就得把分类名称返回去
+			Assort assort = mapperOnCache.selectByPrimaryKey(Assort.class, note.getAssortId());
+			vo.setAssortName(assort.getName());
+		}
 		Long totalReply = noteSubRepository.totalReply(nid);
 		vo.setTotalReply(totalReply);
 		note.getForumId();
 		Forum forum = mapperOnCache.selectByPrimaryKey(Forum.class, note.getForumId());
 		logger.debug("131210:圈子名称:::"+forum.getName());
 		vo.setForumName(forum.getName());
-		
 		Note n = mapperOnCache.selectByPrimaryKey(Note.class, note.getId());
 		List<String> images = getImagesInText(n.getContent());
 		logger.debug("140220:截取帖子图片:::> images.size="+images.size());
