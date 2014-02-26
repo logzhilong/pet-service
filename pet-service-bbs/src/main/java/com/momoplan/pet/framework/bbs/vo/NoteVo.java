@@ -8,6 +8,10 @@ import com.momoplan.pet.commons.domain.bbs.po.Note;
 @SuppressWarnings("serial")
 public class NoteVo extends Note{
 	/**
+	 * 分类名称
+	 */
+	private String assortName = null;
+	/**
 	 * 昵称
 	 */
 	private String nickname = null;
@@ -80,4 +84,11 @@ public class NoteVo extends Note{
 		this.forumName = forumName;
 	}
 
+	public String getAssortName() {
+		return assortName;
+	}
+
+	public void setAssortName(String assortName) {
+		this.assortName = assortName;
+	}
 }
