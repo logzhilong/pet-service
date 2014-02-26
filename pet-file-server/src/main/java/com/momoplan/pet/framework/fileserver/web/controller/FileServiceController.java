@@ -110,6 +110,26 @@ public class FileServiceController {
 	}
 	
 	/**
+	 * TODO 2014-02-26 : 要截正方形
+	 * @param fileId
+	 * @param width
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/get/{fileId}/{width}/square")
+	public void getSmallImageSquare(@PathVariable("fileId") String fileId,@PathVariable("width") String width,HttpServletResponse response) throws Exception{
+		logger.debug("getSmallFile : fileId="+fileId+" ; width="+width);
+		File tmpBaseDir = new File("/tmp/pet-file-server/small");
+		if(!tmpBaseDir.exists()){
+			tmpBaseDir.mkdirs();
+			logger.info("初始化缓存图片目录");
+		}
+		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response);
+	}
+
+	
+	
+	/**
 	 * 获取更新包
 	 * @param fileId
 	 * @param width
