@@ -62,7 +62,8 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 	@Autowired
 	public NoteServiceImpl(NoteMapper noteMapper, NoteSubMapper noteSubMapper,
 			NoteRepository noteRepository, NoteSubRepository noteSubRepository,
-			MapperOnCache mapperOnCache, JmsTemplate apprequestTemplate) {
+			MapperOnCache mapperOnCache, JmsTemplate apprequestTemplate,
+			ForumAssortRelMapper forumAssortRelMapper) {
 		super();
 		this.noteMapper = noteMapper;
 		this.noteSubMapper = noteSubMapper;
@@ -70,6 +71,7 @@ public class NoteServiceImpl extends BaseService implements NoteService {
 		this.noteSubRepository = noteSubRepository;
 		this.mapperOnCache = mapperOnCache;
 		this.apprequestTemplate = apprequestTemplate;
+		this.forumAssortRelMapper = forumAssortRelMapper;
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(NoteServiceImpl.class);
