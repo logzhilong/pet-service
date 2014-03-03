@@ -27,6 +27,6 @@ public interface FileServer {
 	 */
 	public InputStream getFileAsStream(String id) throws Exception ;
 	
-	public InputStream getFileAsStream(String id,Integer width,File img) throws Exception ;
+	public InputStream getFileAsStream(String id,Integer width,File img,String square) throws Exception ;
 	
 }

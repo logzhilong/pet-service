@@ -197,16 +197,24 @@ public class FileServerImpl implements FileServer{
 		InputStream is = new FileInputStream(realPath);
 		return is;
 	}
+	
+	
 
 	@Override
-	public InputStream getFileAsStream(String id, Integer width,File img)throws Exception {
+	public InputStream getFileAsStream(String id, Integer width,File img,String square)throws Exception {
 		InputStream is = getFileAsStream(id);
 		BufferedImage bi = ImageIO.read(is);
+		if("square".equalsIgnoreCase(square)){
+			//XXX 来个正方形
+			int len = bi.getWidth()>bi.getHeight()?bi.getHeight():bi.getWidth();
+			bi = ImageTools.cutting(getFileAsStream(id), 0, 0,len,len,getFormat(id));
+		}
 		int w = bi.getWidth();
 		int h = bi.getHeight();
 		double bili = (double)w/(double)h;
 		int height = (int) (width / bili);
 		bi = ImageTools.getResizePicture(bi, width, height);
+		
 		logger.debug("图片尺寸：width="+width+" ; height="+height);
 		String format = getFormat(id);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -238,6 +246,10 @@ public class FileServerImpl implements FileServer{
 	
 	private String getFormat(String id) throws Exception{
 		InputStream is = getFileAsStream(id);
+		return getFormat(is);
+	}
+	
+	public String getFormat(InputStream is) throws Exception{
 		byte[] bt = new byte[2];
 		is.read(bt);
 		String code = bytesToHexString(bt);

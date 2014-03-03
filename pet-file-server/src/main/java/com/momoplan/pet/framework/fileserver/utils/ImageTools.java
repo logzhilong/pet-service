@@ -10,15 +10,16 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,43 +31,50 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ImageTools {
 	
-	private static Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("jpg");
-	private static ImageReader reader = (ImageReader) readers.next();
+//	public static void main(String[] args) throws IOException {
+//		File input = new File("/app/1.png");
+//		File output = new File("/app/111");
+//		InputStream is = new FileInputStream(input);
+//		System.out.println(is.available());
+//		MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
+//		Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
+//		String format = "jpg";
+//		while(it.hasNext()){
+//			ImageReader r = it.next();
+//			System.out.println(r.getFormatName());
+//			format = r.getFormatName();
+//		}
+//		System.out.println("============format:"+format);
+//		BufferedImage originalPic = ImageIO.read(mis);
+//		int sw = originalPic.getWidth();
+//		int sh = originalPic.getHeight();
+//		double rw = 640;
+//		double rh = (rw/sw)*sh;
+//		System.out.printf("sw=%s sh=%s\r\nrw=%s rh=%s\r\n", sw+"",sh+"",rw+"",rh+"");
+//		BufferedImage res = getResizePicture(originalPic,rw,rh);
+//		System.out.println("OK...");
+//		InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
+//		BufferedImage top = ImageIO.read(tis);
+//		int tw = top.getWidth();
+//		int th = top.getHeight();
+//		if(th>rh/3){
+//			double rth = rh/3;
+//			double rtw = (rth/th)*tw;
+//			top = getResizePicture(top,rtw,rth);
+//		}
+//		res = pressImage(res,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
+//		ImageIO.write(res,format, output);
+//		is.close();
+//	}
 	
-	public static void main(String[] args) throws IOException {
-		File input = new File("/app/1.png");
-		File output = new File("/app/111");
-		InputStream is = new FileInputStream(input);
-		System.out.println(is.available());
-		MemoryCacheImageInputStream mis = new MemoryCacheImageInputStream(is);
-		Iterator<ImageReader> it = ImageIO.getImageReaders(mis);
-		String format = "jpg";
-		while(it.hasNext()){
-			ImageReader r = it.next();
-			System.out.println(r.getFormatName());
-			format = r.getFormatName();
-		}
-		System.out.println("============format:"+format);
-		BufferedImage originalPic = ImageIO.read(mis);
-		int sw = originalPic.getWidth();
-		int sh = originalPic.getHeight();
-		double rw = 640;
-		double rh = (rw/sw)*sh;
-		System.out.printf("sw=%s sh=%s\r\nrw=%s rh=%s\r\n", sw+"",sh+"",rw+"",rh+"");
-		BufferedImage res = getResizePicture(originalPic,rw,rh);
-		System.out.println("OK...");
-		InputStream tis = ImageTools.class.getClassLoader().getResourceAsStream("top_image.png");
-		BufferedImage top = ImageIO.read(tis);
-		int tw = top.getWidth();
-		int th = top.getHeight();
-		if(th>rh/3){
-			double rth = rh/3;
-			double rtw = (rth/th)*tw;
-			top = getResizePicture(top,rtw,rth);
-		}
-		res = pressImage(res,top,new Point(rw-top.getWidth(), rh-top.getHeight()));
-		ImageIO.write(res,format, output);
+	public static void main(String[] args) throws Exception {
+		String format = "png";
+		InputStream is = new FileInputStream("/app/1.jpg");
+		OutputStream os = new FileOutputStream("/app/11.jpg");
+		BufferedImage bi = cutting(is, 0, 0, 100, 100, format);
+		ImageIO.write(bi, format, os);
 		is.close();
+		os.close();
 	}
 	
 	/**
@@ -121,19 +129,20 @@ public class ImageTools {
 	 * @return
 	 * @throws IOException 
 	 */
-	public final static BufferedImage cutting(InputStream is, int x, int y, int w, int h) throws IOException{
+	public final static BufferedImage cutting(InputStream is, int x, int y, int w, int h,String format) throws IOException{
 		ImageInputStream iis = null;
 		try {
+			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(format);
+			ImageReader reader = (ImageReader) readers.next();
 			iis = ImageIO.createImageInputStream(is);
 			reader.setInput(iis, true);
 			ImageReadParam param = reader.getDefaultReadParam();
 			Rectangle rect = new Rectangle(x, y, w, h);
 			param.setSourceRegion(rect);
 			BufferedImage bi = reader.read(0, param);
-			
 			return bi;
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("XXXXXX "+e.getMessage());
 		} finally {
 			if(iis!=null){
 				iis.close();

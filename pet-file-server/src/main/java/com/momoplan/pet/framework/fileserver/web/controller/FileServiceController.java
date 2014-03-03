@@ -106,7 +106,7 @@ public class FileServiceController {
 			tmpBaseDir.mkdirs();
 			logger.info("初始化缓存图片目录");
 		}
-		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response);
+		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response,null);
 	}
 	
 	/**
@@ -119,12 +119,12 @@ public class FileServiceController {
 	@RequestMapping("/get/{fileId}/{width}/square")
 	public void getSmallImageSquare(@PathVariable("fileId") String fileId,@PathVariable("width") String width,HttpServletResponse response) throws Exception{
 		logger.debug("getSmallFile : fileId="+fileId+" ; width="+width);
-		File tmpBaseDir = new File("/tmp/pet-file-server/small");
+		File tmpBaseDir = new File("/tmp/pet-file-server/small/square");
 		if(!tmpBaseDir.exists()){
 			tmpBaseDir.mkdirs();
 			logger.info("初始化缓存图片目录");
 		}
-		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response);
+		getSmallImageInTmp(tmpBaseDir.getPath(),fileId,Integer.parseInt(width),response,"square");
 	}
 
 	
@@ -144,7 +144,7 @@ public class FileServiceController {
 		getFile(fid,response);
 	}
 	
-	public void getSmallImageInTmp(String tmpBasePath,String fileId,Integer width, HttpServletResponse response)throws Exception {
+	public void getSmallImageInTmp(String tmpBasePath,String fileId,Integer width, HttpServletResponse response,String square)throws Exception {
 		OutputStream os = null;
 		InputStream is = null;
 		File imgDir = new File(tmpBasePath,fileId);
@@ -158,7 +158,7 @@ public class FileServiceController {
 			is = new FileInputStream(img);
 		}else{
 			logger.debug("图片不在缓存中");
-			is = fileServer.getFileAsStream(fileId,width,img);
+			is = fileServer.getFileAsStream(fileId,width,img,square);
 		}
 		try{
 			os = response.getOutputStream();
